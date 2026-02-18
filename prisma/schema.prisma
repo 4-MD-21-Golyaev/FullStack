@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+//////////////////////////////////////////////////////
+// ORDER STATUS (справочник)
+//////////////////////////////////////////////////////
+
+model OrderStatus {
+  id     String  @id @default(uuid())
+  code   String  @unique   // FORMED, PAID, ...
+  name   String            // Человекочитаемое название
+
+  orders Order[]
+}
+
+//////////////////////////////////////////////////////
+// PAYMENT STATUS (если нужна симметрия)
+//////////////////////////////////////////////////////
+
+model PaymentStatus {
+  id     String  @id @default(uuid())
+  code   String  @unique   // PENDING, SUCCESS, FAILED
+  name   String
+
+  payments Payment[]
+}
+
+//////////////////////////////////////////////////////
+// USER
+//////////////////////////////////////////////////////
+
+model User {
+  id        String  @id @default(uuid())
+  phone     String
+  email     String  @unique
+  address   String?
+
+  orders    Order[]
+  cartItems CartItem[]
+}
+
+//////////////////////////////////////////////////////
+// CATEGORY
+//////////////////////////////////////////////////////
+
+model Category {
+  id        String      @id @default(uuid())
+  name      String
+  parentId  String?
+
+  parent    Category?   @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children  Category[]  @relation("CategoryToCategory")
+
+  products  Product[]
+}
+
+//////////////////////////////////////////////////////
+// PRODUCT
+//////////////////////////////////////////////////////
+
+model Product {
+  id         String   @id @default(uuid())
+  name       String
+  article    String
+  price      Int
+  stock      Int
+
+  imagePath  String?  // путь к изображению
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+}
+
+
+//////////////////////////////////////////////////////
+// CART
+//////////////////////////////////////////////////////
+
+model CartItem {
+  id        String @id @default(uuid())
+
+  userId    String
+  user      User   @relation(fields: [userId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity  Int
+}
+
+//////////////////////////////////////////////////////
+// ORDER
+//////////////////////////////////////////////////////
+
+model Order {
+  id          String   @id @default(uuid())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  statusId    String
+  status      OrderStatus @relation(fields: [statusId], references: [id])
+
+  totalAmount Int
+
+  deliveryAt  DateTime?
+  address     String
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items       OrderItem[]
+  payments    Payment[]
+}
+
+//////////////////////////////////////////////////////
+// ORDER ITEM
+//////////////////////////////////////////////////////
+
+model OrderItem {
+  id        String  @id @default(uuid())
+
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  name      String
+  article   String
+  price     Int
+  quantity  Int
+}
+
+//////////////////////////////////////////////////////
+// PAYMENT
+//////////////////////////////////////////////////////
+
+model Payment {
+  id              String   @id @default(uuid())
+
+  orderId         String
+  order           Order    @relation(fields: [orderId], references: [id])
+
+  statusId        String
+  status          PaymentStatus @relation(fields: [statusId], references: [id])
+
+  externalId      String?
+  amount          Int
+
+  createdAt       DateTime @default(now())
+}
