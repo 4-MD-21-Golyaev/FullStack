@@ -11,6 +11,8 @@ const mockOrderRepo: OrderRepository = {
 
 const mockProductRepo: ProductRepository = {
     findById: vi.fn(),
+    findAll: vi.fn(),
+    findByCategoryId: vi.fn(),
     save: vi.fn(),
 };
 
@@ -24,6 +26,8 @@ describe('CreateOrderUseCase', () => {
             article: 'A1',
             price: 100,
             stock: 10,
+            imagePath: null,
+            categoryId: 'c1',
         });
 
         const useCase = new CreateOrderUseCase(

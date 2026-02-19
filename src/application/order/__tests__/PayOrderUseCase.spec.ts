@@ -25,6 +25,8 @@ const makeProduct = (stock: number): Product => ({
     article: 'A1',
     price: 500,
     stock,
+    imagePath: null,
+    categoryId: 'c1',
 });
 
 function makeRepos(order: Order | null, product: Product | null) {
@@ -36,10 +38,13 @@ function makeRepos(order: Order | null, product: Product | null) {
         save: vi.fn(),
         findById: vi.fn(),
         findByOrderId: vi.fn(),
+        findByExternalId: vi.fn(),
     };
     const productRepo: ProductRepository = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(product),
+        findAll: vi.fn(),
+        findByCategoryId: vi.fn(),
     };
     return { orderRepo, paymentRepo, productRepo };
 }

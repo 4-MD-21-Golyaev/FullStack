@@ -70,7 +70,7 @@ export class PrismaOrderRepository implements OrderRepository {
         return {
             id: record.id,
             userId: record.userId,
-            totalAmount: record.totalAmount,
+            totalAmount: record.totalAmount.toNumber(),
             address: record.address,
             state: record.status.code as OrderState,
             createdAt: record.createdAt,
@@ -79,7 +79,7 @@ export class PrismaOrderRepository implements OrderRepository {
                 productId: item.productId,
                 name: item.name,
                 article: item.article,
-                price: item.price,
+                price: item.price.toNumber(),
                 quantity: item.quantity,
             })),
         };

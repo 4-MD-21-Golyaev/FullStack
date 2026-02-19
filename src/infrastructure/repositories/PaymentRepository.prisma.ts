@@ -42,7 +42,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
         return {
             id: record.id,
             orderId: record.orderId,
-            amount: record.amount,
+            amount: record.amount.toNumber(),
             status: record.status.code as PaymentStatus,
             externalId: record.externalId ?? undefined,
             createdAt: record.createdAt,
@@ -51,16 +51,32 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
     async findByOrderId(orderId: string): Promise<Payment | null> {
         const record = await prisma.payment.findFirst({
-            where: { orderId, status: { code: PaymentStatus.SUCCESS } },
+            where: { orderId },
+            orderBy: { createdAt: 'desc' },
             include: { status: true },
         });
 
         if (!record) return null;
 
+        return this.toPayment(record);
+    }
+
+    async findByExternalId(externalId: string): Promise<Payment | null> {
+        const record = await prisma.payment.findFirst({
+            where: { externalId },
+            include: { status: true },
+        });
+
+        if (!record) return null;
+
+        return this.toPayment(record);
+    }
+
+    private toPayment(record: any): Payment {
         return {
             id: record.id,
             orderId: record.orderId,
-            amount: record.amount,
+            amount: record.amount.toNumber(),
             status: record.status.code as PaymentStatus,
             externalId: record.externalId ?? undefined,
             createdAt: record.createdAt,

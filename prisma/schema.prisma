@@ -52,6 +52,7 @@ model User {
 model Category {
   id        String      @id @default(uuid())
   name      String
+  imagePath String?
   parentId  String?
 
   parent    Category?   @relation("CategoryToCategory", fields: [parentId], references: [id])
@@ -68,7 +69,7 @@ model Product {
   id         String   @id @default(uuid())
   name       String
   article    String
-  price      Int
+  price      Decimal  @db.Decimal(10, 2)
   stock      Int
 
   imagePath  String?  // путь к изображению
@@ -110,7 +111,7 @@ model Order {
   statusId    String
   status      OrderStatus @relation(fields: [statusId], references: [id])
 
-  totalAmount Int
+  totalAmount Decimal  @db.Decimal(10, 2)
 
   deliveryAt  DateTime?
   address     String
@@ -137,7 +138,7 @@ model OrderItem {
 
   name      String
   article   String
-  price     Int
+  price     Decimal  @db.Decimal(10, 2)
   quantity  Int
 }
 
@@ -155,7 +156,7 @@ model Payment {
   status          PaymentStatus @relation(fields: [statusId], references: [id])
 
   externalId      String?
-  amount          Int
+  amount          Decimal  @db.Decimal(10, 2)
 
   createdAt       DateTime @default(now())
 }
