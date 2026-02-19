@@ -10,7 +10,8 @@ const mockOrderRepo: OrderRepository = {
 };
 
 const mockProductRepo: ProductRepository = {
-    findById: vi.fn()
+    findById: vi.fn(),
+    save: vi.fn(),
 };
 
 describe('CreateOrderUseCase', () => {
@@ -41,7 +42,7 @@ describe('CreateOrderUseCase', () => {
             ]
         });
 
-        expect(order.state).toBe(OrderState.FORMED);
+        expect(order.state).toBe(OrderState.CREATED);
         expect(order.totalAmount).toBe(200);
 
         expect(mockProductRepo.findById).toHaveBeenCalledWith('p1');

@@ -1,21 +1,21 @@
-import { OrderRepository } from '../ports/OrderRepository';
-import { registerPaymentSuccess } from '@/domain/order/transitions';
+import { OrderRepository } from '@/application/ports/OrderRepository';
+import { startPicking } from '@/domain/order/transitions';
 
-interface RegisterPaymentInput {
+interface StartPickingInput {
     orderId: string;
 }
 
-export class RegisterPaymentResultUseCase {
+export class StartPickingUseCase {
     constructor(private orderRepository: OrderRepository) {}
 
-    async execute(input: RegisterPaymentInput) {
+    async execute(input: StartPickingInput) {
         const order = await this.orderRepository.findById(input.orderId);
 
         if (!order) {
             throw new Error('Order not found');
         }
 
-        const updated = registerPaymentSuccess(order);
+        const updated = startPicking(order);
 
         await this.orderRepository.save(updated);
 

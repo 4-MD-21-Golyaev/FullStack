@@ -20,4 +20,11 @@ export class PrismaProductRepository implements ProductRepository {
             stock: record.stock,
         };
     }
+
+    async save(product: Product): Promise<void> {
+        await prisma.product.update({
+            where: { id: product.id },
+            data: { stock: product.stock },
+        });
+    }
 }

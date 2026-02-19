@@ -45,6 +45,42 @@ async function main() {
             create: status,
         })
     }
+
+    // Тестовая категория (нужна для тестового товара)
+    await prisma.category.upsert({
+        where: { id: 'CT' },
+        update: {},
+        create: {
+            id: 'CT',
+            name: 'Тестовая категория',
+        },
+    })
+
+    // Тестовый пользователь
+    await prisma.user.upsert({
+        where: { id: 'UT' },
+        update: {},
+        create: {
+            id: 'UT',
+            phone: '+70000000000',
+            email: 'test@example.com',
+            address: 'Тестовый адрес',
+        },
+    })
+
+    // Тестовый товар
+    await prisma.product.upsert({
+        where: { id: 'PT' },
+        update: {},
+        create: {
+            id: 'PT',
+            name: 'Тестовый товар',
+            article: 'TEST-001',
+            price: 100,
+            stock: 100,
+            categoryId: 'CT',
+        },
+    })
 }
 
 main()
