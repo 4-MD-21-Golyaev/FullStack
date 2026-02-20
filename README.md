@@ -1,36 +1,126 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Интернет-магазин «КомпанияН»
 
-## Getting Started
+**Автор:** Голяев Игнатий
 
-First, run the development server:
+Выпускная квалификационная работа по проектированию и разработке веб-системы онлайн-продаж продуктовой розничной сети.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## Демо
+
+Демостенд доступен по адресу: https://blackfly-causeless-camie.ngrok-free.dev
+
+> Для получения доступа предварительно свяжитесь в Telegram: [@likekuska](https://t.me/likekuska)
+
+---
+
+## Назначение
+
+Реализация устойчивой eGrocery-платформы с поддержкой полного сценария покупки: от формирования заказа до подтверждения доставки. Система интегрируется с внешним платёжным шлюзом ЮKassa и включает строгое управление жизненным циклом заказа.
+
+---
+
+## Архитектура
+
+Проект следует **гексагональной (Ports & Adapters) / Clean Architecture**.
+
+```
+src/
+├── domain/          # Сущности, перечисления, конечный автомат состояний, доменные ошибки
+├── application/     # Use cases + порты (интерфейсы репозиториев и шлюзов)
+│   └── ports/       # Абстракции, которые реализует инфраструктура
+├── infrastructure/  # Реализации: Prisma-репозитории, платёжный шлюз ЮKassa
+└── app/api/         # Next.js App Router — тонкие HTTP-обработчики
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Правило зависимостей:** domain ← application ← infrastructure ← HTTP. Внутренние слои не импортируют внешние.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Жизненный цикл заказа
 
-## Learn More
+```
+CREATED → PICKING → PAYMENT → DELIVERY → CLOSED
+                 ↘ CANCELLED (из CREATED, PICKING или PAYMENT)
+```
 
-To learn more about Next.js, take a look at the following resources:
+| Use case | Переход |
+|---|---|
+| `StartPickingUseCase` | CREATED → PICKING |
+| `CompletePickingUseCase` | PICKING → PAYMENT |
+| `InitiatePaymentUseCase` | создаёт платёж ЮKassa, заказ остаётся в PAYMENT |
+| `ConfirmPaymentUseCase` | PAYMENT → DELIVERY (или CANCELLED при неудаче) |
+| `CloseOrderUseCase` | DELIVERY → CLOSED |
+| `CancelOrderUseCase` | CREATED / PICKING / PAYMENT → CANCELLED |
+| `UpdateOrderItemsUseCase` | изменение состава заказа в PICKING |
+| `PaymentTimeoutUseCase` | автоотмена при нахождении в PAYMENT > 10 минут |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Переходы реализованы через конечный автомат в `src/domain/order/transitions.ts`. Недопустимый переход выбрасывает `InvalidOrderStateError`. Состав заказа фиксируется при переходе в PAYMENT и не может быть изменён после.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Ключевые особенности реализации
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Транзакционные границы** — `ConfirmPaymentUseCase`, `CancelOrderUseCase`, `CreateOrderUseCase` выполняются в `prisma.$transaction` с блокировкой строк (`SELECT FOR UPDATE`), что предотвращает гонки при параллельных запросах.
+- **Идемпотентность вебхука** — повторный вызов `ConfirmPaymentUseCase` с уже обработанным платежом безопасно игнорируется.
+- **Единственный PENDING-платёж** — `InitiatePaymentUseCase` проверяет отсутствие существующего PENDING-платежа перед созданием нового.
+- **Стратегия отсутствия товара** — поле `absenceResolutionStrategy` на заказе (`CALL_REPLACE | CALL_REMOVE | AUTO_REMOVE | AUTO_REPLACE`) определяет поведение при нехватке товара во время сборки.
+- **Списание остатков** — только при переходе PAYMENT → DELIVERY, после повторной проверки наличия.
+- **Таймаут оплаты** — фоновый cron-job (`node-cron`) автоматически отменяет заказы, задержавшиеся в PAYMENT более 10 минут.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## API
+
+| Метод | URL | Описание |
+|---|---|---|
+| `POST` | `/api/orders` | Создать заказ |
+| `POST` | `/api/orders/[id]/start-picking` | Начать сборку |
+| `PATCH` | `/api/orders/[id]/items` | Изменить состав в PICKING |
+| `POST` | `/api/orders/[id]/complete-picking` | Завершить сборку |
+| `POST` | `/api/orders/[id]/pay` | Инициировать оплату (ЮKassa) |
+| `POST` | `/api/orders/[id]/cancel` | Отменить заказ |
+| `POST` | `/api/orders/[id]/close` | Закрыть заказ |
+| `POST` | `/api/webhooks/yookassa` | Вебхук подтверждения оплаты |
+| `GET` | `/api/products` | Список товаров |
+| `GET` | `/api/products/[id]` | Товар по ID |
+| `GET` | `/api/categories` | Список категорий |
+
+---
+
+## Технологии
+
+- **Next.js 16** (App Router, гибридный рендеринг)
+- **React 19**, **TypeScript** (strict mode)
+- **PostgreSQL** — хранилище данных
+- **Prisma 7** (`@prisma/adapter-pg`) — ORM и миграции
+- **ЮKassa** — платёжный шлюз
+- **node-cron** — фоновые задачи (таймаут оплаты)
+- **Vitest** — юнит-тесты
+
+---
+
+## Локальный запуск
+
+### Переменные окружения
+
+```env
+DATABASE_URL=postgresql://...
+YOOKASSA_SHOP_ID=...
+YOOKASSA_SECRET_KEY=...
+YOOKASSA_RETURN_URL=http://localhost:3000
+```
+
+### Команды
+
+```bash
+npm install
+
+npx prisma migrate dev   # Применить миграции
+npx prisma db seed       # Заполнить справочники статусов (обязательно перед запуском)
+
+npm run dev              # Запустить dev-сервер (localhost:3000)
+npm run build            # Сборка для продакшена
+npm run test             # Запустить все тесты
+npm run lint             # Проверка линтером
+```
