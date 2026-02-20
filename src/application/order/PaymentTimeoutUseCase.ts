@@ -53,7 +53,8 @@ export class PaymentTimeoutUseCase {
                 });
 
                 if (didCancel) cancelled++;
-            } catch {
+            } catch (err) {
+                console.error('[PaymentTimeoutUseCase] error cancelling payment', payment.id, err);
                 errors++;
             }
         }
