@@ -3,7 +3,7 @@
 
 ---
 
-## 1. Отсутствуют транзакционные границы в критических use-cases (§12, §16)
+## 1. Отсутствуют транзакционные границы в критических use-cases (§12, §16) — (DONE)
 
 **Что требует спецификация:**
 > §16: "Executed inside transaction: ConfirmOrder, ConfirmPayment, CancelOrder, PAYMENT → DELIVERY transition"
@@ -48,7 +48,7 @@
 
 ---
 
-## 2. Отсутствует проверка уникальности PENDING-платежа (§10)
+## 2. Отсутствует проверка уникальности PENDING-платежа (§10) — (DONE)
 
 **Что требует спецификация:**
 > §10: "Only one PENDING Payment allowed at a time"
@@ -72,7 +72,7 @@
 
 ---
 
-## 3. Отсутствует поле `absenceResolutionStrategy` в доменной модели Order (§8)
+## 3. Отсутствует поле `absenceResolutionStrategy` в доменной модели Order (§8) — (DONE)
 
 **Что требует спецификация:**
 > §8: "Order field: absenceResolutionStrategy: CALL_REPLACE | CALL_REMOVE | AUTO_REMOVE | AUTO_REPLACE"
@@ -155,21 +155,21 @@ absenceResolutionStrategy: AbsenceResolutionStrategy;
 
 ## Итоговый список файлов для корректировок
 
-| # | Файл | Действие |
-|---|------|---------|
-| 1 | `src/application/order/ConfirmPaymentUseCase.ts` | Обернуть в транзакцию |
-| 2 | `src/application/order/CancelOrderUseCase.ts` | Обернуть в транзакцию |
-| 3 | `src/application/order/CreateOrderUseCase.ts` | Обернуть в транзакцию |
-| 4 | `src/infrastructure/repositories/OrderRepository.prisma.ts` | Поддержка tx-клиента |
-| 5 | `src/infrastructure/repositories/PaymentRepository.prisma.ts` | Поддержка tx-клиента |
-| 6 | `src/infrastructure/repositories/ProductRepository.prisma.ts` | Поддержка tx-клиента |
-| 7 | `src/application/order/InitiatePaymentUseCase.ts` | Проверка PENDING-платежа |
-| 8 | `src/application/ports/PaymentRepository.ts` | Добавить метод |
-| 9 | `src/infrastructure/repositories/PaymentRepository.prisma.ts` | Реализовать метод |
-| 10 | `src/domain/order/AbsenceResolutionStrategy.ts` | Создать enum |
-| 11 | `src/domain/order/Order.ts` | Добавить поле |
-| 12 | `src/domain/order/transitions.ts` | Добавить параметр |
-| 13 | `src/application/order/CreateOrderUseCase.ts` | Принимать стратегию |
-| 14 | `prisma/schema.prisma` | absenceResolutionStrategy |
-| 15 | `src/application/order/UpdateOrderItemsUseCase.ts` | Создать |
-| 16 | `src/app/api/orders/[id]/items/route.ts` | Создать |
+| # | Файл | Действие | Статус |
+|---|------|---------|--------|
+| 1 | `src/application/order/ConfirmPaymentUseCase.ts` | Обернуть в транзакцию | DONE |
+| 2 | `src/application/order/CancelOrderUseCase.ts` | Обернуть в транзакцию | DONE |
+| 3 | `src/application/order/CreateOrderUseCase.ts` | Обернуть в транзакцию | DONE |
+| 4 | `src/infrastructure/repositories/OrderRepository.prisma.ts` | Поддержка tx-клиента | DONE |
+| 5 | `src/infrastructure/repositories/PaymentRepository.prisma.ts` | Поддержка tx-клиента | DONE |
+| 6 | `src/infrastructure/repositories/ProductRepository.prisma.ts` | Поддержка tx-клиента | DONE |
+| 7 | `src/application/order/InitiatePaymentUseCase.ts` | Проверка PENDING-платежа | DONE |
+| 8 | `src/application/ports/PaymentRepository.ts` | Добавить метод | DONE |
+| 9 | `src/infrastructure/repositories/PaymentRepository.prisma.ts` | Реализовать метод | DONE |
+| 10 | `src/domain/order/AbsenceResolutionStrategy.ts` | Создать enum | DONE |
+| 11 | `src/domain/order/Order.ts` | Добавить поле | DONE |
+| 12 | `src/domain/order/transitions.ts` | Добавить параметр | DONE |
+| 13 | `src/application/order/CreateOrderUseCase.ts` | Принимать стратегию | DONE |
+| 14 | `prisma/schema.prisma` | absenceResolutionStrategy | DONE |
+| 15 | `src/application/order/UpdateOrderItemsUseCase.ts` | Создать | — |
+| 16 | `src/app/api/orders/[id]/items/route.ts` | Создать | — |

@@ -3,7 +3,7 @@
 
 ---
 
-## 1. Таймаут оплаты — 10-минутный фоновый job (§11)
+## 1. Таймаут оплаты — 10-минутный фоновый job (§11) — (DONE)
 
 **Что требует спецификация:**
 > §11: "Timeout starts at the moment of transition to PAYMENT state. If Order remains in PAYMENT more than 10 minutes and Payment = PENDING → automatic transition to CANCELLED. Implemented via scheduled background job."
@@ -48,7 +48,7 @@ class ExpirePaymentsUseCase {
 
 ---
 
-## 2. Защита от гонок: блокировка на уровне БД (§12)
+## 2. Защита от гонок: блокировка на уровне БД (§12) — (DONE)
 
 **Что требует спецификация:**
 > §12: "row-level locking or optimistic versioning"
@@ -258,14 +258,14 @@ POST /api/orders/[id]/repeat      — RepeatOrderUseCase
 
 ## Сводная таблица нереализованных функций
 
-| # | Функция | Приоритет | Критерий §20 |
-|---|---------|-----------|-------------|
-| 1 | Payment timeout (10 мин → CANCELLED) | Высокий | Да |
-| 2 | Row-level locking / optimistic versioning | Высокий | Да (race conditions) |
-| 3 | MoySklad Export (outbox pattern) | Средний | — |
-| 4 | MoySklad Import (sync продуктов) | Средний | — |
-| 5 | Cart use-cases + API | Средний | — |
-| 6 | Личный кабинет (список заказов, повтор) | Средний | — |
+| # | Функция | Приоритет | Критерий §20 | Статус |
+|---|---------|-----------|-------------|--------|
+| 1 | Payment timeout (10 мин → CANCELLED) | Высокий | Да | DONE |
+| 2 | Row-level locking / optimistic versioning | Высокий | Да (race conditions) | DONE |
+| 3 | MoySklad Export (outbox pattern) | Средний | — | — |
+| 4 | MoySklad Import (sync продуктов) | Средний | — | — |
+| 5 | Cart use-cases + API | Средний | — | — |
+| 6 | Личный кабинет (список заказов, повтор) | Средний | — | — |
 
 ---
 
