@@ -5,6 +5,7 @@ import { OrderState } from '@/domain/order/OrderState';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
 import { Order } from '@/domain/order/Order';
 import { Product } from '@/domain/product/Product';
+import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 
 const makeOrder = (state: OrderState): Order => ({
     id: 'order-1',
@@ -12,6 +13,7 @@ const makeOrder = (state: OrderState): Order => ({
     address: 'Test address',
     totalAmount: 500,
     state,
+    absenceResolutionStrategy: AbsenceResolutionStrategy.CALL_REPLACE,
     items: [{ productId: 'p1', name: 'Product', article: 'A1', price: 500, quantity: 2 }],
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -33,6 +35,7 @@ function makeTransactionRunner(order: Order | null, product: Product | null): Tr
         findByOrderId: vi.fn(),
         findPendingByOrderId: vi.fn(),
         findByExternalId: vi.fn(),
+        findStalePending: vi.fn().mockResolvedValue([]),
     };
     const productRepo = {
         save: vi.fn(),

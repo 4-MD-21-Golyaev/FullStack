@@ -1,8 +1,16 @@
 import { PaymentRepository } from '@/application/ports/PaymentRepository';
 import { TransactionRunner } from '@/application/ports/TransactionRunner';
 import { cancelOrder, startDelivery } from '@/domain/order/transitions';
+import { Order } from '@/domain/order/Order';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
+import { Payment } from '@/domain/payment/Payment';
 import { Product } from '@/domain/product/Product';
+
+type ConfirmPaymentResult = {
+    alreadyProcessed: boolean;
+    order?: Order;
+    payment?: Payment;
+};
 
 type YookassaEvent = 'payment.succeeded' | 'payment.canceled';
 
@@ -17,7 +25,7 @@ export class ConfirmPaymentUseCase {
         private transactionRunner: TransactionRunner,
     ) {}
 
-    async execute(input: ConfirmPaymentInput) {
+    async execute(input: ConfirmPaymentInput): Promise<ConfirmPaymentResult> {
         // Быстрая проверка идемпотентности вне транзакции — избегаем лишних затрат
         const preCheck = await this.paymentRepository.findByExternalId(input.externalId);
 

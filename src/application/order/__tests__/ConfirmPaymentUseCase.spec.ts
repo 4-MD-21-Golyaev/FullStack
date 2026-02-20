@@ -7,6 +7,7 @@ import { PaymentStatus } from '@/domain/payment/PaymentStatus';
 import { Order } from '@/domain/order/Order';
 import { Payment } from '@/domain/payment/Payment';
 import { Product } from '@/domain/product/Product';
+import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 
 const makeOrder = (state: OrderState): Order => ({
     id: 'order-1',
@@ -14,6 +15,7 @@ const makeOrder = (state: OrderState): Order => ({
     address: 'Test address',
     totalAmount: 500,
     state,
+    absenceResolutionStrategy: AbsenceResolutionStrategy.CALL_REPLACE,
     items: [{ productId: 'p1', name: 'Product', article: 'A1', price: 500, quantity: 2 }],
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -40,6 +42,7 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
         findByOrderId: vi.fn(),
         findPendingByOrderId: vi.fn(),
         findByExternalId: vi.fn().mockResolvedValue(payment),
+        findStalePending: vi.fn().mockResolvedValue([]),
     };
 
     const txOrderRepo = {
@@ -52,6 +55,7 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
         findByOrderId: vi.fn(),
         findPendingByOrderId: vi.fn(),
         findByExternalId: vi.fn().mockResolvedValue(payment),
+        findStalePending: vi.fn().mockResolvedValue([]),
     };
     const txProductRepo = {
         save: vi.fn(),
@@ -149,6 +153,7 @@ describe('ConfirmPaymentUseCase', () => {
             findByOrderId: vi.fn(),
             findPendingByOrderId: vi.fn(),
             findByExternalId: vi.fn().mockResolvedValue(null),
+            findStalePending: vi.fn().mockResolvedValue([]),
         };
 
         await expect(

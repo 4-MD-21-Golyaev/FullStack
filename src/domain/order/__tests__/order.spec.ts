@@ -9,8 +9,10 @@ import {
 import { createOrder } from '../transitions';
 import { OrderState } from '../OrderState';
 import { InvalidOrderStateError } from '../errors';
+import { AbsenceResolutionStrategy } from '../AbsenceResolutionStrategy';
 
 const address = 'Test address 123';
+const strategy = AbsenceResolutionStrategy.CALL_REPLACE;
 
 const baseItems = [
     {
@@ -25,14 +27,14 @@ const baseItems = [
 describe('Order lifecycle', () => {
 
     it('creates order in CREATED state', () => {
-        const order = createOrder('1', 'user1', address, baseItems);
+        const order = createOrder('1', 'user1', address, baseItems, strategy);
 
         expect(order.state).toBe(OrderState.CREATED);
         expect(order.totalAmount).toBe(200);
     });
 
     it('CREATED → PICKING', () => {
-        const order = createOrder('1', 'user1', address, baseItems);
+        const order = createOrder('1', 'user1', address, baseItems, strategy);
         const picking = startPicking(order);
 
         expect(picking.state).toBe(OrderState.PICKING);
@@ -40,7 +42,7 @@ describe('Order lifecycle', () => {
 
     it('PICKING → PAYMENT', () => {
         const order = startPicking(
-            createOrder('1', 'user1', address, baseItems)
+            createOrder('1', 'user1', address, baseItems, strategy)
         );
 
         const paid = registerPayment(order);
@@ -51,7 +53,7 @@ describe('Order lifecycle', () => {
     it('PAYMENT → DELIVERY', () => {
         const order = registerPayment(
             startPicking(
-                createOrder('1', 'user1', address, baseItems)
+                createOrder('1', 'user1', address, baseItems, strategy)
             )
         );
 
@@ -64,7 +66,7 @@ describe('Order lifecycle', () => {
         const order = startDelivery(
             registerPayment(
                 startPicking(
-                    createOrder('1', 'user1', address, baseItems)
+                    createOrder('1', 'user1', address, baseItems, strategy)
                 )
             )
         );
@@ -75,7 +77,7 @@ describe('Order lifecycle', () => {
     });
 
     it('allows cancelling CREATED', () => {
-        const order = createOrder('1', 'user1', address, baseItems);
+        const order = createOrder('1', 'user1', address, baseItems, strategy);
         const cancelled = cancelOrder(order);
 
         expect(cancelled.state).toBe(OrderState.CANCELLED);
@@ -83,7 +85,7 @@ describe('Order lifecycle', () => {
 
     it('allows cancelling PICKING', () => {
         const order = startPicking(
-            createOrder('1', 'user1', address, baseItems)
+            createOrder('1', 'user1', address, baseItems, strategy)
         );
 
         const cancelled = cancelOrder(order);
@@ -94,7 +96,7 @@ describe('Order lifecycle', () => {
     it('allows cancelling PAYMENT', () => {
         const order = registerPayment(
             startPicking(
-                createOrder('1', 'user1', address, baseItems)
+                createOrder('1', 'user1', address, baseItems, strategy)
             )
         );
 
@@ -107,7 +109,7 @@ describe('Order lifecycle', () => {
         const order = startDelivery(
             registerPayment(
                 startPicking(
-                    createOrder('1', 'user1', address, baseItems)
+                    createOrder('1', 'user1', address, baseItems, strategy)
                 )
             )
         );
@@ -121,7 +123,7 @@ describe('Order lifecycle', () => {
             startDelivery(
                 registerPayment(
                     startPicking(
-                        createOrder('1', 'user1', address, baseItems)
+                        createOrder('1', 'user1', address, baseItems, strategy)
                     )
                 )
             )

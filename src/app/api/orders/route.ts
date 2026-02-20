@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
         const order = await useCase.execute({
             userId: body.userId,
             address: body.address,
+            absenceResolutionStrategy: body.absenceResolutionStrategy,
             items: body.items,
         });
 

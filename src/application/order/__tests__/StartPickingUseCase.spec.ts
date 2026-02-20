@@ -3,6 +3,7 @@ import { StartPickingUseCase } from '../StartPickingUseCase';
 import { OrderRepository } from '../../ports/OrderRepository';
 import { OrderState } from '@/domain/order/OrderState';
 import { Order } from '@/domain/order/Order';
+import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 
 const makeOrder = (state: OrderState): Order => ({
     id: 'order-1',
@@ -10,6 +11,7 @@ const makeOrder = (state: OrderState): Order => ({
     address: 'Test address',
     totalAmount: 200,
     state,
+    absenceResolutionStrategy: AbsenceResolutionStrategy.CALL_REPLACE,
     items: [{ productId: 'p1', name: 'Product', article: 'A1', price: 100, quantity: 2 }],
     createdAt: new Date(),
     updatedAt: new Date(),

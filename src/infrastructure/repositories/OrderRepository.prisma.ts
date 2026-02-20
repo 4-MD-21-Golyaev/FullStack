@@ -2,6 +2,7 @@ import type { PrismaClient, Prisma } from '@prisma/client';
 import { OrderRepository } from '@/application/ports/OrderRepository';
 import { Order } from '@/domain/order/Order';
 import { OrderState } from '@/domain/order/OrderState';
+import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 import { prisma } from '../db/prismaClient';
 
 type DbClient = PrismaClient | Prisma.TransactionClient;
@@ -28,6 +29,7 @@ export class PrismaOrderRepository implements OrderRepository {
                 userId: order.userId,
                 totalAmount: order.totalAmount,
                 address: order.address,
+                absenceResolutionStrategy: order.absenceResolutionStrategy,
                 statusId: status.id,
                 updatedAt: order.updatedAt,
                 items: {
@@ -46,6 +48,7 @@ export class PrismaOrderRepository implements OrderRepository {
                 userId: order.userId,
                 totalAmount: order.totalAmount,
                 address: order.address,
+                absenceResolutionStrategy: order.absenceResolutionStrategy,
                 statusId: status.id,
                 createdAt: order.createdAt,
                 updatedAt: order.updatedAt,
@@ -79,6 +82,7 @@ export class PrismaOrderRepository implements OrderRepository {
             totalAmount: record.totalAmount.toNumber(),
             address: record.address,
             state: record.status.code as OrderState,
+            absenceResolutionStrategy: record.absenceResolutionStrategy as AbsenceResolutionStrategy,
             createdAt: record.createdAt,
             updatedAt: record.updatedAt,
             items: record.items.map(item => ({

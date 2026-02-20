@@ -1,11 +1,13 @@
 import { TransactionRunner } from '@/application/ports/TransactionRunner';
 import { createOrder } from '@/domain/order/transitions';
 import { OrderItem } from '@/domain/order/OrderItem';
+import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 import { randomUUID } from 'crypto';
 
 interface CreateOrderInput {
     userId: string;
     address: string;
+    absenceResolutionStrategy: AbsenceResolutionStrategy;
     items: {
         productId: string;
         quantity: number;
@@ -47,7 +49,8 @@ export class CreateOrderUseCase {
                 randomUUID(),
                 input.userId,
                 input.address,
-                orderItems
+                orderItems,
+                input.absenceResolutionStrategy
             );
 
             await orderRepository.save(order);

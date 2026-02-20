@@ -2,6 +2,7 @@ import { Order } from './Order';
 import { OrderState } from './OrderState';
 import { InvalidOrderStateError } from './errors';
 import { OrderItem } from './OrderItem';
+import { AbsenceResolutionStrategy } from './AbsenceResolutionStrategy';
 
 function ensureState(order: Order, allowed: OrderState[]) {
     if (!allowed.includes(order.state)) {
@@ -27,7 +28,8 @@ export function createOrder(
     id: string,
     userId: string,
     address: string,
-    items: OrderItem[]
+    items: OrderItem[],
+    absenceResolutionStrategy: AbsenceResolutionStrategy
 ): Order {
 
     if (!items || items.length === 0) {
@@ -61,6 +63,7 @@ export function createOrder(
         items,
         totalAmount,
         state: OrderState.CREATED,
+        absenceResolutionStrategy,
         createdAt: now,
         updatedAt: now,
     };

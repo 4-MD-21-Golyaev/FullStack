@@ -84,6 +84,18 @@ export class PrismaPaymentRepository implements PaymentRepository {
         return this.toPayment(record);
     }
 
+    async findStalePending(olderThan: Date): Promise<Payment[]> {
+        const records = await this.db.payment.findMany({
+            where: {
+                status: { code: PaymentStatus.PENDING },
+                createdAt: { lt: olderThan },
+            },
+            include: { status: true },
+        });
+
+        return records.map(r => this.toPayment(r));
+    }
+
     private toPayment(record: any): Payment {
         return {
             id: record.id,

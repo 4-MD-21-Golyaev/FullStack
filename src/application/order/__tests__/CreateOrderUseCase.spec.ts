@@ -4,6 +4,7 @@ import { TransactionRunner, TransactionContext } from '../../ports/TransactionRu
 import { OrderRepository } from '../../ports/OrderRepository';
 import { ProductRepository } from '../../ports/ProductRepository';
 import { OrderState } from '@/domain/order/OrderState';
+import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 
 function makeTransactionRunner(orderRepo: any, productRepo: any): TransactionRunner {
     return {
@@ -47,6 +48,7 @@ describe('CreateOrderUseCase', () => {
         const order = await useCase.execute({
             userId: 'test-user',
             address: 'Test address 123',
+            absenceResolutionStrategy: AbsenceResolutionStrategy.CALL_REPLACE,
             items: [{ productId: 'p1', quantity: 2 }],
         });
 

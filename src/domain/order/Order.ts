@@ -1,5 +1,6 @@
 import { OrderState } from './OrderState';
 import { OrderItem } from './OrderItem';
+import { AbsenceResolutionStrategy } from './AbsenceResolutionStrategy';
 
 export interface Order {
     id: string;
@@ -8,6 +9,7 @@ export interface Order {
     totalAmount: number;
     state: OrderState;
     address: string;
+    absenceResolutionStrategy: AbsenceResolutionStrategy;
     createdAt: Date;
     updatedAt: Date;
 }

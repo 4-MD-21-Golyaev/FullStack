@@ -6,4 +6,6 @@ export interface PaymentRepository {
     findByOrderId(orderId: string): Promise<Payment | null>;
     findPendingByOrderId(orderId: string): Promise<Payment | null>;
     findByExternalId(externalId: string): Promise<Payment | null>;
+    /** Returns all PENDING payments created before the given cutoff date. */
+    findStalePending(olderThan: Date): Promise<Payment[]>;
 }

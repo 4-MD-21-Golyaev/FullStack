@@ -115,6 +115,7 @@ model Order {
 
   deliveryAt  DateTime?
   address     String
+  absenceResolutionStrategy String @default("CALL_REPLACE")
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
