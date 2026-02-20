@@ -1,12 +1,20 @@
-import { PaymentRepository } from '@/application/ports/PaymentRepository';
+import type { PrismaClient, Prisma } from '@prisma/client';
+import { LockablePaymentRepository } from '@/application/ports/TransactionRunner';
 import { Payment } from '@/domain/payment/Payment';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
 import { prisma } from '../db/prismaClient';
 
-export class PrismaPaymentRepository implements PaymentRepository {
+type DbClient = PrismaClient | Prisma.TransactionClient;
+
+export class PrismaPaymentRepository implements LockablePaymentRepository {
+    private db: DbClient;
+
+    constructor(db?: DbClient) {
+        this.db = db ?? prisma;
+    }
 
     async save(payment: Payment): Promise<void> {
-        const status = await prisma.paymentStatus.findUnique({
+        const status = await this.db.paymentStatus.findUnique({
             where: { code: payment.status },
         });
 
@@ -14,7 +22,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
             throw new Error(`PaymentStatus not found for code ${payment.status}`);
         }
 
-        await prisma.payment.upsert({
+        await this.db.payment.upsert({
             where: { id: payment.id },
             update: {
                 statusId: status.id,
@@ -32,25 +40,18 @@ export class PrismaPaymentRepository implements PaymentRepository {
     }
 
     async findById(id: string): Promise<Payment | null> {
-        const record = await prisma.payment.findUnique({
+        const record = await this.db.payment.findUnique({
             where: { id },
             include: { status: true },
         });
 
         if (!record) return null;
 
-        return {
-            id: record.id,
-            orderId: record.orderId,
-            amount: record.amount.toNumber(),
-            status: record.status.code as PaymentStatus,
-            externalId: record.externalId ?? undefined,
-            createdAt: record.createdAt,
-        };
+        return this.toPayment(record);
     }
 
     async findByOrderId(orderId: string): Promise<Payment | null> {
-        const record = await prisma.payment.findFirst({
+        const record = await this.db.payment.findFirst({
             where: { orderId },
             orderBy: { createdAt: 'desc' },
             include: { status: true },
@@ -62,7 +63,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
     }
 
     async findByExternalId(externalId: string): Promise<Payment | null> {
-        const record = await prisma.payment.findFirst({
+        const record = await this.db.payment.findFirst({
             where: { externalId },
             include: { status: true },
         });
@@ -70,6 +71,11 @@ export class PrismaPaymentRepository implements PaymentRepository {
         if (!record) return null;
 
         return this.toPayment(record);
+    }
+
+    async findByExternalIdWithLock(externalId: string): Promise<Payment | null> {
+        await this.db.$executeRaw`SELECT id FROM "Payment" WHERE "externalId" = ${externalId} FOR UPDATE`;
+        return this.findByExternalId(externalId);
     }
 
     private toPayment(record: any): Payment {

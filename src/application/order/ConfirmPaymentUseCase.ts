@@ -1,6 +1,5 @@
-import { OrderRepository } from '@/application/ports/OrderRepository';
 import { PaymentRepository } from '@/application/ports/PaymentRepository';
-import { ProductRepository } from '@/application/ports/ProductRepository';
+import { TransactionRunner } from '@/application/ports/TransactionRunner';
 import { cancelOrder, startDelivery } from '@/domain/order/transitions';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
 
@@ -13,77 +12,93 @@ interface ConfirmPaymentInput {
 
 export class ConfirmPaymentUseCase {
     constructor(
-        private orderRepository: OrderRepository,
         private paymentRepository: PaymentRepository,
-        private productRepository: ProductRepository
+        private transactionRunner: TransactionRunner,
     ) {}
 
     async execute(input: ConfirmPaymentInput) {
-        const payment = await this.paymentRepository.findByExternalId(input.externalId);
+        // Быстрая проверка идемпотентности вне транзакции — избегаем лишней блокировки
+        const preCheck = await this.paymentRepository.findByExternalId(input.externalId);
 
-        if (!payment) {
+        if (!preCheck) {
             throw new Error(`Payment with externalId "${input.externalId}" not found`);
         }
 
-        // Идемпотентность: вебхук пришёл повторно — ничего не делаем
         if (
-            payment.status === PaymentStatus.SUCCESS ||
-            payment.status === PaymentStatus.FAILED
+            preCheck.status === PaymentStatus.SUCCESS ||
+            preCheck.status === PaymentStatus.FAILED
         ) {
             return { alreadyProcessed: true };
         }
 
-        const order = await this.orderRepository.findById(payment.orderId);
+        return this.transactionRunner.run(async ({ orderRepository, paymentRepository, productRepository }) => {
+            // Перечитываем с блокировкой внутри транзакции
+            const payment = await paymentRepository.findByExternalIdWithLock(input.externalId);
 
-        if (!order) {
-            throw new Error(`Order "${payment.orderId}" not found`);
-        }
+            if (!payment) {
+                throw new Error(`Payment with externalId "${input.externalId}" not found`);
+            }
 
-        if (input.event === 'payment.canceled') {
-            payment.status = PaymentStatus.FAILED;
-            await this.paymentRepository.save(payment);
+            // Повторная проверка внутри транзакции (защита от гонки)
+            if (
+                payment.status === PaymentStatus.SUCCESS ||
+                payment.status === PaymentStatus.FAILED
+            ) {
+                return { alreadyProcessed: true };
+            }
 
-            const cancelled = cancelOrder(order);
-            await this.orderRepository.save(cancelled);
+            const order = await orderRepository.findByIdWithLock(payment.orderId);
 
-            return { alreadyProcessed: false, order: cancelled, payment };
-        }
+            if (!order) {
+                throw new Error(`Order "${payment.orderId}" not found`);
+            }
 
-        // payment.succeeded — проверяем остатки повторно (могли измениться)
-        for (const item of order.items) {
-            const product = await this.productRepository.findById(item.productId);
-
-            if (!product || product.stock < item.quantity) {
+            if (input.event === 'payment.canceled') {
                 payment.status = PaymentStatus.FAILED;
-                await this.paymentRepository.save(payment);
+                await paymentRepository.save(payment);
 
                 const cancelled = cancelOrder(order);
-                await this.orderRepository.save(cancelled);
+                await orderRepository.save(cancelled);
 
-                // TODO: инициировать возврат через ЮKassa
-                throw new Error(
-                    `Insufficient stock for "${item.name}" after payment — order cancelled, refund required`
-                );
+                return { alreadyProcessed: false, order: cancelled, payment };
             }
-        }
 
-        // Списываем остатки
-        for (const item of order.items) {
-            const product = (await this.productRepository.findById(item.productId))!;
-            await this.productRepository.save({
-                ...product,
-                stock: product.stock - item.quantity,
-            });
-        }
+            // payment.succeeded — проверяем остатки повторно (могли измениться)
+            for (const item of order.items) {
+                const product = await productRepository.findById(item.productId);
 
-        // Обновляем статус платежа
-        payment.status = PaymentStatus.SUCCESS;
-        await this.paymentRepository.save(payment);
+                if (!product || product.stock < item.quantity) {
+                    payment.status = PaymentStatus.FAILED;
+                    await paymentRepository.save(payment);
 
-        // Переводим заказ в доставку
-        const updated = startDelivery(order);
-        await this.orderRepository.save(updated);
+                    const cancelled = cancelOrder(order);
+                    await orderRepository.save(cancelled);
 
-        return { alreadyProcessed: false, order: updated, payment };
+                    // TODO: инициировать возврат через ЮKassa
+                    throw new Error(
+                        `Insufficient stock for "${item.name}" after payment — order cancelled, refund required`
+                    );
+                }
+            }
+
+            // Списываем остатки
+            for (const item of order.items) {
+                const product = (await productRepository.findById(item.productId))!;
+                await productRepository.save({
+                    ...product,
+                    stock: product.stock - item.quantity,
+                });
+            }
+
+            // Обновляем статус платежа
+            payment.status = PaymentStatus.SUCCESS;
+            await paymentRepository.save(payment);
+
+            // Переводим заказ в доставку
+            const updated = startDelivery(order);
+            await orderRepository.save(updated);
+
+            return { alreadyProcessed: false, order: updated, payment };
+        });
     }
 }

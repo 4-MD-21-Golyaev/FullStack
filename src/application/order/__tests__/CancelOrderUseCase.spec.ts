@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CancelOrderUseCase } from '../CancelOrderUseCase';
-import { OrderRepository } from '../../ports/OrderRepository';
+import { TransactionRunner, TransactionContext } from '../../ports/TransactionRunner';
 import { OrderState } from '@/domain/order/OrderState';
 import { Order } from '@/domain/order/Order';
 
@@ -15,6 +15,25 @@ const makeOrder = (state: OrderState): Order => ({
     updatedAt: new Date(),
 });
 
+function makeTransactionRunner(order: Order | null): TransactionRunner {
+    const orderRepo = {
+        save: vi.fn(),
+        findById: vi.fn().mockResolvedValue(order),
+        findByIdWithLock: vi.fn().mockResolvedValue(order),
+    };
+
+    return {
+        run: vi.fn().mockImplementation((work: (ctx: TransactionContext) => Promise<any>) =>
+            work({
+                orderRepository: orderRepo,
+                paymentRepository: {} as any,
+                productRepository: {} as any,
+            })
+        ),
+        _orderRepo: orderRepo,
+    } as any;
+}
+
 describe('CancelOrderUseCase', () => {
 
     it.each([
@@ -23,26 +42,19 @@ describe('CancelOrderUseCase', () => {
         OrderState.PAYMENT,
     ])('cancels order from %s state', async (state) => {
         const order = makeOrder(state);
+        const runner = makeTransactionRunner(order);
 
-        const orderRepo: OrderRepository = {
-            save: vi.fn(),
-            findById: vi.fn().mockResolvedValue(order),
-        };
-
-        const useCase = new CancelOrderUseCase(orderRepo);
+        const useCase = new CancelOrderUseCase(runner);
         const result = await useCase.execute({ orderId: 'order-1' });
 
         expect(result.state).toBe(OrderState.CANCELLED);
-        expect(orderRepo.save).toHaveBeenCalledWith(result);
+        expect((runner as any)._orderRepo.save).toHaveBeenCalledWith(result);
     });
 
     it('throws if order not found', async () => {
-        const orderRepo: OrderRepository = {
-            save: vi.fn(),
-            findById: vi.fn().mockResolvedValue(null),
-        };
+        const runner = makeTransactionRunner(null);
 
-        const useCase = new CancelOrderUseCase(orderRepo);
+        const useCase = new CancelOrderUseCase(runner);
 
         await expect(useCase.execute({ orderId: 'missing' }))
             .rejects.toThrow('Order not found');
@@ -54,13 +66,9 @@ describe('CancelOrderUseCase', () => {
         OrderState.CANCELLED,
     ])('throws when cancelling from terminal/locked state %s', async (state) => {
         const order = makeOrder(state);
+        const runner = makeTransactionRunner(order);
 
-        const orderRepo: OrderRepository = {
-            save: vi.fn(),
-            findById: vi.fn().mockResolvedValue(order),
-        };
-
-        const useCase = new CancelOrderUseCase(orderRepo);
+        const useCase = new CancelOrderUseCase(runner);
 
         await expect(useCase.execute({ orderId: 'order-1' }))
             .rejects.toThrow();

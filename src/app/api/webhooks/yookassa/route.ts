@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaOrderRepository } from '@/infrastructure/repositories/OrderRepository.prisma';
 import { PrismaPaymentRepository } from '@/infrastructure/repositories/PaymentRepository.prisma';
-import { PrismaProductRepository } from '@/infrastructure/repositories/ProductRepository.prisma';
+import { PrismaTransactionRunner } from '@/infrastructure/db/PrismaTransactionRunner';
 import { ConfirmPaymentUseCase } from '@/application/order/ConfirmPaymentUseCase';
 import { isYookassaIp, getClientIp } from '@/infrastructure/payment/yookassaIpWhitelist';
 
@@ -37,11 +36,10 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const orderRepo = new PrismaOrderRepository();
-        const paymentRepo = new PrismaPaymentRepository();
-        const productRepo = new PrismaProductRepository();
-
-        const useCase = new ConfirmPaymentUseCase(orderRepo, paymentRepo, productRepo);
+        const useCase = new ConfirmPaymentUseCase(
+            new PrismaPaymentRepository(),
+            new PrismaTransactionRunner(),
+        );
 
         await useCase.execute({
             externalId: paymentObject.id,

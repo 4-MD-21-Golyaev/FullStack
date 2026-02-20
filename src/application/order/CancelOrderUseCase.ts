@@ -1,4 +1,4 @@
-import { OrderRepository } from '@/application/ports/OrderRepository';
+import { TransactionRunner } from '@/application/ports/TransactionRunner';
 import { cancelOrder } from '@/domain/order/transitions';
 
 interface CancelOrderInput {
@@ -6,19 +6,21 @@ interface CancelOrderInput {
 }
 
 export class CancelOrderUseCase {
-    constructor(private orderRepository: OrderRepository) {}
+    constructor(private transactionRunner: TransactionRunner) {}
 
     async execute(input: CancelOrderInput) {
-        const order = await this.orderRepository.findById(input.orderId);
+        return this.transactionRunner.run(async ({ orderRepository }) => {
+            const order = await orderRepository.findByIdWithLock(input.orderId);
 
-        if (!order) {
-            throw new Error('Order not found');
-        }
+            if (!order) {
+                throw new Error('Order not found');
+            }
 
-        const updated = cancelOrder(order);
+            const updated = cancelOrder(order);
 
-        await this.orderRepository.save(updated);
+            await orderRepository.save(updated);
 
-        return updated;
+            return updated;
+        });
     }
 }

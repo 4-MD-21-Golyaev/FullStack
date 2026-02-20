@@ -1,21 +1,28 @@
-import { OrderRepository } from '@/application/ports/OrderRepository';
+import type { PrismaClient, Prisma } from '@prisma/client';
+import { LockableOrderRepository } from '@/application/ports/TransactionRunner';
 import { Order } from '@/domain/order/Order';
 import { OrderState } from '@/domain/order/OrderState';
 import { prisma } from '../db/prismaClient';
 
-export class PrismaOrderRepository implements OrderRepository {
+type DbClient = PrismaClient | Prisma.TransactionClient;
+
+export class PrismaOrderRepository implements LockableOrderRepository {
+    private db: DbClient;
+
+    constructor(db?: DbClient) {
+        this.db = db ?? prisma;
+    }
 
     async save(order: Order): Promise<void> {
-
-        const status = await prisma.orderStatus.findUnique({
-            where: { code: order.state }
+        const status = await this.db.orderStatus.findUnique({
+            where: { code: order.state },
         });
 
         if (!status) {
             throw new Error(`OrderStatus not found for code ${order.state}`);
         }
 
-        await prisma.order.upsert({
+        await this.db.order.upsert({
             where: { id: order.id },
             update: {
                 userId: order.userId,
@@ -56,8 +63,7 @@ export class PrismaOrderRepository implements OrderRepository {
     }
 
     async findById(id: string): Promise<Order | null> {
-
-        const record = await prisma.order.findUnique({
+        const record = await this.db.order.findUnique({
             where: { id },
             include: {
                 items: true,
@@ -83,5 +89,10 @@ export class PrismaOrderRepository implements OrderRepository {
                 quantity: item.quantity,
             })),
         };
+    }
+
+    async findByIdWithLock(id: string): Promise<Order | null> {
+        await this.db.$executeRaw`SELECT id FROM "Order" WHERE id = ${id} FOR UPDATE`;
+        return this.findById(id);
     }
 }
