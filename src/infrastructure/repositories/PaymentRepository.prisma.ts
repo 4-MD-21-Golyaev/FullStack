@@ -62,6 +62,17 @@ export class PrismaPaymentRepository implements PaymentRepository {
         return this.toPayment(record);
     }
 
+    async findPendingByOrderId(orderId: string): Promise<Payment | null> {
+        const record = await this.db.payment.findFirst({
+            where: { orderId, status: { code: PaymentStatus.PENDING } },
+            include: { status: true },
+        });
+
+        if (!record) return null;
+
+        return this.toPayment(record);
+    }
+
     async findByExternalId(externalId: string): Promise<Payment | null> {
         const record = await this.db.payment.findFirst({
             where: { externalId },

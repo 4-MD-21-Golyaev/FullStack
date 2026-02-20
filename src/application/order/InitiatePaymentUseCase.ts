@@ -34,6 +34,12 @@ export class InitiatePaymentUseCase {
             throw new Error('Payment already processed for this order');
         }
 
+        // §10: не допускаем второй PENDING-платёж для одного заказа
+        const existingPending = await this.paymentRepository.findPendingByOrderId(input.orderId);
+        if (existingPending) {
+            throw new Error('Payment already in progress for this order');
+        }
+
         // Проверяем остатки всех позиций
         const products = new Map<string, Product>();
 

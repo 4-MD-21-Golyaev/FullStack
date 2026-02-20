@@ -41,6 +41,7 @@ function makeRepos(order: Order | null, product: Product | null) {
         save: vi.fn(),
         findById: vi.fn(),
         findByOrderId: vi.fn(),
+        findPendingByOrderId: vi.fn().mockResolvedValue(null),
         findByExternalId: vi.fn(),
     };
     const productRepo: ProductRepository = {
@@ -113,5 +114,28 @@ describe('InitiatePaymentUseCase', () => {
 
         await expect(useCase.execute({ orderId: 'missing', returnUrl: 'https://example.com/return' }))
             .rejects.toThrow('Order not found');
+    });
+
+    it('throws when a PENDING payment already exists for the order', async () => {
+        const order = makeOrder(OrderState.PAYMENT);
+        const { orderRepo, paymentRepo, productRepo } = makeRepos(order, makeProduct(10));
+
+        // Simulate an existing PENDING payment
+        (paymentRepo.findPendingByOrderId as any).mockResolvedValue({
+            id: 'pay-existing',
+            orderId: 'order-1',
+            amount: 500,
+            status: PaymentStatus.PENDING,
+            externalId: 'yk-existing',
+            createdAt: new Date(),
+        });
+
+        const useCase = new InitiatePaymentUseCase(orderRepo, paymentRepo, productRepo, mockGateway);
+
+        await expect(useCase.execute({ orderId: 'order-1', returnUrl: 'https://example.com/return' }))
+            .rejects.toThrow('Payment already in progress');
+
+        expect(paymentRepo.save).not.toHaveBeenCalled();
+        expect(mockGateway.createPayment).not.toHaveBeenCalled();
     });
 });

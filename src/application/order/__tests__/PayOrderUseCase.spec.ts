@@ -31,6 +31,7 @@ function makeTransactionRunner(order: Order | null, product: Product | null): Tr
         save: vi.fn(),
         findById: vi.fn(),
         findByOrderId: vi.fn(),
+        findPendingByOrderId: vi.fn(),
         findByExternalId: vi.fn(),
     };
     const productRepo = {

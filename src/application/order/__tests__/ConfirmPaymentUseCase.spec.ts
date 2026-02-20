@@ -38,6 +38,7 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
         save: vi.fn(),
         findById: vi.fn(),
         findByOrderId: vi.fn(),
+        findPendingByOrderId: vi.fn(),
         findByExternalId: vi.fn().mockResolvedValue(payment),
     };
 
@@ -49,6 +50,7 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
         save: vi.fn(),
         findById: vi.fn(),
         findByOrderId: vi.fn(),
+        findPendingByOrderId: vi.fn(),
         findByExternalId: vi.fn().mockResolvedValue(payment),
     };
     const txProductRepo = {
@@ -145,6 +147,7 @@ describe('ConfirmPaymentUseCase', () => {
             save: vi.fn(),
             findById: vi.fn(),
             findByOrderId: vi.fn(),
+            findPendingByOrderId: vi.fn(),
             findByExternalId: vi.fn().mockResolvedValue(null),
         };
 
