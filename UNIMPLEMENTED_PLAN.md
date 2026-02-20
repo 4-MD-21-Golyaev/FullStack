@@ -256,6 +256,68 @@ POST /api/orders/[id]/repeat      — RepeatOrderUseCase
 
 ---
 
+## 6. Аутентификация и ролевой доступ (RBAC)
+
+**Что требует спецификация:**
+> §18 Forbidden: "modify DELIVERY, modify CLOSED, bypass state machine"
+> Складские операции (PICKING, изменение состава) не должны быть доступны обычному клиенту.
+
+**Что отсутствует:**
+Нет аутентификации и разграничения прав. Все эндпоинты публично доступны. Любой, знающий ID заказа, может вызвать складские операции.
+
+**Когда реализовывать:**
+Перед подключением фронтенда — как только API станет доступно извне (staging-деплой или начало интеграции UI).
+
+**Что реализовать:**
+
+### 6.1 Роль в модели User
+```prisma
+model User {
+  role  String  @default("CUSTOMER")  // CUSTOMER | STAFF | ADMIN
+  ...
+}
+```
+
+### 6.2 NextAuth.js — сессия с ролью
+Настроить провайдер (credentials / OAuth). В JWT-callback класть `role` из БД:
+```typescript
+callbacks: {
+    jwt({ token, user }) {
+        if (user) token.role = user.role;
+        return token;
+    }
+}
+```
+
+### 6.3 Next.js middleware — защита групп роутов
+```typescript
+// middleware.ts
+if (staffOnlyRoutes.test(pathname) && token?.role !== 'STAFF') {
+    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+}
+```
+
+### 6.4 Разграничение по ролям
+
+| Эндпоинт | CUSTOMER | STAFF | ADMIN |
+|----------|----------|-------|-------|
+| `POST /api/orders` | ✅ | ✅ | ✅ |
+| `POST /api/orders/[id]/cancel` | ✅ (свой) | ✅ | ✅ |
+| `POST /api/orders/[id]/start-picking` | ❌ | ✅ | ✅ |
+| `PATCH /api/orders/[id]/items` | ❌ | ✅ | ✅ |
+| `POST /api/orders/[id]/complete-picking` | ❌ | ✅ | ✅ |
+| `POST /api/cron/payment-timeout` | ❌ | ❌ | ✅ |
+
+**Важно:** проверки ролей остаются **только в HTTP-слое** (`app/api/`, `middleware.ts`). Domain и use cases не знают о ролях — это соответствует Clean Architecture.
+
+**Файлы:**
+- `prisma/schema.prisma` (добавить `role` в `User`)
+- `src/app/api/auth/[...nextauth]/route.ts` (новый)
+- `middleware.ts` (новый, в корне проекта)
+- все защищённые роуты — добавить проверку сессии
+
+---
+
 ## Сводная таблица нереализованных функций
 
 | # | Функция | Приоритет | Критерий §20 | Статус |
@@ -266,13 +328,15 @@ POST /api/orders/[id]/repeat      — RepeatOrderUseCase
 | 4 | MoySklad Import (sync продуктов) | Средний | — | — |
 | 5 | Cart use-cases + API | Средний | — | — |
 | 6 | Личный кабинет (список заказов, повтор) | Средний | — | — |
+| 7 | Аутентификация и ролевой доступ (RBAC) | Высокий | — | — |
 
 ---
 
 ## Порядок реализации (рекомендация)
 
-1. **Сначала** — п. 2 (блокировки, т.к. нужны в транзакциях из CORRECTIONS_PLAN)
-2. **Затем** — п. 1 (таймаут оплаты — критерий завершённости §20)
-3. **Затем** — п. 5 (корзина)
+1. ~~п. 2 (блокировки)~~ — DONE
+2. ~~п. 1 (таймаут оплаты)~~ — DONE
+3. **Следующий** — п. 5 (корзина)
 4. **Затем** — п. 6 (личный кабинет)
-5. **В конце** — п. 3 и 4 (МойСклад — наиболее объёмная интеграция)
+5. **Перед подключением фронтенда** — п. 7 (аутентификация и роли)
+6. **В конце** — п. 3 и 4 (МойСклад — наиболее объёмная интеграция)
