@@ -10,7 +10,7 @@
 
 Демостенд доступен по адресу: https://blackfly-causeless-camie.ngrok-free.dev
 
-> Для получения доступа предварительно свяжитесь в Telegram: [@likekuska](https://t.me/likekuska)
+> Для получения доступа предварительно свяжитесь в Telegram: [@likekushka](https://t.me/likekushka)
 
 ---
 
