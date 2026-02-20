@@ -1,12 +1,12 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
-import { LockablePaymentRepository } from '@/application/ports/TransactionRunner';
+import { PaymentRepository } from '@/application/ports/PaymentRepository';
 import { Payment } from '@/domain/payment/Payment';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
 import { prisma } from '../db/prismaClient';
 
 type DbClient = PrismaClient | Prisma.TransactionClient;
 
-export class PrismaPaymentRepository implements LockablePaymentRepository {
+export class PrismaPaymentRepository implements PaymentRepository {
     private db: DbClient;
 
     constructor(db?: DbClient) {
@@ -71,11 +71,6 @@ export class PrismaPaymentRepository implements LockablePaymentRepository {
         if (!record) return null;
 
         return this.toPayment(record);
-    }
-
-    async findByExternalIdWithLock(externalId: string): Promise<Payment | null> {
-        await this.db.$executeRaw`SELECT id FROM "Payment" WHERE "externalId" = ${externalId} FOR UPDATE`;
-        return this.findByExternalId(externalId);
     }
 
     private toPayment(record: any): Payment {

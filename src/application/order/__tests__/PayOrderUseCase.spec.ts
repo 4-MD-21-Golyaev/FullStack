@@ -18,32 +18,24 @@ const makeOrder = (state: OrderState): Order => ({
 });
 
 const makeProduct = (stock: number): Product => ({
-    id: 'p1',
-    name: 'Product',
-    article: 'A1',
-    price: 500,
-    stock,
-    imagePath: null,
-    categoryId: 'c1',
+    id: 'p1', name: 'Product', article: 'A1', price: 500, stock,
+    imagePath: null, categoryId: 'c1',
 });
 
 function makeTransactionRunner(order: Order | null, product: Product | null): TransactionRunner & { _repos: any } {
     const orderRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(order),
-        findByIdWithLock: vi.fn().mockResolvedValue(order),
     };
     const paymentRepo = {
         save: vi.fn(),
         findById: vi.fn(),
         findByOrderId: vi.fn(),
         findByExternalId: vi.fn(),
-        findByExternalIdWithLock: vi.fn(),
     };
     const productRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(product),
-        findByIdWithLock: vi.fn().mockResolvedValue(product),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
     };

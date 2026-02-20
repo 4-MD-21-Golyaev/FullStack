@@ -10,7 +10,7 @@ export class CancelOrderUseCase {
 
     async execute(input: CancelOrderInput) {
         return this.transactionRunner.run(async ({ orderRepository }) => {
-            const order = await orderRepository.findByIdWithLock(input.orderId);
+            const order = await orderRepository.findById(input.orderId);
 
             if (!order) {
                 throw new Error('Order not found');

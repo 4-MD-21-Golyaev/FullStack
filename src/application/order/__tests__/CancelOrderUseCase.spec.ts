@@ -15,14 +15,13 @@ const makeOrder = (state: OrderState): Order => ({
     updatedAt: new Date(),
 });
 
-function makeTransactionRunner(order: Order | null): TransactionRunner {
+function makeTransactionRunner(order: Order | null): TransactionRunner & { _orderRepo: any } {
     const orderRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(order),
-        findByIdWithLock: vi.fn().mockResolvedValue(order),
     };
 
-    return {
+    const runner: any = {
         run: vi.fn().mockImplementation((work: (ctx: TransactionContext) => Promise<any>) =>
             work({
                 orderRepository: orderRepo,
@@ -31,7 +30,9 @@ function makeTransactionRunner(order: Order | null): TransactionRunner {
             })
         ),
         _orderRepo: orderRepo,
-    } as any;
+    };
+
+    return runner;
 }
 
 describe('CancelOrderUseCase', () => {
@@ -48,15 +49,13 @@ describe('CancelOrderUseCase', () => {
         const result = await useCase.execute({ orderId: 'order-1' });
 
         expect(result.state).toBe(OrderState.CANCELLED);
-        expect((runner as any)._orderRepo.save).toHaveBeenCalledWith(result);
+        expect(runner._orderRepo.save).toHaveBeenCalledWith(result);
     });
 
     it('throws if order not found', async () => {
         const runner = makeTransactionRunner(null);
 
-        const useCase = new CancelOrderUseCase(runner);
-
-        await expect(useCase.execute({ orderId: 'missing' }))
+        await expect(new CancelOrderUseCase(runner).execute({ orderId: 'missing' }))
             .rejects.toThrow('Order not found');
     });
 
@@ -65,12 +64,9 @@ describe('CancelOrderUseCase', () => {
         OrderState.CLOSED,
         OrderState.CANCELLED,
     ])('throws when cancelling from terminal/locked state %s', async (state) => {
-        const order = makeOrder(state);
-        const runner = makeTransactionRunner(order);
+        const runner = makeTransactionRunner(makeOrder(state));
 
-        const useCase = new CancelOrderUseCase(runner);
-
-        await expect(useCase.execute({ orderId: 'order-1' }))
+        await expect(new CancelOrderUseCase(runner).execute({ orderId: 'order-1' }))
             .rejects.toThrow();
     });
 });

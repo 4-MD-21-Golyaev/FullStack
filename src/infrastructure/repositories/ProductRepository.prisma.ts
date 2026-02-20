@@ -1,11 +1,11 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
-import { LockableProductRepository } from '@/application/ports/TransactionRunner';
+import { ProductRepository } from '@/application/ports/ProductRepository';
 import { Product } from '@/domain/product/Product';
 import { prisma } from '../db/prismaClient';
 
 type DbClient = PrismaClient | Prisma.TransactionClient;
 
-export class PrismaProductRepository implements LockableProductRepository {
+export class PrismaProductRepository implements ProductRepository {
     private db: DbClient;
 
     constructor(db?: DbClient) {
@@ -18,11 +18,6 @@ export class PrismaProductRepository implements LockableProductRepository {
         if (!record) return null;
 
         return this.toProduct(record);
-    }
-
-    async findByIdWithLock(id: string): Promise<Product | null> {
-        await this.db.$executeRaw`SELECT id FROM "Product" WHERE id = ${id} FOR UPDATE`;
-        return this.findById(id);
     }
 
     async findAll(): Promise<Product[]> {

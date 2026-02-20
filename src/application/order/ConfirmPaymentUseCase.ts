@@ -18,7 +18,7 @@ export class ConfirmPaymentUseCase {
     ) {}
 
     async execute(input: ConfirmPaymentInput) {
-        // Быстрая проверка идемпотентности вне транзакции — избегаем лишней блокировки
+        // Быстрая проверка идемпотентности вне транзакции — избегаем лишних затрат
         const preCheck = await this.paymentRepository.findByExternalId(input.externalId);
 
         if (!preCheck) {
@@ -33,14 +33,13 @@ export class ConfirmPaymentUseCase {
         }
 
         return this.transactionRunner.run(async ({ orderRepository, paymentRepository, productRepository }) => {
-            // Перечитываем с блокировкой внутри транзакции
-            const payment = await paymentRepository.findByExternalIdWithLock(input.externalId);
+            const payment = await paymentRepository.findByExternalId(input.externalId);
 
             if (!payment) {
                 throw new Error(`Payment with externalId "${input.externalId}" not found`);
             }
 
-            // Повторная проверка внутри транзакции (защита от гонки)
+            // Повторная проверка внутри транзакции
             if (
                 payment.status === PaymentStatus.SUCCESS ||
                 payment.status === PaymentStatus.FAILED
@@ -48,7 +47,7 @@ export class ConfirmPaymentUseCase {
                 return { alreadyProcessed: true };
             }
 
-            const order = await orderRepository.findByIdWithLock(payment.orderId);
+            const order = await orderRepository.findById(payment.orderId);
 
             if (!order) {
                 throw new Error(`Order "${payment.orderId}" not found`);
@@ -64,11 +63,11 @@ export class ConfirmPaymentUseCase {
                 return { alreadyProcessed: false, order: cancelled, payment };
             }
 
-            // payment.succeeded — блокируем и читаем все товары, проверяем остатки
+            // payment.succeeded — читаем и проверяем остатки всех товаров
             const products = new Map<string, Product>();
 
             for (const item of order.items) {
-                const product = await productRepository.findByIdWithLock(item.productId);
+                const product = await productRepository.findById(item.productId);
 
                 if (!product || product.stock < item.quantity) {
                     payment.status = PaymentStatus.FAILED;
@@ -95,11 +94,9 @@ export class ConfirmPaymentUseCase {
                 });
             }
 
-            // Обновляем статус платежа
             payment.status = PaymentStatus.SUCCESS;
             await paymentRepository.save(payment);
 
-            // Переводим заказ в доставку
             const updated = startDelivery(order);
             await orderRepository.save(updated);
 

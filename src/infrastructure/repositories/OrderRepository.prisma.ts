@@ -1,12 +1,12 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
-import { LockableOrderRepository } from '@/application/ports/TransactionRunner';
+import { OrderRepository } from '@/application/ports/OrderRepository';
 import { Order } from '@/domain/order/Order';
 import { OrderState } from '@/domain/order/OrderState';
 import { prisma } from '../db/prismaClient';
 
 type DbClient = PrismaClient | Prisma.TransactionClient;
 
-export class PrismaOrderRepository implements LockableOrderRepository {
+export class PrismaOrderRepository implements OrderRepository {
     private db: DbClient;
 
     constructor(db?: DbClient) {
@@ -89,10 +89,5 @@ export class PrismaOrderRepository implements LockableOrderRepository {
                 quantity: item.quantity,
             })),
         };
-    }
-
-    async findByIdWithLock(id: string): Promise<Order | null> {
-        await this.db.$executeRaw`SELECT id FROM "Order" WHERE id = ${id} FOR UPDATE`;
-        return this.findById(id);
     }
 }

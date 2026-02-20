@@ -15,22 +15,21 @@ export class PayOrderUseCase {
 
     async execute(input: PayOrderInput) {
         return this.transactionRunner.run(async ({ orderRepository, paymentRepository, productRepository }) => {
-            const order = await orderRepository.findByIdWithLock(input.orderId);
+            const order = await orderRepository.findById(input.orderId);
 
             if (!order) {
                 throw new Error('Order not found');
             }
 
-            // Идемпотентность: повторное уведомление об оплате уже обработанного заказа
             if (order.state === OrderState.DELIVERY || order.state === OrderState.CLOSED) {
                 throw new Error('Payment already processed for this order');
             }
 
-            // Блокируем и читаем все товары, проверяем остатки
+            // Читаем все товары и проверяем остатки
             const products = new Map<string, Product>();
 
             for (const item of order.items) {
-                const product = await productRepository.findByIdWithLock(item.productId);
+                const product = await productRepository.findById(item.productId);
 
                 if (!product) {
                     const cancelled = cancelOrder(order);
@@ -52,7 +51,6 @@ export class PayOrderUseCase {
                 products.set(item.productId, product);
             }
 
-            // Создаём запись об оплате
             const payment: Payment = {
                 id: randomUUID(),
                 orderId: order.id,
@@ -72,7 +70,6 @@ export class PayOrderUseCase {
                 });
             }
 
-            // Переводим заказ в доставку
             const updated = startDelivery(order);
             await orderRepository.save(updated);
 
