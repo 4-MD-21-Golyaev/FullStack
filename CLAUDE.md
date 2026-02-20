@@ -23,6 +23,12 @@ DATABASE_URL              # PostgreSQL connection string
 YOOKASSA_SHOP_ID          # Yookassa shop identifier
 YOOKASSA_SECRET_KEY       # Yookassa secret key
 YOOKASSA_RETURN_URL       # Base URL for payment redirect (default: http://localhost:3000)
+JWT_SECRET                # HS256 key, minimum 32 characters
+SMTP_HOST                 # SMTP host
+SMTP_PORT                 # SMTP port (587 or 465)
+SMTP_USER                 # SMTP username
+SMTP_PASS                 # SMTP password
+SMTP_FROM                 # Sender address
 ```
 
 ## Architecture

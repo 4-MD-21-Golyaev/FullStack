@@ -59,12 +59,35 @@ async function main() {
     // Тестовый пользователь
     await prisma.user.upsert({
         where: { id: 'UT' },
-        update: {},
+        update: { role: 'CUSTOMER' },
         create: {
             id: 'UT',
             phone: '+70000000000',
             email: 'test@example.com',
             address: 'Тестовый адрес',
+            role: 'CUSTOMER',
+        },
+    })
+
+    // Staff-пользователь для ручного тестирования
+    await prisma.user.upsert({
+        where: { email: 'staff@example.com' },
+        update: { role: 'STAFF' },
+        create: {
+            phone: '+70000000001',
+            email: 'staff@example.com',
+            role: 'STAFF',
+        },
+    })
+
+    // Admin-пользователь для ручного тестирования
+    await prisma.user.upsert({
+        where: { email: 'admin@example.com' },
+        update: { role: 'ADMIN' },
+        create: {
+            phone: '+70000000002',
+            email: 'admin@example.com',
+            role: 'ADMIN',
         },
     })
 

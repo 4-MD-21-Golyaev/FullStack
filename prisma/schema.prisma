@@ -40,9 +40,25 @@ model User {
   phone     String
   email     String  @unique
   address   String?
+  role      String  @default("CUSTOMER") // CUSTOMER | STAFF | ADMIN
 
   orders    Order[]
   cartItems CartItem[]
+}
+
+//////////////////////////////////////////////////////
+// EMAIL OTP
+//////////////////////////////////////////////////////
+
+model EmailOtp {
+  id        String   @id @default(uuid())
+  email     String
+  code      String        // plain text, 6 цифр
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
 }
 
 //////////////////////////////////////////////////////
