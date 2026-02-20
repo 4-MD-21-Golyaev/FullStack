@@ -58,6 +58,7 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
     const txProductRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(product),
+        findByIdWithLock: vi.fn().mockResolvedValue(product),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
     };

@@ -2,6 +2,7 @@ import { PaymentRepository } from '@/application/ports/PaymentRepository';
 import { TransactionRunner } from '@/application/ports/TransactionRunner';
 import { cancelOrder, startDelivery } from '@/domain/order/transitions';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
+import { Product } from '@/domain/product/Product';
 
 type YookassaEvent = 'payment.succeeded' | 'payment.canceled';
 
@@ -63,9 +64,11 @@ export class ConfirmPaymentUseCase {
                 return { alreadyProcessed: false, order: cancelled, payment };
             }
 
-            // payment.succeeded — проверяем остатки повторно (могли измениться)
+            // payment.succeeded — блокируем и читаем все товары, проверяем остатки
+            const products = new Map<string, Product>();
+
             for (const item of order.items) {
-                const product = await productRepository.findById(item.productId);
+                const product = await productRepository.findByIdWithLock(item.productId);
 
                 if (!product || product.stock < item.quantity) {
                     payment.status = PaymentStatus.FAILED;
@@ -79,11 +82,13 @@ export class ConfirmPaymentUseCase {
                         `Insufficient stock for "${item.name}" after payment — order cancelled, refund required`
                     );
                 }
+
+                products.set(item.productId, product);
             }
 
-            // Списываем остатки
+            // Списываем остатки из закешированных значений (без повторных чтений)
             for (const item of order.items) {
-                const product = (await productRepository.findById(item.productId))!;
+                const product = products.get(item.productId)!;
                 await productRepository.save({
                     ...product,
                     stock: product.stock - item.quantity,

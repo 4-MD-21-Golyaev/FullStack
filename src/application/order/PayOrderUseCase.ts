@@ -1,6 +1,4 @@
-import { OrderRepository } from '@/application/ports/OrderRepository';
-import { PaymentRepository } from '@/application/ports/PaymentRepository';
-import { ProductRepository } from '@/application/ports/ProductRepository';
+import { TransactionRunner } from '@/application/ports/TransactionRunner';
 import { cancelOrder, startDelivery } from '@/domain/order/transitions';
 import { OrderState } from '@/domain/order/OrderState';
 import { Payment } from '@/domain/payment/Payment';
@@ -13,74 +11,72 @@ interface PayOrderInput {
 }
 
 export class PayOrderUseCase {
-    constructor(
-        private orderRepository: OrderRepository,
-        private paymentRepository: PaymentRepository,
-        private productRepository: ProductRepository
-    ) {}
+    constructor(private transactionRunner: TransactionRunner) {}
 
     async execute(input: PayOrderInput) {
-        const order = await this.orderRepository.findById(input.orderId);
+        return this.transactionRunner.run(async ({ orderRepository, paymentRepository, productRepository }) => {
+            const order = await orderRepository.findByIdWithLock(input.orderId);
 
-        if (!order) {
-            throw new Error('Order not found');
-        }
-
-        // Идемпотентность: повторное уведомление об оплате уже обработанного заказа
-        if (order.state === OrderState.DELIVERY || order.state === OrderState.CLOSED) {
-            throw new Error('Payment already processed for this order');
-        }
-
-        // Проверяем наличие остатков по всем позициям заказа
-        const products = new Map<string, Product>();
-
-        for (const item of order.items) {
-            const product = await this.productRepository.findById(item.productId);
-
-            if (!product) {
-                const cancelled = cancelOrder(order);
-                await this.orderRepository.save(cancelled);
-                throw new Error(
-                    `Product "${item.productId}" not found — order cancelled`
-                );
+            if (!order) {
+                throw new Error('Order not found');
             }
 
-            if (product.stock < item.quantity) {
-                const cancelled = cancelOrder(order);
-                await this.orderRepository.save(cancelled);
-                throw new Error(
-                    `Insufficient stock for "${product.name}": ` +
-                    `required ${item.quantity}, available ${product.stock} — order cancelled`
-                );
+            // Идемпотентность: повторное уведомление об оплате уже обработанного заказа
+            if (order.state === OrderState.DELIVERY || order.state === OrderState.CLOSED) {
+                throw new Error('Payment already processed for this order');
             }
 
-            products.set(item.productId, product);
-        }
+            // Блокируем и читаем все товары, проверяем остатки
+            const products = new Map<string, Product>();
 
-        // Создаём запись об оплате
-        const payment: Payment = {
-            id: randomUUID(),
-            orderId: order.id,
-            amount: order.totalAmount,
-            status: PaymentStatus.SUCCESS,
-            createdAt: new Date(),
-        };
+            for (const item of order.items) {
+                const product = await productRepository.findByIdWithLock(item.productId);
 
-        await this.paymentRepository.save(payment);
+                if (!product) {
+                    const cancelled = cancelOrder(order);
+                    await orderRepository.save(cancelled);
+                    throw new Error(
+                        `Product "${item.productId}" not found — order cancelled`
+                    );
+                }
 
-        // Списываем остатки
-        for (const item of order.items) {
-            const product = products.get(item.productId)!;
-            await this.productRepository.save({
-                ...product,
-                stock: product.stock - item.quantity,
-            });
-        }
+                if (product.stock < item.quantity) {
+                    const cancelled = cancelOrder(order);
+                    await orderRepository.save(cancelled);
+                    throw new Error(
+                        `Insufficient stock for "${product.name}": ` +
+                        `required ${item.quantity}, available ${product.stock} — order cancelled`
+                    );
+                }
 
-        // Переводим заказ в доставку
-        const updated = startDelivery(order);
-        await this.orderRepository.save(updated);
+                products.set(item.productId, product);
+            }
 
-        return { order: updated, payment };
+            // Создаём запись об оплате
+            const payment: Payment = {
+                id: randomUUID(),
+                orderId: order.id,
+                amount: order.totalAmount,
+                status: PaymentStatus.SUCCESS,
+                createdAt: new Date(),
+            };
+
+            await paymentRepository.save(payment);
+
+            // Списываем остатки из закешированных значений
+            for (const item of order.items) {
+                const product = products.get(item.productId)!;
+                await productRepository.save({
+                    ...product,
+                    stock: product.stock - item.quantity,
+                });
+            }
+
+            // Переводим заказ в доставку
+            const updated = startDelivery(order);
+            await orderRepository.save(updated);
+
+            return { order: updated, payment };
+        });
     }
 }
