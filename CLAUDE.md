@@ -81,6 +81,74 @@ Both `InitiatePaymentUseCase` and `ConfirmPaymentUseCase` are idempotent.
 - Use cases receive repositories/gateways via constructor injection; HTTP route handlers are responsible for wiring dependencies.
 - Path alias `@/*` maps to `src/*`.
 
+## Domain Rules & Invariants
+
+**Core principle:** Domain correctness has priority over UI behavior. Invalid domain states must be impossible, not just unlikely.
+
+### Architectural constraints
+- State machine exists **only** in domain (`transitions.ts`). No layer may bypass state transitions.
+- Domain must not depend on infrastructure. Presentation contains no business rules.
+
+### Cart vs Order
+- Cart is mutable and uncommitted — it is **not** an Order and does not create one.
+- Order is created **only** on confirmation. No persistent Order exists before that moment.
+- Unauthenticated cart: stored locally, not in DB. Authenticated cart: stored in DB, managed via use-cases.
+
+### Order state semantics
+| State | Composition | Total | Notes |
+|---|---|---|---|
+| CREATED | fixed | fixed | cancellation allowed |
+| PICKING | **may change** | **may change** | absence strategy applied; return to CREATED forbidden |
+| PAYMENT | immutable | immutable | 10-minute timeout active |
+| DELIVERY | immutable | immutable | stock already deducted |
+| CLOSED / CANCELLED | — | — | terminal |
+
+### Order invariants
+1. Order is always in exactly one state.
+2. Composition immutable after PAYMENT.
+3. Total immutable after PAYMENT.
+4. Order cannot exist without User.
+5. Cancellation forbidden in DELIVERY and CLOSED.
+6. Transition from PICKING back to CREATED forbidden.
+
+### Absence resolution strategy
+Field on Order: `CALL_REPLACE | CALL_REMOVE | AUTO_REMOVE | AUTO_REPLACE`
+- Composition adjustment and total recalculation allowed **only in PICKING**.
+- After transition to PAYMENT, no further modifications allowed.
+
+### Payment rules
+- SUCCESS and FAILED are terminal statuses.
+- FAILED allows creating a new Payment; SUCCESS forbids it.
+- Only **one PENDING Payment** allowed per Order at a time.
+- Payment timeout: if Order stays in PAYMENT > 10 min with PENDING payment → auto-cancel (background job).
+
+### Race conditions
+- SUCCESS has priority over Cancel. If SUCCESS committed first → Cancel forbidden. If Cancel committed first → SUCCESS ignored.
+- Implementation requires: transactional boundaries + row-level locking or optimistic versioning + state validation inside transaction.
+
+### Stock handling
+- Stock is deducted **only** during PAYMENT → DELIVERY transition.
+- Not deducted at order creation or during picking.
+- Stock is re-validated immediately before deduction.
+
+### Transaction boundaries
+Must execute inside a transaction: ConfirmOrder, ConfirmPayment, CancelOrder, PAYMENT → DELIVERY transition.
+Must execute outside: external export (MoySklad).
+
+### Forbidden states (implementation is invalid if any is reachable)
+- DELIVERY without SUCCESS payment
+- CLOSED without DELIVERY
+- SUCCESS without Order
+- Multiple SUCCESS Payments for one Order
+- Composition change after PAYMENT
+- Order without User
+- Return from PICKING to CREATED
+
+### Completion criteria (§20)
+Backend is complete when: all transitions covered by tests · race conditions resolved · payment timeout implemented · webhook idempotent · no forbidden states reachable · cart isolated from domain model · composition mutation restricted to PICKING.
+
+---
+
 ## Tech Stack
 
 - **Next.js 16** (App Router), **React 19**, **TypeScript** (strict)
