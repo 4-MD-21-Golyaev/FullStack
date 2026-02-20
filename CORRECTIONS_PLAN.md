@@ -127,7 +127,7 @@ absenceResolutionStrategy: AbsenceResolutionStrategy;
 
 ---
 
-## 4. PICKING-состояние не поддерживает изменение состава (§7.1, §8)
+## 4. PICKING-состояние не поддерживает изменение состава (§7.1, §8) — (DONE)
 
 **Что требует спецификация:**
 > §7.1 PICKING: "composition may change, total may change, absence strategy applied"
@@ -171,5 +171,5 @@ absenceResolutionStrategy: AbsenceResolutionStrategy;
 | 12 | `src/domain/order/transitions.ts` | Добавить параметр | DONE |
 | 13 | `src/application/order/CreateOrderUseCase.ts` | Принимать стратегию | DONE |
 | 14 | `prisma/schema.prisma` | absenceResolutionStrategy | DONE |
-| 15 | `src/application/order/UpdateOrderItemsUseCase.ts` | Создать | — |
-| 16 | `src/app/api/orders/[id]/items/route.ts` | Создать | — |
+| 15 | `src/application/order/UpdateOrderItemsUseCase.ts` | Создать | DONE |
+| 16 | `src/app/api/orders/[id]/items/route.ts` | Создать | DONE |
