@@ -39,6 +39,7 @@ interface CartItemView {
     name: string;
     article: string;
     price: number;
+    stock: number;
     imagePath: string | null;
     quantity: number;
 }
@@ -341,6 +342,7 @@ export default function TestOrderPage() {
                         name: product.name,
                         article: product.article,
                         price: product.price,
+                        stock: product.stock,
                         imagePath: product.imagePath,
                         quantity: 1,
                     }];
@@ -433,10 +435,12 @@ export default function TestOrderPage() {
         }
     }
 
-    const isStaff   = session?.role === 'STAFF' || session?.role === 'ADMIN';
-    const cartTotal = cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    const action    = order ? STATE_ACTIONS[order.state] : null;
-    const canCancel = order ? CANCELLABLE_STATES.has(order.state) : false;
+    const isStaff        = session?.role === 'STAFF' || session?.role === 'ADMIN';
+    const availableItems = cartItems.filter(i => i.stock > 0);
+    const outOfStockItems = cartItems.filter(i => i.stock === 0);
+    const cartTotal      = availableItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const action         = order ? STATE_ACTIONS[order.state] : null;
+    const canCancel      = order ? CANCELLABLE_STATES.has(order.state) : false;
 
     // ── Рендер ───────────────────────────────────────────────────────────────
 
@@ -654,59 +658,87 @@ export default function TestOrderPage() {
 
                     {!cartLoading && cartItems.length > 0 && (
                         <>
-                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, marginBottom: 16 }}>
-                                <thead>
-                                    <tr style={{ borderBottom: '1px solid #ccc' }}>
-                                        <th style={th}>Товар</th>
-                                        <th style={{ ...th, textAlign: 'right' }}>Цена</th>
-                                        <th style={{ ...th, textAlign: 'center' }}>Кол-во</th>
-                                        <th style={{ ...th, textAlign: 'right' }}>Сумма</th>
-                                        <th style={{ width: 28 }}></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {cartItems.map(item => (
-                                        <tr key={item.productId} style={{ borderBottom: '1px solid #eee' }}>
-                                            <td style={{ padding: '7px 8px 7px 0' }}>
-                                                <div style={{ fontWeight: 600 }}>{item.name}</div>
-                                                <div style={{ fontSize: 11, color: '#888' }}>{item.article}</div>
-                                            </td>
-                                            <td style={{ padding: '7px 8px', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                                                {item.price.toLocaleString('ru')} ₽
-                                            </td>
-                                            <td style={{ padding: '7px 8px', textAlign: 'center' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                                                    <button style={{ ...btnSecondary, padding: '1px 8px', lineHeight: 1.5 }}
-                                                        onClick={() => item.quantity > 1
-                                                            ? handleUpdateCartItem(item.productId, item.quantity - 1)
-                                                            : handleRemoveFromCart(item.productId)
-                                                        }>−</button>
-                                                    <span style={{ minWidth: 20, textAlign: 'center' }}>{item.quantity}</span>
-                                                    <button style={{ ...btnSecondary, padding: '1px 8px', lineHeight: 1.5 }}
-                                                        onClick={() => handleUpdateCartItem(item.productId, item.quantity + 1)}>+</button>
-                                                </div>
-                                            </td>
-                                            <td style={{ padding: '7px 0 7px 8px', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                                                {(item.price * item.quantity).toLocaleString('ru')} ₽
-                                            </td>
-                                            <td style={{ textAlign: 'center', paddingLeft: 4 }}>
-                                                <button onClick={() => handleRemoveFromCart(item.productId)}
-                                                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c00', fontSize: 14 }}
-                                                    title="Удалить">✕</button>
-                                            </td>
+                            {availableItems.length > 0 && (
+                                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, marginBottom: 16 }}>
+                                    <thead>
+                                        <tr style={{ borderBottom: '1px solid #ccc' }}>
+                                            <th style={th}>Товар</th>
+                                            <th style={{ ...th, textAlign: 'right' }}>Цена</th>
+                                            <th style={{ ...th, textAlign: 'center' }}>Кол-во</th>
+                                            <th style={{ ...th, textAlign: 'right' }}>Сумма</th>
+                                            <th style={{ width: 28 }}></th>
                                         </tr>
+                                    </thead>
+                                    <tbody>
+                                        {availableItems.map(item => (
+                                            <tr key={item.productId} style={{ borderBottom: '1px solid #eee' }}>
+                                                <td style={{ padding: '7px 8px 7px 0' }}>
+                                                    <div style={{ fontWeight: 600 }}>{item.name}</div>
+                                                    <div style={{ fontSize: 11, color: '#888' }}>{item.article}</div>
+                                                </td>
+                                                <td style={{ padding: '7px 8px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                                                    {item.price.toLocaleString('ru')} ₽
+                                                </td>
+                                                <td style={{ padding: '7px 8px', textAlign: 'center' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                                                        <button style={{ ...btnSecondary, padding: '1px 8px', lineHeight: 1.5 }}
+                                                            onClick={() => item.quantity > 1
+                                                                ? handleUpdateCartItem(item.productId, item.quantity - 1)
+                                                                : handleRemoveFromCart(item.productId)
+                                                            }>−</button>
+                                                        <span style={{ minWidth: 20, textAlign: 'center' }}>{item.quantity}</span>
+                                                        <button style={{ ...btnSecondary, padding: '1px 8px', lineHeight: 1.5 }}
+                                                            onClick={() => handleUpdateCartItem(item.productId, item.quantity + 1)}>+</button>
+                                                    </div>
+                                                </td>
+                                                <td style={{ padding: '7px 0 7px 8px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                                                    {(item.price * item.quantity).toLocaleString('ru')} ₽
+                                                </td>
+                                                <td style={{ textAlign: 'center', paddingLeft: 4 }}>
+                                                    <button onClick={() => handleRemoveFromCart(item.productId)}
+                                                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c00', fontSize: 14 }}
+                                                        title="Удалить">✕</button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colSpan={3} style={{ padding: '8px 8px 0 0', textAlign: 'right', fontWeight: 600 }}>Итого:</td>
+                                            <td style={{ padding: '8px 0 0 8px', textAlign: 'right', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                                {cartTotal.toLocaleString('ru')} ₽
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            )}
+
+                            {/* Нет в наличии */}
+                            {outOfStockItems.length > 0 && (
+                                <div style={{ marginBottom: 16, padding: '10px 12px', background: '#fafafa', border: '1px solid #e0e0e0', borderRadius: 6 }}>
+                                    <div style={{ fontSize: 12, fontWeight: 600, color: '#999', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                        Нет в наличии
+                                    </div>
+                                    {outOfStockItems.map(item => (
+                                        <div key={item.productId} style={{
+                                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                            padding: '7px 0', borderBottom: '1px solid #eee', gap: 8, opacity: 0.6,
+                                        }}>
+                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                                <div style={{ fontSize: 13, fontWeight: 600, color: '#555' }}>{item.name}</div>
+                                                <div style={{ fontSize: 11, color: '#999' }}>{item.article}</div>
+                                            </div>
+                                            <div style={{ fontSize: 12, color: '#888', whiteSpace: 'nowrap' }}>
+                                                {item.price.toLocaleString('ru')} ₽ × {item.quantity}
+                                            </div>
+                                            <button onClick={() => handleRemoveFromCart(item.productId)}
+                                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c00', fontSize: 14, flexShrink: 0 }}
+                                                title="Удалить">✕</button>
+                                        </div>
                                     ))}
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colSpan={3} style={{ padding: '8px 8px 0 0', textAlign: 'right', fontWeight: 600 }}>Итого:</td>
-                                        <td style={{ padding: '8px 0 0 8px', textAlign: 'right', fontWeight: 700, whiteSpace: 'nowrap' }}>
-                                            {cartTotal.toLocaleString('ru')} ₽
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                                </div>
+                            )}
 
                             {/* Форма подтверждения или предложение войти */}
                             {authStep === 'authenticated' ? (

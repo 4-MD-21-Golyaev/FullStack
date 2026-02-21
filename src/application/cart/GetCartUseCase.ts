@@ -6,6 +6,7 @@ export interface CartItemView {
     name: string;
     article: string;
     price: number;
+    stock: number;
     imagePath: string | null;
     quantity: number;
 }
@@ -29,6 +30,7 @@ export class GetCartUseCase {
                 name: product.name,
                 article: product.article,
                 price: product.price,
+                stock: product.stock,
                 imagePath: product.imagePath,
                 quantity: item.quantity,
             });

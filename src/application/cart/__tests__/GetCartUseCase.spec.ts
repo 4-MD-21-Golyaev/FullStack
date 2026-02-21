@@ -50,6 +50,7 @@ describe('GetCartUseCase', () => {
             name: 'Widget',
             article: 'W-001',
             price: 150,
+            stock: 5,
             imagePath: '/img/widget.png',
             quantity: 3,
         });
