@@ -65,6 +65,32 @@ export class PrismaOrderRepository implements OrderRepository {
         });
     }
 
+    async findByUserId(userId: string): Promise<Order[]> {
+        const records = await this.db.order.findMany({
+            where: { userId },
+            include: { items: true, status: true },
+            orderBy: { createdAt: 'desc' },
+        });
+
+        return records.map(record => ({
+            id: record.id,
+            userId: record.userId,
+            totalAmount: record.totalAmount.toNumber(),
+            address: record.address,
+            state: record.status.code as OrderState,
+            absenceResolutionStrategy: record.absenceResolutionStrategy as AbsenceResolutionStrategy,
+            createdAt: record.createdAt,
+            updatedAt: record.updatedAt,
+            items: record.items.map(item => ({
+                productId: item.productId,
+                name: item.name,
+                article: item.article,
+                price: item.price.toNumber(),
+                quantity: item.quantity,
+            })),
+        }));
+    }
+
     async findById(id: string): Promise<Order | null> {
         const record = await this.db.order.findUnique({
             where: { id },

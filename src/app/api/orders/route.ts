@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaTransactionRunner } from '@/infrastructure/db/PrismaTransactionRunner';
 import { CreateOrderUseCase } from '@/application/order/CreateOrderUseCase';
+import { PrismaOrderRepository } from '@/infrastructure/repositories/OrderRepository.prisma';
+
+export async function GET(req: NextRequest) {
+    const userId = req.headers.get('x-user-id');
+    if (!userId) {
+        return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const orders = await new PrismaOrderRepository().findByUserId(userId);
+    return NextResponse.json(orders);
+}
 
 export async function POST(req: NextRequest) {
     try {

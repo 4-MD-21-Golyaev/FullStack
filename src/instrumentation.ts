@@ -16,7 +16,6 @@ export async function register() {
                     new PrismaTransactionRunner(),
                 );
                 const result = await useCase.execute();
-                console.log('[cron] payment-timeout result:', result);
             });
         }
     }
