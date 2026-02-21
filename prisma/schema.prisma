@@ -6,7 +6,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
 //////////////////////////////////////////////////////
 // ORDER STATUS (справочник)
 //////////////////////////////////////////////////////
@@ -32,12 +31,14 @@ model AbsenceResolutionStrategy {
 }
 
 //////////////////////////////////////////////////////
-// USER ROLE (справочник, без FK — роль хранится строкой в User)
+// USER ROLE (справочник, FK через code-as-PK)
 //////////////////////////////////////////////////////
 
 model UserRole {
-  code String @id  // CUSTOMER, STAFF, ADMIN
-  name String      // Человекочитаемое название
+  code  String @id  // CUSTOMER, STAFF, ADMIN
+  name  String      // Человекочитаемое название
+
+  users User[]
 }
 
 //////////////////////////////////////////////////////
@@ -61,7 +62,8 @@ model User {
   phone     String
   email     String  @unique
   address   String?
-  role      String  @default("CUSTOMER") // CUSTOMER | STAFF | ADMIN
+  role      String    @default("CUSTOMER")
+  userRole  UserRole  @relation(fields: [role], references: [code])
 
   orders    Order[]
   cartItems CartItem[]
