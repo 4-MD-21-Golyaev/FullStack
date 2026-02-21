@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaTransactionRunner } from '@/infrastructure/db/PrismaTransactionRunner';
 import { CreateOrderUseCase } from '@/application/order/CreateOrderUseCase';
 import { PrismaOrderRepository } from '@/infrastructure/repositories/OrderRepository.prisma';
+import { PrismaCartRepository } from '@/infrastructure/repositories/CartRepository.prisma';
 
 export async function GET(req: NextRequest) {
     const userId = req.headers.get('x-user-id');
@@ -30,6 +31,9 @@ export async function POST(req: NextRequest) {
             absenceResolutionStrategy: body.absenceResolutionStrategy,
             items: body.items,
         });
+
+        // Корзина — это незафиксированный заказ. После подтверждения очищаем её.
+        await new PrismaCartRepository().clear(userId);
 
         return NextResponse.json(order, { status: 201 });
 
