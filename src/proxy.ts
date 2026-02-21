@@ -27,7 +27,7 @@ function isStaffOnly(pathname: string, method: string): boolean {
     return STAFF_ONLY_PATTERNS.some((pattern) => pattern.test(pathname));
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
     const { pathname } = req.nextUrl;
 
     // Strip any spoofed x-user-* headers from clients
