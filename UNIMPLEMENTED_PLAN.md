@@ -211,24 +211,19 @@ DELETE /api/cart/[productId]     — RemoveFromCartUseCase { userId }
 
 ---
 
-## 5. Личный кабинет пользователя — API (§18)
+## 5. Личный кабинет пользователя — API (§18) — (PARTIAL)
 
 **Что требует спецификация:**
 > §18 Allowed: "view orders, view status, repeat order"
 > §18 Forbidden: "modify DELIVERY, modify CLOSED, bypass state machine"
 
-**Что отсутствует:**
-Нет API для получения списка заказов пользователя. Нет функции повтора заказа.
+**Что реализовано:**
+- ~~`findByUserId` в OrderRepository (порт + Prisma-реализация)~~
+- ~~`GET /api/orders` — список заказов аутентифицированного пользователя~~
 
-**Что реализовать:**
+**Что остаётся реализовать:**
 
-### 5.1 OrderRepository (новый метод)
-```typescript
-findByUserId(userId: string): Promise<Order[]>;
-```
-
-### 5.2 Use cases
-- `GetUserOrdersUseCase` — вернуть список заказов пользователя (с пагинацией)
+### 5.1 Use cases
 - `RepeatOrderUseCase` — создать новый заказ на основе состава существующего
 
 Логика `RepeatOrderUseCase`:
@@ -238,83 +233,43 @@ findByUserId(userId: string): Promise<Order[]>;
 4. Проверить доступность и остатки
 5. Вызвать `CreateOrderUseCase` с новым составом
 
-### 5.3 API endpoints
+### 5.2 API endpoints
 ```
-GET  /api/orders?userId=          — GetUserOrdersUseCase
 GET  /api/orders/[id]             — просмотр одного заказа
 POST /api/orders/[id]/repeat      — RepeatOrderUseCase
 ```
 
 **Файлы:**
-- `src/application/ports/OrderRepository.ts` (добавить `findByUserId`, `findById` публичный)
-- `src/infrastructure/repositories/OrderRepository.prisma.ts` (реализовать `findByUserId`)
-- `src/application/order/GetUserOrdersUseCase.ts` (новый)
 - `src/application/order/RepeatOrderUseCase.ts` (новый)
-- `src/app/api/orders/route.ts` (добавить GET)
 - `src/app/api/orders/[id]/route.ts` (новый — GET)
 - `src/app/api/orders/[id]/repeat/route.ts` (новый)
 
 ---
 
-## 6. Аутентификация и ролевой доступ (RBAC)
+## 6. Аутентификация и ролевой доступ (RBAC) — (DONE)
 
 **Что требует спецификация:**
 > §18 Forbidden: "modify DELIVERY, modify CLOSED, bypass state machine"
 > Складские операции (PICKING, изменение состава) не должны быть доступны обычному клиенту.
 
-**Что отсутствует:**
-Нет аутентификации и разграничения прав. Все эндпоинты публично доступны. Любой, знающий ID заказа, может вызвать складские операции.
+**Что реализовано:**
+- Email OTP аутентификация (`/api/auth/request-code`, `/api/auth/verify-code`)
+- JWT-сессия в HttpOnly cookie (`signJwt`, `verifyJwt`, `setSessionCookie`)
+- Регистрация пользователя (`/api/auth/register`)
+- Просмотр сессии (`/api/auth/me`), выход (`/api/auth/logout`)
+- `src/proxy.ts` — защита всех `/api/` роутов: публичные префиксы, RBAC для STAFF-only операций, стриппинг спуфинга заголовков
+- Тесты: middleware (11), register (4), request-code (4), verify-code (5), me (2), logout (1)
 
-**Когда реализовывать:**
-Перед подключением фронтенда — как только API станет доступно извне (staging-деплой или начало интеграции UI).
-
-**Что реализовать:**
-
-### 6.1 Роль в модели User
-```prisma
-model User {
-  role  String  @default("CUSTOMER")  // CUSTOMER | STAFF | ADMIN
-  ...
-}
-```
-
-### 6.2 NextAuth.js — сессия с ролью
-Настроить провайдер (credentials / OAuth). В JWT-callback класть `role` из БД:
-```typescript
-callbacks: {
-    jwt({ token, user }) {
-        if (user) token.role = user.role;
-        return token;
-    }
-}
-```
-
-### 6.3 Next.js middleware — защита групп роутов
-```typescript
-// middleware.ts
-if (staffOnlyRoutes.test(pathname) && token?.role !== 'STAFF') {
-    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
-}
-```
-
-### 6.4 Разграничение по ролям
+**Разграничение по ролям (реализовано в proxy.ts):**
 
 | Эндпоинт | CUSTOMER | STAFF | ADMIN |
 |----------|----------|-------|-------|
 | `POST /api/orders` | ✅ | ✅ | ✅ |
-| `POST /api/orders/[id]/cancel` | ✅ (свой) | ✅ | ✅ |
+| `GET /api/orders` | ✅ | ✅ | ✅ |
+| `POST /api/orders/[id]/cancel` | ✅ | ✅ | ✅ |
 | `POST /api/orders/[id]/start-picking` | ❌ | ✅ | ✅ |
 | `PATCH /api/orders/[id]/items` | ❌ | ✅ | ✅ |
 | `POST /api/orders/[id]/complete-picking` | ❌ | ✅ | ✅ |
-| `POST /api/cron/payment-timeout` | ❌ | ❌ | ✅ |
-
-**Важно:** проверки ролей остаются **только в HTTP-слое** (`app/api/`, `middleware.ts`). Domain и use cases не знают о ролях — это соответствует Clean Architecture.
-
-**Файлы:**
-- `prisma/schema.prisma` (добавить `role` в `User`)
-- `src/app/api/auth/[...nextauth]/route.ts` (новый)
-- `middleware.ts` (новый, в корне проекта)
-- все защищённые роуты — добавить проверку сессии
 
 ---
 
@@ -327,8 +282,8 @@ if (staffOnlyRoutes.test(pathname) && token?.role !== 'STAFF') {
 | 3 | MoySklad Export (outbox pattern) | Средний | — | — |
 | 4 | MoySklad Import (sync продуктов) | Средний | — | — |
 | 5 | Cart use-cases + API | Средний | — | — |
-| 6 | Личный кабинет (список заказов, повтор) | Средний | — | — |
-| 7 | Аутентификация и ролевой доступ (RBAC) | Высокий | — | — |
+| 6 | Личный кабинет (список заказов, повтор) | Средний | — | PARTIAL |
+| 7 | Аутентификация и ролевой доступ (RBAC) | Высокий | — | DONE |
 
 ---
 
@@ -336,7 +291,7 @@ if (staffOnlyRoutes.test(pathname) && token?.role !== 'STAFF') {
 
 1. ~~п. 2 (блокировки)~~ — DONE
 2. ~~п. 1 (таймаут оплаты)~~ — DONE
-3. **Следующий** — п. 7 (аутентификация и роли) — фундамент для всех пользовательских фич: корзина и личный кабинет принимают `userId` из сессии, а не из тела запроса; без этого шага их реализация неполна
-4. **Затем** — п. 5 (корзина) — опирается на аутентифицированного пользователя
-5. **Затем** — п. 6 (личный кабинет) — опирается на аутентифицированного пользователя
+3. ~~п. 7 (аутентификация и роли)~~ — DONE
+4. **Следующий** — п. 5 (корзина) — опирается на аутентифицированного пользователя
+5. **Затем** — п. 6 (личный кабинет, PARTIAL) — `GET /api/orders` готов; осталось `GET /api/orders/[id]` и `RepeatOrderUseCase`
 6. **В конце** — п. 3 и 4 (МойСклад — серверная интеграция, не зависит от ролей и пользователей)
