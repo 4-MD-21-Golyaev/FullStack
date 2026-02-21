@@ -18,8 +18,12 @@ export async function POST(req: NextRequest) {
             console.error('[request-code] Failed to send OTP email:', err);
         });
 
-        // Always return ok to prevent email enumeration
-        return NextResponse.json({ ok: true });
+        // In development return the code directly so the test page works without SMTP
+        const body: Record<string, unknown> = { ok: true };
+        if (process.env.NODE_ENV === 'development') {
+            body.code = code;
+        }
+        return NextResponse.json(body);
     } catch (error: any) {
         return NextResponse.json({ message: error.message }, { status: 400 });
     }
