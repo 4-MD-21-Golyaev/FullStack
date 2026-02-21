@@ -155,59 +155,71 @@ interface MoySkladGateway {
 
 ---
 
-## 4. Управление корзиной для аутентифицированного пользователя (§5)
+## 4. Корзина (§5) — (DONE)
 
-**Что требует спецификация:**
-> §5 Authenticated: "stored in database, managed via use-cases"
+### Бизнес-логика
 
-**Что отсутствует:**
-В схеме есть таблица `CartItem`, но нет ни одного use-case, ни одного API-эндпоинта для работы с корзиной. Корзина не управляется через use-cases.
+Корзина — это **незафиксированный заказ**: она хранит выбор пользователя до момента подтверждения. Корзина не является Order и не создаёт его — Order возникает только при явном подтверждении.
 
-**Что реализовать:**
+#### Хранение по типу пользователя
 
-### 4.1 CartRepository (порт)
-```typescript
-interface CartRepository {
-  findByUserId(userId: string): Promise<CartItem[]>;
-  save(item: CartItem): Promise<void>;
-  remove(userId: string, productId: string): Promise<void>;
-  clear(userId: string): Promise<void>;
-}
-```
+| Состояние | Хранение | Примечание |
+|-----------|----------|------------|
+| Неавторизованный | `localStorage` на клиенте | Данные не отправляются в БД |
+| Авторизованный | Таблица `CartItem` в БД | Управляется через use-cases |
 
-### 4.2 Domain
-```typescript
-interface CartItem {
-  userId: string;
-  productId: string;
-  quantity: number;
-}
-```
+#### Синхронизация при авторизации
 
-### 4.3 Use cases
-- `AddToCartUseCase` — добавить/увеличить количество товара
-- `RemoveFromCartUseCase` — убрать позицию
-- `UpdateCartItemUseCase` — изменить количество
-- `GetCartUseCase` — получить содержимое с текущими ценами
+При успешном логине происходит слияние корзин по правилу **приоритета локальной**:
 
-### 4.4 API endpoints
-```
-GET    /api/cart?userId=         — GetCartUseCase
-POST   /api/cart                 — AddToCartUseCase   { userId, productId, quantity }
-PATCH  /api/cart/[productId]     — UpdateCartItemUseCase { userId, quantity }
-DELETE /api/cart/[productId]     — RemoveFromCartUseCase { userId }
-```
+- **Локальная корзина непустая** → она полностью заменяет DB-корзину (`SyncCartUseCase`). `localStorage` очищается.
+- **Локальная корзина пустая** → DB-корзина загружается без изменений.
 
-**Файлы:**
-- `src/domain/cart/CartItem.ts` (новый)
-- `src/application/ports/CartRepository.ts` (новый)
-- `src/infrastructure/repositories/CartRepository.prisma.ts` (новый)
-- `src/application/cart/AddToCartUseCase.ts` (новый)
-- `src/application/cart/RemoveFromCartUseCase.ts` (новый)
-- `src/application/cart/UpdateCartItemUseCase.ts` (новый)
-- `src/application/cart/GetCartUseCase.ts` (новый)
-- `src/app/api/cart/route.ts` (новый)
-- `src/app/api/cart/[productId]/route.ts` (новый)
+Реализовано через `POST /api/cart/sync`.
+
+#### Различие CartItem и OrderItem
+
+| | `CartItem` | `OrderItem` |
+|--|------------|-------------|
+| Состав | ссылка: `productId + quantity` | snapshot: `name, article, price, quantity` |
+| Цена | «живая» — берётся из `Product` при отображении | зафиксирована на момент подтверждения |
+| Изменяемость | да — пользователь редактирует | нет — неизменна после создания Order |
+
+#### Подтверждение заказа
+
+`POST /api/orders` с телом `{ address, absenceResolutionStrategy, items: [{productId, quantity}] }`:
+1. `CreateOrderUseCase` читает переданные позиции, для каждой запрашивает `Product` и **фиксирует** `name, article, price` в `OrderItem`
+2. После создания Order роут вызывает `cartRepository.clear(userId)` — корзина очищается
+
+#### Правила состояния корзины (инварианты)
+
+- Корзина не является Order и не имеет состояния заказа
+- Composition adjustment разрешена в любой момент до подтверждения
+- После перехода заказа в PAYMENT состав OrderItem неизменен (корзина к этому уже очищена)
+- При выходе из системы `localStorage` очищается; DB-корзина остаётся нетронутой
+
+### Реализованные файлы
+
+**Domain / Application:**
+- `src/domain/cart/CartItem.ts` — `{ userId, productId, quantity }`
+- `src/application/ports/CartRepository.ts` — `findByUserId, findByUserAndProduct, save, remove, clear`
+- `src/application/cart/AddToCartUseCase.ts` — добавить / увеличить количество
+- `src/application/cart/RemoveFromCartUseCase.ts` — убрать позицию
+- `src/application/cart/UpdateCartItemUseCase.ts` — изменить количество
+- `src/application/cart/GetCartUseCase.ts` — получить с текущими ценами (`CartItemView`)
+- `src/application/cart/SyncCartUseCase.ts` — заменить DB-корзину локальной при логине
+
+**Infrastructure:**
+- `src/infrastructure/repositories/CartRepository.prisma.ts` — upsert по `@@unique([userId, productId])`
+- `prisma/migrations/20260221000000_add_cart_item_unique/` — уникальный индекс на `(userId, productId)`
+
+**HTTP layer:**
+- `src/app/api/cart/route.ts` — `GET` (GetCart), `POST` (AddToCart)
+- `src/app/api/cart/[productId]/route.ts` — `PATCH` (UpdateCartItem), `DELETE` (RemoveFromCart)
+- `src/app/api/cart/sync/route.ts` — `POST` (SyncCart при логине)
+- `src/app/api/orders/route.ts` — `POST` дополнен очисткой корзины после фиксации заказа
+
+**Тесты:** 18 unit-тестов (AddToCart·5, RemoveFromCart·1, UpdateCartItem·5, GetCart·3, SyncCart·4)
 
 ---
 
@@ -281,7 +293,7 @@ POST /api/orders/[id]/repeat      — RepeatOrderUseCase
 | 2 | Row-level locking / optimistic versioning | Высокий | Да (race conditions) | DONE |
 | 3 | MoySklad Export (outbox pattern) | Средний | — | — |
 | 4 | MoySklad Import (sync продуктов) | Средний | — | — |
-| 5 | Cart use-cases + API | Средний | — | — |
+| 5 | Cart use-cases + API | Средний | — | DONE |
 | 6 | Личный кабинет (список заказов, повтор) | Средний | — | PARTIAL |
 | 7 | Аутентификация и ролевой доступ (RBAC) | Высокий | — | DONE |
 
@@ -292,6 +304,6 @@ POST /api/orders/[id]/repeat      — RepeatOrderUseCase
 1. ~~п. 2 (блокировки)~~ — DONE
 2. ~~п. 1 (таймаут оплаты)~~ — DONE
 3. ~~п. 7 (аутентификация и роли)~~ — DONE
-4. **Следующий** — п. 5 (корзина) — опирается на аутентифицированного пользователя
-5. **Затем** — п. 6 (личный кабинет, PARTIAL) — `GET /api/orders` готов; осталось `GET /api/orders/[id]` и `RepeatOrderUseCase`
+4. ~~п. 5 (корзина)~~ — DONE
+5. **Следующий** — п. 6 (личный кабинет, PARTIAL) — `GET /api/orders` готов; осталось `GET /api/orders/[id]` и `RepeatOrderUseCase`
 6. **В конце** — п. 3 и 4 (МойСклад — серверная интеграция, не зависит от ролей и пользователей)
