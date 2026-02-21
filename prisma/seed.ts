@@ -46,6 +46,35 @@ async function main() {
         })
     }
 
+    const absenceStrategies = [
+        { code: 'CALL_REPLACE', name: 'Позвонить и предложить замену' },
+        { code: 'CALL_REMOVE',  name: 'Позвонить и убрать позицию'   },
+        { code: 'AUTO_REPLACE', name: 'Автоматически заменить'        },
+        { code: 'AUTO_REMOVE',  name: 'Автоматически убрать'          },
+    ]
+
+    for (const strategy of absenceStrategies) {
+        await prisma.absenceResolutionStrategy.upsert({
+            where: { code: strategy.code },
+            update: { name: strategy.name },
+            create: { code: strategy.code, name: strategy.name },
+        })
+    }
+
+    const userRoles = [
+        { code: 'CUSTOMER', name: 'Покупатель'       },
+        { code: 'STAFF',    name: 'Сотрудник склада' },
+        { code: 'ADMIN',    name: 'Администратор'    },
+    ]
+
+    for (const role of userRoles) {
+        await prisma.userRole.upsert({
+            where: { code: role.code },
+            update: { name: role.name },
+            create: role,
+        })
+    }
+
     // Тестовая категория (нужна для тестового товара)
     await prisma.category.upsert({
         where: { id: 'CT' },

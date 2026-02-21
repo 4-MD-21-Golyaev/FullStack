@@ -23,13 +23,21 @@ export class PrismaOrderRepository implements OrderRepository {
             throw new Error(`OrderStatus not found for code ${order.state}`);
         }
 
+        const strategy = await this.db.absenceResolutionStrategy.findUnique({
+            where: { code: order.absenceResolutionStrategy },
+        });
+
+        if (!strategy) {
+            throw new Error(`AbsenceResolutionStrategy not found for code ${order.absenceResolutionStrategy}`);
+        }
+
         await this.db.order.upsert({
             where: { id: order.id },
             update: {
                 userId: order.userId,
                 totalAmount: order.totalAmount,
                 address: order.address,
-                absenceResolutionStrategy: order.absenceResolutionStrategy,
+                absenceResolutionStrategyId: strategy.id,
                 statusId: status.id,
                 updatedAt: order.updatedAt,
                 items: {
@@ -48,7 +56,7 @@ export class PrismaOrderRepository implements OrderRepository {
                 userId: order.userId,
                 totalAmount: order.totalAmount,
                 address: order.address,
-                absenceResolutionStrategy: order.absenceResolutionStrategy,
+                absenceResolutionStrategyId: strategy.id,
                 statusId: status.id,
                 createdAt: order.createdAt,
                 updatedAt: order.updatedAt,
@@ -68,7 +76,7 @@ export class PrismaOrderRepository implements OrderRepository {
     async findByUserId(userId: string): Promise<Order[]> {
         const records = await this.db.order.findMany({
             where: { userId },
-            include: { items: true, status: true },
+            include: { items: true, status: true, absenceResolutionStrategy: true },
             orderBy: { createdAt: 'desc' },
         });
 
@@ -78,7 +86,7 @@ export class PrismaOrderRepository implements OrderRepository {
             totalAmount: record.totalAmount.toNumber(),
             address: record.address,
             state: record.status.code as OrderState,
-            absenceResolutionStrategy: record.absenceResolutionStrategy as AbsenceResolutionStrategy,
+            absenceResolutionStrategy: record.absenceResolutionStrategy.code as AbsenceResolutionStrategy,
             createdAt: record.createdAt,
             updatedAt: record.updatedAt,
             items: record.items.map(item => ({
@@ -97,6 +105,7 @@ export class PrismaOrderRepository implements OrderRepository {
             include: {
                 items: true,
                 status: true,
+                absenceResolutionStrategy: true,
             },
         });
 
@@ -108,7 +117,7 @@ export class PrismaOrderRepository implements OrderRepository {
             totalAmount: record.totalAmount.toNumber(),
             address: record.address,
             state: record.status.code as OrderState,
-            absenceResolutionStrategy: record.absenceResolutionStrategy as AbsenceResolutionStrategy,
+            absenceResolutionStrategy: record.absenceResolutionStrategy.code as AbsenceResolutionStrategy,
             createdAt: record.createdAt,
             updatedAt: record.updatedAt,
             items: record.items.map(item => ({

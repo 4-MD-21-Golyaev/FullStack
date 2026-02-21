@@ -13,10 +13,31 @@ datasource db {
 
 model OrderStatus {
   id     String  @id @default(uuid())
-  code   String  @unique   // FORMED, PAID, ...
+  code   String  @unique   // CREATED, PICKING, PAYMENT, DELIVERY, CLOSED, CANCELLED
   name   String            // Человекочитаемое название
 
   orders Order[]
+}
+
+//////////////////////////////////////////////////////
+// ABSENCE RESOLUTION STRATEGY (справочник)
+//////////////////////////////////////////////////////
+
+model AbsenceResolutionStrategy {
+  id     String  @id @default(uuid())
+  code   String  @unique   // CALL_REPLACE, CALL_REMOVE, AUTO_REPLACE, AUTO_REMOVE
+  name   String            // Человекочитаемое название
+
+  orders Order[]
+}
+
+//////////////////////////////////////////////////////
+// USER ROLE (справочник, без FK — роль хранится строкой в User)
+//////////////////////////////////////////////////////
+
+model UserRole {
+  code String @id  // CUSTOMER, STAFF, ADMIN
+  name String      // Человекочитаемое название
 }
 
 //////////////////////////////////////////////////////
@@ -133,7 +154,8 @@ model Order {
 
   deliveryAt  DateTime?
   address     String
-  absenceResolutionStrategy String @default("CALL_REPLACE")
+  absenceResolutionStrategyId String
+  absenceResolutionStrategy   AbsenceResolutionStrategy @relation(fields: [absenceResolutionStrategyId], references: [id])
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
