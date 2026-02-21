@@ -223,7 +223,7 @@ interface MoySkladGateway {
 
 ---
 
-## 5. Личный кабинет пользователя — API (§18) — (PARTIAL)
+## 5. Личный кабинет пользователя — API (§18) — (DONE)
 
 **Что требует спецификация:**
 > §18 Allowed: "view orders, view status, repeat order"
@@ -294,7 +294,7 @@ POST /api/orders/[id]/repeat      — RepeatOrderUseCase
 | 3 | MoySklad Export (outbox pattern) | Средний | — | — |
 | 4 | MoySklad Import (sync продуктов) | Средний | — | — |
 | 5 | Cart use-cases + API | Средний | — | DONE |
-| 6 | Личный кабинет (список заказов, повтор) | Средний | — | PARTIAL |
+| 6 | Личный кабинет (список заказов, повтор) | Средний | — | DONE |
 | 7 | Аутентификация и ролевой доступ (RBAC) | Высокий | — | DONE |
 
 ---
@@ -305,5 +305,5 @@ POST /api/orders/[id]/repeat      — RepeatOrderUseCase
 2. ~~п. 1 (таймаут оплаты)~~ — DONE
 3. ~~п. 7 (аутентификация и роли)~~ — DONE
 4. ~~п. 5 (корзина)~~ — DONE
-5. **Следующий** — п. 6 (личный кабинет, PARTIAL) — `GET /api/orders` готов; осталось `GET /api/orders/[id]` и `RepeatOrderUseCase`
+5. ~~п. 6 (личный кабинет)~~ — DONE
 6. **В конце** — п. 3 и 4 (МойСклад — серверная интеграция, не зависит от ролей и пользователей)
