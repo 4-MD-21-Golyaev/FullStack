@@ -19,11 +19,11 @@ export async function POST(req: NextRequest) {
         });
 
         // In development return the code directly so the test page works without SMTP
-        const body: Record<string, unknown> = { ok: true };
+        const responseBody: Record<string, unknown> = { ok: true };
         if (process.env.NODE_ENV === 'development') {
-            body.code = code;
+            responseBody.code = code;
         }
-        return NextResponse.json(body);
+        return NextResponse.json(responseBody);
     } catch (error: any) {
         return NextResponse.json({ message: error.message }, { status: 400 });
     }
