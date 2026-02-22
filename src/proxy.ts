@@ -36,6 +36,16 @@ export async function proxy(req: NextRequest) {
     requestHeaders.delete('x-user-role');
     requestHeaders.delete('x-user-email');
 
+    // Internal jobs: доступны по INTERNAL_JOB_SECRET заголовку
+    const INTERNAL_JOB_SECRET = process.env.INTERNAL_JOB_SECRET;
+    if (pathname.startsWith('/api/internal/jobs/')) {
+        const authHeader = req.headers.get('authorization') ?? '';
+        if (INTERNAL_JOB_SECRET && authHeader === `Bearer ${INTERNAL_JOB_SECRET}`) {
+            return NextResponse.next(); // пропускаем JWT-проверку
+        }
+        // Иначе — продолжаем стандартную проверку (ADMIN через JWT тоже допустим)
+    }
+
     if (isPublic(pathname)) {
         return NextResponse.next({ request: { headers: requestHeaders } });
     }

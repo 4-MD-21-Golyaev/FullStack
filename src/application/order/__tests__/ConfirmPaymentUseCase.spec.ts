@@ -64,17 +64,26 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
         findByCategoryId: vi.fn(),
     };
 
+    const txOutboxRepo = {
+        save: vi.fn().mockResolvedValue(undefined),
+        findPending: vi.fn(),
+        markProcessed: vi.fn(),
+        markFailed: vi.fn(),
+        incrementRetry: vi.fn(),
+    };
+
     const transactionRunner: TransactionRunner = {
         run: vi.fn().mockImplementation((work: (ctx: TransactionContext) => Promise<any>) =>
             work({
                 orderRepository: txOrderRepo,
                 paymentRepository: txPaymentRepo,
                 productRepository: txProductRepo,
+                outboxRepository: txOutboxRepo,
             })
         ),
     };
 
-    return { paymentRepo, transactionRunner, txOrderRepo, txPaymentRepo, txProductRepo };
+    return { paymentRepo, transactionRunner, txOrderRepo, txPaymentRepo, txProductRepo, txOutboxRepo };
 }
 
 describe('ConfirmPaymentUseCase', () => {
@@ -143,6 +152,22 @@ describe('ConfirmPaymentUseCase', () => {
         );
         expect(txOrderRepo.save).toHaveBeenCalledWith(
             expect.objectContaining({ state: OrderState.CANCELLED })
+        );
+    });
+
+    it('on payment.succeeded: OutboxEvent записывается с eventType ORDER_DELIVERED и orderId', async () => {
+        const { paymentRepo, transactionRunner, txOutboxRepo } =
+            makeDeps(makePayment(PaymentStatus.PENDING), makeOrder(OrderState.PAYMENT), makeProduct(10));
+
+        await new ConfirmPaymentUseCase(paymentRepo, transactionRunner)
+            .execute({ externalId: 'yk-ext-id', event: 'payment.succeeded' });
+
+        expect(txOutboxRepo.save).toHaveBeenCalledOnce();
+        expect(txOutboxRepo.save).toHaveBeenCalledWith(
+            expect.objectContaining({
+                eventType: 'ORDER_DELIVERED',
+                payload: expect.objectContaining({ orderId: 'order-1' }),
+            })
         );
     });
 

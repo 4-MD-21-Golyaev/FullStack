@@ -5,6 +5,7 @@ import { Order } from '@/domain/order/Order';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
 import { Payment } from '@/domain/payment/Payment';
 import { Product } from '@/domain/product/Product';
+import { randomUUID } from 'crypto';
 
 type ConfirmPaymentResult = {
     alreadyProcessed: boolean;
@@ -40,7 +41,7 @@ export class ConfirmPaymentUseCase {
             return { alreadyProcessed: true };
         }
 
-        return this.transactionRunner.run(async ({ orderRepository, paymentRepository, productRepository }) => {
+        return this.transactionRunner.run(async ({ orderRepository, paymentRepository, productRepository, outboxRepository }) => {
             const payment = await paymentRepository.findByExternalId(input.externalId);
 
             if (!payment) {
@@ -107,6 +108,22 @@ export class ConfirmPaymentUseCase {
 
             const updated = startDelivery(order);
             await orderRepository.save(updated);
+
+            // Записываем событие в outbox (внутри той же транзакции)
+            await outboxRepository.save({
+                id: randomUUID(),
+                eventType: 'ORDER_DELIVERED',
+                payload: {
+                    orderId: updated.id,
+                    items: updated.items.map(i => ({
+                        productId: i.productId,
+                        article:   i.article,
+                        name:      i.name,
+                        price:     i.price,
+                        quantity:  i.quantity,
+                    })),
+                },
+            });
 
             return { alreadyProcessed: false, order: updated, payment };
         });

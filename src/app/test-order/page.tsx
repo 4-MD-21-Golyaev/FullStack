@@ -58,28 +58,12 @@ interface OrderResult {
 
 const LOCAL_CART_KEY = 'cart';
 
-const STATE_LABELS: Record<string, string> = {
-    CREATED:   'Создан',
-    PICKING:   'Сборка',
-    PAYMENT:   'Ожидание оплаты',
-    DELIVERY:  'Доставка',
-    CLOSED:    'Закрыт',
-    CANCELLED: 'Отменён',
-};
-
 const STATE_ACTIONS: Record<string, { label: string; endpoint: string; staffOnly: boolean }> = {
     CREATED:  { label: 'Начать сборку',    endpoint: 'start-picking',    staffOnly: true  },
     PICKING:  { label: 'Завершить сборку', endpoint: 'complete-picking', staffOnly: true  },
     PAYMENT:  { label: 'Оплатить заказ',   endpoint: 'pay',              staffOnly: false },
     DELIVERY: { label: 'Закрыть заказ',    endpoint: 'close',            staffOnly: true  },
 };
-
-const ABSENCE_OPTIONS = [
-    { value: 'CALL_REPLACE', label: 'Позвонить и предложить замену' },
-    { value: 'CALL_REMOVE',  label: 'Позвонить и убрать позицию'    },
-    { value: 'AUTO_REPLACE', label: 'Автоматически заменить'        },
-    { value: 'AUTO_REMOVE',  label: 'Автоматически убрать'          },
-];
 
 const CANCELLABLE_STATES = new Set(['CREATED', 'PICKING', 'PAYMENT']);
 
@@ -129,6 +113,10 @@ export default function TestOrderPage() {
     const [cartLoading, setCartLoading] = useState(false);
     const [cartError, setCartError]     = useState<string | null>(null);
 
+    // Справочники
+    const [stateLabels, setStateLabels]       = useState<Record<string, string>>({});
+    const [absenceOptions, setAbsenceOptions] = useState<{ value: string; label: string }[]>([]);
+
     // Форма подтверждения
     const [address, setAddress]               = useState('Тестовый адрес');
     const [absenceStrategy, setAbsenceStrategy] = useState('CALL_REPLACE');
@@ -159,6 +147,21 @@ export default function TestOrderPage() {
 
     useEffect(() => {
         loadCategories(null, []);
+    }, []);
+
+    useEffect(() => {
+        fetch('/api/order-statuses')
+            .then(r => r.json())
+            .then((data: { code: string; name: string }[]) =>
+                setStateLabels(Object.fromEntries(data.map(s => [s.code, s.name])))
+            )
+            .catch(() => {});
+        fetch('/api/absence-resolution-strategies')
+            .then(r => r.json())
+            .then((data: { code: string; name: string }[]) =>
+                setAbsenceOptions(data.map(s => ({ value: s.code, label: s.name })))
+            )
+            .catch(() => {});
     }, []);
 
     // ── Auth handlers ─────────────────────────────────────────────────────────
@@ -753,7 +756,7 @@ export default function TestOrderPage() {
                                         <label style={{ display: 'block', fontSize: 12, marginBottom: 4, color: '#444' }}>При отсутствии товара</label>
                                         <select value={absenceStrategy} onChange={e => setAbsenceStrategy(e.target.value)}
                                             style={{ ...inputStyle, width: 'auto' }}>
-                                            {ABSENCE_OPTIONS.map(o => (
+                                            {absenceOptions.map(o => (
                                                 <option key={o.value} value={o.value}>{o.label}</option>
                                             ))}
                                         </select>
@@ -797,7 +800,7 @@ export default function TestOrderPage() {
                         <div>
                             <strong style={{ fontSize: 14 }}>Заказ {order.id.slice(0, 8)}…</strong>
                             {' — '}
-                            <span style={{ color: '#0070f3', fontWeight: 600 }}>{STATE_LABELS[order.state] ?? order.state}</span>
+                            <span style={{ color: '#0070f3', fontWeight: 600 }}>{stateLabels[order.state] ?? order.state}</span>
                             <span style={{ marginLeft: 12, fontSize: 12, color: '#666' }}>
                                 {order.totalAmount.toLocaleString('ru')} ₽
                             </span>

@@ -32,15 +32,6 @@ interface Order {
 
 // ── Константы ────────────────────────────────────────────────────────────────
 
-const STATE_LABELS: Record<string, string> = {
-    CREATED:   'Создан',
-    PICKING:   'Сборка',
-    PAYMENT:   'Ожидание оплаты',
-    DELIVERY:  'Доставка',
-    CLOSED:    'Завершён',
-    CANCELLED: 'Отменён',
-};
-
 const STATE_COLOR: Record<string, string> = {
     CREATED:   '#0070f3',
     PICKING:   '#e07b00',
@@ -77,6 +68,10 @@ export default function TestCabinetPage() {
     const [detailLoading, setDetailLoading]       = useState(false);
     const [detailError, setDetailError]           = useState<string | null>(null);
 
+    // Справочники
+    const [stateLabels, setStateLabels]       = useState<Record<string, string>>({});
+    const [absenceLabels, setAbsenceLabels]   = useState<Record<string, string>>({});
+
     // Действия над заказом
     const [actionLoading, setActionLoading]   = useState(false);
     const [actionResult, setActionResult]     = useState<string | null>(null);
@@ -92,6 +87,21 @@ export default function TestCabinetPage() {
                 else       { setAuthStep('unauthenticated'); }
             })
             .catch(() => setAuthStep('unauthenticated'));
+    }, []);
+
+    useEffect(() => {
+        fetch('/api/order-statuses')
+            .then(r => r.json())
+            .then((data: { code: string; name: string }[]) =>
+                setStateLabels(Object.fromEntries(data.map(s => [s.code, s.name])))
+            )
+            .catch(() => {});
+        fetch('/api/absence-resolution-strategies')
+            .then(r => r.json())
+            .then((data: { code: string; name: string }[]) =>
+                setAbsenceLabels(Object.fromEntries(data.map(s => [s.code, s.name])))
+            )
+            .catch(() => {});
     }, []);
 
     // ── Auth handlers ─────────────────────────────────────────────────────────
@@ -342,7 +352,7 @@ export default function TestCabinetPage() {
                                                 background: '#f5f5f5', borderRadius: 4,
                                                 padding: '2px 6px', whiteSpace: 'nowrap',
                                             }}>
-                                                {STATE_LABELS[o.state] ?? o.state}
+                                                {stateLabels[o.state] ?? o.state}
                                             </span>
                                         </td>
                                         <td style={{ padding: '9px 8px', color: '#555', fontSize: 12 }}>
@@ -394,7 +404,7 @@ export default function TestCabinetPage() {
                                         fontWeight: 700, fontSize: 14,
                                         color: STATE_COLOR[selectedOrder.state] ?? '#333',
                                     }}>
-                                        {STATE_LABELS[selectedOrder.state] ?? selectedOrder.state}
+                                        {stateLabels[selectedOrder.state] ?? selectedOrder.state}
                                     </span>
                                     <span style={{ marginLeft: 12, color: '#444' }}>
                                         {selectedOrder.totalAmount.toLocaleString('ru')} ₽
@@ -441,7 +451,7 @@ export default function TestCabinetPage() {
                                 <tbody>
                                     {[
                                         ['Адрес доставки', selectedOrder.address],
-                                        ['Стратегия отсутствия', selectedOrder.absenceResolutionStrategy],
+                                        ['Стратегия отсутствия', absenceLabels[selectedOrder.absenceResolutionStrategy] ?? selectedOrder.absenceResolutionStrategy],
                                         ['Обновлён', new Date(selectedOrder.updatedAt).toLocaleString('ru')],
                                     ].map(([label, value]) => (
                                         <tr key={label}>

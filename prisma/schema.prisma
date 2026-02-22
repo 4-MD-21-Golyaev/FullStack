@@ -186,6 +186,21 @@ model OrderItem {
 }
 
 //////////////////////////////////////////////////////
+// OUTBOX EVENT
+//////////////////////////////////////////////////////
+
+model OutboxEvent {
+  id           String    @id @default(uuid())
+  eventType    String    // "ORDER_DELIVERED"
+  payload      Json
+  createdAt    DateTime  @default(now())
+  processedAt  DateTime?
+  failedAt     DateTime? // проставляется при исчерпании попыток или бизнес-ошибке
+  errorMessage String?   // причина сбоя (артикулы / текст ошибки)
+  retryCount   Int       @default(0)
+}
+
+//////////////////////////////////////////////////////
 // PAYMENT
 //////////////////////////////////////////////////////
 

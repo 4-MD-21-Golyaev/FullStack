@@ -291,7 +291,7 @@ POST /api/orders/[id]/repeat      — RepeatOrderUseCase
 |---|---------|-----------|-------------|--------|
 | 1 | Payment timeout (10 мин → CANCELLED) | Высокий | Да | DONE |
 | 2 | Row-level locking / optimistic versioning | Высокий | Да (race conditions) | DONE |
-| 3 | MoySklad Export (outbox pattern) | Средний | — | — |
+| 3 | MoySklad Export (outbox pattern) | Средний | — | DONE |
 | 4 | MoySklad Import (sync продуктов) | Средний | — | — |
 | 5 | Cart use-cases + API | Средний | — | DONE |
 | 6 | Личный кабинет (список заказов, повтор) | Средний | — | DONE |
