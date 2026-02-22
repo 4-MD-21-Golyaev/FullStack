@@ -28,6 +28,10 @@ export class UpdateCartItemUseCase {
             throw new Error(`Product ${input.productId} not found`);
         }
 
+        if (input.quantity > product.stock) {
+            throw new Error('Insufficient stock');
+        }
+
         await this.cartRepository.save({
             userId: input.userId,
             productId: input.productId,

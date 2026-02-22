@@ -76,4 +76,12 @@ describe('UpdateCartItemUseCase', () => {
             useCase.execute({ userId: 'u1', productId: 'p1', quantity: -3 })
         ).rejects.toThrow('Quantity must be positive');
     });
+
+    it('throws when quantity exceeds stock', async () => {
+        const useCase = new UpdateCartItemUseCase(makeCartRepo(), makeProductRepo());
+
+        await expect(
+            useCase.execute({ userId: 'u1', productId: 'p1', quantity: 11 })
+        ).rejects.toThrow('Insufficient stock');
+    });
 });

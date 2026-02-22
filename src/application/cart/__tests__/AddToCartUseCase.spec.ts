@@ -77,4 +77,22 @@ describe('AddToCartUseCase', () => {
             useCase.execute({ userId: 'u1', productId: 'p1', quantity: -1 })
         ).rejects.toThrow('Quantity must be positive');
     });
+
+    it('throws when quantity exceeds stock', async () => {
+        const cartRepo = makeCartRepo(null);
+        const useCase = new AddToCartUseCase(cartRepo, makeProductRepo());
+
+        await expect(
+            useCase.execute({ userId: 'u1', productId: 'p1', quantity: 11 })
+        ).rejects.toThrow('Insufficient stock');
+    });
+
+    it('throws when accumulated quantity exceeds stock', async () => {
+        const cartRepo = makeCartRepo({ userId: 'u1', productId: 'p1', quantity: 8 });
+        const useCase = new AddToCartUseCase(cartRepo, makeProductRepo());
+
+        await expect(
+            useCase.execute({ userId: 'u1', productId: 'p1', quantity: 3 })
+        ).rejects.toThrow('Insufficient stock');
+    });
 });

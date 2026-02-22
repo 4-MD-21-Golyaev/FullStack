@@ -70,4 +70,24 @@ describe('SyncCartUseCase', () => {
 
         expect(cartRepo.save).not.toHaveBeenCalled();
     });
+
+    it('skips items whose product is out of stock', async () => {
+        const cartRepo = makeCartRepo();
+        const outOfStock = { ...mockProduct('p1'), stock: 0 };
+        const useCase = new SyncCartUseCase(cartRepo, makeProductRepo({ p1: outOfStock }));
+
+        await useCase.execute({ userId: 'u1', items: [{ productId: 'p1', quantity: 2 }] });
+
+        expect(cartRepo.save).not.toHaveBeenCalled();
+    });
+
+    it('clamps quantity to available stock', async () => {
+        const cartRepo = makeCartRepo();
+        const limitedStock = { ...mockProduct('p1'), stock: 3 };
+        const useCase = new SyncCartUseCase(cartRepo, makeProductRepo({ p1: limitedStock }));
+
+        await useCase.execute({ userId: 'u1', items: [{ productId: 'p1', quantity: 7 }] });
+
+        expect(cartRepo.save).toHaveBeenCalledWith({ userId: 'u1', productId: 'p1', quantity: 3 });
+    });
 });

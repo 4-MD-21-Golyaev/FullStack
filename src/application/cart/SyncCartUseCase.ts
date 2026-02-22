@@ -21,14 +21,17 @@ export class SyncCartUseCase {
         if (validItems.length === 0) return;
 
         const products = await this.productRepository.findByIds(validItems.map(i => i.productId));
-        const existingIds = new Set(products.map(p => p.id));
+        const productMap = new Map(products.map(p => [p.id, p]));
 
         for (const item of validItems) {
-            if (!existingIds.has(item.productId)) continue; // товар мог быть удалён пока пользователь не был авторизован
+            const product = productMap.get(item.productId);
+            if (!product) continue; // товар мог быть удалён пока пользователь не был авторизован
+            if (product.stock === 0) continue; // товар закончился на складе
+            const quantity = Math.min(item.quantity, product.stock);
             await this.cartRepository.save({
                 userId: input.userId,
                 productId: item.productId,
-                quantity: item.quantity,
+                quantity,
             });
         }
     }

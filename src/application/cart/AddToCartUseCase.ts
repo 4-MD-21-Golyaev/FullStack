@@ -26,6 +26,10 @@ export class AddToCartUseCase {
         const existing = await this.cartRepository.findByUserAndProduct(input.userId, input.productId);
         const newQuantity = existing ? existing.quantity + input.quantity : input.quantity;
 
+        if (newQuantity > product.stock) {
+            throw new Error('Insufficient stock');
+        }
+
         await this.cartRepository.save({
             userId: input.userId,
             productId: input.productId,
