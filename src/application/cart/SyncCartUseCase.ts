@@ -17,10 +17,14 @@ export class SyncCartUseCase {
     async execute(input: SyncCartInput): Promise<void> {
         await this.cartRepository.clear(input.userId);
 
-        for (const item of input.items) {
-            if (item.quantity <= 0) continue;
-            const product = await this.productRepository.findById(item.productId);
-            if (!product) continue; // товар мог быть удалён пока пользователь не был авторизован
+        const validItems = input.items.filter(i => i.quantity > 0);
+        if (validItems.length === 0) return;
+
+        const products = await this.productRepository.findByIds(validItems.map(i => i.productId));
+        const existingIds = new Set(products.map(p => p.id));
+
+        for (const item of validItems) {
+            if (!existingIds.has(item.productId)) continue; // товар мог быть удалён пока пользователь не был авторизован
             await this.cartRepository.save({
                 userId: input.userId,
                 productId: item.productId,

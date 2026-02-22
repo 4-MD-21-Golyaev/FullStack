@@ -20,6 +20,12 @@ export class PrismaProductRepository implements ProductRepository {
         return this.toProduct(record);
     }
 
+    async findByIds(ids: string[]): Promise<Product[]> {
+        if (ids.length === 0) return [];
+        const records = await this.db.product.findMany({ where: { id: { in: ids } } });
+        return records.map(r => this.toProduct(r));
+    }
+
     async findAll(): Promise<Product[]> {
         const records = await this.db.product.findMany({
             orderBy: { name: 'asc' },

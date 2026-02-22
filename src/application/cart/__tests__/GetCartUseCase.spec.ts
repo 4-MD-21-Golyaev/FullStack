@@ -23,9 +23,10 @@ function makeCartRepo(items: any[] = []): CartRepository {
     };
 }
 
-function makeProductRepo(product: any = mockProduct): ProductRepository {
+function makeProductRepo(products: any[] = [mockProduct]): ProductRepository {
     return {
-        findById: vi.fn().mockResolvedValue(product),
+        findById: vi.fn(),
+        findByIds: vi.fn().mockResolvedValue(products),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
         save: vi.fn(),
@@ -61,14 +62,8 @@ describe('GetCartUseCase', () => {
             { userId: 'u1', productId: 'p1', quantity: 2 },
             { userId: 'u1', productId: 'p2', quantity: 1 },
         ];
-        const productRepo: ProductRepository = {
-            findById: vi.fn().mockImplementation((id: string) =>
-                id === 'p1' ? Promise.resolve(mockProduct) : Promise.resolve(null)
-            ),
-            findAll: vi.fn(),
-            findByCategoryId: vi.fn(),
-            save: vi.fn(),
-        };
+        // findByIds returns only p1 (p2 is deleted)
+        const productRepo = makeProductRepo([mockProduct]);
         const useCase = new GetCartUseCase(makeCartRepo(cartItems), productRepo);
         const result = await useCase.execute('u1');
 

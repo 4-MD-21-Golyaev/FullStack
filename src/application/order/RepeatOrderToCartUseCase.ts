@@ -27,8 +27,11 @@ export class RepeatOrderToCartUseCase {
             throw new Error('Forbidden');
         }
 
+        const cartItems = await this.cartRepository.findByUserId(input.userId);
+        const cartMap = new Map(cartItems.map(i => [i.productId, i]));
+
         for (const item of order.items) {
-            const existing = await this.cartRepository.findByUserAndProduct(input.userId, item.productId);
+            const existing = cartMap.get(item.productId);
             const newQuantity = existing ? existing.quantity + item.quantity : item.quantity;
 
             await this.cartRepository.save({

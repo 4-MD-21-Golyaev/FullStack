@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaOrderRepository } from '@/infrastructure/repositories/OrderRepository.prisma';
 import { PrismaPaymentRepository } from '@/infrastructure/repositories/PaymentRepository.prisma';
-import { PrismaProductRepository } from '@/infrastructure/repositories/ProductRepository.prisma';
+import { PrismaTransactionRunner } from '@/infrastructure/db/PrismaTransactionRunner';
 import { YookassaGateway } from '@/infrastructure/payment/YookassaGateway';
 import { InitiatePaymentUseCase } from '@/application/order/InitiatePaymentUseCase';
 
@@ -16,14 +16,14 @@ export async function POST(
 
         const orderRepo = new PrismaOrderRepository();
         const paymentRepo = new PrismaPaymentRepository();
-        const productRepo = new PrismaProductRepository();
         const gateway = new YookassaGateway();
+        const transactionRunner = new PrismaTransactionRunner();
 
         const useCase = new InitiatePaymentUseCase(
             orderRepo,
             paymentRepo,
-            productRepo,
-            gateway
+            gateway,
+            transactionRunner,
         );
 
         const result = await useCase.execute({

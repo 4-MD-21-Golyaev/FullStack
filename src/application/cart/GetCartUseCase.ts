@@ -19,10 +19,15 @@ export class GetCartUseCase {
 
     async execute(userId: string): Promise<CartItemView[]> {
         const items = await this.cartRepository.findByUserId(userId);
+        if (items.length === 0) return [];
+
+        const products = await this.productRepository.findByIds(items.map(i => i.productId));
+        const productMap = new Map(products.map(p => [p.id, p]));
+
         const views: CartItemView[] = [];
 
         for (const item of items) {
-            const product = await this.productRepository.findById(item.productId);
+            const product = productMap.get(item.productId);
             if (!product) continue;
 
             views.push({

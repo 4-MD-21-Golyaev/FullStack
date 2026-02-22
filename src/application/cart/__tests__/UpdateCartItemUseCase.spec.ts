@@ -26,6 +26,7 @@ function makeCartRepo(existing: any = { userId: 'u1', productId: 'p1', quantity:
 function makeProductRepo(product: any = mockProduct): ProductRepository {
     return {
         findById: vi.fn().mockResolvedValue(product),
+        findByIds: vi.fn(),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
         save: vi.fn(),

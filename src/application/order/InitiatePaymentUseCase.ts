@@ -1,7 +1,7 @@
 import { OrderRepository } from '@/application/ports/OrderRepository';
 import { PaymentRepository } from '@/application/ports/PaymentRepository';
 import { PaymentGateway } from '@/application/ports/PaymentGateway';
-import { ProductRepository } from '@/application/ports/ProductRepository';
+import { TransactionRunner } from '@/application/ports/TransactionRunner';
 import { cancelOrder } from '@/domain/order/transitions';
 import { OrderState } from '@/domain/order/OrderState';
 import { Payment } from '@/domain/payment/Payment';
@@ -18,8 +18,8 @@ export class InitiatePaymentUseCase {
     constructor(
         private orderRepository: OrderRepository,
         private paymentRepository: PaymentRepository,
-        private productRepository: ProductRepository,
-        private paymentGateway: PaymentGateway
+        private paymentGateway: PaymentGateway,
+        private transactionRunner: TransactionRunner,
     ) {}
 
     async execute(input: InitiatePaymentInput) {
@@ -40,44 +40,49 @@ export class InitiatePaymentUseCase {
             throw new Error('Payment already in progress for this order');
         }
 
-        // Проверяем остатки всех позиций
-        const products = new Map<string, Product>();
+        // Транзакционно: проверяем остатки, при необходимости отменяем заказ,
+        // создаём PENDING-запись платежа
+        const payment = await this.transactionRunner.run(async ({ orderRepository, productRepository, paymentRepository }) => {
+            const products = new Map<string, Product>();
 
-        for (const item of order.items) {
-            const product = await this.productRepository.findById(item.productId);
+            for (const item of order.items) {
+                const product = await productRepository.findById(item.productId);
 
-            if (!product) {
-                const cancelled = cancelOrder(order);
-                await this.orderRepository.save(cancelled);
-                throw new Error(
-                    `Product "${item.productId}" not found — order cancelled`
-                );
+                if (!product) {
+                    const cancelled = cancelOrder(order);
+                    await orderRepository.save(cancelled);
+                    throw new Error(
+                        `Product "${item.productId}" not found — order cancelled`
+                    );
+                }
+
+                if (product.stock < item.quantity) {
+                    const cancelled = cancelOrder(order);
+                    await orderRepository.save(cancelled);
+                    throw new Error(
+                        `Insufficient stock for "${product.name}": ` +
+                        `required ${item.quantity}, available ${product.stock} — order cancelled`
+                    );
+                }
+
+                products.set(item.productId, product);
             }
 
-            if (product.stock < item.quantity) {
-                const cancelled = cancelOrder(order);
-                await this.orderRepository.save(cancelled);
-                throw new Error(
-                    `Insufficient stock for "${product.name}": ` +
-                    `required ${item.quantity}, available ${product.stock} — order cancelled`
-                );
-            }
+            const payment: Payment = {
+                id: randomUUID(),
+                orderId: order.id,
+                amount: order.totalAmount,
+                status: PaymentStatus.PENDING,
+                createdAt: new Date(),
+            };
 
-            products.set(item.productId, product);
-        }
+            await paymentRepository.save(payment);
 
-        // Создаём запись платежа со статусом PENDING
-        const payment: Payment = {
-            id: randomUUID(),
-            orderId: order.id,
-            amount: order.totalAmount,
-            status: PaymentStatus.PENDING,
-            createdAt: new Date(),
-        };
-
-        await this.paymentRepository.save(payment);
+            return payment;
+        });
 
         // Создаём платёж в ЮKassa (наш payment.id — idempotency key)
+        // Вызов внешнего сервиса выполняется вне транзакции
         const created = await this.paymentGateway.createPayment({
             internalPaymentId: payment.id,
             orderId: order.id,

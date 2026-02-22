@@ -19,7 +19,7 @@ const makeOrder = (): Order => ({
     updatedAt: new Date(),
 });
 
-function makeRepos(order: Order | null, existingCartItem: { quantity: number } | null = null) {
+function makeRepos(order: Order | null, existingCartItems: { productId: string; quantity: number }[] = []) {
     const orderRepo = {
         findById: vi.fn().mockResolvedValue(order),
         findByUserId: vi.fn(),
@@ -27,11 +27,11 @@ function makeRepos(order: Order | null, existingCartItem: { quantity: number } |
     };
 
     const cartRepo = {
-        findByUserAndProduct: vi.fn().mockResolvedValue(
-            existingCartItem ? { userId: 'user-1', productId: 'p1', quantity: existingCartItem.quantity } : null
+        findByUserId: vi.fn().mockResolvedValue(
+            existingCartItems.map(i => ({ userId: 'user-1', ...i }))
         ),
+        findByUserAndProduct: vi.fn(),
         save: vi.fn(),
-        findByUserId: vi.fn(),
         remove: vi.fn(),
         clear: vi.fn(),
     };
@@ -42,7 +42,7 @@ function makeRepos(order: Order | null, existingCartItem: { quantity: number } |
 describe('RepeatOrderToCartUseCase', () => {
 
     it('adds all order items to an empty cart', async () => {
-        const { orderRepo, cartRepo } = makeRepos(makeOrder(), null);
+        const { orderRepo, cartRepo } = makeRepos(makeOrder(), []);
 
         const result = await new RepeatOrderToCartUseCase(orderRepo, cartRepo).execute({
             orderId: 'order-1',
@@ -57,11 +57,9 @@ describe('RepeatOrderToCartUseCase', () => {
 
     it('merges quantities when items already exist in cart', async () => {
         // p1 already has quantity 3 in cart; order has quantity 2 → should become 5
-        const { orderRepo, cartRepo } = makeRepos(makeOrder(), { quantity: 3 });
-        // findByUserAndProduct returns existing item for p1, null for p2
-        cartRepo.findByUserAndProduct
-            .mockResolvedValueOnce({ userId: 'user-1', productId: 'p1', quantity: 3 })
-            .mockResolvedValueOnce(null);
+        const { orderRepo, cartRepo } = makeRepos(makeOrder(), [
+            { productId: 'p1', quantity: 3 },
+        ]);
 
         await new RepeatOrderToCartUseCase(orderRepo, cartRepo).execute({
             orderId: 'order-1',
@@ -73,7 +71,7 @@ describe('RepeatOrderToCartUseCase', () => {
     });
 
     it('adds items regardless of stock availability (no product lookup)', async () => {
-        const { orderRepo, cartRepo } = makeRepos(makeOrder(), null);
+        const { orderRepo, cartRepo } = makeRepos(makeOrder(), []);
 
         // Should succeed — no productRepository is involved
         const result = await new RepeatOrderToCartUseCase(orderRepo, cartRepo).execute({

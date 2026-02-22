@@ -36,6 +36,7 @@ describe('CreateOrderUseCase', () => {
                 imagePath: null,
                 categoryId: 'c1',
             }),
+            findByIds: vi.fn(),
             findAll: vi.fn(),
             findByCategoryId: vi.fn(),
             save: vi.fn(),

@@ -19,7 +19,10 @@ function makeCartRepo(): CartRepository {
 
 function makeProductRepo(products: Record<string, any>): ProductRepository {
     return {
-        findById: vi.fn().mockImplementation((id: string) => Promise.resolve(products[id] ?? null)),
+        findById: vi.fn(),
+        findByIds: vi.fn().mockImplementation((ids: string[]) =>
+            Promise.resolve(ids.map(id => products[id]).filter(Boolean))
+        ),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
         save: vi.fn(),

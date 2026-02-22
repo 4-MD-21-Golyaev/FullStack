@@ -18,14 +18,14 @@ export class UpdateCartItemUseCase {
             throw new Error('Quantity must be positive');
         }
 
-        const product = await this.productRepository.findById(input.productId);
-        if (!product) {
-            throw new Error(`Product ${input.productId} not found`);
-        }
-
         const existing = await this.cartRepository.findByUserAndProduct(input.userId, input.productId);
         if (!existing) {
             throw new Error('Cart item not found');
+        }
+
+        const product = await this.productRepository.findById(input.productId);
+        if (!product) {
+            throw new Error(`Product ${input.productId} not found`);
         }
 
         await this.cartRepository.save({
