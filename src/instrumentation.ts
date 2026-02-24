@@ -3,8 +3,10 @@ export async function register() {
 
         const cron = await import('node-cron');
         const { PaymentTimeoutUseCase } = await import('@/application/order/PaymentTimeoutUseCase');
+        const { OrderPaymentTimeoutUseCase } = await import('@/application/order/OrderPaymentTimeoutUseCase');
         const { ProcessOutboxUseCase } = await import('@/application/order/ProcessOutboxUseCase');
         const { PrismaPaymentRepository } = await import('@/infrastructure/repositories/PaymentRepository.prisma');
+        const { PrismaOrderRepository } = await import('@/infrastructure/repositories/OrderRepository.prisma');
         const { PrismaOutboxRepository } = await import('@/infrastructure/repositories/OutboxRepository.prisma');
         const { PrismaTransactionRunner } = await import('@/infrastructure/db/PrismaTransactionRunner');
         const { HttpMoySkladGateway } = await import('@/infrastructure/moysklad/HttpMoySkladGateway');
@@ -23,6 +25,19 @@ export async function register() {
                     console.log('[PaymentTimeout]', result);
                 } catch (err) {
                     console.error('[PaymentTimeout] cron error', err);
+                }
+            });
+
+            cron.schedule('* * * * *', async () => {
+                try {
+                    const useCase = new OrderPaymentTimeoutUseCase(
+                        new PrismaOrderRepository(),
+                        new PrismaTransactionRunner(),
+                    );
+                    const result = await useCase.execute();
+                    console.log('[OrderPaymentTimeout]', result);
+                } catch (err) {
+                    console.error('[OrderPaymentTimeout] cron error', err);
                 }
             });
 

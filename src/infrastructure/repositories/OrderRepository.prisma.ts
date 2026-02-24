@@ -73,44 +73,7 @@ export class PrismaOrderRepository implements OrderRepository {
         });
     }
 
-    async findByUserId(userId: string): Promise<Order[]> {
-        const records = await this.db.order.findMany({
-            where: { userId },
-            include: { items: true, status: true, absenceResolutionStrategy: true },
-            orderBy: { createdAt: 'desc' },
-        });
-
-        return records.map(record => ({
-            id: record.id,
-            userId: record.userId,
-            totalAmount: record.totalAmount.toNumber(),
-            address: record.address,
-            state: record.status.code as OrderState,
-            absenceResolutionStrategy: record.absenceResolutionStrategy.code as AbsenceResolutionStrategy,
-            createdAt: record.createdAt,
-            updatedAt: record.updatedAt,
-            items: record.items.map(item => ({
-                productId: item.productId,
-                name: item.name,
-                article: item.article,
-                price: item.price.toNumber(),
-                quantity: item.quantity,
-            })),
-        }));
-    }
-
-    async findById(id: string): Promise<Order | null> {
-        const record = await this.db.order.findUnique({
-            where: { id },
-            include: {
-                items: true,
-                status: true,
-                absenceResolutionStrategy: true,
-            },
-        });
-
-        if (!record) return null;
-
+    private toOrder(record: any): Order {
         return {
             id: record.id,
             userId: record.userId,
@@ -120,7 +83,7 @@ export class PrismaOrderRepository implements OrderRepository {
             absenceResolutionStrategy: record.absenceResolutionStrategy.code as AbsenceResolutionStrategy,
             createdAt: record.createdAt,
             updatedAt: record.updatedAt,
-            items: record.items.map(item => ({
+            items: record.items.map((item: any) => ({
                 productId: item.productId,
                 name: item.name,
                 article: item.article,
@@ -128,5 +91,36 @@ export class PrismaOrderRepository implements OrderRepository {
                 quantity: item.quantity,
             })),
         };
+    }
+
+    async findByUserId(userId: string): Promise<Order[]> {
+        const records = await this.db.order.findMany({
+            where: { userId },
+            include: { items: true, status: true, absenceResolutionStrategy: true },
+            orderBy: { createdAt: 'desc' },
+        });
+
+        return records.map(r => this.toOrder(r));
+    }
+
+    async findById(id: string): Promise<Order | null> {
+        const record = await this.db.order.findUnique({
+            where: { id },
+            include: { items: true, status: true, absenceResolutionStrategy: true },
+        });
+
+        if (!record) return null;
+        return this.toOrder(record);
+    }
+
+    async findStaleInPayment(olderThan: Date): Promise<Order[]> {
+        const records = await this.db.order.findMany({
+            where: {
+                status: { code: OrderState.PAYMENT },
+                updatedAt: { lt: olderThan },
+            },
+            include: { items: true, status: true, absenceResolutionStrategy: true },
+        });
+        return records.map(r => this.toOrder(r));
     }
 }
