@@ -44,6 +44,25 @@ describe('middleware', () => {
         expect(mockVerify).not.toHaveBeenCalled();
     });
 
+    it('POST /api/auth/refresh (public) passes through with 200', async () => {
+        const req = makeReq('/api/auth/refresh', { method: 'POST' });
+        const res = await proxy(req);
+        expect(res.status).toBe(200);
+        expect(mockVerify).not.toHaveBeenCalled();
+    });
+
+    it('GET /api/auth/me (protected) without cookie returns 401', async () => {
+        const req = makeReq('/api/auth/me');
+        const res = await proxy(req);
+        expect(res.status).toBe(401);
+    });
+
+    it('POST /api/auth/logout (protected) without cookie returns 401', async () => {
+        const req = makeReq('/api/auth/logout', { method: 'POST' });
+        const res = await proxy(req);
+        expect(res.status).toBe(401);
+    });
+
     it('GET /api/orders without cookie returns 401', async () => {
         const req = makeReq('/api/orders');
         const res = await proxy(req);
@@ -52,60 +71,57 @@ describe('middleware', () => {
 
     it('GET /api/orders with invalid JWT returns 401', async () => {
         mockVerify.mockResolvedValue(null);
-        const req = makeReq('/api/orders', { cookie: 'session=badtoken' });
+        const req = makeReq('/api/orders', { cookie: 'access_token=badtoken' });
         const res = await proxy(req);
         expect(res.status).toBe(401);
     });
 
     it('GET /api/orders with valid CUSTOMER JWT returns 200', async () => {
         mockVerify.mockResolvedValue(CUSTOMER_SESSION);
-        const req = makeReq('/api/orders', { cookie: 'session=validtoken' });
+        const req = makeReq('/api/orders', { cookie: 'access_token=validtoken' });
         const res = await proxy(req);
         expect(res.status).toBe(200);
     });
 
     it('POST /api/orders/123/start-picking with CUSTOMER JWT returns 403', async () => {
         mockVerify.mockResolvedValue(CUSTOMER_SESSION);
-        const req = makeReq('/api/orders/123/start-picking', { method: 'POST', cookie: 'session=validtoken' });
+        const req = makeReq('/api/orders/123/start-picking', { method: 'POST', cookie: 'access_token=validtoken' });
         const res = await proxy(req);
         expect(res.status).toBe(403);
     });
 
     it('POST /api/orders/123/start-picking with STAFF JWT returns 200', async () => {
         mockVerify.mockResolvedValue(STAFF_SESSION);
-        const req = makeReq('/api/orders/123/start-picking', { method: 'POST', cookie: 'session=validtoken' });
+        const req = makeReq('/api/orders/123/start-picking', { method: 'POST', cookie: 'access_token=validtoken' });
         const res = await proxy(req);
         expect(res.status).toBe(200);
     });
 
     it('POST /api/orders/123/start-picking with ADMIN JWT returns 200', async () => {
         mockVerify.mockResolvedValue(ADMIN_SESSION);
-        const req = makeReq('/api/orders/123/start-picking', { method: 'POST', cookie: 'session=validtoken' });
+        const req = makeReq('/api/orders/123/start-picking', { method: 'POST', cookie: 'access_token=validtoken' });
         const res = await proxy(req);
         expect(res.status).toBe(200);
     });
 
     it('PATCH /api/orders/123/items with CUSTOMER JWT returns 403', async () => {
         mockVerify.mockResolvedValue(CUSTOMER_SESSION);
-        const req = makeReq('/api/orders/123/items', { method: 'PATCH', cookie: 'session=validtoken' });
+        const req = makeReq('/api/orders/123/items', { method: 'PATCH', cookie: 'access_token=validtoken' });
         const res = await proxy(req);
         expect(res.status).toBe(403);
     });
 
     it('PATCH /api/orders/123/items with STAFF JWT returns 200', async () => {
         mockVerify.mockResolvedValue(STAFF_SESSION);
-        const req = makeReq('/api/orders/123/items', { method: 'PATCH', cookie: 'session=validtoken' });
+        const req = makeReq('/api/orders/123/items', { method: 'PATCH', cookie: 'access_token=validtoken' });
         const res = await proxy(req);
         expect(res.status).toBe(200);
     });
 
-    it('spoofed x-user-id header is stripped — verifyJwt is called and CUSTOMER without cookie gets 401', async () => {
-        // No cookie provided — session cookie is missing
+    it('spoofed x-user-id header is stripped — without cookie gets 401', async () => {
         const req = makeReq('/api/orders', { headers: { 'x-user-id': 'attacker-id' } });
         const res = await proxy(req);
-        // No cookie → verifyJwt not called (token is null), response is 401
         expect(res.status).toBe(401);
-        // Verify the header stripping did not allow bypass
         expect(mockVerify).not.toHaveBeenCalled();
     });
 });

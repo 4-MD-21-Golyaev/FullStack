@@ -13,12 +13,17 @@ export async function register() {
             (global as { __cronStarted?: boolean }).__cronStarted = true;
 
             cron.schedule('* * * * *', async () => {
+                try {
+                    const useCase = new PaymentTimeoutUseCase(
+                        new PrismaPaymentRepository(),
+                        new PrismaTransactionRunner(),
+                    );
+                    const result = await useCase.execute();
 
-                const useCase = new PaymentTimeoutUseCase(
-                    new PrismaPaymentRepository(),
-                    new PrismaTransactionRunner(),
-                );
-                const result = await useCase.execute();
+                    console.log('[PaymentTimeout]', result);
+                } catch (err) {
+                    console.error('[PaymentTimeout] cron error', err);
+                }
             });
 
             cron.schedule('* * * * *', async () => {

@@ -65,8 +65,9 @@ model User {
   role      String    @default("CUSTOMER")
   userRole  UserRole  @relation(fields: [role], references: [code])
 
-  orders    Order[]
-  cartItems CartItem[]
+  orders        Order[]
+  cartItems     CartItem[]
+  refreshTokens RefreshToken[]
 }
 
 //////////////////////////////////////////////////////
@@ -82,6 +83,21 @@ model EmailOtp {
   createdAt DateTime @default(now())
 
   @@index([email])
+}
+
+//////////////////////////////////////////////////////
+// REFRESH TOKEN
+//////////////////////////////////////////////////////
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 //////////////////////////////////////////////////////

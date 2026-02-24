@@ -12,7 +12,7 @@ export class PrismaOutboxRepository implements OutboxRepository {
     }
 
     async save(event: Omit<OutboxEvent, 'createdAt' | 'processedAt' | 'failedAt' | 'errorMessage' | 'retryCount'>): Promise<void> {
-        await this.db.outboxEvent.create({ data: event });
+        await this.db.outboxEvent.create({ data: { ...event, payload: event.payload as Prisma.InputJsonValue } });
     }
 
     async findPending(maxRetries: number): Promise<OutboxEvent[]> {

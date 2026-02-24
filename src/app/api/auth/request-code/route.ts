@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createOtpInDB } from '@/lib/auth/otp';
-import { sendOtpEmail } from '@/lib/auth/email';
+import { RequestCodeUseCase } from '@/application/auth/RequestCodeUseCase';
+import { PrismaOtpRepository } from '@/infrastructure/repositories/OtpRepository.prisma';
+import { NodemailerEmailGateway } from '@/infrastructure/auth/NodemailerEmailGateway';
 
 export async function POST(req: NextRequest) {
     try {
@@ -11,20 +12,14 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: 'email is required' }, { status: 400 });
         }
 
-        const code = await createOtpInDB(email);
+        const useCase = new RequestCodeUseCase(
+            new PrismaOtpRepository(),
+            new NodemailerEmailGateway(),
+        );
+        const result = await useCase.execute({ email });
 
-        // Fire-and-forget: send email but don't block response on it
-        sendOtpEmail(email, code).catch((err) => {
-            console.error('[request-code] Failed to send OTP email:', err);
-        });
-
-        // In development return the code directly so the test page works without SMTP
-        const responseBody: Record<string, unknown> = { ok: true };
-        if (process.env.NODE_ENV === 'development') {
-            responseBody.code = code;
-        }
-        return NextResponse.json(responseBody);
-    } catch (error: any) {
-        return NextResponse.json({ message: error.message }, { status: 400 });
+        return NextResponse.json(result);
+    } catch (error: unknown) {
+        return NextResponse.json({ message: (error as Error).message }, { status: 400 });
     }
 }

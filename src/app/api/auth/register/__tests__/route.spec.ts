@@ -1,22 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('@/infrastructure/db/prismaClient', () => ({
-    prisma: {
-        user: {
-            findUnique: vi.fn(),
-            create: vi.fn(),
-        },
-    },
+const mockExecute = vi.fn();
+
+vi.mock('@/application/auth/RegisterUseCase', () => ({
+    RegisterUseCase: class { execute = mockExecute; },
+}));
+
+vi.mock('@/infrastructure/repositories/UserRepository.prisma', () => ({
+    PrismaUserRepository: class {},
 }));
 
 import { NextRequest } from 'next/server';
 import { POST } from '../route';
-import { prisma } from '@/infrastructure/db/prismaClient';
-
-const mockUser = prisma.user as {
-    findUnique: ReturnType<typeof vi.fn>;
-    create: ReturnType<typeof vi.fn>;
-};
+import { UserAlreadyExistsError } from '@/domain/auth/errors';
 
 function makeReq(body: unknown): NextRequest {
     return new NextRequest('http://localhost/api/auth/register', {
@@ -41,15 +37,14 @@ describe('POST /api/auth/register', () => {
         expect(res.status).toBe(400);
     });
 
-    it('returns 409 when user with email already exists', async () => {
-        mockUser.findUnique.mockResolvedValue({ id: 'existing-id', email: 'test@example.com' });
+    it('returns 409 when user already exists', async () => {
+        mockExecute.mockRejectedValue(new UserAlreadyExistsError('test@example.com'));
         const res = await POST(makeReq({ email: 'test@example.com', phone: '+79991234567' }));
         expect(res.status).toBe(409);
     });
 
-    it('returns 201 with id and email on valid data', async () => {
-        mockUser.findUnique.mockResolvedValue(null);
-        mockUser.create.mockResolvedValue({ id: 'new-user-id', email: 'new@example.com', phone: '+79991234567' });
+    it('returns 201 with id and email on success', async () => {
+        mockExecute.mockResolvedValue({ id: 'new-user-id', email: 'new@example.com' });
 
         const res = await POST(makeReq({ email: 'new@example.com', phone: '+79991234567' }));
         expect(res.status).toBe(201);

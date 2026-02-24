@@ -1,4 +1,4 @@
-import { SignJWT, jwtVerify } from 'jose';
+import { jwtVerify } from 'jose';
 
 export interface SessionPayload {
     sub: string;
@@ -10,15 +10,6 @@ function getSecret(): Uint8Array {
     const secret = process.env.JWT_SECRET;
     if (!secret) throw new Error('JWT_SECRET is not defined');
     return new TextEncoder().encode(secret);
-}
-
-export async function signJwt(payload: SessionPayload): Promise<string> {
-    return new SignJWT({ role: payload.role, email: payload.email })
-        .setProtectedHeader({ alg: 'HS256' })
-        .setSubject(payload.sub)
-        .setIssuedAt()
-        .setExpirationTime('7d')
-        .sign(getSecret());
 }
 
 export async function verifyJwt(token: string): Promise<SessionPayload | null> {

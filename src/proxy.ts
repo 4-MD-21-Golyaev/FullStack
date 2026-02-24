@@ -5,7 +5,10 @@ import { verifyJwt } from '@/lib/auth/jwt';
 const PUBLIC_PREFIXES = [
     '/api/products',
     '/api/categories',
-    '/api/auth',
+    '/api/auth/register',
+    '/api/auth/request-code',
+    '/api/auth/verify-code',
+    '/api/auth/refresh',
     '/api/webhooks/yookassa',
     '/api/cron',
 ];
@@ -55,7 +58,7 @@ export async function proxy(req: NextRequest) {
         return NextResponse.next({ request: { headers: requestHeaders } });
     }
 
-    const token = req.cookies.get('session')?.value ?? null;
+    const token = req.cookies.get('access_token')?.value ?? null;
     const session = token ? await verifyJwt(token) : null;
 
     if (!session) {

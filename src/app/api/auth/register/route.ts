@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/infrastructure/db/prismaClient';
+import { RegisterUseCase } from '@/application/auth/RegisterUseCase';
+import { PrismaUserRepository } from '@/infrastructure/repositories/UserRepository.prisma';
+import { UserAlreadyExistsError } from '@/domain/auth/errors';
 
 export async function POST(req: NextRequest) {
     try {
@@ -10,17 +12,14 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: 'email and phone are required' }, { status: 400 });
         }
 
-        const existing = await prisma.user.findUnique({ where: { email } });
-        if (existing) {
-            return NextResponse.json({ message: 'User with this email already exists' }, { status: 409 });
+        const useCase = new RegisterUseCase(new PrismaUserRepository());
+        const result = await useCase.execute({ email, phone, address });
+
+        return NextResponse.json(result, { status: 201 });
+    } catch (error: unknown) {
+        if (error instanceof UserAlreadyExistsError) {
+            return NextResponse.json({ message: error.message }, { status: 409 });
         }
-
-        const user = await prisma.user.create({
-            data: { email, phone, address: address ?? null, role: 'CUSTOMER' },
-        });
-
-        return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
-    } catch (error: any) {
-        return NextResponse.json({ message: error.message }, { status: 400 });
+        return NextResponse.json({ message: (error as Error).message }, { status: 400 });
     }
 }
