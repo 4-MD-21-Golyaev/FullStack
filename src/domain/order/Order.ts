@@ -14,6 +14,8 @@ export interface Order {
     pickerClaimedAt?: Date | null;
     deliveryClaimUserId?: string | null;
     deliveryClaimedAt?: Date | null;
+    outForDeliveryAt?: Date | null;
+    deliveredAt?: Date | null;
     createdAt: Date;
     updatedAt: Date;
 }

@@ -74,7 +74,7 @@ describe('PayOrderUseCase', () => {
         const runner = makeTransactionRunner(makeOrder(OrderState.PAYMENT), makeProduct(10));
         const result = await new PayOrderUseCase(runner).execute({ orderId: 'order-1' });
 
-        expect(result.order.state).toBe(OrderState.DELIVERY);
+        expect(result.order.state).toBe(OrderState.DELIVERY_ASSIGNED);
         expect(result.payment.status).toBe(PaymentStatus.SUCCESS);
         expect(result.payment.orderId).toBe('order-1');
         expect(result.payment.amount).toBe(500);

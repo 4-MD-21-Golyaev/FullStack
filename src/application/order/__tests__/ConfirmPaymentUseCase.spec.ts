@@ -118,7 +118,7 @@ describe('ConfirmPaymentUseCase', () => {
         const result = await useCase.execute({ externalId: 'yk-ext-id', event: 'payment.succeeded' });
 
         expect(result.alreadyProcessed).toBe(false);
-        expect(result.order!.state).toBe(OrderState.DELIVERY);
+        expect(result.order!.state).toBe(OrderState.DELIVERY_ASSIGNED);
         expect(result.payment!.status).toBe(PaymentStatus.SUCCESS);
         expect(txProductRepo.save).toHaveBeenCalledWith(
             expect.objectContaining({ stock: 8 }) // 10 - 2
@@ -215,7 +215,7 @@ describe('ConfirmPaymentUseCase', () => {
         consoleSpy.mockRestore();
     });
 
-    it('on payment.succeeded: OutboxEvent записывается с eventType ORDER_DELIVERED и orderId', async () => {
+    it('on payment.succeeded: OutboxEvent записывается с eventType ORDER_READY_FOR_DELIVERY и orderId', async () => {
         const { paymentRepo, transactionRunner, txOutboxRepo } =
             makeDeps(makePayment(PaymentStatus.PENDING), makeOrder(OrderState.PAYMENT), makeProduct(10));
 
@@ -225,7 +225,7 @@ describe('ConfirmPaymentUseCase', () => {
         expect(txOutboxRepo.save).toHaveBeenCalledOnce();
         expect(txOutboxRepo.save).toHaveBeenCalledWith(
             expect.objectContaining({
-                eventType: 'ORDER_DELIVERED',
+                eventType: 'ORDER_READY_FOR_DELIVERY',
                 payload: expect.objectContaining({ orderId: 'order-1' }),
             })
         );

@@ -16,12 +16,15 @@ const prisma = new PrismaClient({
 
 async function main() {
     const orderStatuses = [
-        { code: 'CREATED', name: 'Создан' },
-        { code: 'PICKING', name: 'Сборка' },
-        { code: 'PAYMENT', name: 'Ожидание оплаты' },
-        { code: 'DELIVERY', name: 'Доставка' },
-        { code: 'CLOSED', name: 'Закрыт' },
-        { code: 'CANCELLED', name: 'Отменён' },
+        { code: 'CREATED',           name: 'Создан'                  },
+        { code: 'PICKING',           name: 'Сборка'                  },
+        { code: 'PAYMENT',           name: 'Ожидание оплаты'         },
+        { code: 'DELIVERY',          name: 'Доставка (устар.)'       }, // backward compat
+        { code: 'DELIVERY_ASSIGNED', name: 'Назначена доставка'      },
+        { code: 'OUT_FOR_DELIVERY',  name: 'В пути'                  },
+        { code: 'DELIVERED',         name: 'Доставлен'               },
+        { code: 'CLOSED',            name: 'Закрыт'                  },
+        { code: 'CANCELLED',         name: 'Отменён'                 },
     ]
 
     for (const status of orderStatuses) {

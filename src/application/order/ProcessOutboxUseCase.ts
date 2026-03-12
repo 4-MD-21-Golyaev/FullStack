@@ -27,9 +27,11 @@ export class ProcessOutboxUseCase {
         for (const event of events) {
             try {
                 if (event.eventType === 'ORDER_DELIVERED') {
+                    // Physical delivery confirmed — export to MoySklad
                     const { orderId, items } = event.payload as any;
                     await this.moySkladGateway.exportOrder(orderId, items);
                 }
+                // ORDER_READY_FOR_DELIVERY: order assigned for delivery, no MoySklad export yet
                 await this.outboxRepository.markProcessed(event.id);
                 processed++;
             } catch (err) {

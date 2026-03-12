@@ -183,6 +183,11 @@ model Order {
   deliveryClaimUserId  String?
   deliveryClaimedAt    DateTime?
 
+  /// Timestamp set when courier transitions order to OUT_FOR_DELIVERY (SLA start)
+  outForDeliveryAt     DateTime?
+  /// Timestamp set when courier confirms actual delivery (SLA end)
+  deliveredAt          DateTime?
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

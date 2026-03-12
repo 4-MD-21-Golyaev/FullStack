@@ -50,6 +50,8 @@ export class PrismaOrderRepository implements OrderRepository {
                 pickerClaimedAt: order.pickerClaimedAt ?? null,
                 deliveryClaimUserId: order.deliveryClaimUserId ?? null,
                 deliveryClaimedAt: order.deliveryClaimedAt ?? null,
+                outForDeliveryAt: order.outForDeliveryAt ?? null,
+                deliveredAt: order.deliveredAt ?? null,
                 items: {
                     deleteMany: {},
                     create: order.items.map(item => ({
@@ -74,6 +76,8 @@ export class PrismaOrderRepository implements OrderRepository {
                 pickerClaimedAt: order.pickerClaimedAt ?? null,
                 deliveryClaimUserId: order.deliveryClaimUserId ?? null,
                 deliveryClaimedAt: order.deliveryClaimedAt ?? null,
+                outForDeliveryAt: order.outForDeliveryAt ?? null,
+                deliveredAt: order.deliveredAt ?? null,
                 items: {
                     create: order.items.map(item => ({
                         productId: item.productId,
@@ -99,6 +103,8 @@ export class PrismaOrderRepository implements OrderRepository {
             pickerClaimedAt: record.pickerClaimedAt ?? null,
             deliveryClaimUserId: record.deliveryClaimUserId ?? null,
             deliveryClaimedAt: record.deliveryClaimedAt ?? null,
+            outForDeliveryAt: record.outForDeliveryAt ?? null,
+            deliveredAt: record.deliveredAt ?? null,
             createdAt: record.createdAt,
             updatedAt: record.updatedAt,
             items: record.items.map((item: any) => ({
@@ -265,7 +271,8 @@ export class PrismaOrderRepository implements OrderRepository {
     async findAvailableForDelivery(): Promise<Order[]> {
         const records = await this.db.order.findMany({
             where: {
-                status: { code: OrderState.DELIVERY },
+                // DELIVERY_ASSIGNED = new; DELIVERY = legacy backward compat
+                status: { code: { in: [OrderState.DELIVERY_ASSIGNED, OrderState.DELIVERY] } },
                 deliveryClaimUserId: null,
             },
             include: ORDER_INCLUDE,
@@ -278,7 +285,7 @@ export class PrismaOrderRepository implements OrderRepository {
         const records = await this.db.order.findMany({
             where: {
                 deliveryClaimUserId: userId,
-                status: { code: OrderState.DELIVERY },
+                status: { code: { in: [OrderState.DELIVERY_ASSIGNED, OrderState.OUT_FOR_DELIVERY, OrderState.DELIVERY] } },
             },
             include: ORDER_INCLUDE,
             orderBy: { deliveryClaimedAt: 'asc' },
@@ -293,7 +300,7 @@ export class PrismaOrderRepository implements OrderRepository {
             WHERE id = ${orderId}
               AND "deliveryClaimUserId" IS NULL
               AND "statusId" IN (
-                  SELECT id FROM "OrderStatus" WHERE code = 'DELIVERY'
+                  SELECT id FROM "OrderStatus" WHERE code IN ('DELIVERY_ASSIGNED', 'DELIVERY')
               )
         `;
         return result > 0;

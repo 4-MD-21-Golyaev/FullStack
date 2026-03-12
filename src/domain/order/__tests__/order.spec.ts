@@ -3,10 +3,13 @@ import {
     startPicking,
     registerPayment,
     startDelivery,
+    startOutForDelivery,
+    confirmDelivered,
+    markDeliveryFailed,
     closeOrder,
     cancelOrder,
+    createOrder,
 } from '../transitions';
-import { createOrder } from '../transitions';
 import { OrderState } from '../OrderState';
 import { InvalidOrderStateError } from '../errors';
 import { AbsenceResolutionStrategy } from '../AbsenceResolutionStrategy';
@@ -50,7 +53,7 @@ describe('Order lifecycle', () => {
         expect(paid.state).toBe(OrderState.PAYMENT);
     });
 
-    it('PAYMENT → DELIVERY', () => {
+    it('PAYMENT → DELIVERY_ASSIGNED', () => {
         const order = registerPayment(
             startPicking(
                 createOrder('1', 'user1', address, baseItems, strategy)
@@ -59,14 +62,68 @@ describe('Order lifecycle', () => {
 
         const delivery = startDelivery(order);
 
-        expect(delivery.state).toBe(OrderState.DELIVERY);
+        expect(delivery.state).toBe(OrderState.DELIVERY_ASSIGNED);
     });
 
-    it('DELIVERY → CLOSED', () => {
+    it('DELIVERY_ASSIGNED → OUT_FOR_DELIVERY', () => {
         const order = startDelivery(
             registerPayment(
                 startPicking(
                     createOrder('1', 'user1', address, baseItems, strategy)
+                )
+            )
+        );
+
+        const outFor = startOutForDelivery(order);
+
+        expect(outFor.state).toBe(OrderState.OUT_FOR_DELIVERY);
+        expect(outFor.outForDeliveryAt).toBeInstanceOf(Date);
+    });
+
+    it('OUT_FOR_DELIVERY → DELIVERED', () => {
+        const order = startOutForDelivery(
+            startDelivery(
+                registerPayment(
+                    startPicking(
+                        createOrder('1', 'user1', address, baseItems, strategy)
+                    )
+                )
+            )
+        );
+
+        const delivered = confirmDelivered(order);
+
+        expect(delivered.state).toBe(OrderState.DELIVERED);
+        expect(delivered.deliveredAt).toBeInstanceOf(Date);
+    });
+
+    it('OUT_FOR_DELIVERY → DELIVERY_ASSIGNED (mark delivery failed)', () => {
+        const order = startOutForDelivery(
+            startDelivery(
+                registerPayment(
+                    startPicking(
+                        createOrder('1', 'user1', address, baseItems, strategy)
+                    )
+                )
+            )
+        );
+
+        const retried = markDeliveryFailed(order);
+
+        expect(retried.state).toBe(OrderState.DELIVERY_ASSIGNED);
+        expect(retried.outForDeliveryAt).toBeNull();
+        expect(retried.deliveryClaimUserId).toBeNull();
+    });
+
+    it('DELIVERED → CLOSED', () => {
+        const order = confirmDelivered(
+            startOutForDelivery(
+                startDelivery(
+                    registerPayment(
+                        startPicking(
+                            createOrder('1', 'user1', address, baseItems, strategy)
+                        )
+                    )
                 )
             )
         );
@@ -105,7 +162,7 @@ describe('Order lifecycle', () => {
         expect(cancelled.state).toBe(OrderState.CANCELLED);
     });
 
-    it('prevents cancelling DELIVERY', () => {
+    it('prevents cancelling DELIVERY_ASSIGNED', () => {
         const order = startDelivery(
             registerPayment(
                 startPicking(
@@ -118,8 +175,8 @@ describe('Order lifecycle', () => {
             .toThrow(InvalidOrderStateError);
     });
 
-    it('prevents cancelling CLOSED', () => {
-        const order = closeOrder(
+    it('prevents cancelling OUT_FOR_DELIVERY', () => {
+        const order = startOutForDelivery(
             startDelivery(
                 registerPayment(
                     startPicking(
@@ -129,8 +186,53 @@ describe('Order lifecycle', () => {
             )
         );
 
+        expect(() => cancelOrder(order)).toThrow(InvalidOrderStateError);
+    });
+
+    it('prevents cancelling DELIVERED', () => {
+        const order = confirmDelivered(
+            startOutForDelivery(
+                startDelivery(
+                    registerPayment(
+                        startPicking(
+                            createOrder('1', 'user1', address, baseItems, strategy)
+                        )
+                    )
+                )
+            )
+        );
+
+        expect(() => cancelOrder(order)).toThrow(InvalidOrderStateError);
+    });
+
+    it('prevents cancelling CLOSED', () => {
+        const order = closeOrder(
+            confirmDelivered(
+                startOutForDelivery(
+                    startDelivery(
+                        registerPayment(
+                            startPicking(
+                                createOrder('1', 'user1', address, baseItems, strategy)
+                            )
+                        )
+                    )
+                )
+            )
+        );
+
         expect(() => cancelOrder(order))
             .toThrow(InvalidOrderStateError);
     });
 
+    it('cannot close order from DELIVERY_ASSIGNED (must go through DELIVERED)', () => {
+        const order = startDelivery(
+            registerPayment(
+                startPicking(
+                    createOrder('1', 'user1', address, baseItems, strategy)
+                )
+            )
+        );
+
+        expect(() => closeOrder(order)).toThrow(InvalidOrderStateError);
+    });
 });

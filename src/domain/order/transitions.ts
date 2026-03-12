@@ -12,11 +12,12 @@ function ensureState(order: Order, allowed: OrderState[]) {
     }
 }
 
-function cloneWithState(order: Order, state: OrderState): Order {
+function cloneWithState(order: Order, state: OrderState, extra?: Partial<Order>): Order {
     return {
         ...order,
         state,
         updatedAt: new Date(),
+        ...extra,
     };
 }
 
@@ -89,20 +90,57 @@ export function registerPayment(order: Order): Order {
 }
 
 //////////////////////////////////////////////////////
-// PAYMENT → DELIVERY
+// PAYMENT → DELIVERY_ASSIGNED
 //////////////////////////////////////////////////////
 
 export function startDelivery(order: Order): Order {
     ensureState(order, [OrderState.PAYMENT]);
-    return cloneWithState(order, OrderState.DELIVERY);
+    return cloneWithState(order, OrderState.DELIVERY_ASSIGNED);
 }
 
 //////////////////////////////////////////////////////
-// DELIVERY → CLOSED
+// DELIVERY_ASSIGNED → OUT_FOR_DELIVERY
+//////////////////////////////////////////////////////
+
+export function startOutForDelivery(order: Order): Order {
+    // Also accept legacy DELIVERY for backward compat with existing records
+    ensureState(order, [OrderState.DELIVERY_ASSIGNED, OrderState.DELIVERY]);
+    return cloneWithState(order, OrderState.OUT_FOR_DELIVERY, {
+        outForDeliveryAt: new Date(),
+    });
+}
+
+//////////////////////////////////////////////////////
+// OUT_FOR_DELIVERY → DELIVERED
+//////////////////////////////////////////////////////
+
+export function confirmDelivered(order: Order): Order {
+    ensureState(order, [OrderState.OUT_FOR_DELIVERY]);
+    return cloneWithState(order, OrderState.DELIVERED, {
+        deliveredAt: new Date(),
+    });
+}
+
+//////////////////////////////////////////////////////
+// OUT_FOR_DELIVERY → DELIVERY_ASSIGNED  (retry)
+//////////////////////////////////////////////////////
+
+export function markDeliveryFailed(order: Order): Order {
+    ensureState(order, [OrderState.OUT_FOR_DELIVERY]);
+    return cloneWithState(order, OrderState.DELIVERY_ASSIGNED, {
+        outForDeliveryAt: null,
+        deliveryClaimUserId: null,
+        deliveryClaimedAt: null,
+    });
+}
+
+//////////////////////////////////////////////////////
+// DELIVERED → CLOSED
 //////////////////////////////////////////////////////
 
 export function closeOrder(order: Order): Order {
-    ensureState(order, [OrderState.DELIVERY]);
+    // Accept DELIVERED (new) or legacy DELIVERY for backward compat
+    ensureState(order, [OrderState.DELIVERED, OrderState.DELIVERY]);
     return cloneWithState(order, OrderState.CLOSED);
 }
 
