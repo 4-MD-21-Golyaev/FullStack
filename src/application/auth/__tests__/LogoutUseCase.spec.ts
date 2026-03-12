@@ -4,7 +4,7 @@ import { RefreshTokenRepository } from '@/application/ports/RefreshTokenReposito
 import { TokenService } from '@/application/ports/TokenService';
 
 function makeRefreshTokenRepo(): RefreshTokenRepository {
-    return { save: vi.fn(), findById: vi.fn(), revoke: vi.fn(), revokeAllForUser: vi.fn() };
+    return { save: vi.fn(), findById: vi.fn(), revoke: vi.fn(), revokeAllForUser: vi.fn(), consumeActive: vi.fn() };
 }
 
 function makeTokenService(payload: unknown = { sub: 'u1', jti: 'jti-1' }): TokenService {

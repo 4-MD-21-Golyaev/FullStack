@@ -51,6 +51,16 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
         findById: vi.fn().mockResolvedValue(order),
         findByUserId: vi.fn(),
         findStaleInPayment: vi.fn(),
+        findAllWithFilters: vi.fn() as any,
+        countWithFilters: vi.fn() as any,
+        findAvailableForPicking: vi.fn() as any,
+        findByPickerClaimUserId: vi.fn() as any,
+        claimForPicker: vi.fn() as any,
+        releasePickerClaim: vi.fn() as any,
+        findAvailableForDelivery: vi.fn() as any,
+        findByCourierClaimUserId: vi.fn() as any,
+        claimForCourier: vi.fn() as any,
+        releaseCourierClaim: vi.fn() as any,
     };
     const txPaymentRepo = {
         save: vi.fn(),
@@ -75,15 +85,17 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
         markProcessed: vi.fn(),
         markFailed: vi.fn(),
         incrementRetry: vi.fn(),
+        claimPending: vi.fn() as any,
     };
 
     const transactionRunner: TransactionRunner = {
         run: vi.fn().mockImplementation((work: (ctx: TransactionContext) => Promise<any>) =>
             work({
-                orderRepository: txOrderRepo,
+                orderRepository: txOrderRepo as any,
                 paymentRepository: txPaymentRepo,
                 productRepository: txProductRepo,
-                outboxRepository: txOutboxRepo,
+                outboxRepository: txOutboxRepo as any,
+                auditLogRepository: {} as any,
             })
         ),
     };

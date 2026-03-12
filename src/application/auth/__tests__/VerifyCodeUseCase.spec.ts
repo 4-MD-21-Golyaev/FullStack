@@ -17,7 +17,7 @@ function makeUserRepo(user: unknown = mockUser): UserRepository {
 }
 
 function makeRefreshTokenRepo(): RefreshTokenRepository {
-    return { save: vi.fn(), findById: vi.fn(), revoke: vi.fn(), revokeAllForUser: vi.fn() };
+    return { save: vi.fn(), findById: vi.fn(), revoke: vi.fn(), revokeAllForUser: vi.fn(), consumeActive: vi.fn() };
 }
 
 function makeTokenService(): TokenService {

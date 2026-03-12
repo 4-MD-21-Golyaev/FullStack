@@ -36,18 +36,38 @@ function makeDeps(
     freshOrder: Order | null,
     pendingPayment: Payment | null,
 ) {
-    const orderRepo: OrderRepository = {
+    const orderRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(freshOrder),
         findByUserId: vi.fn(),
         findStaleInPayment: vi.fn().mockResolvedValue(staleOrders),
-    };
+        findAllWithFilters: vi.fn() as any,
+        countWithFilters: vi.fn() as any,
+        findAvailableForPicking: vi.fn() as any,
+        findByPickerClaimUserId: vi.fn() as any,
+        claimForPicker: vi.fn() as any,
+        releasePickerClaim: vi.fn() as any,
+        findAvailableForDelivery: vi.fn() as any,
+        findByCourierClaimUserId: vi.fn() as any,
+        claimForCourier: vi.fn() as any,
+        releaseCourierClaim: vi.fn() as any,
+    } as unknown as OrderRepository;
 
     const txOrderRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(freshOrder),
         findByUserId: vi.fn(),
         findStaleInPayment: vi.fn(),
+        findAllWithFilters: vi.fn(),
+        countWithFilters: vi.fn(),
+        findAvailableForPicking: vi.fn(),
+        findByPickerClaimUserId: vi.fn(),
+        claimForPicker: vi.fn(),
+        releasePickerClaim: vi.fn(),
+        findAvailableForDelivery: vi.fn(),
+        findByCourierClaimUserId: vi.fn(),
+        claimForCourier: vi.fn(),
+        releaseCourierClaim: vi.fn(),
     };
     const txPaymentRepo = {
         save: vi.fn(),
@@ -65,6 +85,7 @@ function makeDeps(
                 paymentRepository: txPaymentRepo,
                 productRepository: {} as any,
                 outboxRepository: {} as any,
+                    auditLogRepository: {} as any,
             })
         ),
     };
@@ -140,12 +161,22 @@ describe('OrderPaymentTimeoutUseCase', () => {
         const order1 = makeOrder(OrderState.PAYMENT, { id: 'order-1' });
         const order2 = makeOrder(OrderState.PAYMENT, { id: 'order-2' });
 
-        const orderRepo: OrderRepository = {
+        const orderRepo = {
             save: vi.fn(),
             findById: vi.fn(),
             findByUserId: vi.fn(),
             findStaleInPayment: vi.fn().mockResolvedValue([order1, order2]),
-        };
+            findAllWithFilters: vi.fn() as any,
+            countWithFilters: vi.fn() as any,
+            findAvailableForPicking: vi.fn() as any,
+            findByPickerClaimUserId: vi.fn() as any,
+            claimForPicker: vi.fn() as any,
+            releasePickerClaim: vi.fn() as any,
+            findAvailableForDelivery: vi.fn() as any,
+            findByCourierClaimUserId: vi.fn() as any,
+            claimForCourier: vi.fn() as any,
+            releaseCourierClaim: vi.fn() as any,
+        } as unknown as OrderRepository;
 
         let callCount = 0;
         const transactionRunner: TransactionRunner = {
@@ -158,6 +189,16 @@ describe('OrderPaymentTimeoutUseCase', () => {
                         findById: vi.fn().mockResolvedValue(order2),
                         findByUserId: vi.fn(),
                         findStaleInPayment: vi.fn(),
+        findAllWithFilters: vi.fn(),
+        countWithFilters: vi.fn(),
+        findAvailableForPicking: vi.fn(),
+        findByPickerClaimUserId: vi.fn(),
+        claimForPicker: vi.fn(),
+        releasePickerClaim: vi.fn(),
+        findAvailableForDelivery: vi.fn(),
+        findByCourierClaimUserId: vi.fn(),
+        claimForCourier: vi.fn(),
+        releaseCourierClaim: vi.fn(),
                     },
                     paymentRepository: {
                         save: vi.fn(),
@@ -169,6 +210,7 @@ describe('OrderPaymentTimeoutUseCase', () => {
                     },
                     productRepository: {} as any,
                     outboxRepository: {} as any,
+                    auditLogRepository: {} as any,
                 });
             }),
         };

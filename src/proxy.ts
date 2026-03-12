@@ -13,21 +13,33 @@ const PUBLIC_PREFIXES = [
     '/api/webhooks/moysklad',
 ];
 
-// Routes that require STAFF or ADMIN role (all methods)
-const STAFF_ONLY_PATTERNS = [
-    /^\/api\/orders\/[^/]+\/start-picking$/,
-    /^\/api\/orders\/[^/]+\/complete-picking$/,
-    /^\/api\/orders\/[^/]+\/close$/,
-];
+// Operational roles for picking
+const PICKER_ROLES = new Set(['STAFF', 'PICKER', 'ADMIN']);
+// Operational roles for delivery
+const COURIER_ROLES = new Set(['COURIER', 'ADMIN']);
+// Admin-only
+const ADMIN_ROLES = new Set(['ADMIN']);
 
 function isPublic(pathname: string): boolean {
     return PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
-function isStaffOnly(pathname: string, method: string): boolean {
-    // PATCH /api/orders/[id]/items requires STAFF/ADMIN
+function isPickerRoute(pathname: string, method: string): boolean {
+    if (pathname.startsWith('/api/picker/')) return true;
+    // Legacy order routes that require picker role
+    if (pathname.match(/^\/api\/orders\/[^/]+\/start-picking$/) && method === 'POST') return true;
+    if (pathname.match(/^\/api\/orders\/[^/]+\/complete-picking$/) && method === 'POST') return true;
+    if (pathname.match(/^\/api\/orders\/[^/]+\/close$/) && method === 'POST') return true;
     if (pathname.match(/^\/api\/orders\/[^/]+\/items$/) && method === 'PATCH') return true;
-    return STAFF_ONLY_PATTERNS.some((pattern) => pattern.test(pathname));
+    return false;
+}
+
+function isCourierRoute(pathname: string): boolean {
+    return pathname.startsWith('/api/courier/');
+}
+
+function isAdminRoute(pathname: string): boolean {
+    return pathname.startsWith('/api/admin/');
 }
 
 export async function proxy(req: NextRequest) {
@@ -92,9 +104,20 @@ export async function proxy(req: NextRequest) {
     }
 
     const method = req.method;
-    const staffOnly = isStaffOnly(pathname, method);
+    const role = session.role;
 
-    if (staffOnly && session.role === 'CUSTOMER') {
+    // Admin routes: ADMIN only
+    if (isAdminRoute(pathname) && !ADMIN_ROLES.has(role)) {
+        return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }
+
+    // Picker routes: STAFF (transitional), PICKER, ADMIN
+    if (isPickerRoute(pathname, method) && !PICKER_ROLES.has(role)) {
+        return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }
+
+    // Courier routes: COURIER, ADMIN
+    if (isCourierRoute(pathname) && !COURIER_ROLES.has(role)) {
         return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
     }
 

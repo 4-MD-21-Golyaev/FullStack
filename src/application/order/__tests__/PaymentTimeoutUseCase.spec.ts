@@ -41,6 +41,7 @@ function makeDeps(stalePayments: Payment[], freshPayment: Payment | null) {
                 paymentRepository: txPaymentRepo,
                 productRepository: {} as any,
                 outboxRepository: {} as any,
+                    auditLogRepository: {} as any,
             })
         ),
     };
@@ -122,6 +123,7 @@ describe('PaymentTimeoutUseCase', () => {
                     },
                     productRepository: {} as any,
                     outboxRepository: {} as any,
+                    auditLogRepository: {} as any,
                 });
             }),
         };

@@ -64,6 +64,8 @@ async function main() {
     const userRoles = [
         { code: 'CUSTOMER', name: 'Покупатель'       },
         { code: 'STAFF',    name: 'Сотрудник склада' },
+        { code: 'PICKER',   name: 'Сборщик'          },
+        { code: 'COURIER',  name: 'Курьер'           },
         { code: 'ADMIN',    name: 'Администратор'    },
     ]
 
@@ -117,6 +119,28 @@ async function main() {
             phone: '+70000000002',
             email: 'admin@example.com',
             role: 'ADMIN',
+        },
+    })
+
+    // Picker-пользователь для ручного тестирования
+    await prisma.user.upsert({
+        where: { email: 'picker@example.com' },
+        update: { role: 'PICKER' },
+        create: {
+            phone: '+70000000003',
+            email: 'picker@example.com',
+            role: 'PICKER',
+        },
+    })
+
+    // Courier-пользователь для ручного тестирования
+    await prisma.user.upsert({
+        where: { email: 'courier@example.com' },
+        update: { role: 'COURIER' },
+        create: {
+            phone: '+70000000004',
+            email: 'courier@example.com',
+            role: 'COURIER',
         },
     })
 

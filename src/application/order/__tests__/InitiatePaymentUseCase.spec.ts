@@ -34,15 +34,26 @@ const mockGateway: PaymentGateway = {
         externalId: 'yk-ext-id',
         confirmationUrl: 'https://yookassa.ru/checkout/pay/yk-ext-id',
     }),
+    refundPayment: vi.fn(),
 };
 
 function makeRepos(order: Order | null, product: Product | null) {
-    const orderRepo: OrderRepository = {
+    const orderRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(order),
         findByUserId: vi.fn(),
         findStaleInPayment: vi.fn(),
-    };
+        findAllWithFilters: vi.fn() as any,
+        countWithFilters: vi.fn() as any,
+        findAvailableForPicking: vi.fn() as any,
+        findByPickerClaimUserId: vi.fn() as any,
+        claimForPicker: vi.fn() as any,
+        releasePickerClaim: vi.fn() as any,
+        findAvailableForDelivery: vi.fn() as any,
+        findByCourierClaimUserId: vi.fn() as any,
+        claimForCourier: vi.fn() as any,
+        releaseCourierClaim: vi.fn() as any,
+    } as unknown as OrderRepository;
     const paymentRepo: PaymentRepository = {
         save: vi.fn(),
         findById: vi.fn(),
@@ -138,6 +149,7 @@ describe('InitiatePaymentUseCase', () => {
         const gatewayError = new Error('YooKassa 503');
         const failingGateway: PaymentGateway = {
             createPayment: vi.fn().mockRejectedValue(gatewayError),
+            refundPayment: vi.fn(),
         };
 
         const useCase = new InitiatePaymentUseCase(orderRepo, paymentRepo, failingGateway, transactionRunner);
@@ -157,6 +169,7 @@ describe('InitiatePaymentUseCase', () => {
 
         const failingGateway: PaymentGateway = {
             createPayment: vi.fn().mockRejectedValue(new Error('network error')),
+            refundPayment: vi.fn(),
         };
 
         const useCase = new InitiatePaymentUseCase(orderRepo, paymentRepo, failingGateway, transactionRunner);

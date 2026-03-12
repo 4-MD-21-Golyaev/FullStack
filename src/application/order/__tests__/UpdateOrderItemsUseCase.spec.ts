@@ -34,6 +34,16 @@ function makeRunner(order: Order | null, product: Product | null = null) {
         findById: vi.fn().mockResolvedValue(order),
         findByUserId: vi.fn(),
         findStaleInPayment: vi.fn(),
+        findAllWithFilters: vi.fn(),
+        countWithFilters: vi.fn(),
+        findAvailableForPicking: vi.fn(),
+        findByPickerClaimUserId: vi.fn(),
+        claimForPicker: vi.fn(),
+        releasePickerClaim: vi.fn(),
+        findAvailableForDelivery: vi.fn(),
+        findByCourierClaimUserId: vi.fn(),
+        claimForCourier: vi.fn(),
+        releaseCourierClaim: vi.fn(),
     };
     const productRepo = {
         save: vi.fn(),
@@ -51,6 +61,7 @@ function makeRunner(order: Order | null, product: Product | null = null) {
                 paymentRepository: {} as any,
                 productRepository: productRepo,
                 outboxRepository: {} as any,
+                    auditLogRepository: {} as any,
             })
         ),
     };

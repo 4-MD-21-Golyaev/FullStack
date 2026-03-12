@@ -22,14 +22,24 @@ describe('CompletePickingUseCase', () => {
     it('transitions order from PICKING to PAYMENT', async () => {
         const order = makeOrder(OrderState.PICKING);
 
-        const orderRepo: OrderRepository = {
+        const orderRepo = {
             save: vi.fn(),
             findById: vi.fn().mockResolvedValue(order),
             findByUserId: vi.fn(),
             findStaleInPayment: vi.fn(),
+            findAllWithFilters: vi.fn() as any,
+            countWithFilters: vi.fn() as any,
+            findAvailableForPicking: vi.fn() as any,
+            findByPickerClaimUserId: vi.fn() as any,
+            claimForPicker: vi.fn() as any,
+            releasePickerClaim: vi.fn() as any,
+            findAvailableForDelivery: vi.fn() as any,
+            findByCourierClaimUserId: vi.fn() as any,
+            claimForCourier: vi.fn() as any,
+            releaseCourierClaim: vi.fn() as any,
         };
 
-        const useCase = new CompletePickingUseCase(orderRepo);
+        const useCase = new CompletePickingUseCase(orderRepo as unknown as any);
         const result = await useCase.execute({ orderId: 'order-1' });
 
         expect(result.state).toBe(OrderState.PAYMENT);
@@ -37,14 +47,24 @@ describe('CompletePickingUseCase', () => {
     });
 
     it('throws if order not found', async () => {
-        const orderRepo: OrderRepository = {
+        const orderRepo = {
             save: vi.fn(),
             findById: vi.fn().mockResolvedValue(null),
             findByUserId: vi.fn(),
             findStaleInPayment: vi.fn(),
+            findAllWithFilters: vi.fn() as any,
+            countWithFilters: vi.fn() as any,
+            findAvailableForPicking: vi.fn() as any,
+            findByPickerClaimUserId: vi.fn() as any,
+            claimForPicker: vi.fn() as any,
+            releasePickerClaim: vi.fn() as any,
+            findAvailableForDelivery: vi.fn() as any,
+            findByCourierClaimUserId: vi.fn() as any,
+            claimForCourier: vi.fn() as any,
+            releaseCourierClaim: vi.fn() as any,
         };
 
-        const useCase = new CompletePickingUseCase(orderRepo);
+        const useCase = new CompletePickingUseCase(orderRepo as unknown as any);
 
         await expect(useCase.execute({ orderId: 'missing' }))
             .rejects.toThrow('Order not found');
@@ -53,14 +73,24 @@ describe('CompletePickingUseCase', () => {
     it('throws on invalid state transition', async () => {
         const order = makeOrder(OrderState.CREATED);
 
-        const orderRepo: OrderRepository = {
+        const orderRepo = {
             save: vi.fn(),
             findById: vi.fn().mockResolvedValue(order),
             findByUserId: vi.fn(),
             findStaleInPayment: vi.fn(),
+            findAllWithFilters: vi.fn() as any,
+            countWithFilters: vi.fn() as any,
+            findAvailableForPicking: vi.fn() as any,
+            findByPickerClaimUserId: vi.fn() as any,
+            claimForPicker: vi.fn() as any,
+            releasePickerClaim: vi.fn() as any,
+            findAvailableForDelivery: vi.fn() as any,
+            findByCourierClaimUserId: vi.fn() as any,
+            claimForCourier: vi.fn() as any,
+            releaseCourierClaim: vi.fn() as any,
         };
 
-        const useCase = new CompletePickingUseCase(orderRepo);
+        const useCase = new CompletePickingUseCase(orderRepo as unknown as any);
 
         await expect(useCase.execute({ orderId: 'order-1' }))
             .rejects.toThrow();

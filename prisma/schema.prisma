@@ -35,7 +35,7 @@ model AbsenceResolutionStrategy {
 //////////////////////////////////////////////////////
 
 model UserRole {
-  code  String @id  // CUSTOMER, STAFF, ADMIN
+  code  String @id  // CUSTOMER, STAFF, ADMIN, PICKER, COURIER
   name  String      // Человекочитаемое название
 
   users User[]
@@ -68,6 +68,8 @@ model User {
   orders        Order[]
   cartItems     CartItem[]
   refreshTokens RefreshToken[]
+  pickerClaims    Order[] @relation("PickerClaims")
+  deliveryClaims  Order[] @relation("DeliveryClaims")
 }
 
 //////////////////////////////////////////////////////
@@ -176,11 +178,18 @@ model Order {
   absenceResolutionStrategyId String
   absenceResolutionStrategy   AbsenceResolutionStrategy @relation(fields: [absenceResolutionStrategyId], references: [id])
 
+  pickerClaimUserId    String?
+  pickerClaimedAt      DateTime?
+  deliveryClaimUserId  String?
+  deliveryClaimedAt    DateTime?
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  items       OrderItem[]
-  payments    Payment[]
+  items            OrderItem[]
+  payments         Payment[]
+  pickerClaimer    User?     @relation("PickerClaims",   fields: [pickerClaimUserId],   references: [id])
+  deliveryClaimer  User?     @relation("DeliveryClaims", fields: [deliveryClaimUserId], references: [id])
 }
 
 //////////////////////////////////////////////////////
@@ -243,4 +252,44 @@ model Payment {
   pendingOrderLock String?
 
   createdAt       DateTime @default(now())
+}
+
+//////////////////////////////////////////////////////
+// AUDIT LOG
+//////////////////////////////////////////////////////
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  actorUserId   String
+  actorRole     String
+  action        String
+  targetType    String
+  targetId      String
+  before        Json?
+  after         Json?
+  reason        String?
+  correlationId String
+  timestamp     DateTime @default(now())
+
+  @@index([targetType, targetId])
+  @@index([actorUserId])
+  @@index([timestamp])
+}
+
+//////////////////////////////////////////////////////
+// JOB RUN LOG
+//////////////////////////////////////////////////////
+
+model JobRunLog {
+  id           String    @id @default(uuid())
+  jobName      String
+  startedAt    DateTime
+  finishedAt   DateTime?
+  status       String    // RUNNING, SUCCESS, FAILED
+  initiatedBy  String?
+  processed    Int?
+  failed       Int?
+  errorSummary String?
+
+  @@index([jobName, startedAt])
 }

@@ -25,6 +25,16 @@ function makeRepos(order: Order | null, existingCartItems: { productId: string; 
         findByUserId: vi.fn(),
         findStaleInPayment: vi.fn(),
         save: vi.fn(),
+        findAllWithFilters: vi.fn() as any,
+        countWithFilters: vi.fn() as any,
+        findAvailableForPicking: vi.fn() as any,
+        findByPickerClaimUserId: vi.fn() as any,
+        claimForPicker: vi.fn() as any,
+        releasePickerClaim: vi.fn() as any,
+        findAvailableForDelivery: vi.fn() as any,
+        findByCourierClaimUserId: vi.fn() as any,
+        claimForCourier: vi.fn() as any,
+        releaseCourierClaim: vi.fn() as any,
     };
 
     const cartRepo = {

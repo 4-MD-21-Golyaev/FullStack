@@ -23,6 +23,16 @@ function makeTransactionRunner(order: Order | null): TransactionRunner & { _orde
         findById: vi.fn().mockResolvedValue(order),
         findByUserId: vi.fn(),
         findStaleInPayment: vi.fn(),
+        findAllWithFilters: vi.fn(),
+        countWithFilters: vi.fn(),
+        findAvailableForPicking: vi.fn(),
+        findByPickerClaimUserId: vi.fn(),
+        claimForPicker: vi.fn(),
+        releasePickerClaim: vi.fn(),
+        findAvailableForDelivery: vi.fn(),
+        findByCourierClaimUserId: vi.fn(),
+        claimForCourier: vi.fn(),
+        releaseCourierClaim: vi.fn(),
     };
 
     const runner: any = {
@@ -32,6 +42,7 @@ function makeTransactionRunner(order: Order | null): TransactionRunner & { _orde
                 paymentRepository: {} as any,
                 productRepository: {} as any,
                 outboxRepository: {} as any,
+                    auditLogRepository: {} as any,
             })
         ),
         _orderRepo: orderRepo,
