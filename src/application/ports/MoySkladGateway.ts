@@ -1,4 +1,5 @@
 import { OrderItem } from '@/domain/order/OrderItem';
+import { MoySkladFolder, MoySkladProduct } from '@/domain/moysklad/MoySkladProduct';
 
 /** Бросается когда хотя бы один товар из заказа не найден в МойСклад по артикулу. */
 export class MoySkladProductNotFoundError extends Error {
@@ -12,7 +13,7 @@ export interface MoySkladGateway {
     // Export (п.3)
     exportOrder(orderId: string, items: OrderItem[]): Promise<void>;
 
-    // Import (п.4) — добавит SyncProductsUseCase позже
-    // fetchFolders(): Promise<MoySkladFolder[]>;
-    // fetchProducts(): Promise<MoySkladProduct[]>;
+    // Import (п.4)
+    fetchFolders(): Promise<MoySkladFolder[]>;
+    fetchProducts(): Promise<MoySkladProduct[]>;
 }

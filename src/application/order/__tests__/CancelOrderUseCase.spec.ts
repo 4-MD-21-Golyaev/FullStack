@@ -21,6 +21,8 @@ function makeTransactionRunner(order: Order | null): TransactionRunner & { _orde
     const orderRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(order),
+        findByUserId: vi.fn(),
+        findStaleInPayment: vi.fn(),
     };
 
     const runner: any = {
@@ -29,6 +31,7 @@ function makeTransactionRunner(order: Order | null): TransactionRunner & { _orde
                 orderRepository: orderRepo,
                 paymentRepository: {} as any,
                 productRepository: {} as any,
+                outboxRepository: {} as any,
             })
         ),
         _orderRepo: orderRepo,

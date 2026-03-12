@@ -40,6 +40,7 @@ function makeDeps(stalePayments: Payment[], freshPayment: Payment | null) {
                 orderRepository: {} as any,
                 paymentRepository: txPaymentRepo,
                 productRepository: {} as any,
+                outboxRepository: {} as any,
             })
         ),
     };
@@ -120,6 +121,7 @@ describe('PaymentTimeoutUseCase', () => {
                         findStalePending: vi.fn(),
                     },
                     productRepository: {} as any,
+                    outboxRepository: {} as any,
                 });
             }),
         };

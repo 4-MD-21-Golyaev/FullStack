@@ -43,10 +43,32 @@ export class PrismaProductRepository implements ProductRepository {
         return records.map(r => this.toProduct(r));
     }
 
+    async findByArticle(article: string): Promise<Product | null> {
+        const record = await this.db.product.findFirst({ where: { article } });
+        if (!record) return null;
+        return this.toProduct(record);
+    }
+
     async save(product: Product): Promise<void> {
-        await this.db.product.update({
+        await this.db.product.upsert({
             where: { id: product.id },
-            data: { stock: product.stock },
+            update: {
+                name:       product.name,
+                article:    product.article,
+                price:      product.price,
+                stock:      product.stock,
+                imagePath:  product.imagePath,
+                categoryId: product.categoryId,
+            },
+            create: {
+                id:         product.id,
+                name:       product.name,
+                article:    product.article,
+                price:      product.price,
+                stock:      product.stock,
+                imagePath:  product.imagePath,
+                categoryId: product.categoryId,
+            },
         });
     }
 

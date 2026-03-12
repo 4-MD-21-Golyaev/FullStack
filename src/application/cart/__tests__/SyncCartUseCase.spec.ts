@@ -25,6 +25,7 @@ function makeProductRepo(products: Record<string, any>): ProductRepository {
         ),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
+        findByArticle: vi.fn(),
         save: vi.fn(),
     };
 }

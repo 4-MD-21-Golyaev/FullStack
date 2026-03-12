@@ -32,12 +32,16 @@ function makeRunner(order: Order | null, product: Product | null = null) {
     const orderRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(order),
+        findByUserId: vi.fn(),
+        findStaleInPayment: vi.fn(),
     };
     const productRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(product),
+        findByIds: vi.fn(),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
+        findByArticle: vi.fn(),
     };
 
     const runner: TransactionRunner = {
@@ -46,6 +50,7 @@ function makeRunner(order: Order | null, product: Product | null = null) {
                 orderRepository: orderRepo,
                 paymentRepository: {} as any,
                 productRepository: productRepo,
+                outboxRepository: {} as any,
             })
         ),
     };

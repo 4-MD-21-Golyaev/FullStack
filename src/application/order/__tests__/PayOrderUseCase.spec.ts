@@ -28,6 +28,8 @@ function makeTransactionRunner(order: Order | null, product: Product | null): Tr
     const orderRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(order),
+        findByUserId: vi.fn(),
+        findStaleInPayment: vi.fn(),
     };
     const paymentRepo = {
         save: vi.fn(),
@@ -40,13 +42,15 @@ function makeTransactionRunner(order: Order | null, product: Product | null): Tr
     const productRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(product),
+        findByIds: vi.fn(),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
+        findByArticle: vi.fn(),
     };
 
     const runner: any = {
         run: vi.fn().mockImplementation((work: (ctx: TransactionContext) => Promise<any>) =>
-            work({ orderRepository: orderRepo, paymentRepository: paymentRepo, productRepository: productRepo })
+            work({ orderRepository: orderRepo, paymentRepository: paymentRepo, productRepository: productRepo, outboxRepository: {} as any })
         ),
         _repos: { orderRepo, paymentRepo, productRepo },
     };

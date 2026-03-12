@@ -25,6 +25,8 @@ describe('CloseOrderUseCase', () => {
         const orderRepo: OrderRepository = {
             save: vi.fn(),
             findById: vi.fn().mockResolvedValue(order),
+            findByUserId: vi.fn(),
+            findStaleInPayment: vi.fn(),
         };
 
         const useCase = new CloseOrderUseCase(orderRepo);
@@ -38,6 +40,8 @@ describe('CloseOrderUseCase', () => {
         const orderRepo: OrderRepository = {
             save: vi.fn(),
             findById: vi.fn().mockResolvedValue(null),
+            findByUserId: vi.fn(),
+            findStaleInPayment: vi.fn(),
         };
 
         const useCase = new CloseOrderUseCase(orderRepo);
@@ -52,6 +56,8 @@ describe('CloseOrderUseCase', () => {
         const orderRepo: OrderRepository = {
             save: vi.fn(),
             findById: vi.fn().mockResolvedValue(order),
+            findByUserId: vi.fn(),
+            findStaleInPayment: vi.fn(),
         };
 
         const useCase = new CloseOrderUseCase(orderRepo);

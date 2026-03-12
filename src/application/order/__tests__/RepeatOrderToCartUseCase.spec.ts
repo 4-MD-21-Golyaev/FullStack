@@ -23,6 +23,7 @@ function makeRepos(order: Order | null, existingCartItems: { productId: string; 
     const orderRepo = {
         findById: vi.fn().mockResolvedValue(order),
         findByUserId: vi.fn(),
+        findStaleInPayment: vi.fn(),
         save: vi.fn(),
     };
 

@@ -13,6 +13,7 @@ function makeTransactionRunner(orderRepo: any, productRepo: any): TransactionRun
                 orderRepository: orderRepo,
                 paymentRepository: {} as any,
                 productRepository: productRepo,
+                outboxRepository: {} as any,
             })
         ),
     };
@@ -24,6 +25,8 @@ describe('CreateOrderUseCase', () => {
         const mockOrderRepo: OrderRepository = {
             save: vi.fn(),
             findById: vi.fn(),
+            findByUserId: vi.fn(),
+            findStaleInPayment: vi.fn(),
         };
 
         const mockProductRepo: ProductRepository = {
@@ -39,6 +42,7 @@ describe('CreateOrderUseCase', () => {
             findByIds: vi.fn(),
             findAll: vi.fn(),
             findByCategoryId: vi.fn(),
+            findByArticle: vi.fn(),
             save: vi.fn(),
         };
 

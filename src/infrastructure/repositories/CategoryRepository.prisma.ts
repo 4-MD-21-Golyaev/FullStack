@@ -10,11 +10,33 @@ export class PrismaCategoryRepository implements CategoryRepository {
             orderBy: { name: 'asc' },
         });
 
-        return records.map(record => ({
-            id: record.id,
-            name: record.name,
+        return records.map(r => this.toCategory(r));
+    }
+
+    async findAll(): Promise<Category[]> {
+        const records = await prisma.category.findMany({ orderBy: { name: 'asc' } });
+        return records.map(r => this.toCategory(r));
+    }
+
+    async findByNameAndParent(name: string, parentId: string | null): Promise<Category | null> {
+        const record = await prisma.category.findFirst({ where: { name, parentId } });
+        return record ? this.toCategory(record) : null;
+    }
+
+    async save(category: Category): Promise<void> {
+        await prisma.category.upsert({
+            where: { id: category.id },
+            update: { name: category.name, parentId: category.parentId, imagePath: category.imagePath },
+            create: { id: category.id, name: category.name, parentId: category.parentId, imagePath: category.imagePath },
+        });
+    }
+
+    private toCategory(record: any): Category {
+        return {
+            id:        record.id,
+            name:      record.name,
             imagePath: record.imagePath,
-            parentId: record.parentId,
-        }));
+            parentId:  record.parentId,
+        };
     }
 }

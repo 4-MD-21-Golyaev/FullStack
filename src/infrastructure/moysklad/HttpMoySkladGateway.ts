@@ -1,5 +1,6 @@
 import { MoySkladGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladGateway';
 import { OrderItem } from '@/domain/order/OrderItem';
+import { MoySkladFolder, MoySkladProduct } from '@/domain/moysklad/MoySkladProduct';
 
 const BASE_URL = 'https://api.moysklad.ru/api/remap/1.2';
 
@@ -31,7 +32,7 @@ export class HttpMoySkladGateway implements MoySkladGateway {
 
             positions.push({
                 quantity: item.quantity,
-                price: item.price * 100, // рубли → копейки
+                price: Math.round(item.price * 100), // рубли → копейки (целое число)
                 assortment: {
                     meta: {
                         href: data.rows[0].meta.href,
@@ -72,8 +73,35 @@ export class HttpMoySkladGateway implements MoySkladGateway {
         });
 
         if (!res.ok) {
-            throw new Error(`МойСклад exportOrder failed: ${res.status}`);
+            const errorBody = await res.text().catch(() => '');
+            throw new Error(`МойСклад exportOrder failed: ${res.status} — ${errorBody}`);
         }
+    }
+
+    async fetchFolders(): Promise<MoySkladFolder[]> {
+        const res = await fetch(`${BASE_URL}/entity/productfolder?limit=100`, { headers: this.headers() });
+        if (!res.ok) throw new Error(`МойСклад fetchFolders failed: ${res.status}`);
+        const data = await res.json() as { rows: any[] };
+        return data.rows.map(r => ({
+            id:       r.id as string,
+            name:     r.name as string,
+            parentId: r.productFolder?.meta?.href?.split('/').at(-1) ?? null,
+        }));
+    }
+
+    async fetchProducts(): Promise<MoySkladProduct[]> {
+        const res = await fetch(`${BASE_URL}/report/stock/all?expand=assortment&limit=1000`, { headers: this.headers() });
+        if (!res.ok) throw new Error(`МойСклад fetchProducts failed: ${res.status}`);
+        const data = await res.json() as { rows: any[] };
+        return data.rows
+            .filter(r => r.assortment?.code)
+            .map(r => ({
+                article:  r.assortment.code as string,
+                name:     r.assortment.name as string,
+                price:    ((r.assortment.salePrices?.[0]?.value ?? 0) / 100),
+                stock:    Math.max(0, r.quantity ?? 0),
+                folderId: r.assortment.productFolder?.meta?.href?.split('/').at(-1) ?? null,
+            }));
     }
 
     private headers(): Record<string, string> {

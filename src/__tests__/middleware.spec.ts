@@ -124,4 +124,41 @@ describe('middleware', () => {
         expect(res.status).toBe(401);
         expect(mockVerify).not.toHaveBeenCalled();
     });
+
+    describe('internal jobs auth', () => {
+        const JOB_PATH = '/api/internal/jobs/process-outbox';
+
+        it('valid secret passes through (200)', async () => {
+            process.env.INTERNAL_JOB_SECRET = 'test-secret';
+            const req = makeReq(JOB_PATH, { headers: { authorization: 'Bearer test-secret' } });
+            const res = await proxy(req);
+            expect(res.status).toBe(200);
+            expect(mockVerify).not.toHaveBeenCalled();
+        });
+
+        it('invalid secret returns 403', async () => {
+            process.env.INTERNAL_JOB_SECRET = 'test-secret';
+            const req = makeReq(JOB_PATH, { headers: { authorization: 'Bearer wrong-secret' } });
+            const res = await proxy(req);
+            expect(res.status).toBe(403);
+            expect(mockVerify).not.toHaveBeenCalled();
+        });
+
+        it('missing INTERNAL_JOB_SECRET env returns 500', async () => {
+            delete process.env.INTERNAL_JOB_SECRET;
+            const req = makeReq(JOB_PATH, { headers: { authorization: 'Bearer any-secret' } });
+            const res = await proxy(req);
+            expect(res.status).toBe(500);
+            expect(mockVerify).not.toHaveBeenCalled();
+        });
+
+        it('valid JWT ADMIN without Bearer secret returns 403', async () => {
+            process.env.INTERNAL_JOB_SECRET = 'test-secret';
+            mockVerify.mockResolvedValue(ADMIN_SESSION);
+            const req = makeReq(JOB_PATH, { cookie: 'access_token=validtoken' });
+            const res = await proxy(req);
+            expect(res.status).toBe(403);
+            expect(mockVerify).not.toHaveBeenCalled();
+        });
+    });
 });
