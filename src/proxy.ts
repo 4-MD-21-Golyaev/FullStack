@@ -10,7 +10,7 @@ const PUBLIC_PREFIXES = [
     '/api/auth/verify-code',
     '/api/auth/refresh',
     '/api/webhooks/yookassa',
-    '/api/cron',
+    '/api/webhooks/moysklad',
 ];
 
 // Routes that require STAFF or ADMIN role (all methods)
@@ -39,14 +39,40 @@ export async function proxy(req: NextRequest) {
     requestHeaders.delete('x-user-role');
     requestHeaders.delete('x-user-email');
 
-    // Internal jobs: доступны по INTERNAL_JOB_SECRET заголовку
-    const INTERNAL_JOB_SECRET = process.env.INTERNAL_JOB_SECRET;
+    // Internal jobs: доступны ТОЛЬКО по INTERNAL_JOB_SECRET, без fallback на JWT
     if (pathname.startsWith('/api/internal/jobs/')) {
-        const authHeader = req.headers.get('authorization') ?? '';
-        if (INTERNAL_JOB_SECRET && authHeader === `Bearer ${INTERNAL_JOB_SECRET}`) {
-            return NextResponse.next(); // пропускаем JWT-проверку
+        const INTERNAL_JOB_SECRET = process.env.INTERNAL_JOB_SECRET;
+        if (!INTERNAL_JOB_SECRET) {
+            console.error('[proxy] INTERNAL_JOB_SECRET is not configured');
+            return NextResponse.json(
+                { message: 'Internal jobs auth misconfigured' },
+                { status: 500 },
+            );
         }
-        // Иначе — продолжаем стандартную проверку (ADMIN через JWT тоже допустим)
+        const authHeader = req.headers.get('authorization') ?? '';
+        if (authHeader !== `Bearer ${INTERNAL_JOB_SECRET}`) {
+            console.warn('[proxy] Rejected internal job request to', pathname);
+            return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+        }
+        return NextResponse.next(); // только по секрету, JWT не проверяем
+    }
+
+    // Cron jobs: accessible ONLY via CRON_SECRET, no JWT fallback
+    if (pathname.startsWith('/api/cron/')) {
+        const CRON_SECRET = process.env.CRON_SECRET;
+        if (!CRON_SECRET) {
+            console.error('[proxy] CRON_SECRET is not configured');
+            return NextResponse.json(
+                { message: 'Cron auth misconfigured' },
+                { status: 500 },
+            );
+        }
+        const authHeader = req.headers.get('authorization') ?? '';
+        if (authHeader !== `Bearer ${CRON_SECRET}`) {
+            console.warn('[proxy] Rejected cron request to', pathname);
+            return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+        }
+        return NextResponse.next();
     }
 
     if (isPublic(pathname)) {

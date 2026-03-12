@@ -2,6 +2,7 @@ import { OutboxRepository } from '@/application/ports/OutboxRepository';
 import { MoySkladGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladGateway';
 
 const MAX_RETRIES = 3;
+const CLAIM_TIMEOUT_MS = 5 * 60 * 1000; // release stale claims after 5 minutes
 
 interface ProcessOutboxResult {
     processed: number;
@@ -16,7 +17,9 @@ export class ProcessOutboxUseCase {
     ) {}
 
     async execute(): Promise<ProcessOutboxResult> {
-        const events = await this.outboxRepository.findPending(MAX_RETRIES);
+        const now = new Date();
+        const staleAfter = new Date(now.getTime() - CLAIM_TIMEOUT_MS);
+        const events = await this.outboxRepository.claimPending(MAX_RETRIES, now, staleAfter);
         let processed = 0;
         let retried = 0;
         let failed = 0;

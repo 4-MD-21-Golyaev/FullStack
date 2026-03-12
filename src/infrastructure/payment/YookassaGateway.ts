@@ -2,6 +2,7 @@ import {
     PaymentGateway,
     CreatePaymentParams,
     CreatedPayment,
+    RefundParams,
 } from '@/application/ports/PaymentGateway';
 
 const YOOKASSA_API_URL = 'https://api.yookassa.ru/v3';
@@ -61,5 +62,30 @@ export class YookassaGateway implements PaymentGateway {
             externalId: data.id,
             confirmationUrl: data.confirmation.confirmation_url,
         };
+    }
+
+    async refundPayment(params: RefundParams): Promise<void> {
+        const response = await fetch(`${YOOKASSA_API_URL}/refunds`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Basic ${this.auth}`,
+                'Content-Type': 'application/json',
+                'Idempotence-Key': params.idempotencyKey,
+            },
+            body: JSON.stringify({
+                payment_id: params.externalId,
+                amount: {
+                    value: params.amount.toFixed(2),
+                    currency: 'RUB',
+                },
+            }),
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            throw new Error(
+                `ЮKassa refund error ${response.status}: ${JSON.stringify(error)}`
+            );
+        }
     }
 }

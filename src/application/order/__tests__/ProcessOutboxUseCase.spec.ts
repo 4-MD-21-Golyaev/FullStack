@@ -15,6 +15,7 @@ function makeEvent(overrides: Partial<OutboxEvent> = {}): OutboxEvent {
         failedAt: null,
         errorMessage: null,
         retryCount: 0,
+        claimedAt: new Date(),
         ...overrides,
     };
 }
@@ -22,7 +23,7 @@ function makeEvent(overrides: Partial<OutboxEvent> = {}): OutboxEvent {
 function makeRepo(events: OutboxEvent[]): OutboxRepository {
     return {
         save: vi.fn(),
-        findPending: vi.fn().mockResolvedValue(events),
+        claimPending: vi.fn().mockResolvedValue(events),
         markProcessed: vi.fn().mockResolvedValue(undefined),
         markFailed: vi.fn().mockResolvedValue(undefined),
         incrementRetry: vi.fn().mockResolvedValue(undefined),
@@ -32,6 +33,8 @@ function makeRepo(events: OutboxEvent[]): OutboxRepository {
 function makeGateway(impl?: () => Promise<void>): MoySkladGateway {
     return {
         exportOrder: vi.fn().mockImplementation(impl ?? (() => Promise.resolve())),
+        fetchFolders: vi.fn().mockResolvedValue([]),
+        fetchProducts: vi.fn().mockResolvedValue([]),
     };
 }
 
@@ -108,6 +111,8 @@ describe('ProcessOutboxUseCase', () => {
                 .mockResolvedValueOnce(undefined)
                 .mockRejectedValueOnce(new MoySkladProductNotFoundError(['X1']))
                 .mockRejectedValueOnce(new Error('timeout')),
+            fetchFolders: vi.fn().mockResolvedValue([]),
+            fetchProducts: vi.fn().mockResolvedValue([]),
         };
 
         const result = await new ProcessOutboxUseCase(repo, gateway).execute();
@@ -126,5 +131,20 @@ describe('ProcessOutboxUseCase', () => {
         expect(gateway.exportOrder).not.toHaveBeenCalled();
         expect(repo.markProcessed).toHaveBeenCalledWith(event.id);
         expect(result).toEqual({ processed: 1, retried: 0, failed: 0 });
+    });
+
+    it('8. конкурентные воркеры: второй получает пустой список (claimPending вернул [])', async () => {
+        const gateway = makeGateway();
+
+        // Worker 1 claims and processes the event
+        const repo1 = makeRepo([makeEvent()]);
+        const result1 = await new ProcessOutboxUseCase(repo1, gateway).execute();
+        expect(result1.processed).toBe(1);
+
+        // Worker 2 gets nothing — claimPending returns [] (SKIP LOCKED or stale check)
+        const repo2 = makeRepo([]);
+        const result2 = await new ProcessOutboxUseCase(repo2, gateway).execute();
+        expect(result2).toEqual({ processed: 0, retried: 0, failed: 0 });
+        expect(repo2.markProcessed).not.toHaveBeenCalled();
     });
 });

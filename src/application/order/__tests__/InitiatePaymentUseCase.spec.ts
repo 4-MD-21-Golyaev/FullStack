@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InitiatePaymentUseCase } from '../InitiatePaymentUseCase';
+import { PaymentAlreadyInProgressError } from '@/domain/payment/errors';
 import { OrderRepository } from '../../ports/OrderRepository';
 import { PaymentRepository } from '../../ports/PaymentRepository';
 import { ProductRepository } from '../../ports/ProductRepository';
@@ -39,6 +40,8 @@ function makeRepos(order: Order | null, product: Product | null) {
     const orderRepo: OrderRepository = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(order),
+        findByUserId: vi.fn(),
+        findStaleInPayment: vi.fn(),
     };
     const paymentRepo: PaymentRepository = {
         save: vi.fn(),
@@ -54,6 +57,7 @@ function makeRepos(order: Order | null, product: Product | null) {
         findByIds: vi.fn(),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
+        findByArticle: vi.fn(),
     };
     // TransactionRunner calls the callback with the same repos (simulates in-process transaction)
     const transactionRunner: TransactionRunner = {
@@ -127,11 +131,51 @@ describe('InitiatePaymentUseCase', () => {
             .rejects.toThrow('Order not found');
     });
 
-    it('throws when a PENDING payment already exists for the order', async () => {
+    it('marks payment FAILED and rethrows when gateway call fails after local PENDING created', async () => {
         const order = makeOrder(OrderState.PAYMENT);
         const { orderRepo, paymentRepo, transactionRunner } = makeRepos(order, makeProduct(10));
 
-        // Simulate an existing PENDING payment
+        const gatewayError = new Error('YooKassa 503');
+        const failingGateway: PaymentGateway = {
+            createPayment: vi.fn().mockRejectedValue(gatewayError),
+        };
+
+        const useCase = new InitiatePaymentUseCase(orderRepo, paymentRepo, failingGateway, transactionRunner);
+
+        await expect(useCase.execute({ orderId: 'order-1', returnUrl: 'https://example.com/return' }))
+            .rejects.toThrow('YooKassa 503');
+
+        // payment.save called twice: once PENDING (inside tx), once FAILED (compensation)
+        expect(paymentRepo.save).toHaveBeenCalledTimes(2);
+        const compensationCall = (paymentRepo.save as any).mock.calls[1][0];
+        expect(compensationCall.status).toBe(PaymentStatus.FAILED);
+    });
+
+    it('PENDING is cleared after gateway failure so retry can create a new payment', async () => {
+        const order = makeOrder(OrderState.PAYMENT);
+        const { orderRepo, paymentRepo, transactionRunner } = makeRepos(order, makeProduct(10));
+
+        const failingGateway: PaymentGateway = {
+            createPayment: vi.fn().mockRejectedValue(new Error('network error')),
+        };
+
+        const useCase = new InitiatePaymentUseCase(orderRepo, paymentRepo, failingGateway, transactionRunner);
+        await expect(useCase.execute({ orderId: 'order-1', returnUrl: 'https://example.com/return' }))
+            .rejects.toThrow();
+
+        // After compensation, the FAILED payment should not block a retry:
+        // findPendingByOrderId would return null (FAILED != PENDING)
+        // Verify compensation saved FAILED status (pendingOrderLock would be released)
+        const compensationCall = (paymentRepo.save as any).mock.calls[1][0];
+        expect(compensationCall.status).toBe(PaymentStatus.FAILED);
+        expect(compensationCall.externalId).toBeUndefined();
+    });
+
+    it('throws PaymentAlreadyInProgressError when a PENDING payment already exists (check inside transaction)', async () => {
+        const order = makeOrder(OrderState.PAYMENT);
+        const { orderRepo, paymentRepo, transactionRunner } = makeRepos(order, makeProduct(10));
+
+        // Simulate an existing PENDING payment (found inside transaction context)
         (paymentRepo.findPendingByOrderId as any).mockResolvedValue({
             id: 'pay-existing',
             orderId: 'order-1',
@@ -144,7 +188,7 @@ describe('InitiatePaymentUseCase', () => {
         const useCase = new InitiatePaymentUseCase(orderRepo, paymentRepo, mockGateway, transactionRunner);
 
         await expect(useCase.execute({ orderId: 'order-1', returnUrl: 'https://example.com/return' }))
-            .rejects.toThrow('Payment already in progress');
+            .rejects.toBeInstanceOf(PaymentAlreadyInProgressError);
 
         expect(paymentRepo.save).not.toHaveBeenCalled();
         expect(mockGateway.createPayment).not.toHaveBeenCalled();

@@ -11,6 +11,13 @@ export interface CreatedPayment {
     confirmationUrl: string;   // URL для редиректа пользователя
 }
 
+export interface RefundParams {
+    externalId: string;       // Yookassa payment ID to refund
+    amount: number;           // amount in rubles
+    idempotencyKey: string;   // caller-assigned idempotency key
+}
+
 export interface PaymentGateway {
     createPayment(params: CreatePaymentParams): Promise<CreatedPayment>;
+    refundPayment(params: RefundParams): Promise<void>;
 }

@@ -19,6 +19,13 @@ export class UserAlreadyExistsError extends Error {
     }
 }
 
+export class OtpRateLimitedError extends Error {
+    constructor() {
+        super('Too many OTP attempts, please request a new code');
+        this.name = 'OtpRateLimitedError';
+    }
+}
+
 export class InvalidRefreshTokenError extends Error {
     constructor() {
         super('Refresh token is invalid, expired, or revoked');

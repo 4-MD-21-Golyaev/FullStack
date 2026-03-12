@@ -29,6 +29,9 @@ SMTP_PORT                 # SMTP port (587 or 465)
 SMTP_USER                 # SMTP username
 SMTP_PASS                 # SMTP password
 SMTP_FROM                 # Sender address
+INTERNAL_JOB_SECRET       # Bearer secret for /api/internal/jobs/* routes (fail-closed if missing)
+CRON_SECRET               # Bearer secret for /api/cron/* routes (fail-closed if missing)
+OTP_HMAC_SECRET           # HMAC-SHA256 key for OTP hashing (defaults to dev value if missing)
 ```
 
 ## Architecture

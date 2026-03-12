@@ -75,12 +75,13 @@ model User {
 //////////////////////////////////////////////////////
 
 model EmailOtp {
-  id        String   @id @default(uuid())
-  email     String
-  code      String        // plain text, 6 цифр
-  expiresAt DateTime
-  used      Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id           String   @id @default(uuid())
+  email        String
+  code         String        // HMAC-SHA256 hash, not plaintext
+  expiresAt    DateTime
+  used         Boolean  @default(false)
+  attemptCount Int      @default(0)
+  createdAt    DateTime @default(now())
 
   @@index([email])
 }
@@ -214,6 +215,11 @@ model OutboxEvent {
   failedAt     DateTime? // проставляется при исчерпании попыток или бизнес-ошибке
   errorMessage String?   // причина сбоя (артикулы / текст ошибки)
   retryCount   Int       @default(0)
+  /// Set by a worker when it claims the event. NULL = unclaimed.
+  /// Events with a stale claimedAt (older than timeout) are released back.
+  claimedAt    DateTime?
+
+  @@index([claimedAt])
 }
 
 //////////////////////////////////////////////////////
@@ -231,6 +237,10 @@ model Payment {
 
   externalId      String?
   amount          Decimal  @db.Decimal(10, 2)
+
+  /// Set to orderId when status=PENDING, NULL otherwise.
+  /// A unique partial index (WHERE NOT NULL) enforces one PENDING payment per order.
+  pendingOrderLock String?
 
   createdAt       DateTime @default(now())
 }

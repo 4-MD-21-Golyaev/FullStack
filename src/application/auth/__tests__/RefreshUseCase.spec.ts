@@ -10,15 +10,16 @@ const mockUser = { id: 'u1', email: 'a@b.com', role: 'CUSTOMER', phone: '+7', ad
 const validRecord = {
     id: 'jti-1',
     userId: 'u1',
-    revoked: false,
+    revoked: true, // already revoked by consumeActive
     expiresAt: new Date(Date.now() + 86400000),
     createdAt: new Date(),
 };
 
-function makeRefreshTokenRepo(record: unknown = validRecord): RefreshTokenRepository {
+function makeRefreshTokenRepo(consumed: unknown = validRecord): RefreshTokenRepository {
     return {
         save: vi.fn(),
-        findById: vi.fn().mockResolvedValue(record),
+        findById: vi.fn(),
+        consumeActive: vi.fn().mockResolvedValue(consumed),
         revoke: vi.fn(),
         revokeAllForUser: vi.fn(),
     };
@@ -45,36 +46,26 @@ describe('RefreshUseCase', () => {
             .rejects.toThrow(InvalidRefreshTokenError);
     });
 
-    it('throws when record not found in DB', async () => {
+    it('throws when consumeActive returns null (token not found or expired)', async () => {
         const uc = new RefreshUseCase(makeRefreshTokenRepo(null), makeUserRepo(), makeTokenService());
 
         await expect(uc.execute({ refreshToken: 'tok' }))
             .rejects.toThrow(InvalidRefreshTokenError);
     });
 
-    it('throws when record is revoked', async () => {
-        const uc = new RefreshUseCase(
-            makeRefreshTokenRepo({ ...validRecord, revoked: true }),
-            makeUserRepo(),
-            makeTokenService(),
-        );
+    it('throws when consumeActive returns null (token already revoked — replay attack)', async () => {
+        // Simulates second of two concurrent refresh requests: consumeActive returns null
+        const rtRepo = makeRefreshTokenRepo(null);
+        const uc = new RefreshUseCase(rtRepo, makeUserRepo(), makeTokenService());
 
         await expect(uc.execute({ refreshToken: 'tok' }))
             .rejects.toThrow(InvalidRefreshTokenError);
+
+        expect(rtRepo.consumeActive).toHaveBeenCalledOnce();
+        expect(rtRepo.save).not.toHaveBeenCalled();
     });
 
-    it('throws when record is expired', async () => {
-        const uc = new RefreshUseCase(
-            makeRefreshTokenRepo({ ...validRecord, expiresAt: new Date(Date.now() - 1000) }),
-            makeUserRepo(),
-            makeTokenService(),
-        );
-
-        await expect(uc.execute({ refreshToken: 'tok' }))
-            .rejects.toThrow(InvalidRefreshTokenError);
-    });
-
-    it('revokes old token, issues new pair, saves new record', async () => {
+    it('issues new token pair when consumeActive succeeds', async () => {
         const rtRepo = makeRefreshTokenRepo();
         const tokenSvc = makeTokenService();
         const uc = new RefreshUseCase(rtRepo, makeUserRepo(), tokenSvc);
@@ -83,10 +74,31 @@ describe('RefreshUseCase', () => {
 
         expect(result.accessToken).toBe('new-access');
         expect(result.refreshToken).toBe('new-refresh');
-        expect(rtRepo.revoke).toHaveBeenCalledWith('jti-1');
+        // consumeActive handles revocation; legacy revoke should NOT be called
+        expect(rtRepo.revoke).not.toHaveBeenCalled();
         expect(rtRepo.save).toHaveBeenCalledWith(expect.objectContaining({
             userId: 'u1',
             revoked: false,
         }));
+    });
+
+    it('two parallel refreshes: only first succeeds, second is rejected', async () => {
+        const rtRepo = makeRefreshTokenRepo();
+        // First call succeeds (consumeActive returns the record)
+        // Second call would get null (simulated by calling the same mock a second time)
+        (rtRepo.consumeActive as ReturnType<typeof vi.fn>)
+            .mockResolvedValueOnce(validRecord)  // first request wins
+            .mockResolvedValueOnce(null);          // second request loses
+
+        const uc = new RefreshUseCase(rtRepo, makeUserRepo(), makeTokenService());
+
+        const [first, second] = await Promise.allSettled([
+            uc.execute({ refreshToken: 'tok' }),
+            uc.execute({ refreshToken: 'tok' }),
+        ]);
+
+        expect(first.status).toBe('fulfilled');
+        expect(second.status).toBe('rejected');
+        expect((second as PromiseRejectedResult).reason).toBeInstanceOf(InvalidRefreshTokenError);
     });
 });

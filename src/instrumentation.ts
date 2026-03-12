@@ -20,11 +20,9 @@ export async function register() {
                         new PrismaPaymentRepository(),
                         new PrismaTransactionRunner(),
                     );
-                    const result = await useCase.execute();
-
-                    console.log('[PaymentTimeout]', result);
+                    await useCase.execute();
                 } catch (err) {
-                    console.error('[PaymentTimeout] cron error', err);
+                    console.error('[cron:PaymentTimeout] unhandled error', { error: (err as Error).message });
                 }
             });
 
@@ -34,24 +32,26 @@ export async function register() {
                         new PrismaOrderRepository(),
                         new PrismaTransactionRunner(),
                     );
-                    const result = await useCase.execute();
-                    console.log('[OrderPaymentTimeout]', result);
+                    await useCase.execute();
                 } catch (err) {
-                    console.error('[OrderPaymentTimeout] cron error', err);
+                    console.error('[cron:OrderPaymentTimeout] unhandled error', { error: (err as Error).message });
                 }
             });
 
             cron.schedule('* * * * *', async () => {
-
-                const useCase = new ProcessOutboxUseCase(
-                    new PrismaOutboxRepository(),
-                    new HttpMoySkladGateway({
-                        token:          process.env.MOYSKLAD_TOKEN!,
-                        organizationId: process.env.MOYSKLAD_ORGANIZATION_ID!,
-                        agentId:        process.env.MOYSKLAD_AGENT_ID!,
-                    }),
-                );
-                await useCase.execute();
+                try {
+                    const useCase = new ProcessOutboxUseCase(
+                        new PrismaOutboxRepository(),
+                        new HttpMoySkladGateway({
+                            token:          process.env.MOYSKLAD_TOKEN!,
+                            organizationId: process.env.MOYSKLAD_ORGANIZATION_ID!,
+                            agentId:        process.env.MOYSKLAD_AGENT_ID!,
+                        }),
+                    );
+                    await useCase.execute();
+                } catch (err) {
+                    console.error('[cron:ProcessOutbox] unhandled error', { error: (err as Error).message });
+                }
             });
         }
     }

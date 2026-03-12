@@ -35,6 +35,30 @@ export class PrismaRefreshTokenRepository implements RefreshTokenRepository {
         };
     }
 
+    async consumeActive(id: string, now: Date): Promise<RefreshTokenRecord | null> {
+        // Atomic compare-and-swap: only revokes if currently active.
+        // If two requests arrive simultaneously, only the one that wins the UPDATE
+        // gets count=1; the other gets count=0 and receives null → 401.
+        const result = await this.db.refreshToken.updateMany({
+            where: { id, revoked: false, expiresAt: { gt: now } },
+            data: { revoked: true },
+        });
+
+        if (result.count === 0) return null;
+
+        // Safe to read back: we own this token (it's already revoked for others).
+        const record = await this.db.refreshToken.findUnique({ where: { id } });
+        if (!record) return null;
+
+        return {
+            id: record.id,
+            userId: record.userId,
+            revoked: record.revoked,
+            expiresAt: record.expiresAt,
+            createdAt: record.createdAt,
+        };
+    }
+
     async revoke(id: string): Promise<void> {
         await this.db.refreshToken.update({
             where: { id },

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { ConfirmPaymentUseCase } from '../ConfirmPaymentUseCase';
 import { PaymentRepository } from '../../ports/PaymentRepository';
+import { PaymentGateway } from '../../ports/PaymentGateway';
 import { TransactionRunner, TransactionContext } from '../../ports/TransactionRunner';
 import { OrderState } from '@/domain/order/OrderState';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
@@ -48,6 +49,8 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
     const txOrderRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(order),
+        findByUserId: vi.fn(),
+        findStaleInPayment: vi.fn(),
     };
     const txPaymentRepo = {
         save: vi.fn(),
@@ -60,8 +63,10 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
     const txProductRepo = {
         save: vi.fn(),
         findById: vi.fn().mockResolvedValue(product),
+        findByIds: vi.fn(),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
+        findByArticle: vi.fn(),
     };
 
     const txOutboxRepo = {
@@ -83,7 +88,12 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
         ),
     };
 
-    return { paymentRepo, transactionRunner, txOrderRepo, txPaymentRepo, txProductRepo, txOutboxRepo };
+    const gateway: PaymentGateway = {
+        createPayment: vi.fn(),
+        refundPayment: vi.fn().mockResolvedValue(undefined),
+    };
+
+    return { paymentRepo, transactionRunner, txOrderRepo, txPaymentRepo, txProductRepo, txOutboxRepo, gateway };
 }
 
 describe('ConfirmPaymentUseCase', () => {
@@ -138,21 +148,59 @@ describe('ConfirmPaymentUseCase', () => {
         expect(txOrderRepo.save).not.toHaveBeenCalled();
     });
 
-    it('on succeeded with insufficient stock: cancels order and marks FAILED', async () => {
+    it('on succeeded with insufficient stock: cancels order and marks FAILED (no throw)', async () => {
         const { paymentRepo, transactionRunner, txPaymentRepo, txOrderRepo } =
             makeDeps(makePayment(PaymentStatus.PENDING), makeOrder(OrderState.PAYMENT), makeProduct(1));
 
-        await expect(
-            new ConfirmPaymentUseCase(paymentRepo, transactionRunner)
-                .execute({ externalId: 'yk-ext-id', event: 'payment.succeeded' })
-        ).rejects.toThrow('Insufficient stock');
+        const result = await new ConfirmPaymentUseCase(paymentRepo, transactionRunner)
+            .execute({ externalId: 'yk-ext-id', event: 'payment.succeeded' });
 
+        expect(result.alreadyProcessed).toBe(false);
+        expect(result.order!.state).toBe(OrderState.CANCELLED);
+        expect(result.payment!.status).toBe(PaymentStatus.FAILED);
         expect(txPaymentRepo.save).toHaveBeenCalledWith(
             expect.objectContaining({ status: PaymentStatus.FAILED })
         );
         expect(txOrderRepo.save).toHaveBeenCalledWith(
             expect.objectContaining({ state: OrderState.CANCELLED })
         );
+    });
+
+    it('on succeeded with insufficient stock: calls refundPayment with correct params', async () => {
+        const { paymentRepo, transactionRunner, gateway } =
+            makeDeps(makePayment(PaymentStatus.PENDING), makeOrder(OrderState.PAYMENT), makeProduct(1));
+
+        await new ConfirmPaymentUseCase(paymentRepo, transactionRunner, gateway)
+            .execute({ externalId: 'yk-ext-id', event: 'payment.succeeded' });
+
+        expect(gateway.refundPayment).toHaveBeenCalledWith(
+            expect.objectContaining({
+                externalId: 'yk-ext-id',
+                amount: 500,
+                idempotencyKey: expect.stringContaining('pay-1'),
+            })
+        );
+    });
+
+    it('on succeeded with insufficient stock: logs error if refund fails but does not throw', async () => {
+        const { paymentRepo, transactionRunner } =
+            makeDeps(makePayment(PaymentStatus.PENDING), makeOrder(OrderState.PAYMENT), makeProduct(1));
+
+        const failingGateway: PaymentGateway = {
+            createPayment: vi.fn(),
+            refundPayment: vi.fn().mockRejectedValue(new Error('Yookassa refund failed')),
+        };
+        const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+        const result = await new ConfirmPaymentUseCase(paymentRepo, transactionRunner, failingGateway)
+            .execute({ externalId: 'yk-ext-id', event: 'payment.succeeded' });
+
+        expect(result.order!.state).toBe(OrderState.CANCELLED);
+        expect(consoleSpy).toHaveBeenCalledWith(
+            expect.stringContaining('[ConfirmPayment] refund failed'),
+            expect.any(Object)
+        );
+        consoleSpy.mockRestore();
     });
 
     it('on payment.succeeded: OutboxEvent записывается с eventType ORDER_DELIVERED и orderId', async () => {

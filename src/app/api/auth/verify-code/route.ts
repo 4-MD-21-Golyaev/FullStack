@@ -5,7 +5,7 @@ import { PrismaUserRepository } from '@/infrastructure/repositories/UserReposito
 import { PrismaRefreshTokenRepository } from '@/infrastructure/repositories/RefreshTokenRepository.prisma';
 import { JoseTokenService } from '@/infrastructure/auth/JoseTokenService';
 import { setTokenCookies } from '@/lib/auth/session';
-import { InvalidOtpError, UserNotFoundError } from '@/domain/auth/errors';
+import { InvalidOtpError, OtpRateLimitedError, UserNotFoundError } from '@/domain/auth/errors';
 
 export async function POST(req: NextRequest) {
     try {
@@ -29,6 +29,9 @@ export async function POST(req: NextRequest) {
         setTokenCookies(res, accessToken, refreshToken);
         return res;
     } catch (error: unknown) {
+        if (error instanceof OtpRateLimitedError) {
+            return NextResponse.json({ message: error.message }, { status: 429 });
+        }
         if (error instanceof InvalidOtpError) {
             return NextResponse.json({ message: error.message }, { status: 401 });
         }

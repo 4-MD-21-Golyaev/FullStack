@@ -2,6 +2,7 @@ import type { PrismaClient, Prisma } from '@prisma/client';
 import { PaymentRepository } from '@/application/ports/PaymentRepository';
 import { Payment } from '@/domain/payment/Payment';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
+import { PaymentAlreadyInProgressError } from '@/domain/payment/errors';
 import { prisma } from '../db/prismaClient';
 
 type DbClient = PrismaClient | Prisma.TransactionClient;
@@ -22,21 +23,36 @@ export class PrismaPaymentRepository implements PaymentRepository {
             throw new Error(`PaymentStatus not found for code ${payment.status}`);
         }
 
-        await this.db.payment.upsert({
-            where: { id: payment.id },
-            update: {
-                statusId: status.id,
-                externalId: payment.externalId ?? null,
-            },
-            create: {
-                id: payment.id,
-                orderId: payment.orderId,
-                statusId: status.id,
-                amount: payment.amount,
-                externalId: payment.externalId ?? null,
-                createdAt: payment.createdAt,
-            },
-        });
+        // pendingOrderLock holds orderId while PENDING; NULL otherwise.
+        // The partial unique index on this column enforces one PENDING payment per order.
+        const pendingOrderLock = payment.status === PaymentStatus.PENDING ? payment.orderId : null;
+
+        try {
+            await this.db.payment.upsert({
+                where: { id: payment.id },
+                update: {
+                    statusId: status.id,
+                    externalId: payment.externalId ?? null,
+                    pendingOrderLock,
+                },
+                create: {
+                    id: payment.id,
+                    orderId: payment.orderId,
+                    statusId: status.id,
+                    amount: payment.amount,
+                    externalId: payment.externalId ?? null,
+                    pendingOrderLock,
+                    createdAt: payment.createdAt,
+                },
+            });
+        } catch (e: any) {
+            // DB unique constraint on pendingOrderLock: a concurrent transaction already
+            // inserted a PENDING payment for the same order.
+            if (e?.code === 'P2002') {
+                throw new PaymentAlreadyInProgressError();
+            }
+            throw e;
+        }
     }
 
     async findById(id: string): Promise<Payment | null> {

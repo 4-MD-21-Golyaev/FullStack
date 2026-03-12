@@ -6,6 +6,7 @@ import { cancelOrder } from '@/domain/order/transitions';
 import { OrderState } from '@/domain/order/OrderState';
 import { Payment } from '@/domain/payment/Payment';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
+import { PaymentAlreadyInProgressError } from '@/domain/payment/errors';
 import { Product } from '@/domain/product/Product';
 import { randomUUID } from 'crypto';
 
@@ -34,15 +35,16 @@ export class InitiatePaymentUseCase {
             throw new Error('Payment already processed for this order');
         }
 
-        // §10: не допускаем второй PENDING-платёж для одного заказа
-        const existingPending = await this.paymentRepository.findPendingByOrderId(input.orderId);
-        if (existingPending) {
-            throw new Error('Payment already in progress for this order');
-        }
-
-        // Транзакционно: проверяем остатки, при необходимости отменяем заказ,
-        // создаём PENDING-запись платежа
+        // Транзакционно: проверяем PENDING-дубль, остатки, при необходимости
+        // отменяем заказ и создаём PENDING-запись платежа.
+        // Serializable isolation + DB unique index на pendingOrderLock предотвращают гонку.
         const payment = await this.transactionRunner.run(async ({ orderRepository, productRepository, paymentRepository }) => {
+            // §10: проверка внутри транзакции — атомарна с последующим INSERT
+            const existingPending = await paymentRepository.findPendingByOrderId(input.orderId);
+            if (existingPending) {
+                throw new PaymentAlreadyInProgressError();
+            }
+
             const products = new Map<string, Product>();
 
             for (const item of order.items) {
@@ -83,13 +85,21 @@ export class InitiatePaymentUseCase {
 
         // Создаём платёж в ЮKassa (наш payment.id — idempotency key)
         // Вызов внешнего сервиса выполняется вне транзакции
-        const created = await this.paymentGateway.createPayment({
-            internalPaymentId: payment.id,
-            orderId: order.id,
-            amount: order.totalAmount,
-            description: `Заказ №${order.id.slice(0, 8)}`,
-            returnUrl: input.returnUrl,
-        });
+        let created;
+        try {
+            created = await this.paymentGateway.createPayment({
+                internalPaymentId: payment.id,
+                orderId: order.id,
+                amount: order.totalAmount,
+                description: `Заказ №${order.id.slice(0, 8)}`,
+                returnUrl: input.returnUrl,
+            });
+        } catch (gatewayError) {
+            // Компенсация: переводим PENDING в FAILED, чтобы не блокировать повторную оплату.
+            // pendingOrderLock при этом сбрасывается в NULL (PaymentRepository.save).
+            await this.paymentRepository.save({ ...payment, status: PaymentStatus.FAILED });
+            throw gatewayError;
+        }
 
         // Сохраняем externalId от ЮKassa — новый объект, не мутируем
         await this.paymentRepository.save({ ...payment, externalId: created.externalId });

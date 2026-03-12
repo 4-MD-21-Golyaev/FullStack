@@ -26,12 +26,12 @@ export class RefreshUseCase {
         const payload = await this.tokenService.verifyRefreshToken(input.refreshToken);
         if (!payload) throw new InvalidRefreshTokenError();
 
-        const record = await this.refreshTokenRepository.findById(payload.jti);
-        if (!record || record.revoked || record.expiresAt < new Date()) {
+        // consumeActive atomically revokes the token only if it is active and not expired.
+        // This eliminates the TOCTOU race: concurrent refreshes get count=0 → 401.
+        const record = await this.refreshTokenRepository.consumeActive(payload.jti, new Date());
+        if (!record) {
             throw new InvalidRefreshTokenError();
         }
-
-        await this.refreshTokenRepository.revoke(record.id);
 
         const user = await this.userRepository.findById(record.userId);
         if (!user) throw new InvalidRefreshTokenError();

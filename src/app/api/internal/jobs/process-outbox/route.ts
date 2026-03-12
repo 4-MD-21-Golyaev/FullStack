@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ProcessOutboxUseCase } from '@/application/order/ProcessOutboxUseCase';
 import { PrismaOutboxRepository } from '@/infrastructure/repositories/OutboxRepository.prisma';
 import { HttpMoySkladGateway } from '@/infrastructure/moysklad/HttpMoySkladGateway';
+import { assertInternalJobAuth } from '@/lib/internal-job-auth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(_req: NextRequest) {
-    // Авторизация обрабатывается в proxy.ts
+export async function GET(req: NextRequest) {
+    const auth = assertInternalJobAuth(req);
+    if (auth instanceof NextResponse) return auth;
+
     try {
         const useCase = new ProcessOutboxUseCase(
             new PrismaOutboxRepository(),

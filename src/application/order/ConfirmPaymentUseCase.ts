@@ -1,5 +1,6 @@
 import { PaymentRepository } from '@/application/ports/PaymentRepository';
 import { TransactionRunner } from '@/application/ports/TransactionRunner';
+import { PaymentGateway } from '@/application/ports/PaymentGateway';
 import { cancelOrder, startDelivery } from '@/domain/order/transitions';
 import { Order } from '@/domain/order/Order';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
@@ -24,6 +25,7 @@ export class ConfirmPaymentUseCase {
     constructor(
         private paymentRepository: PaymentRepository,
         private transactionRunner: TransactionRunner,
+        private paymentGateway?: PaymentGateway,
     ) {}
 
     async execute(input: ConfirmPaymentInput): Promise<ConfirmPaymentResult> {
@@ -41,7 +43,12 @@ export class ConfirmPaymentUseCase {
             return { alreadyProcessed: true };
         }
 
-        return this.transactionRunner.run(async ({ orderRepository, paymentRepository, productRepository, outboxRepository }) => {
+        // Capture refund info if stock shortage occurs inside the transaction
+        let refundExternalId: string | null = null;
+        let refundAmount = 0;
+        let refundIdempotencyKey = '';
+
+        const result = await this.transactionRunner.run(async ({ orderRepository, paymentRepository, productRepository, outboxRepository }) => {
             const payment = await paymentRepository.findByExternalId(input.externalId);
 
             if (!payment) {
@@ -85,10 +92,14 @@ export class ConfirmPaymentUseCase {
                     const cancelled = cancelOrder(order);
                     await orderRepository.save(cancelled);
 
-                    // TODO: инициировать возврат через ЮKassa
-                    throw new Error(
-                        `Insufficient stock for "${item.name}" after payment — order cancelled, refund required`
-                    );
+                    // Schedule refund outside the transaction (external API call)
+                    if (payment.externalId) {
+                        refundExternalId = payment.externalId;
+                        refundAmount = payment.amount;
+                        refundIdempotencyKey = `${payment.id}-refund`;
+                    }
+
+                    return { alreadyProcessed: false, order: cancelled, payment };
                 }
 
                 products.set(item.productId, product);
@@ -127,5 +138,25 @@ export class ConfirmPaymentUseCase {
 
             return { alreadyProcessed: false, order: updated, payment };
         });
+
+        // Compensation refund: initiated after DB transaction commits to avoid mixing external
+        // API calls with DB writes. Non-fatal if it fails — ops team should monitor logs.
+        if (refundExternalId && this.paymentGateway) {
+            try {
+                await this.paymentGateway.refundPayment({
+                    externalId: refundExternalId,
+                    amount: refundAmount,
+                    idempotencyKey: refundIdempotencyKey,
+                });
+            } catch (err) {
+                console.error('[ConfirmPayment] refund failed — manual intervention required', {
+                    externalId: refundExternalId,
+                    amount: refundAmount,
+                    error: (err as Error).message,
+                });
+            }
+        }
+
+        return result;
     }
 }
