@@ -1,3 +1,8 @@
+﻿Status: РЕАЛИЗОВАН
+Priority: N/A
+Почему: План закрыт: ключевая функциональность присутствует в кодовой базе.
+---
+
 # CORRECTIONS_PLAN.md
 # Корректировки — реализовано, но расходится со спецификацией
 
@@ -173,3 +178,7 @@ absenceResolutionStrategy: AbsenceResolutionStrategy;
 | 14 | `prisma/schema.prisma` | absenceResolutionStrategy | DONE |
 | 15 | `src/application/order/UpdateOrderItemsUseCase.ts` | Создать | DONE |
 | 16 | `src/app/api/orders/[id]/items/route.ts` | Создать | DONE |
+
+
+
+

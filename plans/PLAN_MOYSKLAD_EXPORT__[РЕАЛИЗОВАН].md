@@ -1,3 +1,8 @@
+﻿Status: РЕАЛИЗОВАН
+Priority: N/A
+Почему: План закрыт: ключевая функциональность присутствует в кодовой базе.
+---
+
 # ПЛАН: МойСклад Export (Outbox pattern) — п.3 UNIMPLEMENTED_PLAN.md
 
 Экспорт заказов в МойСклад после перехода в статус DELIVERY.
@@ -446,3 +451,7 @@ INTERNAL_JOB_SECRET=          # Секрет для cron-эндпоинтов
 7. `ProcessOutboxUseCase.ts` + тесты
 8. Route handler + `proxy.ts`
 9. Пометить п.3 как DONE в `UNIMPLEMENTED_PLAN.md`
+
+
+
+

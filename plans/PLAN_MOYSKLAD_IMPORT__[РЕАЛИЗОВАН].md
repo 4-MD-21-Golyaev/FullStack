@@ -1,3 +1,8 @@
+﻿Status: РЕАЛИЗОВАН
+Priority: N/A
+Почему: План закрыт: ключевая функциональность присутствует в кодовой базе.
+---
+
 # ПЛАН: МойСклад Import — п.4 UNIMPLEMENTED_PLAN.md
 
 Периодическая синхронизация ассортимента из МойСклад в локальную БД.
@@ -361,3 +366,7 @@ GET /api/internal/jobs/sync-products
 MOYSKLAD_TOKEN=        # Bearer-токен МойСклад API
 INTERNAL_JOB_SECRET=   # Секрет для cron-эндпоинтов
 ```
+
+
+
+
