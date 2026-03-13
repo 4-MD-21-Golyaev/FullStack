@@ -4,3 +4,10 @@ export class PaymentAlreadyInProgressError extends Error {
         this.name = 'PaymentAlreadyInProgressError';
     }
 }
+
+export class PaymentWindowExpiredError extends Error {
+    constructor() {
+        super('Payment window has expired for this order');
+        this.name = 'PaymentWindowExpiredError';
+    }
+}

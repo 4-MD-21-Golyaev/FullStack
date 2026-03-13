@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InitiatePaymentUseCase } from '../InitiatePaymentUseCase';
-import { PaymentAlreadyInProgressError } from '@/domain/payment/errors';
+import { PaymentAlreadyInProgressError, PaymentWindowExpiredError } from '@/domain/payment/errors';
 import { OrderRepository } from '../../ports/OrderRepository';
 import { PaymentRepository } from '../../ports/PaymentRepository';
 import { ProductRepository } from '../../ports/ProductRepository';
@@ -12,7 +12,7 @@ import { Order } from '@/domain/order/Order';
 import { Product } from '@/domain/product/Product';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 
-const makeOrder = (state: OrderState): Order => ({
+const makeOrder = (state: OrderState, updatedAt = new Date()): Order => ({
     id: 'order-1',
     userId: 'user-1',
     address: 'Test address',
@@ -21,7 +21,7 @@ const makeOrder = (state: OrderState): Order => ({
     absenceResolutionStrategy: AbsenceResolutionStrategy.CALL_REPLACE,
     items: [{ productId: 'p1', name: 'Product', article: 'A1', price: 500, quantity: 2 }],
     createdAt: new Date(),
-    updatedAt: new Date(),
+    updatedAt,
 });
 
 const makeProduct = (stock: number): Product => ({
@@ -182,6 +182,23 @@ describe('InitiatePaymentUseCase', () => {
         const compensationCall = (paymentRepo.save as any).mock.calls[1][0];
         expect(compensationCall.status).toBe(PaymentStatus.FAILED);
         expect(compensationCall.externalId).toBeUndefined();
+    });
+
+    it('cancels order and throws PaymentWindowExpiredError when payment window has elapsed', async () => {
+        const expiredUpdatedAt = new Date(Date.now() - 11 * 60 * 1000); // 11 minutes ago
+        const order = makeOrder(OrderState.PAYMENT, expiredUpdatedAt);
+        const { orderRepo, paymentRepo, transactionRunner } = makeRepos(order, makeProduct(10));
+
+        const useCase = new InitiatePaymentUseCase(orderRepo, paymentRepo, mockGateway, transactionRunner);
+
+        await expect(useCase.execute({ orderId: 'order-1', returnUrl: 'https://example.com/return' }))
+            .rejects.toBeInstanceOf(PaymentWindowExpiredError);
+
+        expect(orderRepo.save).toHaveBeenCalledWith(
+            expect.objectContaining({ state: OrderState.CANCELLED })
+        );
+        expect(paymentRepo.save).not.toHaveBeenCalled();
+        expect(mockGateway.createPayment).not.toHaveBeenCalled();
     });
 
     it('throws PaymentAlreadyInProgressError when a PENDING payment already exists (check inside transaction)', async () => {

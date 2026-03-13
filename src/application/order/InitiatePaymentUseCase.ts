@@ -6,7 +6,8 @@ import { cancelOrder } from '@/domain/order/transitions';
 import { OrderState } from '@/domain/order/OrderState';
 import { Payment } from '@/domain/payment/Payment';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
-import { PaymentAlreadyInProgressError } from '@/domain/payment/errors';
+import { PaymentAlreadyInProgressError, PaymentWindowExpiredError } from '@/domain/payment/errors';
+import { isPaymentWindowExpired } from '@/domain/payment/paymentTimeout';
 import { Product } from '@/domain/product/Product';
 import { randomUUID } from 'crypto';
 
@@ -33,6 +34,17 @@ export class InitiatePaymentUseCase {
         // Идемпотентность: оплата уже была обработана
         if (order.state === OrderState.DELIVERY || order.state === OrderState.CLOSED) {
             throw new Error('Payment already processed for this order');
+        }
+
+        // Окно оплаты истекло: заказ слишком долго находится в состоянии PAYMENT
+        if (order.state === OrderState.PAYMENT && isPaymentWindowExpired(order.updatedAt)) {
+            await this.transactionRunner.run(async ({ orderRepository }) => {
+                const freshOrder = await orderRepository.findById(input.orderId);
+                if (freshOrder && freshOrder.state === OrderState.PAYMENT) {
+                    await orderRepository.save(cancelOrder(freshOrder));
+                }
+            });
+            throw new PaymentWindowExpiredError();
         }
 
         // Транзакционно: проверяем PENDING-дубль, остатки, при необходимости

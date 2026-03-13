@@ -1,8 +1,7 @@
 import { PaymentRepository } from '@/application/ports/PaymentRepository';
 import { TransactionRunner } from '@/application/ports/TransactionRunner';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
-
-const DEFAULT_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+import { PAYMENT_TIMEOUT_MS } from '@/domain/payment/paymentTimeout';
 
 interface PaymentTimeoutResult {
     expired: number;
@@ -15,7 +14,7 @@ export class PaymentTimeoutUseCase {
         private transactionRunner: TransactionRunner,
     ) {}
 
-    async execute(timeoutMs: number = DEFAULT_TIMEOUT_MS): Promise<PaymentTimeoutResult> {
+    async execute(timeoutMs: number = PAYMENT_TIMEOUT_MS): Promise<PaymentTimeoutResult> {
         const cutoff = new Date(Date.now() - timeoutMs);
 
         // Read stale payments outside any transaction — just to get the list
