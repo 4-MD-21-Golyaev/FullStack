@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 interface Session {
     userId: string;
     email: string;
-    role: 'CUSTOMER' | 'STAFF' | 'ADMIN';
+    role: 'CUSTOMER' | 'PICKER' | 'COURIER' | 'ADMIN';
 }
 
 interface OrderItem {
@@ -33,12 +33,15 @@ interface Order {
 // ── Константы ────────────────────────────────────────────────────────────────
 
 const STATE_COLOR: Record<string, string> = {
-    CREATED:   '#0070f3',
-    PICKING:   '#e07b00',
-    PAYMENT:   '#7b3fbf',
-    DELIVERY:  '#0a9e5c',
-    CLOSED:    '#444',
-    CANCELLED: '#c00',
+    CREATED:           '#0070f3',
+    PICKING:           '#e07b00',
+    PAYMENT:           '#7b3fbf',
+    DELIVERY:          '#0a9e5c', // легаси
+    DELIVERY_ASSIGNED: '#0a9e5c',
+    OUT_FOR_DELIVERY:  '#0a7e50',
+    DELIVERED:         '#555',
+    CLOSED:            '#444',
+    CANCELLED:         '#c00',
 };
 
 const CANCELLABLE = new Set(['CREATED', 'PICKING', 'PAYMENT']);
@@ -228,7 +231,8 @@ export default function TestCabinetPage() {
         <div style={{ padding: 40, maxWidth: 820, fontFamily: 'monospace' }}>
             <h1 style={{ marginBottom: 6 }}>Личный кабинет</h1>
             <p style={{ color: '#888', fontSize: 12, marginBottom: 28, marginTop: 0 }}>
-                Тестовая страница · <a href="/test-order" style={{ color: '#0070f3' }}>← Тестирование заказа</a>
+                <a href="/test-ops" style={{ color: '#0070f3' }}>← Операционный хаб</a>
+                {' · '}<a href="/test-order" style={{ color: '#0070f3' }}>Создание заказа</a>
             </p>
 
             {/* ── Аутентификация ── */}
@@ -251,8 +255,10 @@ export default function TestCabinetPage() {
                 {(authStep === 'unauthenticated' || authStep === 'code-sent') && (
                     <div>
                         <p style={{ fontSize: 12, color: '#666', marginTop: 0, marginBottom: 10 }}>
-                            Тестовые аккаунты: <code>test@example.com</code> (CUSTOMER) ·{' '}
-                            <code>staff@example.com</code> (STAFF) · <code>admin@example.com</code> (ADMIN)
+                            <code>test@example.com</code> (CUSTOMER)
+                            {' · '}<code>picker@example.com</code> (PICKER)
+                            {' · '}<code>courier@example.com</code> (COURIER)
+                            {' · '}<code>admin@example.com</code> (ADMIN)
                         </p>
 
                         {authStep === 'unauthenticated' && (
@@ -516,9 +522,10 @@ function plural(n: number, one: string, few: string, many: string): string {
 }
 
 function roleColor(role: string) {
-    if (role === 'ADMIN') return '#c00';
-    if (role === 'STAFF') return '#0070f3';
-    return '#0a9e5c';
+    if (role === 'ADMIN')   return '#c00';
+    if (role === 'PICKER')  return '#e07b00';
+    if (role === 'COURIER') return '#7b3fbf';
+    return '#0a9e5c'; // CUSTOMER
 }
 
 // ── Стили ─────────────────────────────────────────────────────────────────────

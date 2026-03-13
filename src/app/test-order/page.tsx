@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 interface Session {
     userId: string;
     email: string;
-    role: 'CUSTOMER' | 'STAFF' | 'ADMIN';
+    role: 'CUSTOMER' | 'PICKER' | 'COURIER' | 'ADMIN';
 }
 
 interface Category {
@@ -58,11 +58,13 @@ interface OrderResult {
 
 const LOCAL_CART_KEY = 'cart';
 
-const STATE_ACTIONS: Record<string, { label: string; endpoint: string; staffOnly: boolean }> = {
-    CREATED:  { label: 'Начать сборку',    endpoint: 'start-picking',    staffOnly: true  },
-    PICKING:  { label: 'Завершить сборку', endpoint: 'complete-picking', staffOnly: true  },
-    PAYMENT:  { label: 'Оплатить заказ',   endpoint: 'pay',              staffOnly: false },
-    DELIVERY: { label: 'Закрыть заказ',    endpoint: 'close',            staffOnly: true  },
+const STATE_ACTIONS: Record<string, { label: string; endpoint: string; pickerOnly: boolean }> = {
+    CREATED:   { label: 'Начать сборку',    endpoint: 'start-picking',    pickerOnly: true  },
+    PICKING:   { label: 'Завершить сборку', endpoint: 'complete-picking', pickerOnly: true  },
+    PAYMENT:   { label: 'Оплатить заказ',   endpoint: 'pay',              pickerOnly: false },
+    // Статус DELIVERY — легаси; DELIVERED — актуальный терминал доставки (Queue B)
+    DELIVERY:  { label: 'Закрыть заказ',    endpoint: 'close',            pickerOnly: true  },
+    DELIVERED: { label: 'Закрыть заказ',    endpoint: 'close',            pickerOnly: true  },
 };
 
 const CANCELLABLE_STATES = new Set(['CREATED', 'PICKING', 'PAYMENT']);
@@ -438,18 +440,23 @@ export default function TestOrderPage() {
         }
     }
 
-    const isStaff        = session?.role === 'STAFF' || session?.role === 'ADMIN';
-    const availableItems = cartItems.filter(i => i.stock > 0);
+    // STAFF оставлен для обратной совместимости переходного периода
+    const isPickerOrAdmin = ['PICKER', 'ADMIN', 'STAFF'].includes(session?.role ?? '');
+    const availableItems  = cartItems.filter(i => i.stock > 0);
     const outOfStockItems = cartItems.filter(i => i.stock === 0);
     const cartTotal      = availableItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    const action         = order ? STATE_ACTIONS[order.state] : null;
-    const canCancel      = order ? CANCELLABLE_STATES.has(order.state) : false;
+    const action    = order ? (STATE_ACTIONS[order.state] ?? null) : null;
+    const canCancel = order ? CANCELLABLE_STATES.has(order.state) : false;
 
     // ── Рендер ───────────────────────────────────────────────────────────────
 
     return (
         <div style={{ padding: 40, maxWidth: 780, fontFamily: 'monospace' }}>
-            <h1 style={{ marginBottom: 28 }}>Тестирование жизненного цикла заказа</h1>
+            <h1 style={{ marginBottom: 6 }}>Тестирование жизненного цикла заказа</h1>
+            <p style={{ color: '#888', fontSize: 12, marginTop: 0, marginBottom: 28 }}>
+                <a href="/test-ops" style={{ color: '#0070f3' }}>← Операционный хаб</a>
+                {' · '}<a href="/test-cabinet" style={{ color: '#0070f3' }}>Личный кабинет →</a>
+            </p>
 
             {/* ── Аутентификация ── */}
             <section style={sectionStyle}>
@@ -471,8 +478,10 @@ export default function TestOrderPage() {
                 {(authStep === 'unauthenticated' || authStep === 'code-sent') && (
                     <div>
                         <p style={{ fontSize: 12, color: '#666', marginTop: 0, marginBottom: 10 }}>
-                            Тестовые аккаунты: <code>test@example.com</code> (CUSTOMER) ·{' '}
-                            <code>staff@example.com</code> (STAFF) · <code>admin@example.com</code> (ADMIN)
+                            <code>test@example.com</code> (CUSTOMER)
+                            {' · '}<code>picker@example.com</code> (PICKER)
+                            {' · '}<code>courier@example.com</code> (COURIER)
+                            {' · '}<code>admin@example.com</code> (ADMIN)
                         </p>
 
                         {!showRegister ? (
@@ -807,8 +816,8 @@ export default function TestOrderPage() {
                         </div>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                             {action && (
-                                action.staffOnly && !isStaff
-                                    ? <span style={{ fontSize: 12, color: '#888' }}>{action.label} — только STAFF/ADMIN</span>
+                                action.pickerOnly && !isPickerOrAdmin
+                                    ? <span style={{ fontSize: 12, color: '#888' }}>{action.label} — только PICKER/ADMIN</span>
                                     : (
                                         <button onClick={() => handleOrderAction(action.endpoint)}
                                             disabled={orderLoading}
@@ -851,9 +860,10 @@ function Thumbnail({ src, alt }: { src: string | null; alt: string }) {
 }
 
 function roleColor(role: string) {
-    if (role === 'ADMIN') return '#c00';
-    if (role === 'STAFF') return '#0070f3';
-    return '#0a9e5c';
+    if (role === 'ADMIN')   return '#c00';
+    if (role === 'PICKER')  return '#e07b00';
+    if (role === 'COURIER') return '#7b3fbf';
+    return '#0a9e5c'; // CUSTOMER
 }
 
 // ── Стили ─────────────────────────────────────────────────────────────────────
