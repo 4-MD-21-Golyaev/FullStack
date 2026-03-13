@@ -215,7 +215,7 @@ describe('ConfirmPaymentUseCase', () => {
         consoleSpy.mockRestore();
     });
 
-    it('on payment.succeeded: OutboxEvent записывается с eventType ORDER_READY_FOR_DELIVERY и orderId', async () => {
+    it('on payment.succeeded: OutboxEvent записывается с eventType PAYMENT_RECEIVED и orderId + amount', async () => {
         const { paymentRepo, transactionRunner, txOutboxRepo } =
             makeDeps(makePayment(PaymentStatus.PENDING), makeOrder(OrderState.PAYMENT), makeProduct(10));
 
@@ -225,8 +225,8 @@ describe('ConfirmPaymentUseCase', () => {
         expect(txOutboxRepo.save).toHaveBeenCalledOnce();
         expect(txOutboxRepo.save).toHaveBeenCalledWith(
             expect.objectContaining({
-                eventType: 'ORDER_READY_FOR_DELIVERY',
-                payload: expect.objectContaining({ orderId: 'order-1' }),
+                eventType: 'PAYMENT_RECEIVED',
+                payload: expect.objectContaining({ orderId: 'order-1', amount: 500 }),
             })
         );
     });

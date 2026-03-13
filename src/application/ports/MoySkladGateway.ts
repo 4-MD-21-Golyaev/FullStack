@@ -10,10 +10,13 @@ export class MoySkladProductNotFoundError extends Error {
 }
 
 export interface MoySkladGateway {
-    // Export (п.3)
-    exportOrder(orderId: string, items: OrderItem[]): Promise<void>;
+    // Order lifecycle
+    createCustomerOrder(orderId: string, items: OrderItem[], totalAmount: number): Promise<string>;
+    updateCustomerOrder(moySkladId: string, items: OrderItem[], totalAmount: number): Promise<void>;
+    createPaymentIn(moySkladId: string, amount: number, orderId: string): Promise<void>;
+    updateCustomerOrderState(moySkladId: string): Promise<void>;
 
-    // Import (п.4)
+    // Import
     fetchFolders(): Promise<MoySkladFolder[]>;
     fetchProducts(): Promise<MoySkladProduct[]>;
 }

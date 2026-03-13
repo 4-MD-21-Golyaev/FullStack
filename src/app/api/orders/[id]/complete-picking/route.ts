@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaOrderRepository } from '@/infrastructure/repositories/OrderRepository.prisma';
+import { PrismaTransactionRunner } from '@/infrastructure/db/PrismaTransactionRunner';
 import { CompletePickingUseCase } from '@/application/order/CompletePickingUseCase';
 
 export async function POST(
@@ -8,8 +8,7 @@ export async function POST(
 ) {
     try {
         const { id } = await params;
-        const orderRepo = new PrismaOrderRepository();
-        const useCase = new CompletePickingUseCase(orderRepo);
+        const useCase = new CompletePickingUseCase(new PrismaTransactionRunner());
 
         const order = await useCase.execute({ orderId: id });
 

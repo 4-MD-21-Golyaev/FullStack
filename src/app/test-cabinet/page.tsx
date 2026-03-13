@@ -209,6 +209,38 @@ export default function TestCabinetPage() {
         }
     }
 
+    // ── Оплата заказа ────────────────────────────────────────────────────────
+
+    async function handlePay(orderId: string) {
+        setActionLoading(true); setActionResult(null); setActionError(null);
+        try {
+            const res = await fetch(`/api/orders/${orderId}/pay`, { method: 'POST' });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message);
+            if (data.confirmationUrl) window.location.href = data.confirmationUrl;
+        } catch (err: any) {
+            setActionError(err.message);
+        } finally {
+            setActionLoading(false);
+        }
+    }
+
+    async function handlePayDev(orderId: string) {
+        setActionLoading(true); setActionResult(null); setActionError(null);
+        try {
+            const res = await fetch(`/api/orders/${orderId}/pay-dev`, { method: 'POST' });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message);
+            setActionResult('Оплата принята (dev)');
+            setSelectedOrder(data);
+            setOrders(prev => prev.map(o => o.id === orderId ? data : o));
+        } catch (err: any) {
+            setActionError(err.message);
+        } finally {
+            setActionLoading(false);
+        }
+    }
+
     // ── Повтор заказа (добавить позиции в корзину) ────────────────────────────
 
     async function handleRepeat(orderId: string) {
@@ -420,6 +452,26 @@ export default function TestCabinetPage() {
                                     </span>
                                 </div>
                                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                                    {selectedOrder.state === 'PAYMENT' && (
+                                        <>
+                                            <button
+                                                onClick={() => handlePay(selectedOrder.id)}
+                                                disabled={actionLoading}
+                                                style={btnPrimary}
+                                                title="Оплата через Юкассу (требует доступ к api.yookassa.ru)"
+                                            >
+                                                {actionLoading ? '...' : 'Оплатить (Юкасса)'}
+                                            </button>
+                                            <button
+                                                onClick={() => handlePayDev(selectedOrder.id)}
+                                                disabled={actionLoading}
+                                                style={btnDev}
+                                                title="[DEV] Прямая оплата без шлюза"
+                                            >
+                                                {actionLoading ? '...' : '[DEV] Оплатить'}
+                                            </button>
+                                        </>
+                                    )}
                                     <button
                                         onClick={() => handleRepeat(selectedOrder.id)}
                                         disabled={actionLoading}
@@ -559,4 +611,8 @@ const btnDanger: React.CSSProperties = {
 const btnSecondary: React.CSSProperties = {
     padding: '8px 12px', fontSize: 13, background: '#f0f0f0',
     color: '#333', border: '1px solid #ccc', borderRadius: 4, cursor: 'pointer',
+};
+const btnDev: React.CSSProperties = {
+    padding: '8px 12px', fontSize: 13, background: '#555',
+    color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer',
 };

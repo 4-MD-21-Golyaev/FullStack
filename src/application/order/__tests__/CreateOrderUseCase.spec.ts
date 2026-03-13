@@ -13,7 +13,7 @@ function makeTransactionRunner(orderRepo: any, productRepo: any): TransactionRun
                 orderRepository: orderRepo,
                 paymentRepository: {} as any,
                 productRepository: productRepo,
-                outboxRepository: {} as any,
+                outboxRepository: { save: vi.fn(), claimPending: vi.fn(), markProcessed: vi.fn(), markFailed: vi.fn(), incrementRetry: vi.fn() },
                     auditLogRepository: {} as any,
             })
         ),

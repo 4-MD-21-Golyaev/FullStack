@@ -16,6 +16,7 @@ export interface Order {
     deliveryClaimedAt?: Date | null;
     outForDeliveryAt?: Date | null;
     deliveredAt?: Date | null;
+    moySkladId?: string | null;
     createdAt: Date;
     updatedAt: Date;
 }

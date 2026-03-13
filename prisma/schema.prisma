@@ -188,6 +188,9 @@ model Order {
   /// Timestamp set when courier confirms actual delivery (SLA end)
   deliveredAt          DateTime?
 
+  /// MoySklad customerorder ID, set after ORDER_CREATED outbox event is processed
+  moySkladId           String?
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

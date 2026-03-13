@@ -13,7 +13,7 @@ export class CourierConfirmDeliveredUseCase {
     constructor(private transactionRunner: TransactionRunner) {}
 
     async execute(input: CourierConfirmDeliveredInput) {
-        return this.transactionRunner.run(async ({ orderRepository, outboxRepository, auditLogRepository }) => {
+        return this.transactionRunner.run(async ({ orderRepository, auditLogRepository, outboxRepository }) => {
             const order = await orderRepository.findById(input.orderId);
             if (!order) throw new Error('Order not found');
 
@@ -24,22 +24,6 @@ export class CourierConfirmDeliveredUseCase {
             const updated = confirmDelivered(order);
             await orderRepository.save(updated);
 
-            // Publish ORDER_DELIVERED — triggers MoySklad export via outbox
-            await outboxRepository.save({
-                id: randomUUID(),
-                eventType: 'ORDER_DELIVERED',
-                payload: {
-                    orderId: updated.id,
-                    items: updated.items.map(i => ({
-                        productId: i.productId,
-                        article:   i.article,
-                        name:      i.name,
-                        price:     i.price,
-                        quantity:  i.quantity,
-                    })),
-                },
-            });
-
             await auditLogRepository.save({
                 actorUserId: input.userId,
                 actorRole: input.userRole,
@@ -49,6 +33,14 @@ export class CourierConfirmDeliveredUseCase {
                 before: { state: order.state },
                 after: { state: updated.state, deliveredAt: updated.deliveredAt },
                 correlationId: input.correlationId,
+            });
+
+            await outboxRepository.save({
+                id: randomUUID(),
+                eventType: 'ORDER_COMPLETED',
+                payload: {
+                    orderId: updated.id,
+                },
             });
 
             return updated;

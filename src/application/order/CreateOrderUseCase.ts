@@ -18,7 +18,7 @@ export class CreateOrderUseCase {
     constructor(private transactionRunner: TransactionRunner) {}
 
     async execute(input: CreateOrderInput) {
-        return this.transactionRunner.run(async ({ orderRepository, productRepository }) => {
+        return this.transactionRunner.run(async ({ orderRepository, productRepository, outboxRepository }) => {
             const orderItems: OrderItem[] = [];
 
             for (const item of input.items) {
@@ -54,6 +54,22 @@ export class CreateOrderUseCase {
             );
 
             await orderRepository.save(order);
+
+            await outboxRepository.save({
+                id: randomUUID(),
+                eventType: 'ORDER_CREATED',
+                payload: {
+                    orderId: order.id,
+                    items: order.items.map(i => ({
+                        productId: i.productId,
+                        article: i.article,
+                        name: i.name,
+                        price: i.price,
+                        quantity: i.quantity,
+                    })),
+                    totalAmount: order.totalAmount,
+                },
+            });
 
             return order;
         });

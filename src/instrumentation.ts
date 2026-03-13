@@ -47,6 +47,7 @@ export async function register() {
                             organizationId: process.env.MOYSKLAD_ORGANIZATION_ID!,
                             agentId:        process.env.MOYSKLAD_AGENT_ID!,
                         }),
+                        new PrismaOrderRepository(),
                     );
                     await useCase.execute();
                 } catch (err) {

@@ -120,20 +120,12 @@ export class ConfirmPaymentUseCase {
             const updated = startDelivery(order);
             await orderRepository.save(updated);
 
-            // ORDER_READY_FOR_DELIVERY: уведомляем о готовности к доставке.
-            // ORDER_DELIVERED публикуется позже — только после физического вручения курьером.
             await outboxRepository.save({
                 id: randomUUID(),
-                eventType: 'ORDER_READY_FOR_DELIVERY',
+                eventType: 'PAYMENT_RECEIVED',
                 payload: {
                     orderId: updated.id,
-                    items: updated.items.map(i => ({
-                        productId: i.productId,
-                        article:   i.article,
-                        name:      i.name,
-                        price:     i.price,
-                        quantity:  i.quantity,
-                    })),
+                    amount: payment.amount,
                 },
             });
 
