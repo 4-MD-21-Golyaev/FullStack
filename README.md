@@ -1,139 +1,131 @@
-# Интернет-магазин «КомпанияН»
+﻿# Интернет-магазин «КомпанияН»
 
-**Автор:** Голяев Игнатий
+Бэкенд/API для eGrocery-платформы в рамках ВКР: оформление заказа, сборка, оплата, доставка и операционные роли (picker/courier/admin).
 
-Выпускная квалификационная работа по проектированию и разработке веб-системы онлайн-продаж продуктовой розничной сети.
+## Стек
 
----
-
-## Демо
-
-Демостенд доступен по адресу: https://blackfly-causeless-camie.ngrok-free.dev
-
-> Для получения доступа предварительно свяжитесь в Telegram: [@likekushka](https://t.me/likekushka)
-
-### Тестовые страницы
-
-| Страница | URL | Описание |
-|---|---|---|
-| Жизненный цикл заказа | [/test-order](/test-order) | Каталог, корзина, оформление и прохождение заказа по всем статусам |
-| Личный кабинет | [/test-cabinet](/test-cabinet) | История заказов, детальный просмотр, повтор и отмена заказа |
-
----
-
-## Дизайн
-
-Макет интерфейса доступен в Figma: [ВКР — Figma](https://www.figma.com/design/TcdOTCNzWomMEaytw9T4sm/%D0%92%D0%9A%D0%A0?node-id=1-6&t=y6X8jl4kgPGdnPWo-1)
-
----
-
-## Назначение
-
-Реализация устойчивой eGrocery-платформы с поддержкой полного сценария покупки: от формирования заказа до подтверждения доставки. Система интегрируется с внешним платёжным шлюзом ЮKassa и включает строгое управление жизненным циклом заказа.
-
----
+- Next.js 16 (App Router), React 19, TypeScript (strict)
+- PostgreSQL + Prisma 7 (`@prisma/adapter-pg`)
+- ЮKassa (платежи), MoySklad (выгрузка)
+- Nodemailer (OTP по email)
+- Vitest (unit + route tests)
 
 ## Архитектура
 
-Проект следует **гексагональной (Ports & Adapters) / Clean Architecture**.
+Проект следует Hexagonal (Ports & Adapters) / Clean Architecture:
 
-```
+```text
 src/
-├── domain/          # Сущности, перечисления, конечный автомат состояний, доменные ошибки
-├── application/     # Use cases + порты (интерфейсы репозиториев и шлюзов)
-│   └── ports/       # Абстракции, которые реализует инфраструктура
-├── infrastructure/  # Реализации: Prisma-репозитории, платёжный шлюз ЮKassa
-└── app/api/         # Next.js App Router — тонкие HTTP-обработчики
+├── domain/          # сущности, enum'ы, state machine, domain errors
+├── application/     # use-cases + портовые интерфейсы
+│   └── ports/       # контракты репозиториев/шлюзов
+├── infrastructure/  # Prisma-репозитории, внешние gateway, db-адаптеры
+└── app/api/         # HTTP-слой (тонкие route handlers)
 ```
 
-**Правило зависимостей:** domain ← application ← infrastructure ← HTTP. Внутренние слои не импортируют внешние.
-
----
+Правило зависимостей: `domain <- application <- infrastructure <- app/api`.
 
 ## Жизненный цикл заказа
 
+```text
+CREATED -> PICKING -> PAYMENT -> DELIVERY -> CLOSED
+                 \-> CANCELLED (из CREATED/PICKING/PAYMENT)
 ```
-CREATED → PICKING → PAYMENT → DELIVERY → CLOSED
-                 ↘ CANCELLED (из CREATED, PICKING или PAYMENT)
-```
 
-| Use case | Переход |
-|---|---|
-| `StartPickingUseCase` | CREATED → PICKING |
-| `CompletePickingUseCase` | PICKING → PAYMENT |
-| `InitiatePaymentUseCase` | создаёт платёж ЮKassa, заказ остаётся в PAYMENT |
-| `ConfirmPaymentUseCase` | PAYMENT → DELIVERY (или CANCELLED при неудаче) |
-| `CloseOrderUseCase` | DELIVERY → CLOSED |
-| `CancelOrderUseCase` | CREATED / PICKING / PAYMENT → CANCELLED |
-| `UpdateOrderItemsUseCase` | изменение состава заказа в PICKING |
-| `PaymentTimeoutUseCase` | автоотмена при нахождении в PAYMENT > 10 минут |
+Ключевые правила:
 
-Переходы реализованы через конечный автомат в `src/domain/order/transitions.ts`. Недопустимый переход выбрасывает `InvalidOrderStateError`. Состав заказа фиксируется при переходе в PAYMENT и не может быть изменён после.
+- переходы валидируются только в `src/domain/order/transitions.ts`
+- состав и сумма заказа можно менять только в `PICKING`
+- списание stock только в `PAYMENT -> DELIVERY`
+- webhook Yookassa и инициирование платежа идемпотентны
+- в `PAYMENT` допускается только один `PENDING` платеж
+- таймаут оплаты: авто-отмена при зависании в `PAYMENT` > 10 минут
 
----
+## Платежный поток (Yookassa)
 
-## Ключевые особенности реализации
+1. `POST /api/orders/[id]/pay` создает `Payment(PENDING)` и `confirmationUrl`.
+2. Пользователь оплачивает на стороне ЮKassa.
+3. `POST /api/webhooks/yookassa` подтверждает платеж:
+   - `SUCCESS` -> перевод заказа в `DELIVERY`
+   - `FAILED` -> отмена/неуспех по бизнес-правилам
 
-- **Транзакционные границы** — `ConfirmPaymentUseCase`, `CancelOrderUseCase`, `CreateOrderUseCase` выполняются в `prisma.$transaction` с блокировкой строк (`SELECT FOR UPDATE`), что предотвращает гонки при параллельных запросах.
-- **Идемпотентность вебхука** — повторный вызов `ConfirmPaymentUseCase` с уже обработанным платежом безопасно игнорируется.
-- **Единственный PENDING-платёж** — `InitiatePaymentUseCase` проверяет отсутствие существующего PENDING-платежа перед созданием нового.
-- **Стратегия отсутствия товара** — поле `absenceResolutionStrategy` на заказе (`CALL_REPLACE | CALL_REMOVE | AUTO_REMOVE | AUTO_REPLACE`) определяет поведение при нехватке товара во время сборки.
-- **Списание остатков** — только при переходе PAYMENT → DELIVERY, после повторной проверки наличия.
-- **Таймаут оплаты** — фоновый cron-job (`node-cron`) автоматически отменяет заказы, задержавшиеся в PAYMENT более 10 минут.
+В продакшене входящий IP webhook проверяется по whitelist.
 
----
+## API (основные группы)
 
-## API
+- Справочники: `/api/products`, `/api/categories`, `/api/order-statuses`, `/api/absence-resolution-strategies`, `/api/user-roles`
+- Auth: `/api/auth/register`, `/api/auth/request-code`, `/api/auth/verify-code`, `/api/auth/refresh`, `/api/auth/me`, `/api/auth/logout`
+- Cart: `/api/cart`, `/api/cart/[productId]`, `/api/cart/sync`
+- Orders: `/api/orders`, `/api/orders/[id]`, `/api/orders/[id]/start-picking`, `/api/orders/[id]/items`, `/api/orders/[id]/complete-picking`, `/api/orders/[id]/pay`, `/api/orders/[id]/cancel`, `/api/orders/[id]/close`, `/api/orders/[id]/repeat`
+- Picker: `/api/picker/orders/available`, `/api/picker/orders/me`, `/api/picker/orders/[id]/claim`, `/api/picker/orders/[id]/release`
+- Courier: `/api/courier/orders/available`, `/api/courier/orders/me`, `/api/courier/orders/[id]/claim`, `/api/courier/orders/[id]/start-delivery`, `/api/courier/orders/[id]/confirm-delivered`, `/api/courier/orders/[id]/mark-delivery-failed`, `/api/courier/orders/[id]/release`
+- Admin: `/api/admin/orders`, `/api/admin/payments/issues`, `/api/admin/payments/[id]/retry`, `/api/admin/payments/[id]/mark-failed`, `/api/admin/jobs/[jobName]/status`, `/api/admin/jobs/[jobName]/run`
+- Webhooks: `/api/webhooks/yookassa`, `/api/webhooks/moysklad`
+- Internal jobs: `/api/internal/jobs/payment-timeout`, `/api/internal/jobs/process-outbox`, `/api/internal/jobs/sync-products`
+- Cron endpoint: `/api/cron/payment-timeout`
 
-| Метод | URL | Описание |
-|---|---|---|
-| `POST` | `/api/orders` | Создать заказ |
-| `POST` | `/api/orders/[id]/start-picking` | Начать сборку |
-| `PATCH` | `/api/orders/[id]/items` | Изменить состав в PICKING |
-| `POST` | `/api/orders/[id]/complete-picking` | Завершить сборку |
-| `POST` | `/api/orders/[id]/pay` | Инициировать оплату (ЮKassa) |
-| `POST` | `/api/orders/[id]/cancel` | Отменить заказ |
-| `POST` | `/api/orders/[id]/close` | Закрыть заказ |
-| `POST` | `/api/webhooks/yookassa` | Вебхук подтверждения оплаты |
-| `GET` | `/api/products` | Список товаров |
-| `GET` | `/api/products/[id]` | Товар по ID |
-| `GET` | `/api/categories` | Список категорий |
+## Тестовые страницы
 
----
+- `/test-order` - жизненный цикл заказа
+- `/test-cabinet` - личный кабинет/история заказов
+- `/test-picker` - сценарии сборщика
+- `/test-courier` - сценарии курьера
+- `/test-admin-ops` - админ-операции
+- `/test-access-matrix` - матрица прав
+- `/test-ops` - операционные сценарии
+- `/admin/moysklad` - панель интеграции MoySklad
 
-## Технологии
+## Переменные окружения
 
-- **Next.js 16** (App Router, гибридный рендеринг)
-- **React 19**, **TypeScript** (strict mode)
-- **PostgreSQL** — хранилище данных
-- **Prisma 7** (`@prisma/adapter-pg`) — ORM и миграции
-- **ЮKassa** — платёжный шлюз
-- **node-cron** — фоновые задачи (таймаут оплаты)
-- **Vitest** — юнит-тесты
-
----
-
-## Локальный запуск
-
-### Переменные окружения
+Минимальный набор для локального запуска:
 
 ```env
-DATABASE_URL=postgresql://...
+DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+JWT_SECRET=your-secret-min-32-chars
 YOOKASSA_SHOP_ID=...
 YOOKASSA_SECRET_KEY=...
 YOOKASSA_RETURN_URL=http://localhost:3000
+SMTP_HOST=...
+SMTP_PORT=587
+SMTP_USER=...
+SMTP_PASS=...
+SMTP_FROM=...
 ```
 
-### Команды
+Также используются:
+
+```env
+OTP_HMAC_SECRET=...
+CRON_SECRET=...
+INTERNAL_JOB_SECRET=...
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+MOYSKLAD_TOKEN=...
+MOYSKLAD_ORGANIZATION_ID=...
+MOYSKLAD_AGENT_ID=...
+```
+
+Примечания:
+
+- `OTP_HMAC_SECRET` опционален для dev (есть fallback), но обязателен для production.
+- `CRON_SECRET` нужен для `/api/cron/*`.
+- `INTERNAL_JOB_SECRET` нужен для `/api/internal/jobs/*`.
+- перед первым запуском обязательно выполнить `seed`, чтобы заполнить lookup-таблицы статусов.
+
+## Локальный запуск
 
 ```bash
 npm install
+npx prisma migrate dev
+npx prisma db seed
+npm run dev
+```
 
-npx prisma migrate dev   # Применить миграции
-npx prisma db seed       # Заполнить справочники статусов (обязательно перед запуском)
+Прочие команды:
 
-npm run dev              # Запустить dev-сервер (localhost:3000)
-npm run build            # Сборка для продакшена
-npm run test             # Запустить все тесты
-npm run lint             # Проверка линтером
+```bash
+npm run build
+npm run start
+npm run lint
+npm run test
+npx vitest run src/path/to/file.spec.ts
 ```
