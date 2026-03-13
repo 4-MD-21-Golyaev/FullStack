@@ -1,131 +1,248 @@
-﻿# Интернет-магазин «КомпанияН»
+# Интернет-магазин «КомпанияН»
 
-Бэкенд/API для eGrocery-платформы в рамках ВКР: оформление заказа, сборка, оплата, доставка и операционные роли (picker/courier/admin).
+eGrocery-платформа, разработанная в рамках ВКР. Система покрывает полный цикл работы с заказом — от добавления товара в корзину до закрытия доставленного заказа — и включает операционные роли для сборщиков, курьеров и администраторов.
 
-## Стек
+> Весь код проекта разработан с использованием возможностей ИИ-агента — **Claude Code** (Anthropic).
 
-- Next.js 16 (App Router), React 19, TypeScript (strict)
-- PostgreSQL + Prisma 7 (`@prisma/adapter-pg`)
-- ЮKassa (платежи), MoySklad (выгрузка)
-- Nodemailer (OTP по email)
-- Vitest (unit + route tests)
+---
 
-## Архитектура
+## Посмотреть вживую
 
-Проект следует Hexagonal (Ports & Adapters) / Clean Architecture:
+Проект доступен по адресу: **https://blackfly-causeless-camie.ngrok-free.dev/**
 
-```text
-src/
-├── domain/          # сущности, enum'ы, state machine, domain errors
-├── application/     # use-cases + портовые интерфейсы
-│   └── ports/       # контракты репозиториев/шлюзов
-├── infrastructure/  # Prisma-репозитории, внешние gateway, db-адаптеры
-└── app/api/         # HTTP-слой (тонкие route handlers)
-```
+Перед тем как открыть ссылку, напишите в Telegram: **[@likekushka](https://t.me/likekushka)** — сервер запускается по запросу.
 
-Правило зависимостей: `domain <- application <- infrastructure <- app/api`.
+### Тестовые страницы
+
+| Страница | URL | Что можно проверить |
+|----------|-----|---------------------|
+| Жизненный цикл заказа | `/test-order` | Создание заказа, оплата, переходы по статусам |
+| Личный кабинет | `/test-cabinet` | История заказов, повтор заказа |
+| Сборщик | `/test-picker` | Захват заказа, корректировка состава, завершение сборки |
+| Курьер | `/test-courier` | Захват заказа, выезд, подтверждение вручения / неудача |
+| Администратор | `/test-admin-ops` | Просмотр всех заказов, управление платежами, запуск задач |
+| Матрица доступа | `/test-access-matrix` | Ролевая модель: кто что может делать |
+| Операционные сценарии | `/test-ops` | Совместный сценарий picker + courier + admin |
+| Интеграция МойСклад | `/admin/moysklad` | Синхронизация каталога, экспорт заказов |
+
+---
+
+## Что это за проект
+
+Это REST API + минимальный фронтенд (текущая реализация) для онлайн-магазина с доставкой. Основная ценность — продуманная доменная модель и явная реализация жизненного цикла заказа с сохранением инвариантов на уровне бизнес-логики, а не базы данных.
+
+**Пользовательские роли:**
+
+| Роль | Что делает |
+|------|-----------|
+| Покупатель | Формирует корзину, оформляет заказ, оплачивает, отслеживает статус |
+| Сборщик  | Берёт заказ в работу, собирает по факту наличия, закрывает сборку |
+| Курьер | Принимает заказ на доставку, подтверждает вручение или фиксирует неудачу |
+| Администратор | Видит все заказы, управляет платёжными инцидентами и фоновыми задачами |
+
+---
 
 ## Жизненный цикл заказа
 
-```text
-CREATED -> PICKING -> PAYMENT -> DELIVERY -> CLOSED
-                 \-> CANCELLED (из CREATED/PICKING/PAYMENT)
+```
+CREATED ──► PICKING ──► PAYMENT ──► DELIVERY_ASSIGNED ──► OUT_FOR_DELIVERY ──► DELIVERED ──► CLOSED
+    │           │            │                                     │
+    └───────────└────────────┴──► CANCELLED          DELIVERY_ASSIGNED ◄── (неудача доставки)
 ```
 
-Ключевые правила:
+**Правила переходов:**
 
-- переходы валидируются только в `src/domain/order/transitions.ts`
-- состав и сумма заказа можно менять только в `PICKING`
-- списание stock только в `PAYMENT -> DELIVERY`
-- webhook Yookassa и инициирование платежа идемпотентны
-- в `PAYMENT` допускается только один `PENDING` платеж
-- таймаут оплаты: авто-отмена при зависании в `PAYMENT` > 10 минут
+- `CREATED → PICKING` — сборщик берёт заказ в работу
+- `PICKING → PAYMENT` — сборщик завершил комплектацию
+- `PAYMENT → DELIVERY_ASSIGNED` — платёж успешно подтверждён (через webhook ЮKassa)
+- `DELIVERY_ASSIGNED → OUT_FOR_DELIVERY` — курьер выехал
+- `OUT_FOR_DELIVERY → DELIVERED` — курьер подтвердил вручение
+- `OUT_FOR_DELIVERY → DELIVERY_ASSIGNED` — вручение не удалось, повторная попытка
+- `DELIVERED → CLOSED` — заказ закрыт
+- `CANCELLED` — доступна из `CREATED`, `PICKING` и `PAYMENT`
 
-## Платежный поток (Yookassa)
+**Ключевые инварианты:**
 
-1. `POST /api/orders/[id]/pay` создает `Payment(PENDING)` и `confirmationUrl`.
-2. Пользователь оплачивает на стороне ЮKassa.
-3. `POST /api/webhooks/yookassa` подтверждает платеж:
-   - `SUCCESS` -> перевод заказа в `DELIVERY`
-   - `FAILED` -> отмена/неуспех по бизнес-правилам
+- Состав и сумма заказа фиксируются на переходе в `PAYMENT` и далее неизменны
+- Списание остатков происходит только в момент `PAYMENT → DELIVERY`
+- В состоянии `PAYMENT` может существовать не более одного `PENDING`-платежа
+- Если заказ завис в `PAYMENT` дольше 10 минут — автоматическая отмена
+- Переход из `PICKING` обратно в `CREATED` запрещён
 
-В продакшене входящий IP webhook проверяется по whitelist.
+**Стратегия отсутствия товаров при сборке:**
 
-## API (основные группы)
+На заказе хранится поле `absenceStrategy`: `CALL_REPLACE` / `CALL_REMOVE` / `AUTO_REPLACE` / `AUTO_REMOVE`. Корректировка состава разрешена только в состоянии `PICKING`.
 
-- Справочники: `/api/products`, `/api/categories`, `/api/order-statuses`, `/api/absence-resolution-strategies`, `/api/user-roles`
-- Auth: `/api/auth/register`, `/api/auth/request-code`, `/api/auth/verify-code`, `/api/auth/refresh`, `/api/auth/me`, `/api/auth/logout`
-- Cart: `/api/cart`, `/api/cart/[productId]`, `/api/cart/sync`
-- Orders: `/api/orders`, `/api/orders/[id]`, `/api/orders/[id]/start-picking`, `/api/orders/[id]/items`, `/api/orders/[id]/complete-picking`, `/api/orders/[id]/pay`, `/api/orders/[id]/cancel`, `/api/orders/[id]/close`, `/api/orders/[id]/repeat`
-- Picker: `/api/picker/orders/available`, `/api/picker/orders/me`, `/api/picker/orders/[id]/claim`, `/api/picker/orders/[id]/release`
-- Courier: `/api/courier/orders/available`, `/api/courier/orders/me`, `/api/courier/orders/[id]/claim`, `/api/courier/orders/[id]/start-delivery`, `/api/courier/orders/[id]/confirm-delivered`, `/api/courier/orders/[id]/mark-delivery-failed`, `/api/courier/orders/[id]/release`
-- Admin: `/api/admin/orders`, `/api/admin/payments/issues`, `/api/admin/payments/[id]/retry`, `/api/admin/payments/[id]/mark-failed`, `/api/admin/jobs/[jobName]/status`, `/api/admin/jobs/[jobName]/run`
-- Webhooks: `/api/webhooks/yookassa`, `/api/webhooks/moysklad`
-- Internal jobs: `/api/internal/jobs/payment-timeout`, `/api/internal/jobs/process-outbox`, `/api/internal/jobs/sync-products`
-- Cron endpoint: `/api/cron/payment-timeout`
+---
 
-## Тестовые страницы
+## Платёжный поток (ЮKassa)
 
-- `/test-order` - жизненный цикл заказа
-- `/test-cabinet` - личный кабинет/история заказов
-- `/test-picker` - сценарии сборщика
-- `/test-courier` - сценарии курьера
-- `/test-admin-ops` - админ-операции
-- `/test-access-matrix` - матрица прав
-- `/test-ops` - операционные сценарии
-- `/admin/moysklad` - панель интеграции MoySklad
-
-## Переменные окружения
-
-Минимальный набор для локального запуска:
-
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/dbname
-JWT_SECRET=your-secret-min-32-chars
-YOOKASSA_SHOP_ID=...
-YOOKASSA_SECRET_KEY=...
-YOOKASSA_RETURN_URL=http://localhost:3000
-SMTP_HOST=...
-SMTP_PORT=587
-SMTP_USER=...
-SMTP_PASS=...
-SMTP_FROM=...
+```
+POST /api/orders/{id}/pay
+        │
+        ▼
+InitiatePaymentUseCase
+  · проверяет остатки
+  · создаёт Payment(PENDING)
+  · вызывает YookassaGateway → получает confirmationUrl
+        │
+        ▼ (пользователь оплачивает на стороне ЮKassa)
+        │
+POST /api/webhooks/yookassa
+        │
+        ▼
+ConfirmPaymentUseCase
+  · идемпотентен (повторный webhook безопасен)
+  · SUCCESS → списывает остатки → Order переходит в DELIVERY_ASSIGNED
+  · FAILED  → Payment закрыт, Order можно оплатить повторно
 ```
 
-Также используются:
+В продакшене входящие IP webhook-уведомлений проверяются по whitelist ЮKassa.
 
-```env
-OTP_HMAC_SECRET=...
-CRON_SECRET=...
-INTERNAL_JOB_SECRET=...
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-MOYSKLAD_TOKEN=...
-MOYSKLAD_ORGANIZATION_ID=...
-MOYSKLAD_AGENT_ID=...
+---
+
+## Архитектура
+
+Проект следует **Hexagonal (Ports & Adapters) / Clean Architecture**. Зависимости направлены строго внутрь:
+
+```
+app/api  ──►  infrastructure  ──►  application  ──►  domain
+(HTTP)         (Prisma, внешние    (use-cases,         (сущности,
+               сервисы)            порты)               state machine)
 ```
 
-Примечания:
-
-- `OTP_HMAC_SECRET` опционален для dev (есть fallback), но обязателен для production.
-- `CRON_SECRET` нужен для `/api/cron/*`.
-- `INTERNAL_JOB_SECRET` нужен для `/api/internal/jobs/*`.
-- перед первым запуском обязательно выполнить `seed`, чтобы заполнить lookup-таблицы статусов.
-
-## Локальный запуск
-
-```bash
-npm install
-npx prisma migrate dev
-npx prisma db seed
-npm run dev
+```
+src/
+├── domain/          # Сущности, enum'ы, state machine, domain errors
+│                    # Чистый TypeScript — без каких-либо зависимостей
+├── application/     # Use-cases + интерфейсы портов (репозитории, gateway)
+├── infrastructure/  # Prisma-репозитории, YookassaGateway, MoySkladGateway,
+│                    # JoseTokenService, NodemailerEmailGateway
+└── app/api/         # Тонкие Next.js route handlers — только инициализация
+                     # зависимостей и вызов use-case
 ```
 
-Прочие команды:
+**Каждый use-case получает зависимости через конструктор** — тестируется изолированно, без HTTP-слоя.
 
-```bash
-npm run build
-npm run start
-npm run lint
-npm run test
-npx vitest run src/path/to/file.spec.ts
-```
+---
+
+## Домен
+
+**Ключевые сущности:**
+
+| Сущность | Описание |
+|----------|----------|
+| `Order` | Заказ: состояние, состав, суммы, адрес, claim сборщика/курьера |
+| `OrderItem` | Снимок товара на момент создания заказа (имя, артикул, цена не меняются) |
+| `Payment` | Запись о платеже со статусом `PENDING / SUCCESS / FAILED` |
+| `CartItem` | Элемент корзины — не является частью домена заказа |
+| `Product` | Товар каталога: цена, остаток, категория |
+| `AuditLog` | Иммутабельный лог действий |
+| `OutboxEvent` | Событие для асинхронной обработки (паттерн Transactional Outbox) |
+
+**Деньги** хранятся в рублях с двумя знаками (`Decimal(10,2)`). На уровне домена используется `number`.
+
+---
+
+## API
+
+<details>
+<summary>Аутентификация</summary>
+
+| Метод | URL | Описание |
+|-------|-----|----------|
+| POST | `/api/auth/register` | Регистрация |
+| POST | `/api/auth/request-code` | Запрос OTP на email |
+| POST | `/api/auth/verify-code` | Подтверждение OTP, получение токенов |
+| POST | `/api/auth/refresh` | Обновление access-токена |
+| GET  | `/api/auth/me` | Текущий пользователь |
+| POST | `/api/auth/logout` | Выход |
+
+</details>
+
+<details>
+<summary>Корзина</summary>
+
+| Метод | URL | Описание |
+|-------|-----|----------|
+| GET    | `/api/cart` | Получить корзину |
+| POST   | `/api/cart` | Добавить товар |
+| PATCH  | `/api/cart/[productId]` | Изменить количество |
+| DELETE | `/api/cart/[productId]` | Удалить позицию |
+| POST   | `/api/cart/sync` | Слить анонимную корзину с авторизованной |
+
+</details>
+
+<details>
+<summary>Заказы (покупатель)</summary>
+
+| Метод | URL | Описание |
+|-------|-----|----------|
+| GET  | `/api/orders` | История заказов |
+| POST | `/api/orders` | Создать заказ из корзины |
+| GET  | `/api/orders/[id]` | Детали заказа |
+| POST | `/api/orders/[id]/pay` | Инициировать оплату |
+| POST | `/api/orders/[id]/cancel` | Отменить заказ |
+| POST | `/api/orders/[id]/repeat` | Повторить заказ (перенос в корзину) |
+
+</details>
+
+<details>
+<summary>Операционные роли (Picker / Courier / Admin)</summary>
+
+**Picker:**
+- `GET /api/picker/orders/available` — доступные заказы для сборки
+- `POST /api/picker/orders/[id]/claim` / `release` — взять / отпустить заказ
+- `POST /api/orders/[id]/start-picking` — начать сборку
+- `PATCH /api/orders/[id]/items` — скорректировать состав
+- `POST /api/orders/[id]/complete-picking` — завершить сборку
+
+**Courier:**
+- `GET /api/courier/orders/available` — заказы, готовые к доставке
+- `POST /api/courier/orders/[id]/claim` / `release` — взять / отпустить
+- `POST /api/courier/orders/[id]/start-delivery` — выехал
+- `POST /api/courier/orders/[id]/confirm-delivered` — вручено
+- `POST /api/courier/orders/[id]/mark-delivery-failed` — не вручено
+
+**Admin:**
+- `GET /api/admin/orders` — все заказы
+- `GET /api/admin/payments/issues` — проблемные платежи
+- `POST /api/admin/payments/[id]/retry` / `mark-failed` — управление платежом
+- `GET /api/admin/jobs/[jobName]/status` — статус фоновой задачи
+- `POST /api/admin/jobs/[jobName]/run` — ручной запуск задачи
+
+</details>
+
+<details>
+<summary>Webhooks и внутренние задачи</summary>
+
+| URL | Описание |
+|-----|----------|
+| `POST /api/webhooks/yookassa` | Уведомление об оплате от ЮKassa |
+| `POST /api/webhooks/moysklad` | Уведомление от МойСклад |
+| `POST /api/internal/jobs/payment-timeout` | Авто-отмена просроченных платежей |
+| `POST /api/internal/jobs/process-outbox` | Обработка Outbox-событий (экспорт в МойСклад) |
+| `POST /api/internal/jobs/sync-products` | Синхронизация каталога из МойСклад |
+| `POST /api/cron/payment-timeout` | Cron-обёртка над payment-timeout |
+
+</details>
+
+---
+
+## Интеграции
+
+**ЮKassa** — приём платежей. Создание платёжной сессии, получение webhook, IP-whitelist в продакшене.
+
+**МойСклад** — ERP-интеграция. Синхронизация каталога товаров (остатки, цены), экспорт доставленных заказов. Реализована через Transactional Outbox: при переходе заказа в `CLOSED` создаётся `OutboxEvent`, который фоновая задача передаёт в МойСклад.
+
+---
+
+## Стек
+
+- **Next.js 16** (App Router), **React 19**, **TypeScript** (strict)
+- **PostgreSQL** + **Prisma 7** (`@prisma/adapter-pg`)
+- **ЮKassa** — платёжный шлюз
+- **МойСклад** — ERP
+- **Nodemailer** — отправка OTP по email
+- **jose** — JWT (HS256)
+- **Vitest** — юнит- и интеграционные тесты
