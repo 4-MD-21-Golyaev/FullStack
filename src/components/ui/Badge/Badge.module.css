@@ -1,0 +1,34 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--badge-font-size);
+  font-weight: var(--badge-font-weight);
+  border-radius: var(--badge-radius);
+  padding: var(--badge-padding);
+  white-space: nowrap;
+}
+
+.default {
+  background-color: var(--ctx-color-bg-subtle);
+  color: var(--ctx-color-text-secondary);
+}
+
+.success {
+  background-color: var(--primitive-color-green-500);
+  color: var(--ctx-color-text-inverse);
+}
+
+.warning {
+  background-color: var(--primitive-color-orange-500);
+  color: var(--ctx-color-text-inverse);
+}
+
+.danger {
+  background-color: var(--primitive-color-red-500);
+  color: var(--ctx-color-text-inverse);
+}
+
+.info {
+  background-color: var(--primitive-color-blue-500);
+  color: var(--ctx-color-text-inverse);
+}

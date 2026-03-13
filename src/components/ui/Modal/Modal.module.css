@@ -1,0 +1,46 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--modal-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--modal-z);
+  animation: fadeIn var(--primitive-duration-fast) ease;
+}
+
+.root {
+  background-color: var(--modal-bg);
+  border-radius: var(--modal-radius);
+  box-shadow: var(--modal-shadow);
+  min-width: 320px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp var(--primitive-duration-normal) ease;
+}
+
+.header {
+  padding: var(--ctx-space-inset-md) var(--ctx-space-inset-lg);
+  border-bottom: 1px solid var(--ctx-color-border-default);
+}
+
+.title {
+  font-size: var(--ctx-font-size-heading);
+  font-weight: var(--primitive-font-weight-semibold);
+  color: var(--ctx-color-text-default);
+}
+
+.body {
+  padding: var(--ctx-space-inset-lg);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}

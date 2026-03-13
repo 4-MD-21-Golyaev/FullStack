@@ -1,0 +1,89 @@
+/* tokens/primitive.css — raw values, no semantics */
+:root {
+
+  /* ── Color palette ── */
+  --primitive-color-blue-50:    #eff6ff;
+  --primitive-color-blue-100:   #dbeafe;
+  --primitive-color-blue-500:   #0070f3;
+  --primitive-color-blue-600:   #0057c2;
+  --primitive-color-blue-900:   #1e3a5f;
+
+  --primitive-color-violet-500: #7b3fbf;
+  --primitive-color-violet-600: #6230a0;
+
+  --primitive-color-green-500:  #0a9e5c;
+  --primitive-color-green-600:  #0a7e50;
+
+  --primitive-color-orange-500: #e07b00;
+  --primitive-color-orange-600: #b86200;
+
+  --primitive-color-red-500:    #cc0000;
+  --primitive-color-red-600:    #a80000;
+
+  --primitive-color-neutral-0:   #ffffff;
+  --primitive-color-neutral-50:  #f9fafb;
+  --primitive-color-neutral-100: #f3f4f6;
+  --primitive-color-neutral-200: #e5e7eb;
+  --primitive-color-neutral-300: #d1d5db;
+  --primitive-color-neutral-400: #9ca3af;
+  --primitive-color-neutral-500: #6b7280;
+  --primitive-color-neutral-700: #374151;
+  --primitive-color-neutral-800: #1f2937;
+  --primitive-color-neutral-900: #111827;
+
+  /* ── Spacing scale (base unit 4px) ── */
+  --primitive-space-0:  0px;
+  --primitive-space-1:  4px;
+  --primitive-space-2:  8px;
+  --primitive-space-3:  12px;
+  --primitive-space-4:  16px;
+  --primitive-space-5:  20px;
+  --primitive-space-6:  24px;
+  --primitive-space-8:  32px;
+  --primitive-space-10: 40px;
+  --primitive-space-12: 48px;
+  --primitive-space-16: 64px;
+
+  /* ── Typography scale ── */
+  --primitive-font-family-sans: 'Inter', system-ui, sans-serif;
+  --primitive-font-family-mono: 'JetBrains Mono', monospace;
+
+  --primitive-font-size-xs:   12px;
+  --primitive-font-size-sm:   14px;
+  --primitive-font-size-base: 16px;
+  --primitive-font-size-lg:   18px;
+  --primitive-font-size-xl:   20px;
+  --primitive-font-size-2xl:  24px;
+  --primitive-font-size-3xl:  30px;
+
+  --primitive-font-weight-regular:  400;
+  --primitive-font-weight-medium:   500;
+  --primitive-font-weight-semibold: 600;
+  --primitive-font-weight-bold:     700;
+
+  --primitive-line-height-tight:  1.25;
+  --primitive-line-height-normal: 1.5;
+
+  /* ── Border radius scale ── */
+  --primitive-radius-none: 0px;
+  --primitive-radius-sm:   4px;
+  --primitive-radius-md:   8px;
+  --primitive-radius-lg:   12px;
+  --primitive-radius-xl:   16px;
+  --primitive-radius-full: 9999px;
+
+  /* ── Shadow scale ── */
+  --primitive-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --primitive-shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+  --primitive-shadow-lg: 0 10px 15px rgba(0,0,0,0.10);
+
+  /* ── Duration scale ── */
+  --primitive-duration-fast:   100ms;
+  --primitive-duration-normal: 200ms;
+  --primitive-duration-slow:   300ms;
+
+  /* ── Z-index scale ── */
+  --primitive-z-dropdown: 100;
+  --primitive-z-modal:    200;
+  --primitive-z-toast:    300;
+}

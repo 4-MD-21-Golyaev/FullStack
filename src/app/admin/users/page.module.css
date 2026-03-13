@@ -1,0 +1,12 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.title {
+  font-size: var(--primitive-font-size-2xl);
+  font-weight: var(--primitive-font-weight-bold);
+  color: var(--ctx-color-text-default);
+  margin: 0;
+}

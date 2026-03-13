@@ -1,0 +1,76 @@
+/* tokens/context.css — semantic aliases, reference only primitive tokens */
+:root {
+
+  /* ── Text color ── */
+  --ctx-color-text-default:   var(--primitive-color-neutral-900);
+  --ctx-color-text-secondary: var(--primitive-color-neutral-500);
+  --ctx-color-text-disabled:  var(--primitive-color-neutral-400);
+  --ctx-color-text-inverse:   var(--primitive-color-neutral-0);
+  --ctx-color-text-link:      var(--primitive-color-blue-500);
+  --ctx-color-text-danger:    var(--primitive-color-red-500);
+
+  /* ── Background color ── */
+  --ctx-color-bg-page:        var(--primitive-color-neutral-50);
+  --ctx-color-bg-surface:     var(--primitive-color-neutral-0);
+  --ctx-color-bg-subtle:      var(--primitive-color-neutral-100);
+  --ctx-color-bg-overlay:     rgba(0,0,0,0.4);
+
+  /* ── Border color ── */
+  --ctx-color-border-default: var(--primitive-color-neutral-200);
+  --ctx-color-border-focus:   var(--primitive-color-blue-500);
+  --ctx-color-border-danger:  var(--primitive-color-red-500);
+
+  /* ── Actions (buttons, links) ── */
+  --ctx-color-action-primary:         var(--primitive-color-blue-500);
+  --ctx-color-action-primary-hover:   var(--primitive-color-blue-600);
+  --ctx-color-action-danger:          var(--primitive-color-red-500);
+  --ctx-color-action-danger-hover:    var(--primitive-color-red-600);
+
+  /* ── Status colors (feedback) ── */
+  --ctx-color-status-success: var(--primitive-color-green-500);
+  --ctx-color-status-warning: var(--primitive-color-orange-500);
+  --ctx-color-status-danger:  var(--primitive-color-red-500);
+  --ctx-color-status-info:    var(--primitive-color-blue-500);
+
+  /* ── Order status colors ── */
+  --ctx-color-order-created:            var(--primitive-color-blue-500);
+  --ctx-color-order-picking:            var(--primitive-color-orange-500);
+  --ctx-color-order-payment:            var(--primitive-color-violet-500);
+  --ctx-color-order-delivery-assigned:  var(--primitive-color-green-500);
+  --ctx-color-order-out-for-delivery:   var(--primitive-color-green-600);
+  --ctx-color-order-delivered:          var(--primitive-color-neutral-500);
+  --ctx-color-order-closed:             var(--primitive-color-neutral-700);
+  --ctx-color-order-cancelled:          var(--primitive-color-red-500);
+
+  /* ── Spacing by usage context ── */
+  --ctx-space-inset-sm:   var(--primitive-space-2);
+  --ctx-space-inset-md:   var(--primitive-space-4);
+  --ctx-space-inset-lg:   var(--primitive-space-6);
+  --ctx-space-stack-sm:   var(--primitive-space-2);
+  --ctx-space-stack-md:   var(--primitive-space-4);
+  --ctx-space-stack-lg:   var(--primitive-space-8);
+  --ctx-space-inline-sm:  var(--primitive-space-2);
+  --ctx-space-inline-md:  var(--primitive-space-4);
+
+  /* ── Typography by context ── */
+  --ctx-font-body:         var(--primitive-font-family-sans);
+  --ctx-font-code:         var(--primitive-font-family-mono);
+  --ctx-font-size-body:    var(--primitive-font-size-base);
+  --ctx-font-size-label:   var(--primitive-font-size-sm);
+  --ctx-font-size-caption: var(--primitive-font-size-xs);
+  --ctx-font-size-heading: var(--primitive-font-size-xl);
+
+  /* ── Shape (border-radius) ── */
+  --ctx-radius-control: var(--primitive-radius-md);
+  --ctx-radius-card:    var(--primitive-radius-lg);
+  --ctx-radius-badge:   var(--primitive-radius-full);
+  --ctx-radius-modal:   var(--primitive-radius-xl);
+
+  /* ── Misc ── */
+  --ctx-shadow-card:    var(--primitive-shadow-sm);
+  --ctx-shadow-modal:   var(--primitive-shadow-lg);
+  --ctx-transition:     var(--primitive-duration-normal) ease;
+  --ctx-z-dropdown:     var(--primitive-z-dropdown);
+  --ctx-z-modal:        var(--primitive-z-modal);
+  --ctx-z-toast:        var(--primitive-z-toast);
+}

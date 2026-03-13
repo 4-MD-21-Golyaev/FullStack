@@ -1,0 +1,102 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.tableContainer {
+  overflow-x: auto;
+  border: 1px solid var(--table-border);
+  border-radius: var(--ctx-radius-card);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ctx-font-size-label);
+}
+
+.header {
+  background: var(--table-header-bg);
+  color: var(--table-header-text);
+  font-weight: var(--primitive-font-weight-semibold);
+  text-align: left;
+  padding: var(--table-cell-padding);
+  border-bottom: 1px solid var(--table-border);
+  white-space: nowrap;
+}
+
+.row {
+  border-bottom: 1px solid var(--table-border);
+  transition: background-color var(--primitive-duration-fast) ease;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background: var(--table-row-hover-bg);
+}
+
+.cell {
+  padding: var(--table-cell-padding);
+  color: var(--ctx-color-text-default);
+  vertical-align: middle;
+}
+
+.empty {
+  padding: var(--primitive-space-10);
+  text-align: center;
+  color: var(--ctx-color-text-secondary);
+}
+
+.skeletonCell {
+  height: 16px;
+  background: var(--ctx-color-bg-subtle);
+  border-radius: var(--primitive-radius-sm);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ctx-space-inline-sm);
+}
+
+.pageBtn {
+  background: var(--ctx-color-bg-subtle);
+  border: 1px solid var(--ctx-color-border-default);
+  border-radius: var(--ctx-radius-control);
+  padding: var(--primitive-space-1) var(--primitive-space-3);
+  cursor: pointer;
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-default);
+  transition: background-color var(--primitive-duration-fast) ease;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--ctx-color-border-default);
+}
+
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+  min-width: 60px;
+  text-align: center;
+}

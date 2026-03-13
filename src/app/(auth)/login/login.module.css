@@ -1,0 +1,94 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ctx-color-bg-page);
+  padding: var(--ctx-space-inset-lg);
+}
+
+.card {
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: var(--primitive-space-8);
+  width: 100%;
+  max-width: 400px;
+}
+
+.title {
+  font-size: var(--primitive-font-size-2xl);
+  font-weight: var(--primitive-font-weight-bold);
+  color: var(--ctx-color-text-default);
+  margin: 0 0 var(--ctx-space-stack-sm);
+}
+
+.subtitle {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+  margin: 0 0 var(--ctx-space-stack-lg);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-sm);
+}
+
+.label {
+  font-size: var(--ctx-font-size-label);
+  font-weight: var(--primitive-font-weight-medium);
+  color: var(--ctx-color-text-default);
+}
+
+.input {
+  font-size: var(--input-font-size);
+  border: var(--input-border);
+  border-radius: var(--input-radius);
+  background: var(--input-bg);
+  color: var(--input-text);
+  padding: var(--input-padding);
+  outline: none;
+  transition: border-color var(--ctx-transition);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border: var(--input-border-focus);
+}
+
+.error {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-danger);
+}
+
+.errorBanner {
+  background: var(--primitive-color-neutral-50);
+  border: 1px solid var(--ctx-color-border-danger);
+  border-radius: var(--ctx-radius-control);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-danger);
+}
+
+.back {
+  background: none;
+  border: none;
+  color: var(--ctx-color-text-link);
+  font-size: var(--ctx-font-size-label);
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
