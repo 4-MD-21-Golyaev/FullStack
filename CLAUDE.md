@@ -176,6 +176,12 @@ OTP-based email authentication. Flow: `RequestCodeUseCase` → sends OTP via ema
 | `POST /api/auth/logout` | `LogoutUseCase` |
 | `GET /api/auth/me` | `GetMeUseCase` |
 
+### Code Style
+
+- **Аккуратность и лаконичность:** код должен быть чистым и компактным — без лишних абстракций, без дублирования, без избыточных комментариев там, где код говорит сам за себя.
+- **Декомпозиция повторяющегося кода:** если одинаковая логика встречается в двух и более местах — она выносится в отдельную вспомогательную функцию. Дублирование через copy-paste недопустимо. Один источник истины для каждого поведения.
+- **Размер функций:** функция делает одно дело. Если функция разрослась — ищи части, которые можно именовать и вынести.
+
 ### Key Conventions
 
 - **Money is stored in rubles** with two decimal places (`Decimal(10,2)` in DB, `number` in domain). `YookassaGateway` passes the value directly to Yookassa as-is. Prisma repositories convert `Prisma.Decimal` → `number` via `.toNumber()` at the infrastructure boundary.
