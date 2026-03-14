@@ -1,5 +1,5 @@
 import { TransactionRunner } from '@/application/ports/TransactionRunner';
-import { confirmDelivered } from '@/domain/order/transitions';
+import { confirmDelivered, closeOrder } from '@/domain/order/transitions';
 import { randomUUID } from 'crypto';
 
 interface CourierConfirmDeliveredInput {
@@ -21,8 +21,9 @@ export class CourierConfirmDeliveredUseCase {
                 throw new Error('Only the assigned courier can confirm delivery for this order');
             }
 
-            const updated = confirmDelivered(order);
-            await orderRepository.save(updated);
+            const delivered = confirmDelivered(order);
+            const closed = closeOrder(delivered);
+            await orderRepository.save(closed);
 
             await auditLogRepository.save({
                 actorUserId: input.userId,
@@ -31,7 +32,7 @@ export class CourierConfirmDeliveredUseCase {
                 targetType: 'Order',
                 targetId: order.id,
                 before: { state: order.state },
-                after: { state: updated.state, deliveredAt: updated.deliveredAt },
+                after: { state: closed.state, deliveredAt: delivered.deliveredAt },
                 correlationId: input.correlationId,
             });
 
@@ -39,11 +40,11 @@ export class CourierConfirmDeliveredUseCase {
                 id: randomUUID(),
                 eventType: 'ORDER_COMPLETED',
                 payload: {
-                    orderId: updated.id,
+                    orderId: closed.id,
                 },
             });
 
-            return updated;
+            return closed;
         });
     }
 }
