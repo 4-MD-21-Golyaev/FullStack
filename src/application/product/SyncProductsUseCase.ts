@@ -1,7 +1,8 @@
 import { randomUUID } from 'crypto';
-import { MoySkladGateway } from '@/application/ports/MoySkladGateway';
+import { MoySkladCatalogGateway } from '@/application/ports/MoySkladCatalogGateway';
 import { ProductRepository } from '@/application/ports/ProductRepository';
 import { CategoryRepository } from '@/application/ports/CategoryRepository';
+import { ImageStorageGateway } from '@/application/ports/ImageStorageGateway';
 import { MoySkladFolder } from '@/domain/moysklad/MoySkladProduct';
 
 export interface SyncResult {
@@ -9,19 +10,25 @@ export interface SyncResult {
     updated: number;
     hidden: number;
     categoriesProcessed: number;
+    imagesImported: number;
+    imageAttempts: number;
+    imageErrors: string[];
 }
 
 export class SyncProductsUseCase {
     constructor(
-        private gateway: MoySkladGateway,
+        private gateway: MoySkladCatalogGateway,
         private productRepository: ProductRepository,
         private categoryRepository: CategoryRepository,
+        private imageStorage: ImageStorageGateway | null = null,
     ) {}
 
     async execute(): Promise<SyncResult> {
+        // 1. Sync categories
         const folders = await this.gateway.fetchFolders();
         const folderIdToLocalCategoryId = await this.syncCategories(folders);
 
+        // 2. Sync catalog (products from /entity/product)
         const msProducts = await this.gateway.fetchProducts();
         const localProducts = await this.productRepository.findAll();
 
@@ -30,38 +37,78 @@ export class SyncProductsUseCase {
 
         let created = 0;
         let updated = 0;
+        let imagesImported = 0;
+        let imageAttempts = 0;
+        const imageErrors: string[] = [];
 
         for (const msp of msProducts) {
-            if (!msp.folderId) continue; // товар без папки — пропускаем
-
-            const localCategoryId = folderIdToLocalCategoryId.get(msp.folderId);
-            if (!localCategoryId) continue; // папка не смаплена — пропускаем
+            const localCategoryId = msp.folderId
+                ? folderIdToLocalCategoryId.get(msp.folderId) ?? null
+                : null;
 
             const local = localByArticle.get(msp.article);
             if (local) {
+                let imagePath = local.imagePath;
+                if (this.imageStorage && !imagePath && msp.hasImages) {
+                    imageAttempts++;
+                    const result = await this.tryImportImage(msp.id, msp.article);
+                    if (result.path) {
+                        imagePath = result.path;
+                        imagesImported++;
+                    } else {
+                        imageErrors.push(`${msp.article}: ${result.error}`);
+                    }
+                }
                 await this.productRepository.save({
                     ...local,
                     name:       msp.name,
                     price:      msp.price,
-                    stock:      msp.stock,
-                    categoryId: localCategoryId,
+                    categoryId: localCategoryId ?? local.categoryId,
+                    imagePath,
                 });
                 updated++;
             } else {
+                if (!localCategoryId) continue;
+
+                let imagePath: string | null = null;
+                if (this.imageStorage && msp.hasImages) {
+                    imageAttempts++;
+                    const result = await this.tryImportImage(msp.id, msp.article);
+                    if (result.path) {
+                        imagePath = result.path;
+                        imagesImported++;
+                    } else {
+                        imageErrors.push(`${msp.article}: ${result.error}`);
+                    }
+                }
                 await this.productRepository.save({
                     id:         randomUUID(),
                     name:       msp.name,
                     article:    msp.article,
                     price:      msp.price,
-                    stock:      msp.stock,
+                    stock:      0,
                     categoryId: localCategoryId,
-                    imagePath:  null,
+                    imagePath,
                 });
                 created++;
             }
         }
 
-        // Скрываем товары, которых больше нет в МойСклад
+        // 3. Sync stock separately from /report/stock/all
+        const stockItems = await this.gateway.fetchStock();
+        const stockByArticle = new Map(stockItems.map(s => [s.article, s.stock]));
+
+        // Re-fetch local products to include newly created ones
+        const allLocal = await this.productRepository.findAll();
+        for (const product of allLocal) {
+            const msStock = stockByArticle.get(product.article);
+            const newStock = msStock ?? 0;
+            if (product.stock !== newStock) {
+                await this.productRepository.save({ ...product, stock: newStock });
+            }
+        }
+
+        // Hide products not present in MoySklad catalog
         let hidden = 0;
         for (const local of localProducts) {
             if (!msArticles.has(local.article) && local.stock !== 0) {
@@ -70,7 +117,20 @@ export class SyncProductsUseCase {
             }
         }
 
-        return { created, updated, hidden, categoriesProcessed: folders.length };
+        return { created, updated, hidden, categoriesProcessed: folders.length, imagesImported, imageAttempts, imageErrors };
+    }
+
+    private async tryImportImage(msProductId: string, article: string): Promise<{ path: string | null; error: string | null }> {
+        try {
+            const image = await this.gateway.fetchProductImage(msProductId);
+            if (!image) {
+                return { path: null, error: `no image in MoySklad (msId=${msProductId})` };
+            }
+            const path = await this.imageStorage!.save(image.bytes, article, image.filename);
+            return { path, error: null };
+        } catch (err: any) {
+            return { path: null, error: `${err.message ?? err} (msId=${msProductId})` };
+        }
     }
 
     private async syncCategories(folders: MoySkladFolder[]): Promise<Map<string, string>> {
@@ -81,7 +141,6 @@ export class SyncProductsUseCase {
 
         const folderIdToLocalId = new Map<string, string>();
 
-        // Топологическая сортировка: сначала корневые, потом вложенные
         const sorted = topSort(folders);
 
         for (const folder of sorted) {

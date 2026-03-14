@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { ProcessOutboxUseCase } from '../ProcessOutboxUseCase';
 import { OutboxRepository, OutboxEvent } from '@/application/ports/OutboxRepository';
-import { MoySkladGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladGateway';
+import { MoySkladOrderGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladOrderGateway';
 import { OrderRepository } from '@/application/ports/OrderRepository';
 import { Order } from '@/domain/order/Order';
 import { OrderState } from '@/domain/order/OrderState';
@@ -51,14 +51,12 @@ function makeRepo(events: OutboxEvent[]): OutboxRepository {
     };
 }
 
-function makeGateway(): MoySkladGateway {
+function makeGateway(): MoySkladOrderGateway {
     return {
         createCustomerOrder: vi.fn().mockResolvedValue('ms-123'),
         updateCustomerOrder: vi.fn().mockResolvedValue(undefined),
         createPaymentIn: vi.fn().mockResolvedValue(undefined),
         updateCustomerOrderState: vi.fn().mockResolvedValue(undefined),
-        fetchFolders: vi.fn().mockResolvedValue([]),
-        fetchProducts: vi.fn().mockResolvedValue([]),
     };
 }
 

@@ -1,8 +1,32 @@
-import { MoySkladGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladGateway';
+import { MoySkladCatalogGateway } from '@/application/ports/MoySkladCatalogGateway';
+import { MoySkladOrderGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladOrderGateway';
 import { OrderItem } from '@/domain/order/OrderItem';
-import { MoySkladFolder, MoySkladProduct } from '@/domain/moysklad/MoySkladProduct';
+import { MoySkladFolder, MoySkladProduct, MoySkladStockItem } from '@/domain/moysklad/MoySkladProduct';
 
 const BASE_URL = 'https://api.moysklad.ru/api/remap/1.2';
+const PAGE_LIMIT = 100;
+
+// ── Shared helpers ──────────────────────────────────────────────────────────
+
+interface MoySkladConfig {
+    token: string;
+    organizationId: string;
+    agentId: string;
+}
+
+function headers(token: string): Record<string, string> {
+    return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+    };
+}
+
+/** Extract entity UUID from a MoySklad meta href, stripping query params. */
+function extractIdFromHref(href: string | undefined): string {
+    if (!href) return '';
+    const lastSegment = href.split('/').at(-1) ?? '';
+    return lastSegment.split('?')[0];
+}
 
 /**
  * Build a MoySklad list URL with a single-field filter.
@@ -14,17 +38,116 @@ function filterUrl(entityPath: string, field: string, value: string, limit = 1):
     return `${BASE_URL}/${entityPath}?filter=${field}%3D${encodeURIComponent(value)}&limit=${limit}`;
 }
 
-export class HttpMoySkladGateway implements MoySkladGateway {
-    constructor(private config: {
-        token: string;
-        organizationId: string;
-        agentId: string;
-    }) {}
+/** Paginate through a MoySklad list endpoint, collecting all rows. */
+async function fetchAllPaginated<T>(
+    url: string,
+    token: string,
+    mapRow: (row: any) => T,
+    limit = PAGE_LIMIT,
+): Promise<T[]> {
+    const results: T[] = [];
+    let offset = 0;
+
+    while (true) {
+        const separator = url.includes('?') ? '&' : '?';
+        const pageUrl = `${url}${separator}limit=${limit}&offset=${offset}`;
+        const res = await fetch(pageUrl, { headers: headers(token) });
+        if (!res.ok) throw new Error(`МойСклад fetch failed: ${res.status} — ${pageUrl}`);
+        const data = await res.json() as { rows: any[]; meta: { size: number } };
+        for (const row of data.rows) {
+            results.push(mapRow(row));
+        }
+        offset += data.rows.length;
+        if (offset >= data.meta.size || data.rows.length === 0) break;
+    }
+
+    return results;
+}
+
+// ── Catalog Gateway (import) ────────────────────────────────────────────────
+
+export class HttpMoySkladCatalogGateway implements MoySkladCatalogGateway {
+    constructor(private config: MoySkladConfig) {}
+
+    async fetchFolders(): Promise<MoySkladFolder[]> {
+        return fetchAllPaginated(
+            `${BASE_URL}/entity/productfolder`,
+            this.config.token,
+            (r) => ({
+                id:       r.id as string,
+                name:     r.name as string,
+                parentId: extractIdFromHref(r.productFolder?.meta?.href) || null,
+            }),
+        );
+    }
+
+    async fetchProducts(): Promise<MoySkladProduct[]> {
+        return fetchAllPaginated(
+            `${BASE_URL}/entity/product`,
+            this.config.token,
+            (r) => ({
+                id:        r.id as string,
+                article:   (r.code ?? r.article ?? '') as string,
+                name:      r.name as string,
+                price:     ((r.salePrices?.[0]?.value ?? 0) / 100),
+                folderId:  extractIdFromHref(r.productFolder?.meta?.href) || null,
+                hasImages: (r.images?.meta?.size ?? 0) > 0,
+            }),
+        );
+    }
+
+    async fetchStock(): Promise<MoySkladStockItem[]> {
+        return fetchAllPaginated(
+            `${BASE_URL}/report/stock/all`,
+            this.config.token,
+            (r) => ({
+                article: (r.code ?? '') as string,
+                stock:   Math.max(0, r.quantity ?? 0),
+            }),
+            1000, // stock report supports larger pages
+        );
+    }
+
+    async fetchProductImage(productId: string): Promise<{ bytes: Buffer; filename: string } | null> {
+        const url = `${BASE_URL}/entity/product/${productId}/images?limit=1`;
+        const listRes = await fetch(url, { headers: headers(this.config.token) });
+        if (!listRes.ok) {
+            const body = await listRes.text().catch(() => '');
+            console.warn(`[MoySklad] fetchProductImage list failed: ${listRes.status} url=${url} body=${body}`);
+            return null;
+        }
+        const data = await listRes.json() as { rows: any[] };
+        if (!data.rows?.length) return null;
+
+        const row = data.rows[0];
+        const filename: string = row.filename ?? row.title ?? 'image.jpg';
+        const downloadHref: string | undefined = row.meta?.downloadHref ?? row.miniature?.downloadHref;
+        if (!downloadHref) {
+            console.warn(`[MoySklad] fetchProductImage: no downloadHref in row keys=[${Object.keys(row)}] for productId=${productId}`);
+            return null;
+        }
+
+        const imgRes = await fetch(downloadHref, {
+            headers: { 'Authorization': `Bearer ${this.config.token}` },
+        });
+        if (!imgRes.ok) {
+            console.warn(`[MoySklad] fetchProductImage download failed: ${imgRes.status} href=${downloadHref} for productId=${productId}`);
+            return null;
+        }
+
+        const bytes = Buffer.from(await imgRes.arrayBuffer());
+        return { bytes, filename };
+    }
+}
+
+// ── Order Gateway (export) ──────────────────────────────────────────────────
+
+export class HttpMoySkladOrderGateway implements MoySkladOrderGateway {
+    constructor(private config: MoySkladConfig) {}
 
     async createCustomerOrder(orderId: string, items: OrderItem[], _totalAmount: number): Promise<string> {
         const desc = `Order #${orderId}`;
 
-        // Idempotency: check if order already exists by description
         const existing = await this.findEntity('entity/customerorder', 'description', desc);
         if (existing) return existing;
 
@@ -39,7 +162,7 @@ export class HttpMoySkladGateway implements MoySkladGateway {
 
         const res = await fetch(`${BASE_URL}/entity/customerorder`, {
             method: 'POST',
-            headers: this.headers(),
+            headers: headers(this.config.token),
             body: JSON.stringify(body),
         });
 
@@ -57,7 +180,7 @@ export class HttpMoySkladGateway implements MoySkladGateway {
 
         const res = await fetch(`${BASE_URL}/entity/customerorder/${moySkladId}`, {
             method: 'PUT',
-            headers: this.headers(),
+            headers: headers(this.config.token),
             body: JSON.stringify({ positions }),
         });
 
@@ -70,7 +193,6 @@ export class HttpMoySkladGateway implements MoySkladGateway {
     async createPaymentIn(moySkladId: string, amount: number, orderId: string): Promise<void> {
         const desc = `Payment for Order #${orderId}`;
 
-        // Idempotency
         const existing = await this.findEntity('entity/paymentin', 'description', desc);
         if (existing) return;
 
@@ -92,7 +214,7 @@ export class HttpMoySkladGateway implements MoySkladGateway {
 
         const res = await fetch(`${BASE_URL}/entity/paymentin`, {
             method: 'POST',
-            headers: this.headers(),
+            headers: headers(this.config.token),
             body: JSON.stringify(body),
         });
 
@@ -103,7 +225,7 @@ export class HttpMoySkladGateway implements MoySkladGateway {
     }
 
     async updateCustomerOrderState(moySkladId: string): Promise<void> {
-        const statesRes = await fetch(`${BASE_URL}/entity/customerorder/metadata`, { headers: this.headers() });
+        const statesRes = await fetch(`${BASE_URL}/entity/customerorder/metadata`, { headers: headers(this.config.token) });
         if (!statesRes.ok) {
             throw new Error(`МойСклад: failed to fetch customerorder metadata: ${statesRes.status}`);
         }
@@ -115,7 +237,7 @@ export class HttpMoySkladGateway implements MoySkladGateway {
 
         const res = await fetch(`${BASE_URL}/entity/customerorder/${moySkladId}`, {
             method: 'PUT',
-            headers: this.headers(),
+            headers: headers(this.config.token),
             body: JSON.stringify({
                 state: {
                     meta: {
@@ -133,33 +255,7 @@ export class HttpMoySkladGateway implements MoySkladGateway {
         }
     }
 
-    async fetchFolders(): Promise<MoySkladFolder[]> {
-        const res = await fetch(`${BASE_URL}/entity/productfolder?limit=100`, { headers: this.headers() });
-        if (!res.ok) throw new Error(`МойСклад fetchFolders failed: ${res.status}`);
-        const data = await res.json() as { rows: any[] };
-        return data.rows.map(r => ({
-            id:       r.id as string,
-            name:     r.name as string,
-            parentId: r.productFolder?.meta?.href?.split('/').at(-1) ?? null,
-        }));
-    }
-
-    async fetchProducts(): Promise<MoySkladProduct[]> {
-        const res = await fetch(`${BASE_URL}/report/stock/all?expand=assortment&limit=1000`, { headers: this.headers() });
-        if (!res.ok) throw new Error(`МойСклад fetchProducts failed: ${res.status}`);
-        const data = await res.json() as { rows: any[] };
-        return data.rows
-            .filter(r => r.assortment?.code)
-            .map(r => ({
-                article:  r.assortment.code as string,
-                name:     r.assortment.name as string,
-                price:    ((r.assortment.salePrices?.[0]?.value ?? 0) / 100),
-                stock:    Math.max(0, r.quantity ?? 0),
-                folderId: r.assortment.productFolder?.meta?.href?.split('/').at(-1) ?? null,
-            }));
-    }
-
-    // ── Private helpers ───────────────────────────────────────────────────────
+    // ── Private helpers ─────────────────────────────────────────────────────
 
     private async resolvePositions(items: OrderItem[]) {
         const missingArticles: string[] = [];
@@ -167,7 +263,7 @@ export class HttpMoySkladGateway implements MoySkladGateway {
 
         for (const item of items) {
             const url = filterUrl('entity/product', 'code', item.article);
-            const res = await fetch(url, { headers: this.headers() });
+            const res = await fetch(url, { headers: headers(this.config.token) });
 
             if (!res.ok) {
                 throw new Error(`МойСклад: поиск товара вернул ${res.status}`);
@@ -200,12 +296,9 @@ export class HttpMoySkladGateway implements MoySkladGateway {
         return positions;
     }
 
-    /**
-     * Search for an entity by a single field. Returns the id if found, null otherwise.
-     */
     private async findEntity(entityPath: string, field: string, value: string): Promise<string | null> {
         const url = filterUrl(entityPath, field, value);
-        const res = await fetch(url, { headers: this.headers() });
+        const res = await fetch(url, { headers: headers(this.config.token) });
         if (!res.ok) return null;
         const data = await res.json() as { rows: { id: string }[] };
         return data.rows?.length ? data.rows[0].id : null;
@@ -228,13 +321,6 @@ export class HttpMoySkladGateway implements MoySkladGateway {
                 type: 'counterparty',
                 mediaType: 'application/json',
             },
-        };
-    }
-
-    private headers(): Record<string, string> {
-        return {
-            'Authorization': `Bearer ${this.config.token}`,
-            'Content-Type': 'application/json',
         };
     }
 }

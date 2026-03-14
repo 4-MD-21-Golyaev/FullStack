@@ -1,6 +1,6 @@
 import { OutboxRepository } from '@/application/ports/OutboxRepository';
 import { OrderRepository } from '@/application/ports/OrderRepository';
-import { MoySkladGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladGateway';
+import { MoySkladOrderGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladOrderGateway';
 import { OutboxPrerequisiteNotReadyError } from './errors/OutboxPrerequisiteNotReadyError';
 
 const MAX_RETRIES = 3;
@@ -15,7 +15,7 @@ interface ProcessOutboxResult {
 export class ProcessOutboxUseCase {
     constructor(
         private outboxRepository: OutboxRepository,
-        private moySkladGateway: MoySkladGateway,
+        private moySkladGateway: MoySkladOrderGateway,
         private orderRepository: OrderRepository,
     ) {}
 

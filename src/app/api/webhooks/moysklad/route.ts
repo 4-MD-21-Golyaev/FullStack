@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SyncProductsUseCase } from '@/application/product/SyncProductsUseCase';
-import { HttpMoySkladGateway } from '@/infrastructure/moysklad/HttpMoySkladGateway';
+import { HttpMoySkladCatalogGateway } from '@/infrastructure/moysklad/HttpMoySkladGateway';
+import { DiskImageStorageGateway } from '@/infrastructure/storage/DiskImageStorageGateway';
 import { PrismaProductRepository } from '@/infrastructure/repositories/ProductRepository.prisma';
 import { PrismaCategoryRepository } from '@/infrastructure/repositories/CategoryRepository.prisma';
 
@@ -33,16 +34,15 @@ export async function POST(req: NextRequest) {
     console.log('[MoySklad webhook] received', JSON.stringify(payload));
 
     try {
-        const gateway = new HttpMoySkladGateway({
-            token:          process.env.MOYSKLAD_TOKEN!,
-            organizationId: process.env.MOYSKLAD_ORGANIZATION_ID!,
-            agentId:        process.env.MOYSKLAD_AGENT_ID!,
-        });
-
         const useCase = new SyncProductsUseCase(
-            gateway,
+            new HttpMoySkladCatalogGateway({
+                token:          process.env.MOYSKLAD_TOKEN!,
+                organizationId: process.env.MOYSKLAD_ORGANIZATION_ID!,
+                agentId:        process.env.MOYSKLAD_AGENT_ID!,
+            }),
             new PrismaProductRepository(),
             new PrismaCategoryRepository(),
+            new DiskImageStorageGateway(),
         );
 
         const result = await useCase.execute();

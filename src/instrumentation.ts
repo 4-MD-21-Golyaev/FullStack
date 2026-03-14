@@ -9,7 +9,7 @@ export async function register() {
         const { PrismaOrderRepository } = await import('@/infrastructure/repositories/OrderRepository.prisma');
         const { PrismaOutboxRepository } = await import('@/infrastructure/repositories/OutboxRepository.prisma');
         const { PrismaTransactionRunner } = await import('@/infrastructure/db/PrismaTransactionRunner');
-        const { HttpMoySkladGateway } = await import('@/infrastructure/moysklad/HttpMoySkladGateway');
+        const { HttpMoySkladOrderGateway } = await import('@/infrastructure/moysklad/HttpMoySkladGateway');
 
         if (!(global as { __cronStarted?: boolean }).__cronStarted) {
             (global as { __cronStarted?: boolean }).__cronStarted = true;
@@ -42,7 +42,7 @@ export async function register() {
                 try {
                     const useCase = new ProcessOutboxUseCase(
                         new PrismaOutboxRepository(),
-                        new HttpMoySkladGateway({
+                        new HttpMoySkladOrderGateway({
                             token:          process.env.MOYSKLAD_TOKEN!,
                             organizationId: process.env.MOYSKLAD_ORGANIZATION_ID!,
                             agentId:        process.env.MOYSKLAD_AGENT_ID!,
