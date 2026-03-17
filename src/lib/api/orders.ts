@@ -28,6 +28,7 @@ export interface OrderDto {
   state: OrderState;
   address: string;
   absenceResolutionStrategy: AbsenceResolutionStrategy;
+  customerPhone?: string | null;
   pickerClaimUserId?: string | null;
   pickerClaimedAt?: string | null;
   deliveryClaimUserId?: string | null;

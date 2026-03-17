@@ -25,8 +25,8 @@ export default function CourierPage() {
 
   const claimMutation = useMutation({
     mutationFn: (id: string) => courierApi.claim(id),
-    onSuccess: (order) => {
-      queryClient.setQueryData(['courier', 'me'], { order });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['courier', 'me'] });
     },
   });
 

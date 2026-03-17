@@ -12,19 +12,23 @@ import styles from './PickingWorkspace.module.css';
 const ABSENCE_LABELS: Record<AbsenceResolutionStrategy, string> = {
   [AbsenceResolutionStrategy.CALL_REPLACE]: 'Позвонить — заменить',
   [AbsenceResolutionStrategy.CALL_REMOVE]: 'Позвонить — убрать',
-  [AbsenceResolutionStrategy.AUTO_REMOVE]: 'Авто убрать',
-  [AbsenceResolutionStrategy.AUTO_REPLACE]: 'Авто заменить',
+  [AbsenceResolutionStrategy.AUTO_REMOVE]: 'Убрать автоматически',
+  [AbsenceResolutionStrategy.AUTO_REPLACE]: 'Заменить автоматически',
 };
+
+const CALL_STRATEGIES = new Set<AbsenceResolutionStrategy>([
+  AbsenceResolutionStrategy.CALL_REPLACE,
+  AbsenceResolutionStrategy.CALL_REMOVE,
+]);
 
 interface ItemRowProps {
   item: OrderItemDto;
   onQtyChange: (productId: string, qty: number) => void;
-  onAbsenceChange: (productId: string, strategy: AbsenceResolutionStrategy) => void;
   localQty: number;
-  absenceStrategy: AbsenceResolutionStrategy;
+  maxQty: number;
 }
 
-function ItemRow({ item, onQtyChange, onAbsenceChange, localQty, absenceStrategy }: ItemRowProps) {
+function ItemRow({ item, onQtyChange, localQty, maxQty }: ItemRowProps) {
   return (
     <div className={styles.itemRow}>
       <div className={styles.itemInfo}>
@@ -41,28 +45,16 @@ function ItemRow({ item, onQtyChange, onAbsenceChange, localQty, absenceStrategy
           >
             −
           </button>
-          <span className={styles.qtyValue}>{localQty}</span>
+          <span className={styles.qtyValue}>{localQty} / {maxQty}</span>
           <button
             type="button"
             className={styles.qtyBtn}
+            disabled={localQty >= maxQty}
             onClick={() => onQtyChange(item.productId, localQty + 1)}
           >
             +
           </button>
         </div>
-        <select
-          className={styles.absenceSelect}
-          value={absenceStrategy}
-          onChange={(e) =>
-            onAbsenceChange(item.productId, e.target.value as AbsenceResolutionStrategy)
-          }
-        >
-          {Object.values(AbsenceResolutionStrategy).map((s) => (
-            <option key={s} value={s}>
-              {ABSENCE_LABELS[s]}
-            </option>
-          ))}
-        </select>
       </div>
       <div className={styles.itemSubtotal}>
         {(item.price * localQty).toLocaleString('ru')} ₽
@@ -80,13 +72,11 @@ export function PickingWorkspace({ order }: Props) {
   const [showRelease, setShowRelease] = useState(false);
   const [showComplete, setShowComplete] = useState(false);
 
-  const [localItems, setLocalItems] = useState<
-    Record<string, { qty: number; absence: AbsenceResolutionStrategy }>
-  >(() =>
+  const [localItems, setLocalItems] = useState<Record<string, { qty: number; maxQty: number }>>(() =>
     Object.fromEntries(
       order.items.map((item) => [
         item.productId,
-        { qty: item.quantity, absence: order.absenceResolutionStrategy },
+        { qty: item.quantity, maxQty: item.quantity },
       ]),
     ),
   );
@@ -139,17 +129,13 @@ export function PickingWorkspace({ order }: Props) {
     scheduleUpdate();
   };
 
-  const handleAbsenceChange = (productId: string, strategy: AbsenceResolutionStrategy) => {
-    setLocalItems((prev) => ({ ...prev, [productId]: { ...prev[productId], absence: strategy } }));
-    scheduleUpdate();
-  };
-
   const localTotal = order.items.reduce((sum, item) => {
     return sum + item.price * (localItems[item.productId]?.qty ?? item.quantity);
   }, 0);
 
   const isNotStarted = order.state === OrderState.CREATED;
   const isPicking = order.state === OrderState.PICKING;
+  const needsCall = CALL_STRATEGIES.has(order.absenceResolutionStrategy);
 
   return (
     <div className={styles.root}>
@@ -164,6 +150,14 @@ export function PickingWorkspace({ order }: Props) {
       </div>
 
       <p className={styles.address}>{order.address}</p>
+
+      <div className={styles.absenceInfo}>
+        <span className={styles.absenceLabel}>При отсутствии товара:</span>
+        <span className={styles.absenceValue}>{ABSENCE_LABELS[order.absenceResolutionStrategy]}</span>
+        {needsCall && order.customerPhone && (
+          <span className={styles.customerPhone}>Телефон: {order.customerPhone}</span>
+        )}
+      </div>
 
       {isNotStarted && (
         <Button
@@ -184,11 +178,8 @@ export function PickingWorkspace({ order }: Props) {
                 key={item.productId}
                 item={item}
                 localQty={localItems[item.productId]?.qty ?? item.quantity}
-                absenceStrategy={
-                  localItems[item.productId]?.absence ?? order.absenceResolutionStrategy
-                }
+                maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
                 onQtyChange={handleQtyChange}
-                onAbsenceChange={handleAbsenceChange}
               />
             ))}
           </div>

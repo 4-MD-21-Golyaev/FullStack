@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     try {
         const useCase = new PickerListMyOrdersUseCase(new PrismaOrderRepository());
         const orders = await useCase.execute({ userId });
-        return NextResponse.json(orders);
+        return NextResponse.json({ order: orders[0] ?? null });
     } catch (error: any) {
         return NextResponse.json({ message: error.message }, { status: 400 });
     }

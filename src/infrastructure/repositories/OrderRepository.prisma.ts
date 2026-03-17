@@ -13,6 +13,11 @@ const ORDER_INCLUDE = {
     absenceResolutionStrategy: true,
 };
 
+const ORDER_INCLUDE_WITH_USER = {
+    ...ORDER_INCLUDE,
+    user: { select: { phone: true } },
+};
+
 export class PrismaOrderRepository implements OrderRepository {
     private db: DbClient;
 
@@ -101,6 +106,7 @@ export class PrismaOrderRepository implements OrderRepository {
             address: record.address,
             state: record.status.code as OrderState,
             absenceResolutionStrategy: record.absenceResolutionStrategy.code as AbsenceResolutionStrategy,
+            customerPhone: record.user?.phone ?? null,
             pickerClaimUserId: record.pickerClaimUserId ?? null,
             pickerClaimedAt: record.pickerClaimedAt ?? null,
             deliveryClaimUserId: record.deliveryClaimUserId ?? null,
@@ -231,7 +237,7 @@ export class PrismaOrderRepository implements OrderRepository {
                 pickerClaimUserId: userId,
                 status: { code: { in: [OrderState.CREATED, OrderState.PICKING] } },
             },
-            include: ORDER_INCLUDE,
+            include: ORDER_INCLUDE_WITH_USER,
             orderBy: { pickerClaimedAt: 'asc' },
         });
         return records.map(r => this.toOrder(r));

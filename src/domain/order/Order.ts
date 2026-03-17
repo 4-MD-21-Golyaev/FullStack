@@ -10,6 +10,7 @@ export interface Order {
     state: OrderState;
     address: string;
     absenceResolutionStrategy: AbsenceResolutionStrategy;
+    customerPhone?: string | null;
     pickerClaimUserId?: string | null;
     pickerClaimedAt?: Date | null;
     deliveryClaimUserId?: string | null;

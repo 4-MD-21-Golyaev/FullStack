@@ -25,8 +25,8 @@ export default function PickerPage() {
 
   const claimMutation = useMutation({
     mutationFn: (id: string) => pickerApi.claim(id),
-    onSuccess: (order) => {
-      queryClient.setQueryData(['picker', 'me'], { order });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['picker', 'me'] });
     },
   });
 

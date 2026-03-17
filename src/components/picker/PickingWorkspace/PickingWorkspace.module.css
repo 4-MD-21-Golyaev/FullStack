@@ -91,6 +91,34 @@
   color: var(--ctx-color-text-secondary);
 }
 
+.absenceInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inline-sm);
+  flex-wrap: wrap;
+  background: var(--ctx-color-bg-subtle);
+  border-radius: var(--ctx-radius-control);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+}
+
+.absenceLabel {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+}
+
+.absenceValue {
+  font-size: var(--ctx-font-size-label);
+  font-weight: var(--primitive-font-weight-medium);
+  color: var(--ctx-color-text-default);
+}
+
+.customerPhone {
+  margin-left: auto;
+  font-size: var(--ctx-font-size-label);
+  font-weight: var(--primitive-font-weight-semibold);
+  color: var(--ctx-color-text-default);
+}
+
 .itemControls {
   display: flex;
   gap: var(--ctx-space-inline-sm);
@@ -121,8 +149,13 @@
   color: var(--ctx-color-text-default);
 }
 
-.qtyBtn:hover {
+.qtyBtn:hover:not(:disabled) {
   background: var(--ctx-color-border-default);
+}
+
+.qtyBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .qtyValue {
@@ -133,20 +166,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-.absenceSelect {
-  flex: 1;
-  font-size: var(--ctx-font-size-caption);
-  border: var(--input-border);
-  border-radius: var(--input-radius);
-  background: var(--input-bg);
-  color: var(--input-text);
-  padding: var(--ctx-space-inset-sm);
-  outline: none;
-}
-
-.absenceSelect:focus {
-  border: var(--input-border-focus);
-}
 
 .itemSubtotal {
   font-size: var(--ctx-font-size-label);
