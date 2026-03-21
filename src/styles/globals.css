@@ -11,13 +11,14 @@
 
 /* ── Base ── */
 html {
-  font-size: var(--primitive-font-size-base);
+  font-size: var(--primitive-font-size-md);
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   font-family: var(--ctx-font-body);
   font-size: var(--ctx-font-size-body);
+  font-weight: var(--primitive-font-weight-regular);
   line-height: var(--primitive-line-height-normal);
   color: var(--ctx-color-text-default);
   background-color: var(--ctx-color-bg-page);

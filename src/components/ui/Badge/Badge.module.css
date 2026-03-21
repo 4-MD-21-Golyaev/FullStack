@@ -14,21 +14,21 @@
 }
 
 .success {
-  background-color: var(--primitive-color-green-500);
+  background-color: var(--ctx-color-status-success);
   color: var(--ctx-color-text-inverse);
 }
 
 .warning {
-  background-color: var(--primitive-color-orange-500);
+  background-color: var(--ctx-color-status-warning);
   color: var(--ctx-color-text-inverse);
 }
 
 .danger {
-  background-color: var(--primitive-color-red-500);
+  background-color: var(--ctx-color-status-danger);
   color: var(--ctx-color-text-inverse);
 }
 
 .info {
-  background-color: var(--primitive-color-blue-500);
+  background-color: var(--ctx-color-status-info);
   color: var(--ctx-color-text-inverse);
 }

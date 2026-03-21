@@ -1,35 +1,43 @@
 /* tokens/primitive.css — raw values, no semantics */
+/* Values source of truth: Figma (eV3fLo7RMJcyNqnFeuwHmg) */
 :root {
 
-  /* ── Color palette ── */
-  --primitive-color-blue-50:    #eff6ff;
-  --primitive-color-blue-100:   #dbeafe;
-  --primitive-color-blue-500:   #0070f3;
-  --primitive-color-blue-600:   #0057c2;
-  --primitive-color-blue-900:   #1e3a5f;
+  /* ── Neutral scale ── */
+  --primitive-color-neutral-0:   #fefefe;   /* White/Enabled */
+  --primitive-color-neutral-50:  #fcfcfc;   /* White/Hovered */
+  --primitive-color-neutral-75:  #f7f7f7;   /* Light gray — page bg */
+  --primitive-color-neutral-100: #f2f2f2;   /* Gray/Enabled — subtle bg */
+  --primitive-color-neutral-200: #ededed;   /* Gray/Hovered — border/hover */
+  --primitive-color-neutral-300: #cccccc;   /* Gray/Disabled */
+  --primitive-color-neutral-400: #9c9999;   /* Dark Gray/Enabled — secondary icons */
+  --primitive-color-neutral-500: #999999;   /* Gray contrast — secondary text */
+  --primitive-color-neutral-900: #282828;   /* Signal black — primary text */
 
-  --primitive-color-violet-500: #7b3fbf;
-  --primitive-color-violet-600: #6230a0;
+  /* ── Red brand scale (accent/primary) ── */
+  --primitive-color-red-300: #af3732;   /* Red/Focused */
+  --primitive-color-red-400: #9f322d;   /* Red/Hovered */
+  --primitive-color-red-500: #8f2d29;   /* Red/Enabled — primary action */
+  --primitive-color-red-700: #620c04;   /* Red/Disabled */
+  --primitive-color-red-900: #500a03;   /* Ripe Wine — decorative dark */
 
-  --primitive-color-green-500:  #0a9e5c;
-  --primitive-color-green-600:  #0a7e50;
+  /* ── Error / Destructive ── */
+  --primitive-color-error-50:  #faf0f0;
+  --primitive-color-error-500: #ba6a66;
 
-  --primitive-color-orange-500: #e07b00;
-  --primitive-color-orange-600: #b86200;
+  /* ── Warning accent ── */
+  --primitive-color-orange-400: #f5a12b;
 
-  --primitive-color-red-500:    #cc0000;
-  --primitive-color-red-600:    #a80000;
+  /* ── Admin UI status colors (no Figma variable — admin panel only) ── */
+  --primitive-color-green-500: #0a9e5c;
+  --primitive-color-blue-500:  #0070f3;
 
-  --primitive-color-neutral-0:   #ffffff;
-  --primitive-color-neutral-50:  #f9fafb;
-  --primitive-color-neutral-100: #f3f4f6;
-  --primitive-color-neutral-200: #e5e7eb;
-  --primitive-color-neutral-300: #d1d5db;
-  --primitive-color-neutral-400: #9ca3af;
-  --primitive-color-neutral-500: #6b7280;
-  --primitive-color-neutral-700: #374151;
-  --primitive-color-neutral-800: #1f2937;
-  --primitive-color-neutral-900: #111827;
+  /* ── Pastel scale (status/tag backgrounds) ── */
+  --primitive-color-pastel-cream:  #fff8e4;
+  --primitive-color-pastel-orange: #fdf0e2;
+  --primitive-color-pastel-green:  #e8fcea;
+  --primitive-color-pastel-pink:   #ffebeb;
+  --primitive-color-pastel-blue:   #e9f0fc;
+  --primitive-color-pastel-purple: #f3e9fb;
 
   /* ── Spacing scale (base unit 4px) ── */
   --primitive-space-0:  0px;
@@ -37,7 +45,6 @@
   --primitive-space-2:  8px;
   --primitive-space-3:  12px;
   --primitive-space-4:  16px;
-  --primitive-space-5:  20px;
   --primitive-space-6:  24px;
   --primitive-space-8:  32px;
   --primitive-space-10: 40px;
@@ -45,37 +52,45 @@
   --primitive-space-16: 64px;
 
   /* ── Typography scale ── */
-  --primitive-font-family-sans: 'Inter', system-ui, sans-serif;
+  --primitive-font-family-sans: 'PT Root UI VF', system-ui, sans-serif;
   --primitive-font-family-mono: 'JetBrains Mono', monospace;
 
-  --primitive-font-size-xs:   12px;
-  --primitive-font-size-sm:   14px;
-  --primitive-font-size-base: 16px;
-  --primitive-font-size-lg:   18px;
-  --primitive-font-size-xl:   20px;
-  --primitive-font-size-2xl:  24px;
-  --primitive-font-size-3xl:  30px;
+  --primitive-font-size-xs:  12px;
+  --primitive-font-size-sm:  14px;
+  --primitive-font-size-md:  16px;
+  --primitive-font-size-lg:  18px;
+  --primitive-font-size-xl:  20px;
+  --primitive-font-size-2xl: 24px;
+  --primitive-font-size-3xl: 36px;
+  --primitive-font-size-4xl: 40px;
 
-  --primitive-font-weight-regular:  400;
+  /* PT Root UI VF — variable font, supports fractional weights */
+  --primitive-font-weight-regular:  450;
   --primitive-font-weight-medium:   500;
   --primitive-font-weight-semibold: 600;
   --primitive-font-weight-bold:     700;
 
-  --primitive-line-height-tight:  1.25;
-  --primitive-line-height-normal: 1.5;
+  --primitive-line-height-tight:  1.10;
+  --primitive-line-height-normal: 1.15;
+  --primitive-line-height-loose:  1.20;
 
   /* ── Border radius scale ── */
   --primitive-radius-none: 0px;
-  --primitive-radius-sm:   4px;
-  --primitive-radius-md:   8px;
-  --primitive-radius-lg:   12px;
-  --primitive-radius-xl:   16px;
-  --primitive-radius-full: 9999px;
+  --primitive-radius-sm:   4px;     /* Radius/100 */
+  --primitive-radius-md:   8px;     /* Radius/200 */
+  --primitive-radius-lg:   12px;    /* Radius/300 */
+  --primitive-radius-xl:   16px;    /* Radius/400 */
+  --primitive-radius-2xl:  32px;    /* Radius/800 */
+  --primitive-radius-full: 9999px;  /* Radius/FULL */
 
   /* ── Shadow scale ── */
-  --primitive-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --primitive-shadow-md: 0 4px 6px rgba(0,0,0,0.07);
-  --primitive-shadow-lg: 0 10px 15px rgba(0,0,0,0.10);
+  /* Drop Shadow/200 (Figma) — two-layer soft shadow */
+  --primitive-shadow-card:
+    0 1px 4px rgba(12, 12, 13, 0.05),
+    0 1px 4px rgba(12, 12, 13, 0.10);
+  --primitive-shadow-modal:
+    0 4px 6px  rgba(0, 0, 0, 0.12),
+    0 10px 20px rgba(0, 0, 0, 0.20);
 
   /* ── Duration scale ── */
   --primitive-duration-fast:   100ms;

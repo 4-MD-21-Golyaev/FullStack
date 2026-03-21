@@ -2,43 +2,43 @@
 :root {
 
   /* ── Button ── */
-  --button-font-size:          var(--ctx-font-size-label);
-  --button-font-weight:        var(--primitive-font-weight-medium);
-  --button-radius:             var(--ctx-radius-control);
-  --button-transition:         var(--ctx-transition);
+  --button-font-size:        var(--ctx-font-size-label);
+  --button-font-weight:      var(--primitive-font-weight-medium);
+  --button-radius:           var(--ctx-radius-control);
+  --button-transition:       var(--ctx-transition);
 
-  --button-primary-bg:         var(--ctx-color-action-primary);
-  --button-primary-bg-hover:   var(--ctx-color-action-primary-hover);
-  --button-primary-text:       var(--ctx-color-text-inverse);
+  --button-primary-bg:       var(--ctx-color-action-primary);
+  --button-primary-bg-hover: var(--ctx-color-action-primary-hover);
+  --button-primary-text:     var(--ctx-color-text-inverse);
 
   --button-secondary-bg:       var(--ctx-color-bg-subtle);
-  --button-secondary-bg-hover: var(--ctx-color-border-default);
+  --button-secondary-bg-hover: var(--ctx-color-bg-subtle-hover);
   --button-secondary-text:     var(--ctx-color-text-default);
 
-  --button-danger-bg:          var(--ctx-color-action-danger);
-  --button-danger-bg-hover:    var(--ctx-color-action-danger-hover);
-  --button-danger-text:        var(--ctx-color-text-inverse);
+  --button-danger-bg:       var(--ctx-color-action-danger);
+  --button-danger-bg-hover: var(--ctx-color-action-primary-active);
+  --button-danger-text:     var(--ctx-color-text-inverse);
 
   --button-padding-sm: var(--ctx-space-inset-sm) var(--primitive-space-3);
   --button-padding-md: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
   --button-padding-lg: var(--primitive-space-3)  var(--ctx-space-inset-lg);
 
   /* ── Input ── */
-  --input-font-size:        var(--ctx-font-size-body);
-  --input-radius:           var(--ctx-radius-control);
-  --input-border:           1px solid var(--ctx-color-border-default);
-  --input-border-focus:     2px solid var(--ctx-color-border-focus);
-  --input-border-danger:    1px solid var(--ctx-color-border-danger);
-  --input-bg:               var(--ctx-color-bg-surface);
-  --input-text:             var(--ctx-color-text-default);
-  --input-placeholder:      var(--ctx-color-text-disabled);
-  --input-padding:          var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  --input-font-size:    var(--ctx-font-size-body);
+  --input-radius:       var(--ctx-radius-control);
+  --input-border:       1px solid var(--ctx-color-border-default);
+  --input-border-focus: 2px solid var(--ctx-color-border-focus);
+  --input-border-danger: 1px solid var(--ctx-color-border-danger);
+  --input-bg:           var(--ctx-color-bg-surface);
+  --input-text:         var(--ctx-color-text-default);
+  --input-placeholder:  var(--ctx-color-text-disabled);
+  --input-padding:      var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
 
   /* ── Badge ── */
-  --badge-font-size:    var(--ctx-font-size-caption);
-  --badge-font-weight:  var(--primitive-font-weight-semibold);
-  --badge-radius:       var(--ctx-radius-badge);
-  --badge-padding:      var(--primitive-space-1) var(--primitive-space-2);
+  --badge-font-size:   var(--ctx-font-size-label);
+  --badge-font-weight: var(--primitive-font-weight-semibold);
+  --badge-radius:      var(--ctx-radius-badge);
+  --badge-padding:     var(--primitive-space-1) var(--primitive-space-2);
 
   /* ── Card ── */
   --card-bg:      var(--ctx-color-bg-surface);
@@ -57,7 +57,7 @@
   /* ── Table (admin) ── */
   --table-header-bg:    var(--ctx-color-bg-subtle);
   --table-header-text:  var(--ctx-color-text-secondary);
-  --table-row-hover-bg: var(--ctx-color-bg-subtle);
+  --table-row-hover-bg: var(--ctx-color-bg-subtle-hover);
   --table-border:       var(--ctx-color-border-default);
   --table-cell-padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
 
@@ -68,9 +68,9 @@
 
   /* ── Sidebar (admin) ── */
   --sidebar-bg:              var(--primitive-color-neutral-900);
-  --sidebar-text:            var(--primitive-color-neutral-300);
+  --sidebar-text:            var(--primitive-color-neutral-400);
   --sidebar-text-active:     var(--primitive-color-neutral-0);
-  --sidebar-item-active-bg:  rgba(255,255,255,0.08);
+  --sidebar-item-active-bg:  rgba(255, 255, 255, 0.08);
   --sidebar-width:           240px;
   --sidebar-width-collapsed: 56px;
 }
