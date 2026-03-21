@@ -43,37 +43,41 @@ src/styles/
 
 ```css
 /* tokens/primitive.css */
+/* Значения — источник истины: Figma (eV3fLo7RMJcyNqnFeuwHmg) */
 :root {
 
-  /* ── Color palette ── */
-  --primitive-color-blue-50:    #eff6ff;
-  --primitive-color-blue-100:   #dbeafe;
-  --primitive-color-blue-500:   #0070f3;
-  --primitive-color-blue-600:   #0057c2;
-  --primitive-color-blue-900:   #1e3a5f;
+  /* ── Нейтральная шкала ── */
+  --primitive-color-neutral-0:   #fefefe;   /* White/Enabled */
+  --primitive-color-neutral-50:  #fcfcfc;   /* White/Hovered */
+  --primitive-color-neutral-75:  #f7f7f7;   /* Light gray — фон страницы */
+  --primitive-color-neutral-100: #f2f2f2;   /* Gray/Enabled — subtle фон */
+  --primitive-color-neutral-200: #ededed;   /* Gray/Hovered — граница/hover */
+  --primitive-color-neutral-300: #cccccc;   /* Gray/Disabled */
+  --primitive-color-neutral-400: #9c9999;   /* Dark Gray/Enabled — иконки secondary */
+  --primitive-color-neutral-500: #999999;   /* Gray contrast — вторичный текст */
+  --primitive-color-neutral-900: #282828;   /* Signal black — основной текст */
 
-  --primitive-color-violet-500: #7b3fbf;
-  --primitive-color-violet-600: #6230a0;
+  /* ── Фирменная красная шкала (бренд/акцент) ── */
+  --primitive-color-red-300: #af3732;   /* Red/Focused */
+  --primitive-color-red-400: #9f322d;   /* Red/Hovered */
+  --primitive-color-red-500: #8f2d29;   /* Red/Enabled — основной акцент */
+  --primitive-color-red-700: #620c04;   /* Red/Disabled */
+  --primitive-color-red-900: #500a03;   /* Ripe Wine — декоративный тёмный */
 
-  --primitive-color-green-500:  #0a9e5c;
-  --primitive-color-green-600:  #0a7e50;
+  /* ── Ошибка / Деструктивное ── */
+  --primitive-color-error-50:  #faf0f0;   /* Error | Destructive/Background */
+  --primitive-color-error-500: #ba6a66;   /* Error | Destructive/Enabled */
 
-  --primitive-color-orange-500: #e07b00;
-  --primitive-color-orange-600: #b86200;
+  /* ── Акцент предупреждения ── */
+  --primitive-color-orange-400: #f5a12b;   /* Orange */
 
-  --primitive-color-red-500:    #cc0000;
-  --primitive-color-red-600:    #a80000;
-
-  --primitive-color-neutral-0:   #ffffff;
-  --primitive-color-neutral-50:  #f9fafb;
-  --primitive-color-neutral-100: #f3f4f6;
-  --primitive-color-neutral-200: #e5e7eb;
-  --primitive-color-neutral-300: #d1d5db;
-  --primitive-color-neutral-400: #9ca3af;
-  --primitive-color-neutral-500: #6b7280;
-  --primitive-color-neutral-700: #374151;
-  --primitive-color-neutral-800: #1f2937;
-  --primitive-color-neutral-900: #111827;
+  /* ── Пастельная шкала (фоны статусов/тегов) ── */
+  --primitive-color-pastel-cream:  #fff8e4;
+  --primitive-color-pastel-orange: #fdf0e2;
+  --primitive-color-pastel-green:  #e8fcea;
+  --primitive-color-pastel-pink:   #ffebeb;
+  --primitive-color-pastel-blue:   #e9f0fc;
+  --primitive-color-pastel-purple: #f3e9fb;
 
   /* ── Spacing scale (базовая единица 4px) ── */
   --primitive-space-0:  0px;
@@ -81,45 +85,52 @@ src/styles/
   --primitive-space-2:  8px;
   --primitive-space-3:  12px;
   --primitive-space-4:  16px;
-  --primitive-space-5:  20px;
   --primitive-space-6:  24px;
   --primitive-space-8:  32px;
-  --primitive-space-10: 40px;
   --primitive-space-12: 48px;
   --primitive-space-16: 64px;
 
   /* ── Typography scale ── */
-  --primitive-font-family-sans: 'Inter', system-ui, sans-serif;
+  --primitive-font-family-sans: 'PT Root UI VF', system-ui, sans-serif;
   --primitive-font-family-mono: 'JetBrains Mono', monospace;
 
   --primitive-font-size-xs:   12px;
   --primitive-font-size-sm:   14px;
-  --primitive-font-size-base: 16px;
-  --primitive-font-size-lg:   18px;
+  --primitive-font-size-md:   16px;
+  --primitive-font-size-lg:   18px;   /* основной body */
   --primitive-font-size-xl:   20px;
   --primitive-font-size-2xl:  24px;
-  --primitive-font-size-3xl:  30px;
+  --primitive-font-size-3xl:  36px;
+  --primitive-font-size-4xl:  40px;
 
-  --primitive-font-weight-regular:  400;
+  /* PT Root UI VF — variable font, поддерживает дробные значения */
+  --primitive-font-weight-regular:  450;
   --primitive-font-weight-medium:   500;
   --primitive-font-weight-semibold: 600;
   --primitive-font-weight-bold:     700;
 
-  --primitive-line-height-tight:  1.25;
-  --primitive-line-height-normal: 1.5;
+  --primitive-line-height-tight:  1.10;
+  --primitive-line-height-normal: 1.15;
+  --primitive-line-height-loose:  1.20;
 
   /* ── Border radius scale ── */
   --primitive-radius-none: 0px;
-  --primitive-radius-sm:   4px;
-  --primitive-radius-md:   8px;
-  --primitive-radius-lg:   12px;
-  --primitive-radius-xl:   16px;
-  --primitive-radius-full: 9999px;
+  --primitive-radius-sm:   4px;    /* Radius/100 */
+  --primitive-radius-md:   8px;    /* Radius/200 */
+  --primitive-radius-lg:   12px;   /* Radius/300 */
+  --primitive-radius-xl:   16px;   /* Radius/400 */
+  --primitive-radius-2xl:  32px;   /* Radius/800 */
+  --primitive-radius-full: 9999px; /* Radius/FULL */
 
   /* ── Shadow scale ── */
-  --primitive-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --primitive-shadow-md: 0 4px 6px rgba(0,0,0,0.07);
-  --primitive-shadow-lg: 0 10px 15px rgba(0,0,0,0.10);
+  /* Drop Shadow/200 (Figma) — двухслойная мягкая тень */
+  --primitive-shadow-card:
+    0 1px 4px rgba(12,12,13,0.05),
+    0 1px 4px rgba(12,12,13,0.10);
+  /* Drop Shadow/Modal */
+  --primitive-shadow-modal:
+    0 4px 6px  rgba(0,0,0,0.12),
+    0 10px 20px rgba(0,0,0,0.20);
 
   /* ── Duration scale ── */
   --primitive-duration-fast:   100ms;
@@ -147,71 +158,83 @@ src/styles/
   /* ── Цвет текста ── */
   --ctx-color-text-default:   var(--primitive-color-neutral-900);
   --ctx-color-text-secondary: var(--primitive-color-neutral-500);
-  --ctx-color-text-disabled:  var(--primitive-color-neutral-400);
+  --ctx-color-text-disabled:  var(--primitive-color-neutral-300);
   --ctx-color-text-inverse:   var(--primitive-color-neutral-0);
-  --ctx-color-text-link:      var(--primitive-color-blue-500);
-  --ctx-color-text-danger:    var(--primitive-color-red-500);
+  --ctx-color-text-danger:    var(--primitive-color-error-500);
 
   /* ── Цвет фона ── */
-  --ctx-color-bg-page:        var(--primitive-color-neutral-50);
-  --ctx-color-bg-surface:     var(--primitive-color-neutral-0);
-  --ctx-color-bg-subtle:      var(--primitive-color-neutral-100);
-  --ctx-color-bg-overlay:     rgba(0,0,0,0.4);
+  --ctx-color-bg-page:         var(--primitive-color-neutral-75);
+  --ctx-color-bg-surface:      var(--primitive-color-neutral-0);
+  --ctx-color-bg-subtle:       var(--primitive-color-neutral-100);
+  --ctx-color-bg-subtle-hover: var(--primitive-color-neutral-200);
+  --ctx-color-bg-overlay:      rgba(0,0,0,0.4);
 
   /* ── Цвет границ ── */
   --ctx-color-border-default: var(--primitive-color-neutral-200);
-  --ctx-color-border-focus:   var(--primitive-color-blue-500);
-  --ctx-color-border-danger:  var(--primitive-color-red-500);
+  --ctx-color-border-focus:   var(--primitive-color-red-500);
+  --ctx-color-border-danger:  var(--primitive-color-error-500);
 
   /* ── Действия (кнопки, ссылки) ── */
-  --ctx-color-action-primary:         var(--primitive-color-blue-500);
-  --ctx-color-action-primary-hover:   var(--primitive-color-blue-600);
-  --ctx-color-action-danger:          var(--primitive-color-red-500);
-  --ctx-color-action-danger-hover:    var(--primitive-color-red-600);
+  --ctx-color-action-primary:        var(--primitive-color-red-500);
+  --ctx-color-action-primary-hover:  var(--primitive-color-red-400);
+  --ctx-color-action-primary-active: var(--primitive-color-red-300);
+  --ctx-color-action-danger:         var(--primitive-color-error-500);
+  --ctx-color-action-danger-bg:      var(--primitive-color-error-50);
 
-  /* ── Статус-цвета (обратная связь) ── */
-  --ctx-color-status-success: var(--primitive-color-green-500);
-  --ctx-color-status-warning: var(--primitive-color-orange-500);
-  --ctx-color-status-danger:  var(--primitive-color-red-500);
-  --ctx-color-status-info:    var(--primitive-color-blue-500);
+  /* ── Статус-цвета (feedback) ── */
+  --ctx-color-status-warning:     var(--primitive-color-orange-400);
+  --ctx-color-status-success-bg:  var(--primitive-color-pastel-green);
+  --ctx-color-status-warning-bg:  var(--primitive-color-pastel-orange);
+  --ctx-color-status-danger-bg:   var(--primitive-color-pastel-pink);
+  --ctx-color-status-info-bg:     var(--primitive-color-pastel-blue);
+  --ctx-color-status-payment-bg:  var(--primitive-color-pastel-purple);
+  --ctx-color-status-neutral-bg:  var(--primitive-color-pastel-cream);
 
-  /* ── Статусы заказа ── */
-  --ctx-color-order-created:            var(--primitive-color-blue-500);
-  --ctx-color-order-picking:            var(--primitive-color-orange-500);
-  --ctx-color-order-payment:            var(--primitive-color-violet-500);
-  --ctx-color-order-delivery-assigned:  var(--primitive-color-green-500);
-  --ctx-color-order-out-for-delivery:   var(--primitive-color-green-600);
-  --ctx-color-order-delivered:          var(--primitive-color-neutral-500);
-  --ctx-color-order-closed:             var(--primitive-color-neutral-700);
-  --ctx-color-order-cancelled:          var(--primitive-color-red-500);
+  /* ── Статусы заказа (bg + text пара для бейджей) ── */
+  --ctx-color-order-created-bg:           var(--primitive-color-pastel-blue);
+  --ctx-color-order-created-text:         var(--primitive-color-red-500);
+  --ctx-color-order-picking-bg:           var(--primitive-color-pastel-orange);
+  --ctx-color-order-picking-text:         var(--primitive-color-neutral-900);
+  --ctx-color-order-payment-bg:           var(--primitive-color-pastel-purple);
+  --ctx-color-order-payment-text:         var(--primitive-color-neutral-900);
+  --ctx-color-order-delivery-bg:          var(--primitive-color-pastel-green);
+  --ctx-color-order-delivery-text:        var(--primitive-color-neutral-900);
+  --ctx-color-order-delivered-bg:         var(--primitive-color-pastel-green);
+  --ctx-color-order-delivered-text:       var(--primitive-color-neutral-900);
+  --ctx-color-order-closed-bg:            var(--primitive-color-neutral-100);
+  --ctx-color-order-closed-text:          var(--primitive-color-neutral-500);
+  --ctx-color-order-cancelled-bg:         var(--primitive-color-pastel-pink);
+  --ctx-color-order-cancelled-text:       var(--primitive-color-error-500);
 
   /* ── Отступы по контексту использования ── */
-  --ctx-space-inset-sm:   var(--primitive-space-2);   /* padding внутри маленьких компонентов */
-  --ctx-space-inset-md:   var(--primitive-space-4);   /* padding внутри средних компонентов */
-  --ctx-space-inset-lg:   var(--primitive-space-6);   /* padding внутри больших секций */
-  --ctx-space-stack-sm:   var(--primitive-space-2);   /* вертикальный gap между элементами */
-  --ctx-space-stack-md:   var(--primitive-space-4);
-  --ctx-space-stack-lg:   var(--primitive-space-8);
-  --ctx-space-inline-sm:  var(--primitive-space-2);   /* горизонтальный gap */
-  --ctx-space-inline-md:  var(--primitive-space-4);
+  --ctx-space-inset-sm:      var(--primitive-space-2);   /* padding маленьких компонентов */
+  --ctx-space-inset-md:      var(--primitive-space-4);   /* padding кнопок, инпутов */
+  --ctx-space-inset-lg:      var(--primitive-space-6);   /* padding карточек */
+  --ctx-space-stack-sm:      var(--primitive-space-2);   /* вертикальный gap мелкий */
+  --ctx-space-stack-md:      var(--primitive-space-4);
+  --ctx-space-stack-lg:      var(--primitive-space-8);
+  --ctx-space-inline-sm:     var(--primitive-space-2);   /* горизонтальный gap */
+  --ctx-space-inline-md:     var(--primitive-space-4);
+  --ctx-space-page-desktop:  var(--primitive-space-8);   /* 32px — padding страницы */
+  --ctx-space-page-mobile:   var(--primitive-space-3);   /* 12px */
 
   /* ── Типографика по контексту ── */
-  --ctx-font-body:        var(--primitive-font-family-sans);
-  --ctx-font-code:        var(--primitive-font-family-mono);
-  --ctx-font-size-body:   var(--primitive-font-size-base);
-  --ctx-font-size-label:  var(--primitive-font-size-sm);
-  --ctx-font-size-caption:var(--primitive-font-size-xs);
-  --ctx-font-size-heading:var(--primitive-font-size-xl);
+  --ctx-font-body:         var(--primitive-font-family-sans);
+  --ctx-font-code:         var(--primitive-font-family-mono);
+  --ctx-font-size-body:    var(--primitive-font-size-lg);    /* 18px */
+  --ctx-font-size-caption: var(--primitive-font-size-md);    /* 16px */
+  --ctx-font-size-label:   var(--primitive-font-size-sm);    /* 14px */
+  --ctx-font-size-heading: var(--primitive-font-size-xl);    /* 20px */
 
   /* ── Форма (border-radius) ── */
-  --ctx-radius-control: var(--primitive-radius-md);   /* кнопки, инпуты */
-  --ctx-radius-card:    var(--primitive-radius-lg);   /* карточки */
-  --ctx-radius-badge:   var(--primitive-radius-full); /* бейджи */
-  --ctx-radius-modal:   var(--primitive-radius-xl);
+  --ctx-radius-control: var(--primitive-radius-md);    /* 8px — кнопки, инпуты */
+  --ctx-radius-card:    var(--primitive-radius-xl);    /* 16px — карточки */
+  --ctx-radius-badge:   var(--primitive-radius-full);  /* 9999px — бейджи */
+  --ctx-radius-modal:   var(--primitive-radius-2xl);   /* 32px — модальные окна */
 
   /* ── Прочее ── */
-  --ctx-shadow-card:    var(--primitive-shadow-sm);
-  --ctx-shadow-modal:   var(--primitive-shadow-lg);
+  --ctx-shadow-card:    var(--primitive-shadow-card);
+  --ctx-shadow-modal:   var(--primitive-shadow-modal);
   --ctx-transition:     var(--primitive-duration-normal) ease;
   --ctx-z-dropdown:     var(--primitive-z-dropdown);
   --ctx-z-modal:        var(--primitive-z-modal);
@@ -246,7 +269,7 @@ src/styles/
   --button-secondary-text:     var(--ctx-color-text-default);
 
   --button-danger-bg:          var(--ctx-color-action-danger);
-  --button-danger-bg-hover:    var(--ctx-color-action-danger-hover);
+  --button-danger-bg-hover:    var(--ctx-color-action-danger);
   --button-danger-text:        var(--ctx-color-text-inverse);
 
   --button-padding-sm: var(--ctx-space-inset-sm) var(--primitive-space-3);
@@ -292,13 +315,13 @@ src/styles/
   --table-cell-padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
 
   /* ── SlaTimer ── */
-  --sla-color-ok:      var(--ctx-color-status-success);
+  --sla-color-ok:      var(--ctx-color-status-success-bg);
   --sla-color-warning: var(--ctx-color-status-warning);
-  --sla-color-overdue: var(--ctx-color-status-danger);
+  --sla-color-overdue: var(--ctx-color-action-danger);
 
   /* ── Sidebar (admin) ── */
   --sidebar-bg:           var(--primitive-color-neutral-900);
-  --sidebar-text:         var(--primitive-color-neutral-300);
+  --sidebar-text:         var(--primitive-color-neutral-400);
   --sidebar-text-active:  var(--primitive-color-neutral-0);
   --sidebar-item-active-bg: rgba(255,255,255,0.08);
   --sidebar-width:        240px;

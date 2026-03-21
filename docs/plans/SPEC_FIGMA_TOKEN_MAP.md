@@ -1,206 +1,227 @@
 # SPEC: Figma → Code Token Mapping
 
-## Статус: К исполнению
-
----
-
-## Проблема
-
-Figma-файл использует упрощённую систему токенов, которая не совпадает с трёхслойной архитектурой
-спецификации (`primitive → context → component`):
-
-| Что есть в Figma | Что требует спецификация |
-|---|---|
-| Цвета заданы как стили `color/state` | Три слоя: `primitive` → `ctx-color-*` → `component-token` |
-| Spacing и radius используются как примитивы напрямую | Только через context-токены в компонентах |
-| Нет context-слоя (семантических псевдонимов) | `--ctx-color-action-primary`, `--ctx-space-inset-md` и т.д. |
-| Нет component-слоя | `--button-primary-bg`, `--card-padding` и т.д. |
-
-**Figma остаётся неизменной.** Несоответствие устраняется на этапе реализации через карту маппинга,
-которая работает как фильтр: при реализации компонента по Figma-экспорту — используется не имя из
-Figma, а соответствующий токен спецификации.
+## Статус: Актуален. Figma-файл не изменяется — все несоответствия устраняются через правила интерпретации ниже.
 
 ---
 
 ## Принцип работы
 
 ```
-Figma-экспорт          Карта маппинга           Код (CSS Module)
-──────────────         ──────────────────        ─────────────────────────
-color/primary    ───►  figma → spec lookup  ───► var(--button-primary-bg)
-color/state/     ───►                       ───► var(--ctx-color-order-*)
-spacing/4        ───►                       ───► var(--ctx-space-inset-md)
-radius/md        ───►                       ───► var(--button-radius)
+Figma Variable (Context)          CSS (code)
+────────────────────────          ──────────────────────────
+Context/Color/Action/Primary  ──► var(--ctx-color-action-primary)
+Context/Space/Inset/MD        ──► var(--ctx-space-inset-md)
+Context/Radius/Control        ──► var(--ctx-radius-control)
 ```
 
-Я (AI-агент) не копирую Figma-имена в CSS. Вместо этого я:
-1. Нахожу элемент в Figma-экспорте
-2. Ищу его Figma-имя в карте ниже
-3. Использую соответствующий токен спецификации
+Figma Context-переменные и CSS context-токены — взаимно однозначное соответствие.
+При обновлении дизайна из Figma меняются значения в Figma Primitive,
+CSS primitive.css обновляется под новые hex/px, context и component остаются стабильными.
 
 ---
 
-## Карта маппинга
+## Правила интерпретации (Figma не изменяется)
 
-### Цвета — действия и UI
+Эти правила применяются **всегда** при реализации компонентов и страниц из Figma.
+Figma-файл содержит исторические значения — код использует интерпретированные.
 
-| Figma style | Spec token | Слой |
-|---|---|---|
-| `color/primary` | `--ctx-color-action-primary` | context |
-| `color/primary-hover` | `--ctx-color-action-primary-hover` | context |
-| `color/danger` | `--ctx-color-action-danger` | context |
-| `color/danger-hover` | `--ctx-color-action-danger-hover` | context |
+### Правило 1 — Page Padding (критическое)
 
-### Цвета — текст
+**Что показывает Figma:** горизонтальный padding фрейма 1440px = **150px** с каждой стороны.
 
-| Figma style | Spec token | Слой |
-|---|---|---|
-| `color/text/default` | `--ctx-color-text-default` | context |
-| `color/text/secondary` | `--ctx-color-text-secondary` | context |
-| `color/text/disabled` | `--ctx-color-text-disabled` | context |
-| `color/text/inverse` | `--ctx-color-text-inverse` | context |
-| `color/text/link` | `--ctx-color-text-link` | context |
-| `color/text/danger` | `--ctx-color-text-danger` | context |
-
-### Цвета — фон
-
-| Figma style | Spec token | Слой |
-|---|---|---|
-| `color/bg/page` | `--ctx-color-bg-page` | context |
-| `color/bg/surface` | `--ctx-color-bg-surface` | context |
-| `color/bg/subtle` | `--ctx-color-bg-subtle` | context |
-| `color/bg/overlay` | `--ctx-color-bg-overlay` | context |
-
-### Цвета — статусы заказа (`color/state/*`)
-
-| Figma style | Spec token | Слой |
-|---|---|---|
-| `color/state/created` | `--ctx-color-order-created` | context |
-| `color/state/picking` | `--ctx-color-order-picking` | context |
-| `color/state/payment` | `--ctx-color-order-payment` | context |
-| `color/state/delivery-assigned` | `--ctx-color-order-delivery-assigned` | context |
-| `color/state/out-for-delivery` | `--ctx-color-order-out-for-delivery` | context |
-| `color/state/delivered` | `--ctx-color-order-delivered` | context |
-| `color/state/closed` | `--ctx-color-order-closed` | context |
-| `color/state/cancelled` | `--ctx-color-order-cancelled` | context |
-
-### Цвета — обратная связь
-
-| Figma style | Spec token | Слой |
-|---|---|---|
-| `color/status/success` | `--ctx-color-status-success` | context |
-| `color/status/warning` | `--ctx-color-status-warning` | context |
-| `color/status/danger` | `--ctx-color-status-danger` | context |
-| `color/status/info` | `--ctx-color-status-info` | context |
-
-### Spacing
-
-Figma экспортирует spacing как числовые значения или именованные шаги (`spacing/4`, `8px` и т.д.).
-Маппинг строится по **назначению** в компоненте, а не по числовому значению:
-
-| Контекст использования | Spec token | Primitive значение |
-|---|---|---|
-| Padding внутри маленького компонента (badge, chip) | `--ctx-space-inset-sm` | 8px |
-| Padding внутри кнопки, инпута, ячейки таблицы | `--ctx-space-inset-md` | 16px |
-| Padding внутри карточки, секции | `--ctx-space-inset-lg` | 24px |
-| Вертикальный gap между элементами списка (мелкий) | `--ctx-space-stack-sm` | 8px |
-| Вертикальный gap между блоками | `--ctx-space-stack-md` | 16px |
-| Вертикальный gap между крупными секциями | `--ctx-space-stack-lg` | 32px |
-| Горизонтальный gap внутри строки (иконка + текст) | `--ctx-space-inline-sm` | 8px |
-| Горизонтальный gap между элементами | `--ctx-space-inline-md` | 16px |
-
-> Если Figma задаёт spacing напрямую числом (например `16px`) — определяю контекст и выбираю
-> соответствующий context-токен. Числовое значение в CSS не используется.
-
-### Border radius
-
-| Figma style / значение | Spec token | Назначение |
-|---|---|---|
-| `radius/sm` / `4px` | `--primitive-radius-sm` | только если нет подходящего ctx |
-| `radius/md` / `8px` | `--ctx-radius-control` | кнопки, инпуты, теги |
-| `radius/lg` / `12px` | `--ctx-radius-card` | карточки |
-| `radius/xl` / `16px` | `--ctx-radius-modal` | модальные окна |
-| `radius/full` / `9999px` | `--ctx-radius-badge` | бейджи, аватары |
-
-### Типографика
-
-| Figma style | Spec token |
-|---|---|
-| `text/body` / 16px regular | `--ctx-font-size-body` + `--primitive-font-weight-regular` |
-| `text/label` / 14px medium | `--ctx-font-size-label` + `--primitive-font-weight-medium` |
-| `text/caption` / 12px | `--ctx-font-size-caption` |
-| `text/heading` / 20px | `--ctx-font-size-heading` |
-
-### Тени
-
-| Figma style | Spec token |
-|---|---|
-| Shadow / card / sm | `--ctx-shadow-card` |
-| Shadow / modal / lg | `--ctx-shadow-modal` |
-
----
-
-## Правила применения маппинга
-
-### 1. Приоритет component-токена над context
-
-Если для компонента есть component-токен — использовать его, не context напрямую:
-
+**Как интерпретировать в коде:**
 ```css
-/* ✅ Правильно — через component-токен */
-.root { border-radius: var(--button-radius); }
+/* НЕ делать: padding: 0 150px */
 
-/* ❌ Неправильно — context напрямую в компоненте, у которого есть свой токен */
-.root { border-radius: var(--ctx-radius-control); }
+/* Делать: */
+.page {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: var(--ctx-space-page-desktop); /* 32px */
+}
 ```
 
-Исключение: если component-токен не определён для данного свойства — допустимо использовать
-context-токен.
+Логика: 150px = 120px (центрирование 1200px на 1440px) + 30px (старый gutter). В коде это раскладывается на `max-width` + `padding-inline: 32px`. Число 150 из Figma в CSS не попадает никогда.
 
-### 2. Spacing по назначению, не по значению
+**Мобильный фрейм (360px):** padding 12px → `padding-inline: var(--ctx-space-page-mobile)` (12px, значение верное, интерпретация не нужна).
 
-Figma может показать `gap: 8px`. В коде не пишем `8px` и не ищем примитив `--primitive-space-2`.
-Спрашиваем: *что это за gap?* Если это горизонтальный gap между иконкой и текстом — `--ctx-space-inline-sm`.
+### Правило 2 — Цвета без семантических переменных
 
-### 3. Незнакомые цвета из Figma
+Figma-файл использует примитивные цвета (`Red/Enabled`, `Signal black` и т.д.) вместо Context-переменных. При реализации каждый hex-цвет из Figma переводится по таблице ниже — напрямую в CSS hex не попадает.
 
-Если Figma-стиль не найден в карте выше:
-1. Определить семантику цвета (action? status? text? bg?)
-2. Найти ближайший context-токен по смыслу
-3. Если не подходит ни один — добавить новый context-токен в `context.css` (не использовать primitive напрямую)
-4. Зафиксировать добавление в этом файле
+Таблица маппинга — в разделе «Цвета» этого файла.
 
-### 4. Figma-стили без аналога в спецификации
+### Правило 3 — T-shirt aliases и SDS-переменные в spacing
 
-Если в Figma есть стиль, для которого в спецификации нет токена (например специфический hover-цвет
-для sidebar-item), — добавить component-токен в `component.css`:
+Если Figma показывает `Spacing/M`, `Spacing/L` или `var(--sds-size-space-*)` — использовать только числовой эквивалент из таблицы spacing ниже, а из него — соответствующий CSS context-токен.
 
-```css
-/* tokens/component.css */
---sidebar-item-active-bg: rgba(255,255,255,0.08);  /* нет primitive для alpha-white — допустимое исключение */
-```
+| Figma (встречается) | Числовой эквивалент | CSS token |
+|---|---|---|
+| `Spacing/XXS` / `Spacing/200` | 8px | `--ctx-space-inset-sm` / `--ctx-space-stack-sm` / `--ctx-space-inline-sm` |
+| `Spacing/S` / `Spacing/400` | 16px | `--ctx-space-inset-md` / `--ctx-space-stack-md` / `--ctx-space-inline-md` |
+| `Spacing/M` / `Spacing/600` | 24px | `--ctx-space-inset-lg` |
+| `Spacing/L` / `Spacing/800` | 32px | `--ctx-space-stack-lg` |
+| `var(--sds-size-space-*)` | по числу (см. таблицу spacing) | по назначению |
+
+### Правило 4 — Radius/M
+
+`Radius/M` = 8px = `Radius/200` → `--ctx-radius-control`.
+
+### Правило 5 — Gill Sans Nova токены
+
+Токены `Body/Medium` и `Utilities/Secondary` с Gill Sans Nova — устаревшие, в коде не используются. При встрече заменять на ближайший `[Desktop]/...` токен с PT Root UI VF.
 
 ---
 
-## Обновление карты при работе с MCP
+## Цвета — действия
 
-Когда будет подключён Figma MCP-сервер, карта уточняется:
+| Figma Context | CSS token | px / hex |
+|---|---|---|
+| `Context/Color/Action/Primary` | `--ctx-color-action-primary` | `#8F2D29` |
+| `Context/Color/Action/PrimaryHover` | `--ctx-color-action-primary-hover` | `#9F322D` |
+| `Context/Color/Action/PrimaryActive` | `--ctx-color-action-primary-active` | `#AF3732` |
+| `Context/Color/Action/Danger` | `--ctx-color-action-danger` | `#BA6A66` |
+| `Context/Color/Action/DangerBg` | `--ctx-color-action-danger-bg` | `#FAF0F0` |
 
-1. Читаю все стили из Figma-файла
-2. Сопоставляю фактические имена (`color/state/created`) с предположительными в таблицах выше
-3. Корректирую таблицы — добавляю несовпадающие имена, удаляю несуществующие
-4. Фиксирую результат в этом файле как финальную карту
+## Цвета — текст
 
-До подключения MCP — таблицы выше описывают **ожидаемые** имена стилей на основе типичных
-Figma-конвенций и информации о структуре файла.
+| Figma Context | CSS token | hex |
+|---|---|---|
+| `Context/Color/Text/Default` | `--ctx-color-text-default` | `#282828` |
+| `Context/Color/Text/Secondary` | `--ctx-color-text-secondary` | `#999999` |
+| `Context/Color/Text/Disabled` | `--ctx-color-text-disabled` | `#CCCCCC` |
+| `Context/Color/Text/Inverse` | `--ctx-color-text-inverse` | `#FEFEFE` |
+| `Context/Color/Text/Danger` | `--ctx-color-text-danger` | `#BA6A66` |
+
+## Цвета — фон
+
+| Figma Context | CSS token | hex |
+|---|---|---|
+| `Context/Color/Bg/Page` | `--ctx-color-bg-page` | `#F7F7F7` |
+| `Context/Color/Bg/Surface` | `--ctx-color-bg-surface` | `#FEFEFE` |
+| `Context/Color/Bg/Subtle` | `--ctx-color-bg-subtle` | `#F2F2F2` |
+| `Context/Color/Bg/SubtleHover` | `--ctx-color-bg-subtle-hover` | `#EDEDED` |
+
+## Цвета — границы
+
+| Figma Context | CSS token | hex |
+|---|---|---|
+| `Context/Color/Border/Default` | `--ctx-color-border-default` | `#EDEDED` |
+| `Context/Color/Border/Danger` | `--ctx-color-border-danger` | `#BA6A66` |
+
+## Цвета — статусы (feedback)
+
+| Figma Context | CSS token | hex |
+|---|---|---|
+| `Context/Color/Status/Warning` | `--ctx-color-status-warning` | `#F5A12B` |
+| `Context/Color/Status/SuccessBg` | `--ctx-color-status-success-bg` | `#E8FCEA` |
+| `Context/Color/Status/WarningBg` | `--ctx-color-status-warning-bg` | `#FDF0E2` |
+| `Context/Color/Status/DangerBg` | `--ctx-color-status-danger-bg` | `#FFEBEB` |
+| `Context/Color/Status/InfoBg` | `--ctx-color-status-info-bg` | `#E9F0FC` |
+| `Context/Color/Status/PaymentBg` | `--ctx-color-status-payment-bg` | `#F3E9FB` |
+| `Context/Color/Status/NeutralBg` | `--ctx-color-status-neutral-bg` | `#FFF8E4` |
+
+## Цвета — статусы заказа (клиентский UI)
+
+| Figma Context | CSS token bg | CSS token text |
+|---|---|---|
+| `Context/Color/Order/Created/*` | `--ctx-color-order-created-bg` | `--ctx-color-order-created-text` |
+| `Context/Color/Order/Picking/*` | `--ctx-color-order-picking-bg` | `--ctx-color-order-picking-text` |
+| `Context/Color/Order/Payment/*` | `--ctx-color-order-payment-bg` | `--ctx-color-order-payment-text` |
+| `Context/Color/Order/Delivery/*` | `--ctx-color-order-delivery-bg` | `--ctx-color-order-delivery-text` |
+| `Context/Color/Order/Cancelled/*` | `--ctx-color-order-cancelled-bg` | `--ctx-color-order-cancelled-text` |
+
+> Значения: bg = соответствующий Pastel, text = `#282828` кроме Cancelled (`#BA6A66`) и Created (`#8F2D29`)
 
 ---
 
-## Что НЕ является частью этой спецификации
+## Spacing
 
-- Изменения в Figma-файле — файл остаётся неизменным
-- Переименование Figma-стилей — не требуется
-- Экспорт токенов через плагины (Tokens Studio и т.д.) — не используется
+| Figma Context | CSS token | px |
+|---|---|---|
+| `Context/Space/Inset/SM` | `--ctx-space-inset-sm` | 8 |
+| `Context/Space/Inset/MD` | `--ctx-space-inset-md` | 16 |
+| `Context/Space/Inset/LG` | `--ctx-space-inset-lg` | 24 |
+| `Context/Space/Stack/SM` | `--ctx-space-stack-sm` | 8 |
+| `Context/Space/Stack/MD` | `--ctx-space-stack-md` | 16 |
+| `Context/Space/Stack/LG` | `--ctx-space-stack-lg` | 32 |
+| `Context/Space/Inline/SM` | `--ctx-space-inline-sm` | 8 |
+| `Context/Space/Inline/MD` | `--ctx-space-inline-md` | 16 |
+| `Context/Space/Page/Desktop` | `--ctx-space-page-desktop` | 32 |
+| `Context/Space/Page/Mobile` | `--ctx-space-page-mobile` | 12 |
 
-Вся трансформация происходит **в голове агента** при реализации компонента: Figma показывает
-визуал → агент применяет маппинг → в CSS появляются правильные `var()`.
+> При реализации: `max-width: 1200px; margin: 0 auto; padding-inline: var(--ctx-space-page-desktop)`
+
+Figma Primitive → CSS Primitive (числовая шкала):
+
+| Figma Primitive | CSS primitive | px |
+|---|---|---|
+| `Primitive/Space/100` | `--primitive-space-1` | 4 |
+| `Primitive/Space/200` | `--primitive-space-2` | 8 |
+| `Primitive/Space/300` | `--primitive-space-3` | 12 |
+| `Primitive/Space/400` | `--primitive-space-4` | 16 |
+| `Primitive/Space/600` | `--primitive-space-6` | 24 |
+| `Primitive/Space/800` | `--primitive-space-8` | 32 |
+| `Primitive/Space/1200` | `--primitive-space-12` | 48 |
+| `Primitive/Space/1600` | `--primitive-space-16` | 64 |
+
+---
+
+## Border Radius
+
+| Figma Context | CSS token | px |
+|---|---|---|
+| `Context/Radius/Control` | `--ctx-radius-control` | 8 |
+| `Context/Radius/Card` | `--ctx-radius-card` | 16 |
+| `Context/Radius/Badge` | `--ctx-radius-badge` | 9999 |
+| `Context/Radius/Modal` | `--ctx-radius-modal` | 32 |
+
+Figma Primitive → CSS Primitive:
+
+| Figma Primitive | CSS primitive | px |
+|---|---|---|
+| `Primitive/Radius/100` | `--primitive-radius-sm` | 4 |
+| `Primitive/Radius/200` | `--primitive-radius-md` | 8 |
+| `Primitive/Radius/300` | `--primitive-radius-lg` | 12 |
+| `Primitive/Radius/400` | `--primitive-radius-xl` | 16 |
+| `Primitive/Radius/800` | `--primitive-radius-2xl` | 32 |
+| `Primitive/Radius/FULL` | `--primitive-radius-full` | 9999 |
+
+> Замечание: в `SPEC_FRONTEND_ARCHITECTURE.md` `--ctx-radius-card` был 12px (`Radius/300`).
+> Исправить на 16px (`Radius/400`) — Figma является источником истины для значений.
+
+---
+
+## Тени
+
+| Figma Effect | CSS token | Описание |
+|---|---|---|
+| `Drop Shadow/200` | `--ctx-shadow-card` | мягкая двухслойная тень для карточек |
+| `Drop Shadow/Modal` | `--ctx-shadow-modal` | глубокая тень для модальных окон |
+
+---
+
+## Типографика
+
+Типографика уже структурирована корректно. Маппинг:
+
+| Figma Variable | CSS token |
+|---|---|
+| `[Desktop]/Body/Weight 450` | `--ctx-font-size-body` (18px, w450) |
+| `[Desktop]/Utilities/Caption` | `--ctx-font-size-caption` (16px, w450) |
+| `[Desktop]/Utilities/Secondary` | `--ctx-font-size-label` (14px, w450) |
+| `[Desktop]/Headings/Heading 4` | `--ctx-font-size-heading` (20px, w700) |
+
+> Шрифт `PT Root UI VF` — variable font. В CSS: `font-family: 'PT Root UI VF', sans-serif`.
+> Указывать `font-weight` числом (450, 500, 600, 700) — variable font поддерживает промежуточные значения.
+
+---
+
+## Связь с `SPEC_FRONTEND_ARCHITECTURE.md`
+
+Единая система токенов для всех контуров (customer, admin, picker, courier).
+Специализация происходит **только на уровне component-токенов** — не на уровне primitive и context.
+
+`SPEC_FRONTEND_ARCHITECTURE.md` обновлён в соответствии с Figma-значениями:
+primitive.css содержит реальную палитру проекта (red brand, neutral шкала из Figma),
+context.css ссылается на неё. Все контуры потребляют одни и те же context-токены.
