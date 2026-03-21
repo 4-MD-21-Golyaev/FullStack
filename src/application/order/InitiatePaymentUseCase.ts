@@ -6,7 +6,7 @@ import { cancelOrder } from '@/domain/order/transitions';
 import { OrderState } from '@/domain/order/OrderState';
 import { Payment } from '@/domain/payment/Payment';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
-import { PaymentAlreadyInProgressError, PaymentWindowExpiredError } from '@/domain/payment/errors';
+import { PaymentWindowExpiredError } from '@/domain/payment/errors';
 import { isPaymentWindowExpired } from '@/domain/payment/paymentTimeout';
 import { Product } from '@/domain/product/Product';
 import { randomUUID } from 'crypto';
@@ -52,9 +52,11 @@ export class InitiatePaymentUseCase {
         // Serializable isolation + DB unique index на pendingOrderLock предотвращают гонку.
         const payment = await this.transactionRunner.run(async ({ orderRepository, productRepository, paymentRepository }) => {
             // §10: проверка внутри транзакции — атомарна с последующим INSERT
+            // Идемпотентность: если PENDING уже существует — возвращаем его,
+            // gateway вызовем с тем же internalPaymentId (idempotency key).
             const existingPending = await paymentRepository.findPendingByOrderId(input.orderId);
             if (existingPending) {
-                throw new PaymentAlreadyInProgressError();
+                return existingPending;
             }
 
             const products = new Map<string, Product>();

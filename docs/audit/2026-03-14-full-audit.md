@@ -8,11 +8,11 @@
 
 ## 1. КРИТИЧЕСКИЕ ДЕФЕКТЫ (блокирующие)
 
-### 1.1 InitiatePaymentUseCase нарушает контракт идемпотентности
+### ✅ 1.1 InitiatePaymentUseCase нарушает контракт идемпотентности — ИСПРАВЛЕНО
 - **Файл:** `src/application/order/InitiatePaymentUseCase.ts`
-- **Проблема:** при наличии PENDING-платежа выбрасывает `PaymentAlreadyInProgressError` вместо возврата существующего платежа
-- **Контракт CLAUDE.md:** "Both InitiatePaymentUseCase and ConfirmPaymentUseCase are idempotent"
-- **Исправление:** вернуть существующий confirmationUrl вместо ошибки
+- **Проблема:** при наличии PENDING-платежа выбрасывал `PaymentAlreadyInProgressError` вместо возврата существующего платежа
+- **Исправление:** существующий PENDING возвращается из транзакции; gateway вызывается с тем же `internalPaymentId` (idempotency key) → Yookassa возвращает тот же `confirmationUrl`
+- **Примечание:** `PaymentAlreadyInProgressError` оставлен в репозитории как защита от race condition (P2002 DB constraint)
 
 ---
 
@@ -92,7 +92,7 @@
 
 | # | Задача | Приоритет |
 |---|--------|-----------|
-| 1 | Исправить идемпотентность InitiatePaymentUseCase | CRITICAL |
+| 1 | ~~Исправить идемпотентность InitiatePaymentUseCase~~ | ✅ DONE |
 | 2 | ~~Тесты для picker use cases (4 шт)~~ | ✅ DONE |
 | 3 | ~~Тесты для courier use cases (7 шт)~~ | ✅ DONE |
 | 4 | ~~Тесты для admin use cases (6 шт)~~ | ✅ DONE |
@@ -142,7 +142,7 @@
 | Race condition handling | ✅ |
 | Composition mutation restriction (PICKING only) | ✅ |
 | Idempotent webhooks | ✅ |
-| Idempotent payment initiation | ❌ |
+| Idempotent payment initiation | ✅ |
 | All transitions tested | ✅ |
 
 ### Маршруты API (48 endpoints)

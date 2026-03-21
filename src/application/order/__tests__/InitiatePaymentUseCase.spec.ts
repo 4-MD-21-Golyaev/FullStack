@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InitiatePaymentUseCase } from '../InitiatePaymentUseCase';
-import { PaymentAlreadyInProgressError, PaymentWindowExpiredError } from '@/domain/payment/errors';
+import { PaymentWindowExpiredError } from '@/domain/payment/errors';
 import { OrderRepository } from '../../ports/OrderRepository';
 import { PaymentRepository } from '../../ports/PaymentRepository';
 import { ProductRepository } from '../../ports/ProductRepository';
@@ -201,26 +201,32 @@ describe('InitiatePaymentUseCase', () => {
         expect(mockGateway.createPayment).not.toHaveBeenCalled();
     });
 
-    it('throws PaymentAlreadyInProgressError when a PENDING payment already exists (check inside transaction)', async () => {
+    it('returns existing confirmationUrl when a PENDING payment already exists (idempotent)', async () => {
         const order = makeOrder(OrderState.PAYMENT);
         const { orderRepo, paymentRepo, transactionRunner } = makeRepos(order, makeProduct(10));
 
-        // Simulate an existing PENDING payment (found inside transaction context)
-        (paymentRepo.findPendingByOrderId as any).mockResolvedValue({
+        const existingPayment = {
             id: 'pay-existing',
             orderId: 'order-1',
             amount: 500,
             status: PaymentStatus.PENDING,
             externalId: 'yk-existing',
             createdAt: new Date(),
-        });
+        };
+        (paymentRepo.findPendingByOrderId as any).mockResolvedValue(existingPayment);
 
         const useCase = new InitiatePaymentUseCase(orderRepo, paymentRepo, mockGateway, transactionRunner);
+        const result = await useCase.execute({ orderId: 'order-1', returnUrl: 'https://example.com/return' });
 
-        await expect(useCase.execute({ orderId: 'order-1', returnUrl: 'https://example.com/return' }))
-            .rejects.toBeInstanceOf(PaymentAlreadyInProgressError);
+        expect(result.confirmationUrl).toBe('https://yookassa.ru/checkout/pay/yk-ext-id');
 
-        expect(paymentRepo.save).not.toHaveBeenCalled();
-        expect(mockGateway.createPayment).not.toHaveBeenCalled();
+        // Gateway вызван с internalPaymentId существующего платежа (idempotency key)
+        expect(mockGateway.createPayment).toHaveBeenCalledWith(
+            expect.objectContaining({ internalPaymentId: 'pay-existing' })
+        );
+
+        // Сохранён с актуальным externalId от gateway, новый платёж не создавался
+        expect(paymentRepo.save).toHaveBeenCalledTimes(1);
+        expect((paymentRepo.save as any).mock.calls[0][0].externalId).toBe('yk-ext-id');
     });
 });

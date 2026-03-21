@@ -4,7 +4,6 @@ import { PrismaPaymentRepository } from '@/infrastructure/repositories/PaymentRe
 import { PrismaTransactionRunner } from '@/infrastructure/db/PrismaTransactionRunner';
 import { YookassaGateway } from '@/infrastructure/payment/YookassaGateway';
 import { InitiatePaymentUseCase } from '@/application/order/InitiatePaymentUseCase';
-import { PaymentAlreadyInProgressError } from '@/domain/payment/errors';
 
 const RETURN_URL = process.env.YOOKASSA_RETURN_URL ?? 'http://localhost:3000';
 
@@ -50,9 +49,6 @@ export async function POST(
 
         return NextResponse.json(result);
     } catch (error: any) {
-        if (error instanceof PaymentAlreadyInProgressError) {
-            return NextResponse.json({ message: error.message }, { status: 409 });
-        }
         return NextResponse.json(
             { message: error.message },
             { status: 400 }

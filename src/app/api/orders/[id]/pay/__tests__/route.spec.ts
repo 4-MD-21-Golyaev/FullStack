@@ -27,9 +27,6 @@ vi.mock('@/application/order/InitiatePaymentUseCase', () => ({
     },
 }));
 
-// Use real error class (no infrastructure deps, safe to import directly)
-import { PaymentAlreadyInProgressError } from '@/domain/payment/errors';
-
 import { NextRequest } from 'next/server';
 import { POST } from '../route';
 
@@ -123,13 +120,4 @@ describe('POST /api/orders/[id]/pay', () => {
         expect(body.message).toBe('Order is not in PAYMENT state');
     });
 
-    it('returns 409 when PaymentAlreadyInProgressError is thrown', async () => {
-        mockFindById.mockResolvedValue(mockOrder);
-        mockExecute.mockRejectedValue(new PaymentAlreadyInProgressError());
-        const res = await POST(
-            makeReq({ 'x-user-id': OWNER_ID, 'x-user-role': 'CUSTOMER' }),
-            routeParams,
-        );
-        expect(res.status).toBe(409);
-    });
 });
