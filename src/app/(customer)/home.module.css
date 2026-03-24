@@ -94,12 +94,6 @@
 }
 
 .sliderTitleCol {
-  width: 217px;
-  min-width: 217px;
-  height: 306px;
-  display: flex;
-  align-items: flex-start;
-  padding-top: var(--primitive-space-600);
   flex-shrink: 0;
 }
 

@@ -2,42 +2,39 @@
 
 import { usePathname } from 'next/navigation';
 import { Breadcrumbs, type BreadcrumbItem } from '@/shared/ui';
-import styles from './CustomerBreadcrumbs.module.css';
+import { useBreadcrumbs } from '@/app/(customer)/BreadcrumbsContext';
 
-const LABELS: Record<string, string> = {
+const SEGMENT_LABELS: Record<string, string> = {
   catalog: 'Каталог',
   cart: 'Корзина',
   orders: 'Заказы',
   favorites: 'Избранное',
+  product: 'Товар',
 };
 
-function labelFromSegment(segment: string) {
-  return LABELS[segment] ?? decodeURIComponent(segment);
+function buildCrumbsFromPathname(pathname: string): BreadcrumbItem[] {
+  const segments = pathname.split('/').filter(Boolean);
+  const crumbs: BreadcrumbItem[] = [{ label: 'Главная', href: '/' }];
+  let current = '';
+  segments.forEach(seg => {
+    current += `/${seg}`;
+    crumbs.push({
+      label: SEGMENT_LABELS[seg] ?? decodeURIComponent(seg),
+      href: current,
+    });
+  });
+  return crumbs;
 }
 
 export default function CustomerBreadcrumbs() {
   const pathname = usePathname();
+  const { customCrumbs } = useBreadcrumbs();
 
-  if (!pathname || !pathname.startsWith('/catalog') || pathname === '/catalog') {
+  if (!pathname || pathname === '/' || pathname === '/catalog') {
     return null;
   }
 
-  const segments = pathname.split('/').filter(Boolean);
-  const crumbs: BreadcrumbItem[] = [
-    { label: 'Главная', href: '/' },
-  ];
+  const crumbs = customCrumbs ?? buildCrumbsFromPathname(pathname);
 
-  let current = '';
-  segments.forEach(seg => {
-    current += `/${seg}`;
-    crumbs.push({ label: labelFromSegment(seg), href: current });
-  });
-
-  return (
-    <Breadcrumbs
-      crumbs={crumbs}
-      size="S"
-      className={styles.root}
-    />
-  );
+  return <Breadcrumbs crumbs={crumbs} size="L" />;
 }

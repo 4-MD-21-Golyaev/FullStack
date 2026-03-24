@@ -13,6 +13,11 @@ export class PrismaCategoryRepository implements CategoryRepository {
         return records.map(r => this.toCategory(r));
     }
 
+    async findById(id: string): Promise<Category | null> {
+        const record = await prisma.category.findUnique({ where: { id } });
+        return record ? this.toCategory(record) : null;
+    }
+
     async findAll(): Promise<Category[]> {
         const records = await prisma.category.findMany({ orderBy: { name: 'asc' } });
         return records.map(r => this.toCategory(r));

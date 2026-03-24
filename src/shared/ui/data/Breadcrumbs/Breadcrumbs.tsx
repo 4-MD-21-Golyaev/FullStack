@@ -16,7 +16,7 @@ export interface BreadcrumbsProps {
 export function Breadcrumbs({ crumbs, size = 'L', className }: BreadcrumbsProps) {
   const items = crumbs.map((crumb, i) => (
     <span key={i} className={styles.item}>
-      {i > 0 && <Icon name="arrow_right" size={10} className={styles.separator} />}
+      {i > 0 && <Icon name="arrow_right" size={10} color="var(--ctx-color-text-secondary)" className={styles.separator} />}
       <NextLink href={crumb.href} className={styles.link}>
         {crumb.label}
       </NextLink>

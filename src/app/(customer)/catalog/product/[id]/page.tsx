@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Button, LikeButton, Price, Spinner, Tab } from '@/shared/ui';
+import { useCatalog, buildCategoryPath } from '../../CatalogContext';
+import { useBreadcrumbs } from '../../../BreadcrumbsContext';
 import styles from './product.module.css';
 
 interface ApiProduct {
@@ -17,6 +19,9 @@ interface ApiProduct {
 export default function ProductPage() {
   const params = useParams<{ id: string }>();
   const productId = params?.id;
+
+  const { rootCategories, childrenByParent } = useCatalog();
+  const { setCustomCrumbs } = useBreadcrumbs();
 
   const [product, setProduct] = useState<ApiProduct | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,6 +53,20 @@ export default function ProductPage() {
       active = false;
     };
   }, [productId]);
+
+  useEffect(() => {
+    if (!product) return;
+    const categoryPath = product.categoryId
+      ? buildCategoryPath(product.categoryId, rootCategories, childrenByParent)
+      : [];
+    setCustomCrumbs([
+      { label: 'Главная', href: '/' },
+      { label: 'Каталог', href: '/catalog' },
+      ...categoryPath.map(cat => ({ label: cat.name, href: `/catalog/${cat.id}` })),
+      { label: product.name, href: `/catalog/product/${product.id}` },
+    ]);
+    return () => setCustomCrumbs(null);
+  }, [product, rootCategories, childrenByParent, setCustomCrumbs]);
 
   const imageSrc = product?.imagePath ?? '/images/placeholder.png';
   const galleryImages = useMemo(() => [], []);

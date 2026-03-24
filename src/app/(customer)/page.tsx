@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ArrowsContainer,
   Pagination,
@@ -12,7 +12,7 @@ import {
 import ProductCard from '@/widgets/customer/ProductCard/ProductCard';
 import styles from './home.module.css';
 
-/* ── Mock data ── */
+/* ── Hero slides ── */
 
 interface HeroSlide {
   id: string;
@@ -42,82 +42,39 @@ const HERO_SLIDES: HeroSlide[] = [
   },
 ];
 
-interface MockProduct {
+/* ── Category sliders ── */
+
+const CATEGORY_IDS = ['CAT-2-3', 'CAT-4-1', 'CAT-1-2-1'];
+
+interface ApiCategory {
   id: string;
-  slug: string;
   name: string;
-  price: number;
-  oldPrice?: number;
-  discount?: string;
-  image: string;
+  imagePath?: string | null;
 }
 
-const makeProduct = (
-  id: string,
-  name: string,
-  price: number,
-  oldPrice?: number,
-  discount?: string,
-): MockProduct => ({
-  id,
-  slug: `product-${id}`,
-  name,
-  price,
-  oldPrice,
-  discount,
-  image: '/images/placeholder.png',
-});
+interface ApiProduct {
+  id: string;
+  name: string;
+  price: number;
+  imagePath: string | null;
+}
 
-const SLIDERS: { title: string; href: string; products: MockProduct[] }[] = [
-  {
-    title: 'Хиты продаж',
-    href: '/catalog?sort=popular',
-    products: [
-      makeProduct('1', 'Кимчи из пекинской капусты, 500 г', 380),
-      makeProduct('2', 'Соевый соус Kikkoman, 1 л', 520, 640, '-19%'),
-      makeProduct('3', 'Лапша удон, 200 г', 149),
-      makeProduct('4', 'Мисо-паста красная, 300 г', 275, 310, '-11%'),
-      makeProduct('5', 'Рис для суши Nishiki, 1 кг', 460),
-      makeProduct('6', 'Кунжутное масло, 250 мл', 340, 390, '-13%'),
-    ],
-  },
-  {
-    title: 'Новинки',
-    href: '/catalog?sort=new',
-    products: [
-      makeProduct('7', 'Кочудян острая паста, 500 г', 620),
-      makeProduct('8', 'Тофу шёлковый, 400 г', 195),
-      makeProduct('9', 'Водоросли нори, 10 листов', 230),
-      makeProduct('10', 'Понзу соус с лимоном, 200 мл', 285),
-      makeProduct('11', 'Рамен говяжий, 115 г', 175),
-      makeProduct('12', 'Маринованный имбирь, 300 г', 210),
-    ],
-  },
-  {
-    title: 'Акции',
-    href: '/catalog?sort=sale',
-    products: [
-      makeProduct('13', 'Терияки соус, 500 мл', 310, 420, '-26%'),
-      makeProduct('14', 'Рисовый уксус, 400 мл', 199, 240, '-17%'),
-      makeProduct('15', 'Вакамэ сушёные, 100 г', 290, 350, '-17%'),
-      makeProduct('16', 'Тайский рыбный соус, 300 мл', 255, 320, '-20%'),
-      makeProduct('17', 'Паста карри красная, 200 г', 340, 410, '-17%'),
-      makeProduct('18', 'Чай Молочный Улун, 100 г', 480, 580, '-17%'),
-    ],
-  },
-  {
-    title: 'Рекомендуем',
-    href: '/catalog?sort=recommended',
-    products: [
-      makeProduct('19', 'Бобы эдамаме замороженные, 400 г', 270),
-      makeProduct('20', 'Чипсы из морской капусты, 60 г', 165),
-      makeProduct('21', 'Маття порошок, 100 г', 890),
-      makeProduct('22', 'Дайкон маринованный, 250 г', 220),
-      makeProduct('23', 'Кунжут белый обжаренный, 100 г', 145),
-      makeProduct('24', 'Сливовый соус, 260 г', 195),
-    ],
-  },
-];
+interface SliderData {
+  id: string;
+  name: string;
+  imagePath: string | null;
+  products: ApiProduct[];
+}
+
+async function fetchSliderData(id: string): Promise<SliderData> {
+  const [catRes, productsRes] = await Promise.all([
+    fetch(`/api/categories/${id}`),
+    fetch(`/api/products?categoryId=${encodeURIComponent(id)}`),
+  ]);
+  const cat: ApiCategory = catRes.ok ? await catRes.json() : { id, name: id };
+  const products: ApiProduct[] = productsRes.ok ? await productsRes.json() : [];
+  return { id, name: cat.name, imagePath: cat.imagePath ?? null, products };
+}
 
 const BENEFITS = [
   'Накапливайте баллы с каждой покупки',
@@ -130,6 +87,11 @@ const BENEFITS = [
 
 export default function HomePage() {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [sliders, setSliders] = useState<SliderData[]>([]);
+
+  useEffect(() => {
+    Promise.all(CATEGORY_IDS.map(fetchSliderData)).then(setSliders);
+  }, []);
 
   const goTo = (index: number) => setActiveSlide(index);
   const prev = () => setActiveSlide(i => (i - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
@@ -179,12 +141,12 @@ export default function HomePage() {
 
       {/* ── 2. Sale sliders ── */}
       <div className={styles.sliders}>
-        {SLIDERS.map(({ title, href, products }) => (
-          <section key={title} className={styles.sliderSection}>
+        {sliders.map(({ id, name, imagePath, products }) => (
+          <section key={id} className={styles.sliderSection}>
             <div className={styles.section}>
               <div className={styles.sliderRow}>
                 <div className={styles.sliderTitleCol}>
-                  <SaleSliderTitle title={title} href={href} />
+                  <SaleSliderTitle title={name} imageSrc={imagePath ?? undefined} />
                 </div>
                 <div className={styles.sliderTrackCol}>
                   <SliderContainer>
@@ -192,12 +154,10 @@ export default function HomePage() {
                       <ProductCard
                         key={p.id}
                         id={p.id}
-                        slug={p.slug}
+                        slug={`product/${p.id}`}
                         name={p.name}
                         price={p.price}
-                        oldPrice={p.oldPrice}
-                        discount={p.discount}
-                        image={p.image}
+                        image={p.imagePath ?? '/images/placeholder.png'}
                       />
                     ))}
                   </SliderContainer>

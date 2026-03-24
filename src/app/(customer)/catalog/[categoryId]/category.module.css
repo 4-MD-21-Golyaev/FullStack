@@ -72,16 +72,6 @@
   gap: var(--ctx-space-stack-xl);
 }
 
-.sliderSection {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ctx-space-stack-md);
-}
-
-.sliderTitle {
-  margin-bottom: var(--ctx-space-inset-sm);
-}
-
 @media (max-width: 1200px) {
   .layout {
     grid-template-columns: 1fr;

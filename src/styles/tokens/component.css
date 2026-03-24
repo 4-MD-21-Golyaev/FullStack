@@ -30,7 +30,7 @@
   --input-border-danger: 1px solid var(--ctx-color-border-danger);
   --input-padding:       var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
   /* Fixed Figma height/padding per size */
-  --input-height-lg:    56px;    /* Figma: Input L */
+  --input-height-lg:    52px;    /* Figma: Input L */
   --input-height-md:    52px;    /* Figma: Input M */
   --input-height-sm:    44px;    /* Figma: Input S */
   --input-padding-lg:   var(--ctx-space-inset-md) 32px;  /* Figma: L horizontal 32px */

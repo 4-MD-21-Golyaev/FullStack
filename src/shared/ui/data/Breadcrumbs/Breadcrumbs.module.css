@@ -2,9 +2,18 @@
   display: flex;
   align-items: center;
   gap: var(--ctx-space-inset-xs); /* 4px */
+  background: var(--ctx-color-bg-surface);
+  width: 100%;
+}
+
+.L {
+  max-width: var(--ctx-layout-max-width);
+  margin-inline: auto;
+  padding: var(--ctx-space-inset-md) var(--ctx-space-page-desktop); /* 16px 32px */
 }
 
 .S {
+  padding: var(--ctx-space-stack-xs) var(--ctx-space-page-mobile); /* 12px 12px */
   overflow: hidden;
 }
 
@@ -40,6 +49,5 @@
 }
 
 .separator {
-  color: var(--ctx-color-icon-secondary);
   flex-shrink: 0;
 }

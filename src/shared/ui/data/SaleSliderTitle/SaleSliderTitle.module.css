@@ -1,15 +1,36 @@
-.root {
+/* ── Sale slider title card ── */
+
+.card {
+  position: relative;
+  width: 217px;
+  min-width: 217px;
+  height: var(--product-card-h-l); /* 306px — Figma: same height as product cards */
+  border-radius: var(--ctx-radius-control); /* 16px */
+  overflow: hidden;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--sale-slider-title-gap);
+  padding: var(--ctx-space-stack-xl) var(--ctx-space-inset-md); /* 48px 16px */
+  flex-shrink: 0;
+  background-color: var(--ctx-color-bg-subtle); /* fallback when no image */
 }
 
-.title {
-  font-family: var(--sale-slider-title-font-family);
-  font-size: var(--sale-slider-title-font-size);
-  font-weight: var(--sale-slider-title-font-weight);
-  line-height: var(--sale-slider-title-line-height);
-  color: var(--sale-slider-title-color);
-  margin: 0;
+.cardImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.cardTitle {
+  position: relative;
+  z-index: 1;
+  font-family: var(--ctx-font-body);
+  font-size: var(--ctx-font-size-h4); /* 20px — [Desktop]/Headings/Heading 4 */
+  font-weight: 700; /* Bold */
+  line-height: var(--ctx-line-height-loose); /* 1.2 */
+  color: var(--ctx-color-text-default);
+  text-align: center;
 }

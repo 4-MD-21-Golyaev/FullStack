@@ -1,27 +1,16 @@
-import { Link } from '../../buttons/Link/Link';
 import styles from './SaleSliderTitle.module.css';
 
 interface SaleSliderTitleProps {
   title: string;
-  href?: string;
-  linkLabel?: string;
+  imageSrc?: string;
   className?: string;
 }
 
-export function SaleSliderTitle({
-  title,
-  href,
-  linkLabel = 'Смотреть все',
-  className,
-}: SaleSliderTitleProps) {
+export function SaleSliderTitle({ title, imageSrc, className }: SaleSliderTitleProps) {
   return (
-    <div className={[styles.root, className].filter(Boolean).join(' ')}>
-      <h2 className={styles.title}>{title}</h2>
-      {href && (
-        <Link href={href} size="S" showIcon>
-          {linkLabel}
-        </Link>
-      )}
+    <div className={[styles.card, className].filter(Boolean).join(' ')}>
+      {imageSrc && <img src={imageSrc} alt="" className={styles.cardImage} aria-hidden />}
+      <span className={styles.cardTitle}>{title}</span>
     </div>
   );
 }
