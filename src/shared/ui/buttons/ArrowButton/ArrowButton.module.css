@@ -1,0 +1,50 @@
+/* Wrapper holds the decorative bg circle + button */
+.wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Decorative background shape */
+.bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.wrapper:has(button:hover) .bg,
+.wrapper:has(button:focus-visible) .bg {
+  color: var(--ctx-color-bg-surface-hover);
+}
+
+/* The actual button */
+.root {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  transform: translateY(-50%);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--ctx-color-icon-default);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 150ms ease;
+}
+
+.root:hover:not(:disabled) { color: var(--ctx-color-icon-default); }
+.root:focus-visible:not(:disabled) { outline: none; }
+.root:disabled { cursor: not-allowed; opacity: 0.5; }
+
+/* Button sizes */
+.sm.root { width: 32px; height: 32px; }
+.md.root { width: 40px; height: 40px; }
+.lg.root { width: 48px; height: 48px; }

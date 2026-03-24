@@ -1,0 +1,143 @@
+.root {
+  padding: var(--ctx-space-stack-xl) 0;
+}
+
+.container {
+  max-width: var(--ctx-layout-max-width);
+  margin-inline: auto;
+  padding-inline: var(--ctx-space-page-desktop);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-lg);
+}
+
+/* ── Section heading ── */
+
+.heading {
+  font-size: var(--ctx-font-size-h2);
+  font-weight: 700; /* Bold */
+  color: var(--ctx-color-text-default);
+}
+
+/* ── Main row ── */
+
+.mainRow {
+  display: flex;
+  gap: var(--ctx-space-stack-xl);
+  align-items: flex-start;
+}
+
+.phoneStub {
+  width: 332px;
+  min-width: 332px;
+  height: 420px;
+  background-color: var(--ctx-color-bg-subtle);
+  border-radius: var(--ctx-radius-card);
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-lg);
+  padding-top: var(--ctx-space-inset-md);
+}
+
+/* ── Benefits list ── */
+
+.benefits {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-md);
+}
+
+.benefitItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ctx-space-inline-sm);
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.checkIcon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ctx-radius-badge);
+  background-color: var(--ctx-color-action-primary);
+  color: var(--ctx-color-text-inverse);
+  flex-shrink: 0;
+}
+
+.detailsLink {
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-action-primary);
+  text-decoration: underline;
+  align-self: flex-start;
+}
+
+.detailsLink:hover {
+  color: var(--ctx-color-action-primary-hover);
+}
+
+/* ── App section ── */
+
+.appSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-md);
+}
+
+.appHeading {
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700; /* Bold */
+  color: var(--ctx-color-text-default);
+}
+
+.appSub {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+}
+
+.appButtons {
+  display: flex;
+  gap: var(--ctx-space-inline-md);
+  flex-wrap: wrap;
+}
+
+.appBtn {
+  width: 154px;
+  height: 44px;
+  border: 1px solid var(--ctx-color-border-default);
+  border-radius: var(--ctx-radius-card);
+  background-color: var(--ctx-color-bg-surface);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: background-color var(--ctx-transition);
+}
+
+.appBtn:hover {
+  background-color: var(--ctx-color-bg-subtle);
+}
+
+.appBtnSub {
+  font-size: var(--ctx-font-size-xs);
+  color: var(--ctx-color-text-secondary);
+  line-height: 1;
+}
+
+.appBtnLabel {
+  font-size: var(--ctx-font-size-label);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  color: var(--ctx-color-text-default);
+  line-height: 1;
+}

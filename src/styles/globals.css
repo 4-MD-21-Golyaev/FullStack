@@ -2,6 +2,16 @@
 @import './tokens/context.css';
 @import './tokens/component.css';
 
+@font-face {
+  font-family: 'PT Root UI VF';
+  src:
+    url('/fonts/pt-root-ui_vf.woff2') format('woff2'),
+    url('/fonts/pt-root-ui_vf.woff')  format('woff');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ── Reset ── */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -11,15 +21,15 @@
 
 /* ── Base ── */
 html {
-  font-size: var(--primitive-font-size-md);
+  font-size: var(--primitive-font-size-16);
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   font-family: var(--ctx-font-body);
   font-size: var(--ctx-font-size-body);
-  font-weight: var(--primitive-font-weight-regular);
-  line-height: var(--primitive-line-height-normal);
+  font-weight: var(--primitive-font-weight-450);
+  line-height: var(--primitive-line-height-115);
   color: var(--ctx-color-text-default);
   background-color: var(--ctx-color-bg-page);
   -webkit-font-smoothing: antialiased;
@@ -29,10 +39,6 @@ body {
 a {
   color: var(--ctx-color-text-link);
   text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
 }
 
 img, video {
@@ -48,3 +54,4 @@ input, textarea, select {
   font-family: inherit;
   font-size: inherit;
 }
+

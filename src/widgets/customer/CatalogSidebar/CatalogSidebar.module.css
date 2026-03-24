@@ -1,0 +1,29 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.placeholder {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.navGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.navChildren {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-left: var(--ctx-space-inset-sm);
+}

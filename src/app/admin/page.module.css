@@ -5,8 +5,8 @@
 }
 
 .title {
-  font-size: var(--primitive-font-size-2xl);
-  font-weight: var(--primitive-font-weight-bold);
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700; /* Bold */
   color: var(--ctx-color-text-default);
   margin: 0;
 }
@@ -18,8 +18,8 @@
 }
 
 .sectionTitle {
-  font-size: var(--ctx-font-size-heading);
-  font-weight: var(--primitive-font-weight-semibold);
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 600; /* Semibold */
   color: var(--ctx-color-text-default);
   margin: 0;
   display: flex;
@@ -29,7 +29,7 @@
 
 .link {
   font-size: var(--ctx-font-size-label);
-  font-weight: var(--primitive-font-weight-regular);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
   color: var(--ctx-color-text-link);
   text-decoration: none;
 }
@@ -53,8 +53,8 @@
 .jobCard {
   display: flex;
   align-items: center;
-  gap: var(--primitive-space-2);
-  background: var(--card-bg);
+  gap: var(--ctx-space-inset-sm);
+  background: var(--ctx-color-bg-surface);
   border: var(--card-border);
   border-radius: var(--ctx-radius-control);
   padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
@@ -66,7 +66,7 @@
 }
 
 .jobStatus {
-  font-weight: var(--primitive-font-weight-semibold);
+  font-weight: 600; /* Semibold */
   font-size: var(--ctx-font-size-caption);
 }
 
@@ -85,3 +85,4 @@
 .jobUnknown {
   color: var(--ctx-color-text-disabled);
 }
+

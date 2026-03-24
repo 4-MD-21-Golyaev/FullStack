@@ -1,0 +1,49 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ctx-space-inset-sm);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  border-radius: var(--ctx-radius-control);
+
+  /* Enabled state */
+  background-color: var(--ctx-color-bg-surface);
+  border: 2px solid var(--ctx-color-bg-subtle);
+
+  font-family: var(--ctx-font-body);
+  font-size: var(--ctx-font-size-body);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-normal);
+
+  cursor: pointer;
+  transition: background-color var(--ctx-transition), border-color var(--ctx-transition);
+}
+
+.root:hover {
+  background-color: var(--ctx-color-bg-surface-hover);
+  border-color: var(--ctx-color-bg-subtle-hover);
+}
+
+.root:focus-visible {
+  outline: none;
+  background-color: var(--ctx-color-bg-subtle);
+  border-color: var(--ctx-color-bg-subtle-focus);
+}
+
+.root.isSelected {
+  background-color: var(--ctx-color-bg-surface-active);
+  border-color: transparent;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.label {
+  white-space: nowrap;
+}

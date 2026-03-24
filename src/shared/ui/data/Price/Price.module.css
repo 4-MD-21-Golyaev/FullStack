@@ -1,0 +1,55 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Size M — ProductCard (20px current, column layout) */
+.sizeM .current {
+  font-size: var(--price-current-font-size-m);
+  font-weight: 700; /* Bold */
+  line-height: var(--ctx-line-height-loose);
+  color: var(--ctx-color-text-default);
+  white-space: nowrap;
+}
+
+.sizeM .old {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 700; /* Bold */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-secondary);
+  text-decoration: line-through;
+  white-space: nowrap;
+}
+
+/* Size L — product detail page (24px current, row layout with baseline alignment) */
+.sizeL {
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--ctx-space-inline-sm);
+}
+
+.sizeL .current {
+  font-size: var(--price-current-font-size-l);
+  font-weight: 700; /* Bold */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+  white-space: nowrap;
+}
+
+.sizeL .old {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 700; /* Bold */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-secondary);
+  text-decoration: line-through;
+  white-space: nowrap;
+}
+
+/* Old price + discount badge row */
+.oldRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--ctx-space-inline-sm);
+}

@@ -1,0 +1,25 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--badge-padding-m);
+  border-radius: var(--ctx-radius-badge);
+  font-size: var(--ctx-font-size-label);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.pending {
+  background: var(--ctx-color-bg-subtle);
+  color: var(--ctx-color-text-secondary);
+}
+
+.success {
+  background: var(--ctx-color-bg-surface-hover);
+  color: var(--ctx-color-status-success);
+}
+
+.failed {
+  background: var(--ctx-color-bg-surface-hover);
+  color: var(--ctx-color-status-danger);
+}

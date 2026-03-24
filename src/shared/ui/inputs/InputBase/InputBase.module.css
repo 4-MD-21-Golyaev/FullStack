@@ -1,0 +1,36 @@
+.root {
+  border-radius: var(--ctx-radius-control);
+  border: none;
+  color: var(--ctx-color-text-default);
+  width: 100%;
+  outline: none;
+  font-size: var(--ctx-font-size-body);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  line-height: var(--ctx-line-height-tight);
+  transition: background-color var(--ctx-transition);
+}
+
+.root::placeholder {
+  color: var(--ctx-color-text-disabled);
+}
+
+.root:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* -- Colors -- */
+.color_gray { background-color: var(--ctx-color-bg-subtle); }
+.color_gray:focus { background-color: var(--ctx-color-bg-subtle-hover); }
+
+.color_white { background-color: var(--ctx-color-bg-surface); }
+.color_white:focus { background-color: var(--ctx-color-bg-surface-hover); }
+
+/* -- Sizes -- */
+.size_lg { padding: var(--input-padding-lg); min-height: var(--input-height-lg); }
+.size_md { padding: var(--input-padding-md); min-height: var(--input-height-md); }
+.size_sm { padding: var(--input-padding-sm); min-height: var(--input-height-sm); }
+
+/* -- Error -- */
+.isError { outline: 2px solid var(--ctx-color-text-danger); outline-offset: -2px; }
+.isError:focus { outline: 2px solid var(--ctx-color-text-danger); outline-offset: -2px; }

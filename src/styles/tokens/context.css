@@ -5,28 +5,42 @@
   --ctx-color-text-default:   var(--primitive-color-neutral-900);
   --ctx-color-text-secondary: var(--primitive-color-neutral-500);
   --ctx-color-text-disabled:  var(--primitive-color-neutral-300);
-  --ctx-color-text-inverse:   var(--primitive-color-neutral-0);
+  --ctx-color-text-inverse:          var(--primitive-color-neutral-0);
+  --ctx-color-text-inverse-secondary: var(--primitive-color-neutral-400);  /* secondary text on dark bg */
   --ctx-color-text-link:      var(--primitive-color-red-500);
   --ctx-color-text-danger:    var(--primitive-color-error-500);
 
   /* ── Background color ── */
-  --ctx-color-bg-page:         var(--primitive-color-neutral-75);
-  --ctx-color-bg-surface:      var(--primitive-color-neutral-0);
-  --ctx-color-bg-subtle:       var(--primitive-color-neutral-100);
-  --ctx-color-bg-subtle-hover: var(--primitive-color-neutral-200);
-  --ctx-color-bg-overlay:      rgba(0, 0, 0, 0.4);
+  --ctx-color-bg-page:           var(--primitive-color-neutral-75);
+  --ctx-color-bg-inverse:        var(--primitive-color-neutral-900);  /* dark surface (sidebar, etc.) */
+  --ctx-color-bg-surface:        var(--primitive-color-neutral-0);
+  --ctx-color-bg-surface-hover:  var(--primitive-color-neutral-50);   /* white/hovered */
+  --ctx-color-bg-surface-active: var(--primitive-color-neutral-150);  /* white/activated */
+  --ctx-color-bg-subtle:         var(--primitive-color-neutral-100);
+  --ctx-color-bg-subtle-hover:   var(--primitive-color-neutral-200);
+  --ctx-color-bg-subtle-focus:   var(--primitive-color-neutral-250);
+  --ctx-color-bg-overlay:        rgba(0, 0, 0, 0.4);
 
   /* ── Border color ── */
   --ctx-color-border-default: var(--primitive-color-neutral-200);
   --ctx-color-border-focus:   var(--primitive-color-red-500);
   --ctx-color-border-danger:  var(--primitive-color-error-500);
 
+  /* ── Icon color ── */
+  --ctx-color-icon-default:   var(--primitive-color-neutral-900);
+  --ctx-color-icon-secondary: var(--primitive-color-neutral-400);
+  --ctx-color-icon-disabled:  var(--primitive-color-neutral-300);
+
+  /* ── Accent (stars, warnings) ── */
+  --ctx-color-accent: var(--primitive-color-orange-400);
+
   /* ── Actions (buttons, links) ── */
-  --ctx-color-action-primary:        var(--primitive-color-red-500);
-  --ctx-color-action-primary-hover:  var(--primitive-color-red-400);
-  --ctx-color-action-primary-active: var(--primitive-color-red-300);
-  --ctx-color-action-danger:         var(--primitive-color-error-500);
-  --ctx-color-action-danger-bg:      var(--primitive-color-error-50);
+  --ctx-color-action-primary:          var(--primitive-color-red-500);
+  --ctx-color-action-primary-hover:    var(--primitive-color-red-400);
+  --ctx-color-action-primary-active:   var(--primitive-color-red-300);
+  --ctx-color-action-primary-disabled: var(--primitive-color-red-700);
+  --ctx-color-action-danger:           var(--primitive-color-error-500);
+  --ctx-color-action-danger-bg:        var(--primitive-color-error-50);
 
   /* ── Status colors (feedback) ── */
   /* solid — for text, icons, badges, toast backgrounds */
@@ -35,59 +49,79 @@
   --ctx-color-status-danger:  var(--primitive-color-error-500);
   --ctx-color-status-info:    var(--primitive-color-blue-500);
   /* bg — for subtle backgrounds */
-  --ctx-color-status-success-bg: var(--primitive-color-pastel-green);
-  --ctx-color-status-warning-bg: var(--primitive-color-pastel-orange);
-  --ctx-color-status-danger-bg:  var(--primitive-color-pastel-pink);
-  --ctx-color-status-info-bg:    var(--primitive-color-pastel-blue);
-  --ctx-color-status-payment-bg: var(--primitive-color-pastel-purple);
-  --ctx-color-status-neutral-bg: var(--primitive-color-pastel-cream);
+  --ctx-color-status-success-bg: var(--primitive-color-green-50);
+  --ctx-color-status-warning-bg: var(--primitive-color-orange-50);
+  --ctx-color-status-danger-bg:  var(--primitive-color-pink-50);
+  --ctx-color-status-info-bg:    var(--primitive-color-blue-50);
+  --ctx-color-status-payment-bg: var(--primitive-color-purple-50);
+  --ctx-color-status-neutral-bg: var(--primitive-color-cream-50);
+  --ctx-color-bg-category:       var(--primitive-color-cream-50);  /* category tile background — Pastel/Cream */
 
   /* ── Order status colors (bg + text pair for badges) ── */
-  --ctx-color-order-created-bg:    var(--primitive-color-pastel-blue);
+  --ctx-color-order-created-bg:    var(--primitive-color-blue-50);
   --ctx-color-order-created-text:  var(--primitive-color-red-500);
-  --ctx-color-order-picking-bg:    var(--primitive-color-pastel-orange);
+  --ctx-color-order-picking-bg:    var(--primitive-color-orange-50);
   --ctx-color-order-picking-text:  var(--primitive-color-neutral-900);
-  --ctx-color-order-payment-bg:    var(--primitive-color-pastel-purple);
+  --ctx-color-order-payment-bg:    var(--primitive-color-purple-50);
   --ctx-color-order-payment-text:  var(--primitive-color-neutral-900);
-  --ctx-color-order-delivery-bg:   var(--primitive-color-pastel-green);
+  --ctx-color-order-delivery-bg:   var(--primitive-color-green-50);
   --ctx-color-order-delivery-text: var(--primitive-color-neutral-900);
-  --ctx-color-order-delivered-bg:   var(--primitive-color-pastel-green);
+  --ctx-color-order-delivered-bg:   var(--primitive-color-green-50);
   --ctx-color-order-delivered-text: var(--primitive-color-neutral-900);
   --ctx-color-order-closed-bg:     var(--primitive-color-neutral-100);
   --ctx-color-order-closed-text:   var(--primitive-color-neutral-500);
-  --ctx-color-order-cancelled-bg:  var(--primitive-color-pastel-pink);
+  --ctx-color-order-cancelled-bg:  var(--primitive-color-pink-50);
   --ctx-color-order-cancelled-text: var(--primitive-color-error-500);
 
   /* ── Spacing by usage context ── */
-  --ctx-space-inset-sm:     var(--primitive-space-2);   /* padding small components */
-  --ctx-space-inset-md:     var(--primitive-space-4);   /* padding buttons, inputs */
-  --ctx-space-inset-lg:     var(--primitive-space-6);   /* padding cards */
-  --ctx-space-stack-sm:     var(--primitive-space-2);   /* vertical gap small */
-  --ctx-space-stack-md:     var(--primitive-space-4);
-  --ctx-space-stack-lg:     var(--primitive-space-8);
-  --ctx-space-inline-sm:    var(--primitive-space-2);   /* horizontal gap */
-  --ctx-space-inline-md:    var(--primitive-space-4);
-  --ctx-space-page-desktop: var(--primitive-space-8);   /* 32px page padding */
-  --ctx-space-page-mobile:  var(--primitive-space-3);   /* 12px */
+  --ctx-space-inset-xs:     var(--primitive-space-100);   /* 4px  padding tiny elements */
+  --ctx-space-inset-sm:     var(--primitive-space-200);   /* 8px  padding small components */
+  --ctx-space-inset-md:     var(--primitive-space-400);   /* 16px padding buttons, inputs */
+  --ctx-space-inset-lg:     var(--primitive-space-600);   /* 24px padding cards */
+  --ctx-space-stack-xs:     var(--primitive-space-300);   /* 12px vertical gap extra-small */
+  --ctx-space-stack-sm:     var(--primitive-space-200);   /* 8px  vertical gap small */
+  --ctx-space-stack-md:     var(--primitive-space-400);   /* 16px */
+  --ctx-space-stack-lg:     var(--primitive-space-800);   /* 32px */
+  --ctx-space-stack-xl:     var(--primitive-space-1200);  /* 48px */
+  --ctx-space-inline-sm:    var(--primitive-space-200);   /* 8px  horizontal gap */
+  --ctx-space-inline-md:    var(--primitive-space-400);   /* 16px */
+  --ctx-space-inline-lg:    var(--primitive-space-600);   /* 24px */
+  --ctx-space-page-desktop: var(--primitive-space-800);   /* 32px page padding */
+  --ctx-space-page-mobile:  var(--primitive-space-300);   /* 12px */
+  --ctx-layout-max-width:   1200px;   /* standard content width (customer pages) */
 
   /* ── Typography by context ── */
   --ctx-font-body:         var(--primitive-font-family-sans);
   --ctx-font-code:         var(--primitive-font-family-mono);
-  --ctx-font-size-body:    var(--primitive-font-size-lg);   /* 18px */
-  --ctx-font-size-caption: var(--primitive-font-size-md);   /* 16px */
-  --ctx-font-size-label:   var(--primitive-font-size-sm);   /* 14px */
-  --ctx-font-size-heading: var(--primitive-font-size-xl);   /* 20px */
+
+  /* Font sizes — Figma text style scale */
+  --ctx-font-size-xs:      var(--primitive-font-size-12);   /* 12px — [Mobile]/Utilities/Secondary */
+  --ctx-font-size-label:   var(--primitive-font-size-14);   /* 14px — [Desktop]/Utilities/Secondary */
+  --ctx-font-size-caption: var(--primitive-font-size-16);   /* 16px — [Desktop]/Utilities/Caption */
+  --ctx-font-size-ui:      var(--primitive-font-size-18);   /* 18px — [Desktop]/Utilities/UI */
+  --ctx-font-size-body:    var(--primitive-font-size-18);   /* 18px — [Desktop]/Body, H5 */
+  --ctx-font-size-h4:      var(--primitive-font-size-20);   /* 20px — [Desktop]/Headings/Heading 4 */
+  --ctx-font-size-h3:      var(--primitive-font-size-24);   /* 24px — [Desktop]/Headings/Heading 3 */
+  --ctx-font-size-h2:      var(--primitive-font-size-36);   /* 36px — [Desktop]/Headings/Heading 2 */
+  --ctx-font-size-h1:      var(--primitive-font-size-40);   /* 40px — [Desktop]/Headings/Heading 1 */
+
+  /* Line heights — all three values from Figma */
+  --ctx-line-height-tight:  var(--primitive-line-height-110);  /* 1.10 */
+  --ctx-line-height-normal: var(--primitive-line-height-115);  /* 1.15 */
+  --ctx-line-height-loose:  var(--primitive-line-height-120);  /* 1.20 */
 
   /* ── Shape (border-radius) ── */
-  --ctx-radius-control: var(--primitive-radius-md);    /* 8px  — buttons, inputs */
-  --ctx-radius-card:    var(--primitive-radius-xl);    /* 16px — cards */
-  --ctx-radius-badge:   var(--primitive-radius-full);  /* 9999px — badges */
-  --ctx-radius-modal:   var(--primitive-radius-2xl);   /* 32px — modals */
+  --ctx-radius-sm:      var(--primitive-radius-100);    /* 4px  — мелкие элементы */
+  --ctx-radius-card:    var(--primitive-radius-200);    /* 8px  — cards */
+  --ctx-radius-lg:      var(--primitive-radius-300);    /* 12px — крупные контролы */
+  --ctx-radius-control: var(--primitive-radius-400);    /* 16px — buttons, inputs */
+  --ctx-radius-modal:   var(--primitive-radius-800);    /* 32px — modals */
+  --ctx-radius-badge:   var(--primitive-radius-FULL);   /* 9999px — badges */
 
   /* ── Misc ── */
   --ctx-shadow-card:  var(--primitive-shadow-card);
   --ctx-shadow-modal: var(--primitive-shadow-modal);
-  --ctx-transition:   var(--primitive-duration-normal) ease;
+  --ctx-transition:   var(--primitive-duration-200) ease;
   --ctx-z-dropdown:   var(--primitive-z-dropdown);
   --ctx-z-modal:      var(--primitive-z-modal);
   --ctx-z-toast:      var(--primitive-z-toast);

@@ -1,0 +1,57 @@
+.root {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 52px; /* component-specific fixed height per Figma */
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-sm) var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  gap: 12px; /* Figma: icon-label gap */
+  border: none;
+  border-radius: var(--ctx-radius-control);
+  background-color: var(--ctx-color-bg-surface);
+  cursor: pointer;
+  overflow: hidden;
+  text-align: left;
+}
+
+.root:hover {
+  background-color: var(--ctx-color-bg-surface-hover);
+}
+
+.root:focus-visible {
+  background-color: var(--ctx-color-bg-subtle);
+  outline: none;
+}
+
+.iconFrame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px; /* component-specific icon frame size per Figma */
+  height: 36px; /* component-specific icon frame size per Figma */
+  border-radius: var(--ctx-radius-card);
+  background-color: var(--ctx-color-bg-subtle);
+}
+
+.label {
+  flex: 1;
+  font-size: var(--ctx-font-size-body);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  color: var(--ctx-color-text-default);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arrow {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.root:hover .arrow,
+.root:focus-visible .arrow {
+  opacity: 1;
+}

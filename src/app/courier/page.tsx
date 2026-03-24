@@ -2,9 +2,9 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { courierApi } from '@/lib/api/courier';
-import { OrderDeliveryCard } from '@/components/courier/OrderDeliveryCard/OrderDeliveryCard';
-import { DeliveryWorkspace } from '@/components/courier/DeliveryWorkspace/DeliveryWorkspace';
-import { Spinner } from '@/components/ui';
+import { OrderDeliveryCard } from '@/widgets/courier/OrderDeliveryCard/OrderDeliveryCard';
+import { DeliveryWorkspace } from '@/widgets/courier/DeliveryWorkspace/DeliveryWorkspace';
+import { Spinner } from '@/shared/ui';
 import styles from './page.module.css';
 
 export default function CourierPage() {

@@ -1,0 +1,102 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.tableContainer {
+  overflow-x: auto;
+  border: 1px solid var(--ctx-color-border-default);
+  border-radius: var(--ctx-radius-card);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ctx-font-size-label);
+}
+
+.header {
+  background: var(--ctx-color-bg-subtle);
+  color: var(--ctx-color-text-secondary);
+  font-weight: 600; /* Semibold */
+  text-align: left;
+  padding: var(--table-cell-padding);
+  border-bottom: 1px solid var(--ctx-color-border-default);
+  white-space: nowrap;
+}
+
+.row {
+  border-bottom: 1px solid var(--ctx-color-border-default);
+  transition: background-color 100ms ease;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background: var(--ctx-color-bg-subtle-hover);
+}
+
+.cell {
+  padding: var(--table-cell-padding);
+  color: var(--ctx-color-text-default);
+  vertical-align: middle;
+}
+
+.empty {
+  padding: var(--ctx-space-stack-lg);
+  text-align: center;
+  color: var(--ctx-color-text-secondary);
+}
+
+.skeletonCell {
+  height: 16px;
+  background: var(--ctx-color-bg-subtle);
+  border-radius: var(--ctx-radius-sm);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ctx-space-inline-sm);
+}
+
+.pageBtn {
+  background: var(--ctx-color-bg-subtle);
+  border: 1px solid var(--ctx-color-border-default);
+  border-radius: var(--ctx-radius-control);
+  padding: var(--ctx-space-inset-xs) 12px; /* Figma: pagination button padding */
+  cursor: pointer;
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-default);
+  transition: background-color 100ms ease;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--ctx-color-border-default);
+}
+
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+  min-width: 60px;
+  text-align: center;
+}

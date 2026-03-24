@@ -1,0 +1,42 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+  width: 84px;
+  height: 64px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 64px;
+  border: none;
+  background-color: var(--ctx-color-bg-surface);
+  color: var(--ctx-color-icon-default);
+  cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+  background-color: var(--ctx-color-bg-subtle);
+}
+
+.badge {
+  position: absolute;
+  top: 15px;
+  left: 39px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--ctx-color-action-primary);
+  color: var(--ctx-color-bg-surface);
+  font-size: var(--ctx-font-size-xs);
+  font-weight: 600; /* Semibold */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+}

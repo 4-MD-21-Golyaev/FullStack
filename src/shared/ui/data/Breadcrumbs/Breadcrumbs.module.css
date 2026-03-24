@@ -1,0 +1,45 @@
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inset-xs); /* 4px */
+}
+
+.S {
+  overflow: hidden;
+}
+
+.scrollable {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inset-xs);
+  overflow-x: auto;
+  overflow-y: clip;
+  min-width: 0;
+  flex: 1;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inset-xs); /* 4px */
+  flex-shrink: 0;
+}
+
+.link {
+  font-size: var(--ctx-font-size-label); /* 14px */
+  font-weight: 450; /* [Desktop]/Utilities/Secondary */
+  line-height: var(--ctx-line-height-tight); /* 1.10 */
+  color: var(--ctx-color-text-secondary);
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color var(--ctx-transition);
+}
+
+.link:hover {
+  color: var(--ctx-color-text-default);
+}
+
+.separator {
+  color: var(--ctx-color-icon-secondary);
+  flex-shrink: 0;
+}

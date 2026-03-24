@@ -15,6 +15,8 @@ export async function GET(req: NextRequest) {
             name: p.name,
             price: p.price,
             imagePath: p.imagePath,
+            stock: p.stock,
+            categoryId: p.categoryId,
         }));
 
         return NextResponse.json(result);

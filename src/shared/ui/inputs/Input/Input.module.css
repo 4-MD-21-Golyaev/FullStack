@@ -1,0 +1,21 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-sm);
+}
+
+.label {
+  font-size: var(--ctx-font-size-label);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  color: var(--ctx-color-text-default);
+}
+
+.hint {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+}
+
+.hintError {
+  color: var(--ctx-color-text-danger);
+}
+

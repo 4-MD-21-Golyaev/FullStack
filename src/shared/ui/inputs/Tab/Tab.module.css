@@ -1,0 +1,28 @@
+.root {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--ctx-font-body);
+  font-size: var(--ctx-font-size-body);
+  font-weight: 600; /* Semibold */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-normal);
+  transition: color var(--ctx-transition);
+}
+
+.root.isActive {
+  gap: var(--ctx-space-inset-sm); /* 8px — space between text and underline */
+}
+
+.underline {
+  display: block;
+  width: 100%;
+  height: 2px; /* no border-height token — fixed per spec */
+  background: var(--ctx-color-action-primary);
+  border-radius: var(--ctx-radius-badge);
+}

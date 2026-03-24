@@ -1,0 +1,106 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ctx-space-inline-sm);
+  border-radius: var(--ctx-radius-control);
+  font-weight: var(--button-font-weight);
+  font-size: var(--ctx-font-size-ui);
+  line-height: var(--ctx-line-height-tight);
+  transition: background-color var(--ctx-transition);
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+/* ── Variants ── */
+.primary {
+  background-color: var(--ctx-color-action-primary);
+  color: var(--ctx-color-text-inverse);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--ctx-color-action-primary-hover);
+}
+
+.secondary {
+  background-color: var(--ctx-color-bg-subtle);
+  color: var(--ctx-color-text-default);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--ctx-color-bg-subtle-hover);
+}
+
+.danger {
+  background-color: var(--ctx-color-action-danger);
+  color: var(--ctx-color-text-inverse);
+}
+
+.danger:hover:not(:disabled) {
+  background-color: var(--ctx-color-action-primary-active);
+}
+
+.ghost {
+  background-color: transparent;
+  color: var(--ctx-color-text-default);
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: var(--ctx-color-bg-subtle);
+}
+
+.tertiary {
+  background-color: transparent;
+  color: var(--ctx-color-text-default);
+  border-radius: var(--ctx-radius-control);
+}
+
+.tertiary:hover:not(:disabled) {
+  background-color: var(--ctx-color-bg-subtle-hover);
+}
+
+.tertiary:focus-visible:not(:disabled) {
+  background-color: var(--ctx-color-bg-subtle-focus);
+  outline: none;
+}
+
+.tertiary:disabled {
+  background-color: transparent;
+  color: var(--ctx-color-text-secondary);
+  opacity: 1;
+}
+
+/* ── Sizes ── */
+.sm { padding: var(--button-padding-sm); }
+.md { padding: var(--button-padding-md); }
+.lg { padding: var(--button-padding-lg); }
+
+/* Tertiary size overrides */
+.tertiary.sm { padding: 8px 24px; }
+.tertiary.md { padding: 12px 24px; }
+.tertiary.lg { padding: 16px 24px; }
+
+/* ── States ── */
+.root:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.isLoading {
+  pointer-events: none;
+}
+
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--ctx-radius-badge);
+  animation: spin 300ms linear infinite; /* Figma: spinner rotation speed */
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

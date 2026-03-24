@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { usersApi, type UserDto } from '@/lib/api/users';
-import { DataTable, type Column } from '@/components/ui';
+import { DataTable, type Column } from '@/shared/ui';
 import styles from './page.module.css';
 
 const PAGE_SIZE = 20;

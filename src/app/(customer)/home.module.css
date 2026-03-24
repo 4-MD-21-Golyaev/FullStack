@@ -1,0 +1,223 @@
+/* ── Page wrapper ── */
+.page {
+  background-color: transparent;
+}
+
+/* ── Section container (centered, consistent gutters) ── */
+.section {
+  max-width: var(--ctx-layout-max-width);
+  margin-inline: auto;
+  padding-inline: var(--ctx-space-page-desktop);
+}
+
+/* ═══════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════ */
+.hero {
+  padding: var(--primitive-space-1600) 0 var(--primitive-space-1200);
+}
+
+.heroInner {
+  position: relative;
+}
+
+.heroSlide {
+  width: 100%;
+  height: 350px;
+  border-radius: var(--ctx-radius-card);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--ctx-color-bg-subtle);
+}
+
+.heroSlideImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroSlideContent {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: var(--ctx-space-inset-lg);
+}
+
+.heroSlideTitle {
+  font-size: var(--primitive-font-size-36);
+  font-weight: var(--primitive-font-weight-700);
+  color: var(--ctx-color-text-inverse);
+  margin: 0 0 var(--primitive-space-200);
+  text-shadow: 0 2px 8px var(--ctx-color-bg-overlay);
+}
+
+.heroSlideSubtitle {
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-text-inverse);
+  margin: 0;
+  text-shadow: 0 1px 4px var(--ctx-color-bg-overlay);
+}
+
+/* Arrow overlays — ArrowsContainer handles positioning */
+.heroArrows {
+  z-index: 2;
+}
+
+/* Pagination row */
+.heroPagination {
+  display: flex;
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════
+   SALE SLIDERS
+═══════════════════════════════════════════════ */
+.sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sliderSection {
+  padding: var(--primitive-space-1200) 0;
+}
+
+.sliderRow {
+  display: flex;
+  gap: var(--primitive-space-400);
+  align-items: flex-start;
+}
+
+.sliderTitleCol {
+  width: 217px;
+  min-width: 217px;
+  height: 306px;
+  display: flex;
+  align-items: flex-start;
+  padding-top: var(--primitive-space-600);
+  flex-shrink: 0;
+}
+
+.sliderTrackCol {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   LOYALTY
+═══════════════════════════════════════════════ */
+.loyalty {
+  padding: var(--primitive-space-1200) 0 var(--primitive-space-1600);
+}
+
+.loyaltyInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-800);
+}
+
+.loyaltyHeading {
+  font-size: var(--primitive-font-size-36);
+  font-weight: var(--primitive-font-weight-700);
+  color: var(--ctx-color-text-default);
+  margin: 0;
+}
+
+.loyaltyBody {
+  display: flex;
+  gap: var(--primitive-space-1200);
+  align-items: flex-start;
+}
+
+.loyaltyPhoneStub {
+  width: 332px;
+  min-width: 332px;
+  height: 420px;
+  background-color: var(--ctx-color-bg-subtle);
+  border-radius: var(--ctx-radius-card);
+  flex-shrink: 0;
+}
+
+.loyaltyContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-600);
+  padding-top: var(--primitive-space-400);
+}
+
+.loyaltyBenefits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-400);
+}
+
+.loyaltyBenefitItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ctx-space-inline-sm);
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-text-default);
+  line-height: var(--primitive-line-height-115);
+}
+
+.loyaltyCheckIcon {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ctx-radius-badge);
+  background-color: var(--ctx-color-action-primary);
+  color: var(--ctx-color-text-inverse);
+  flex-shrink: 0;
+}
+
+.loyaltyDetailsLink {
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-action-primary);
+  text-decoration: underline;
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.loyaltyDetailsLink:hover {
+  color: var(--ctx-color-action-primary-hover);
+}
+
+.loyaltyApp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-400);
+}
+
+.loyaltyAppHeading {
+  font-size: var(--primitive-font-size-24);
+  font-weight: var(--primitive-font-weight-700);
+  color: var(--ctx-color-text-default);
+  margin: 0;
+}
+
+.loyaltyAppSub {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+  margin: 0;
+}
+
+.loyaltyAppButtons {
+  display: flex;
+  gap: var(--ctx-space-inline-md);
+  flex-wrap: wrap;
+}

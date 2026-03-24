@@ -1,0 +1,26 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-xs); /* 12px — spacing/300 between title row and slider */
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.title {
+  font-family: var(--ctx-font-body);
+  font-size: var(--ctx-font-size-h3); /* 24px — [Desktop]/Headings/Heading 3 */
+  font-weight: 700; /* [Desktop]/Headings/Heading 3 */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}

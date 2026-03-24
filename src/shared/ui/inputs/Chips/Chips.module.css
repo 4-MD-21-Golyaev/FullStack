@@ -1,0 +1,67 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px; /* Figma: chip icon gap */
+  border-radius: var(--ctx-radius-control);
+  border: none;
+  background: var(--ctx-color-bg-subtle);
+  color: var(--ctx-color-text-default);
+  font-family: var(--ctx-font-body);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
+  line-height: var(--ctx-line-height-normal);
+  cursor: pointer;
+  transition: background var(--ctx-transition), color var(--ctx-transition);
+  white-space: nowrap;
+}
+
+.size_lg {
+  padding: 12px var(--ctx-space-inset-lg); /* Figma: L chip vertical 12px */
+  font-size: var(--ctx-font-size-body);
+}
+
+.size_md {
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
+  font-size: var(--ctx-font-size-body);
+}
+
+.size_sm {
+  padding: 12px var(--ctx-space-inset-md); /* Figma: S chip vertical 12px */
+  font-size: var(--ctx-font-size-caption);
+}
+
+.root:hover:not(:disabled):not(.isSelected) {
+  background: var(--ctx-color-bg-subtle-hover);
+}
+
+.root:focus-visible:not(:disabled):not(.isSelected) {
+  background: var(--ctx-color-bg-subtle-focus);
+  outline: none;
+}
+
+.isSelected {
+  background: var(--ctx-color-action-primary);
+  color: var(--ctx-color-text-inverse);
+}
+
+.isSelected:hover:not(:disabled) {
+  background: var(--ctx-color-action-primary-hover);
+}
+
+.isSelected:focus-visible:not(:disabled) {
+  background: var(--ctx-color-action-primary-active);
+  outline: none;
+}
+
+.isDisabled,
+.root:disabled {
+  background: var(--ctx-color-text-disabled);
+  color: var(--ctx-color-text-secondary);
+  cursor: not-allowed;
+}
+
+.dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}

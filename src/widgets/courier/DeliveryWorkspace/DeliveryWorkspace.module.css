@@ -1,0 +1,129 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.orderId {
+  display: block;
+  font-family: var(--ctx-font-code);
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+  margin-bottom: var(--ctx-space-inset-xs);
+}
+
+.total {
+  display: block;
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 700; /* Bold */
+  color: var(--ctx-color-text-default);
+}
+
+.releaseBtn {
+  background: none;
+  border: 1px solid var(--ctx-color-border-default);
+  color: var(--ctx-color-text-secondary);
+  font-size: var(--ctx-font-size-label);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  border-radius: var(--ctx-radius-control);
+  cursor: pointer;
+  transition: all 100ms ease;
+}
+
+.releaseBtn:hover {
+  border-color: var(--ctx-color-status-danger);
+  color: var(--ctx-color-status-danger);
+}
+
+.addressCard {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ctx-space-inline-sm);
+  background: var(--ctx-color-bg-surface);
+  border: var(--card-border);
+  border-radius: var(--ctx-radius-card);
+  padding: var(--ctx-space-inset-lg);
+  text-decoration: none;
+  color: var(--ctx-color-text-default);
+  transition: border-color 100ms ease;
+}
+
+.addressCard:hover {
+  border-color: var(--ctx-color-action-primary);
+}
+
+.mapPin {
+  color: var(--ctx-color-action-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.address {
+  font-size: var(--ctx-font-size-body);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.slaCard {
+  background: var(--ctx-color-bg-surface);
+  border: var(--card-border);
+  border-radius: var(--ctx-radius-card);
+  padding: var(--ctx-space-inset-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-sm);
+}
+
+.slaLabel {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-sm);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-xs);
+}
+
+.label {
+  font-size: var(--ctx-font-size-label);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  color: var(--ctx-color-text-default);
+}
+
+.textarea {
+  font-size: var(--ctx-font-size-body);
+  border: var(--input-border);
+  border-radius: var(--ctx-radius-control);
+  background: var(--ctx-color-bg-surface);
+  color: var(--ctx-color-text-default);
+  padding: var(--input-padding);
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  transition: border-color var(--ctx-transition);
+}
+
+.textarea:focus {
+  border: var(--input-border-focus);
+}
+
+.error {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-danger);
+}

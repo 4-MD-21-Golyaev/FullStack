@@ -1,0 +1,15 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: var(--ctx-space-inset-md);
+}
+
+.slider {
+  width: 100%;
+}
+
+.controls {
+  pointer-events: none;
+}

@@ -7,14 +7,14 @@
 .loading,
 .error {
   text-align: center;
-  padding: var(--primitive-space-10);
+  padding: var(--ctx-space-stack-lg);
   color: var(--ctx-color-text-secondary);
 }
 
 .back {
   display: inline-flex;
   align-items: center;
-  gap: var(--primitive-space-1);
+  gap: var(--ctx-space-inset-xs);
   background: none;
   border: none;
   color: var(--ctx-color-text-link);
@@ -28,9 +28,9 @@
 }
 
 .card {
-  background: var(--card-bg);
+  background: var(--ctx-color-bg-surface);
   border: var(--card-border);
-  border-radius: var(--card-radius);
+  border-radius: var(--ctx-radius-card);
   padding: var(--ctx-space-inset-lg);
   display: flex;
   flex-direction: column;
@@ -38,8 +38,8 @@
 }
 
 .title {
-  font-size: var(--primitive-font-size-2xl);
-  font-weight: var(--primitive-font-weight-bold);
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700; /* Bold */
   color: var(--ctx-color-text-default);
   margin: 0;
 }
@@ -47,13 +47,13 @@
 .dl {
   display: grid;
   grid-template-columns: 160px 1fr;
-  gap: var(--primitive-space-2) var(--ctx-space-inline-md);
+  gap: var(--ctx-space-inset-sm) var(--ctx-space-inline-md);
   font-size: var(--ctx-font-size-label);
 }
 
 .dl dt {
   color: var(--ctx-color-text-secondary);
-  font-weight: var(--primitive-font-weight-medium);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
 }
 
 .dl dd {
@@ -68,8 +68,8 @@
 }
 
 .sectionTitle {
-  font-size: var(--ctx-font-size-heading);
-  font-weight: var(--primitive-font-weight-semibold);
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 600; /* Semibold */
   color: var(--ctx-color-text-default);
   margin: 0;
 }

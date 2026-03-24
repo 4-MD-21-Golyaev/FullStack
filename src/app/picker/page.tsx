@@ -2,9 +2,9 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { pickerApi } from '@/lib/api/picker';
-import { OrderPickCard } from '@/components/picker/OrderPickCard/OrderPickCard';
-import { PickingWorkspace } from '@/components/picker/PickingWorkspace/PickingWorkspace';
-import { Spinner } from '@/components/ui';
+import { OrderPickCard } from '@/widgets/picker/OrderPickCard/OrderPickCard';
+import { PickingWorkspace } from '@/widgets/picker/PickingWorkspace/PickingWorkspace';
+import { Spinner } from '@/shared/ui';
 import styles from './page.module.css';
 
 export default function PickerPage() {

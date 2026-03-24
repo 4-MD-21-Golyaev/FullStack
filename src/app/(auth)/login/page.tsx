@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/lib/api/auth';
-import { Button } from '@/components/ui';
+import { Button } from '@/shared/ui';
 import styles from './login.module.css';
 
 const emailSchema = z.object({

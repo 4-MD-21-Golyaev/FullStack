@@ -1,0 +1,10 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--badge-padding-m);
+  border-radius: var(--ctx-radius-badge);
+  font-size: var(--ctx-font-size-label);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  white-space: nowrap;
+  line-height: 1;
+}

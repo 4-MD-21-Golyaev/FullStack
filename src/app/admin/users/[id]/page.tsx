@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { usersApi } from '@/lib/api/users';
 import { ordersApi, type OrderDto } from '@/lib/api/orders';
-import { DataTable, OrderStatusBadge, type Column } from '@/components/ui';
+import { DataTable, OrderStatusBadge, type Column } from '@/shared/ui';
 import { ArrowLeft } from 'lucide-react';
 import styles from './page.module.css';
 

@@ -1,0 +1,82 @@
+.root {
+  /* layout */
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 50px; /* Figma: fixed row height */
+  padding-top: var(--ctx-space-inset-md);
+  padding-bottom: var(--ctx-space-inset-md);
+  padding-right: var(--ctx-space-inset-sm);
+  gap: 12px; /* Figma: icon-label gap */
+
+  /* shape */
+  border-radius: var(--ctx-radius-control);
+  overflow: hidden;
+  border: none;
+  cursor: pointer;
+
+  /* colors — Enabled state */
+  background-color: var(--ctx-color-bg-surface);
+  color: var(--ctx-color-text-default);
+
+  /* typography */
+  font-family: var(--ctx-font-body);
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  line-height: var(--ctx-line-height-normal);
+
+  /* transition */
+  transition: background-color var(--ctx-transition);
+}
+
+/* Level-specific left padding */
+.level1 {
+  padding-left: 12px; /* Figma: level 1 indent */
+}
+
+.level2 {
+  padding-left: var(--ctx-space-inset-md);
+}
+
+/* Hovered state */
+.root:hover {
+  background-color: var(--ctx-color-bg-surface-hover);
+}
+
+/* Expanded / Focused state */
+.expanded,
+.expanded:hover {
+  background-color: var(--ctx-color-bg-subtle);
+}
+
+/* Label */
+.label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* Chevron container — 36×36px touch target, centered icon */
+.chevron {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--ctx-radius-card);
+  background-color: transparent;
+  transition: background-color var(--ctx-transition);
+  color: var(--ctx-color-text-default);
+}
+
+.root:hover .chevron {
+  background-color: var(--ctx-color-bg-surface-hover);
+}
+
+.expanded .chevron {
+  background-color: var(--ctx-color-bg-subtle);
+}

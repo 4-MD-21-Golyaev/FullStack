@@ -10,7 +10,7 @@ import {
   OrderStatusBadge,
   type Column,
   type FilterOption,
-} from '@/components/ui';
+} from '@/shared/ui';
 import { OrderState } from '@/domain/order/OrderState';
 import { ORDER_STATUS_CONFIG } from '@/lib/order-status-config';
 import type { OrderDto } from '@/lib/api/orders';

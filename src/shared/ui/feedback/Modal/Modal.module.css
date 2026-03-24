@@ -1,0 +1,46 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--ctx-color-bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--ctx-z-modal);
+  animation: fadeIn 100ms ease; /* Figma: overlay fade duration */
+}
+
+.root {
+  background-color: var(--ctx-color-bg-surface);
+  border-radius: var(--ctx-radius-modal);
+  box-shadow: var(--ctx-shadow-modal);
+  min-width: 320px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp var(--ctx-transition); /* 200ms ease */
+}
+
+.header {
+  padding: var(--ctx-space-inset-md) var(--ctx-space-inset-lg);
+  border-bottom: 1px solid var(--ctx-color-border-default);
+}
+
+.title {
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 600; /* Semibold */
+  color: var(--ctx-color-text-default);
+}
+
+.body {
+  padding: var(--ctx-space-inset-lg);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}

@@ -7,14 +7,14 @@
 .loading,
 .error {
   text-align: center;
-  padding: var(--primitive-space-10);
+  padding: var(--ctx-space-stack-lg);
   color: var(--ctx-color-text-secondary);
 }
 
 .back {
   display: inline-flex;
   align-items: center;
-  gap: var(--primitive-space-1);
+  gap: var(--ctx-space-inset-xs);
   background: none;
   border: none;
   color: var(--ctx-color-text-link);
@@ -42,8 +42,8 @@
 }
 
 .title {
-  font-size: var(--primitive-font-size-2xl);
-  font-weight: var(--primitive-font-weight-bold);
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700; /* Bold */
   color: var(--ctx-color-text-default);
   margin: 0;
 }
@@ -54,9 +54,9 @@
 }
 
 .card {
-  background: var(--card-bg);
+  background: var(--ctx-color-bg-surface);
   border: var(--card-border);
-  border-radius: var(--card-radius);
+  border-radius: var(--ctx-radius-card);
   padding: var(--ctx-space-inset-lg);
   display: flex;
   flex-direction: column;
@@ -64,8 +64,8 @@
 }
 
 .cardTitle {
-  font-size: var(--ctx-font-size-heading);
-  font-weight: var(--primitive-font-weight-semibold);
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 600; /* Semibold */
   color: var(--ctx-color-text-default);
   margin: 0;
 }
@@ -112,13 +112,13 @@
 .timelineLabel {
   font-size: var(--ctx-font-size-caption);
   color: var(--ctx-color-text-secondary);
-  margin-top: var(--primitive-space-1);
+  margin-top: var(--ctx-space-inset-xs);
   text-align: center;
 }
 
 .timelineLabelCurrent {
   color: var(--ctx-color-text-default);
-  font-weight: var(--primitive-font-weight-semibold);
+  font-weight: 600; /* Semibold */
 }
 
 .timelineConnector {
@@ -144,22 +144,22 @@
 .itemsTable th {
   text-align: left;
   padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
-  background: var(--table-header-bg);
-  color: var(--table-header-text);
-  font-weight: var(--primitive-font-weight-semibold);
-  border-bottom: 1px solid var(--table-border);
+  background: var(--ctx-color-bg-subtle);
+  color: var(--ctx-color-text-secondary);
+  font-weight: 600; /* Semibold */
+  border-bottom: 1px solid var(--ctx-color-border-default);
 }
 
 .itemsTable td {
   padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
-  border-bottom: 1px solid var(--table-border);
+  border-bottom: 1px solid var(--ctx-color-border-default);
   color: var(--ctx-color-text-default);
 }
 
 .itemsTable tfoot td {
-  border-top: 2px solid var(--table-border);
+  border-top: 2px solid var(--ctx-color-border-default);
   border-bottom: none;
-  font-weight: var(--primitive-font-weight-semibold);
+  font-weight: 600; /* Semibold */
 }
 
 .totalLabel {
@@ -176,13 +176,13 @@
 .dl {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: var(--primitive-space-2) var(--ctx-space-inline-md);
+  gap: var(--primitive-space-200) var(--ctx-space-inline-md);
   font-size: var(--ctx-font-size-label);
 }
 
 .dl dt {
   color: var(--ctx-color-text-secondary);
-  font-weight: var(--primitive-font-weight-medium);
+  font-weight: var(--primitive-font-weight-500);
 }
 
 .dl dd {

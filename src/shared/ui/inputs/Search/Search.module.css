@@ -1,0 +1,19 @@
+.root {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+  gap: var(--ctx-space-inline-sm);
+}
+
+.input {
+  flex: 1;
+  transition: max-width 250ms ease, padding 250ms ease, opacity 250ms ease;
+}
+
+.collapsed .input {
+  max-width: 0;
+  padding: 0;
+  opacity: 0;
+  flex: 0;
+}

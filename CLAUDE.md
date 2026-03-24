@@ -45,12 +45,43 @@ This is a **Next.js e-commerce order management system** following **Hexagonal (
 
 ```
 src/
+├── shared/ui/       # Design system — pure UI components, no business logic (buttons, inputs, icons, etc.)
+├── widgets/         # Composite page-level blocks, organized by role:
+│   ├── customer/    # Customer-facing (Header, Footer, ProductCard, Slider, etc.)
+│   ├── admin/       # Admin interface blocks
+│   ├── courier/     # Courier workflow blocks
+│   ├── picker/      # Picker workflow blocks
+│   └── WorkerHeader/
+├── entities/        # Domain entity UI (future: product, order, user)
+├── features/        # User interaction flows (future: cart, auth, search)
 ├── domain/          # Entities, enums, state machine, domain errors — pure TypeScript, no dependencies
 ├── application/     # Use cases + port interfaces (Repository & Gateway abstractions)
 │   └── ports/       # Interfaces that infrastructure must implement
 ├── infrastructure/  # Concrete implementations: Prisma repositories, Yookassa/MoySklad gateways, auth
-└── app/api/         # Next.js App Router HTTP layer — thin handlers that instantiate and call use cases
+└── app/             # Next.js App Router — pages (app/) and API routes (app/api/)
 ```
+
+**FSD import rule (STRICT — never violate):**
+- `shared/ui` imports nothing from `widgets`, `entities`, `features`, or `app`
+- `entities` imports only from `shared/ui`
+- `features` imports from `shared/ui` and `entities`
+- `widgets` imports from `shared/ui`, `entities`, and `features`
+- `app` imports from any layer
+
+**shared/ui internal groups:**
+```
+src/shared/ui/
+├── icons/      Icon, Logo
+├── buttons/    Button, IconButton, ArrowButton, ArrowsContainer, ArrowBg,
+│               LikeButton, SocialButton, CartButton, MobilePanelButton, MobilePanelCartButton
+├── inputs/     InputBase, Input, TextField, Search  (+ Select, Counter, Switch, Radio…)
+├── feedback/   Badge, OrderStatusBadge, PaymentStatusBadge, Spinner, Skeleton,
+│               Modal, Toast, ConfirmDialog, SlaTimer
+├── data/       StatCard, DataTable, FilterBar
+└── index.ts    ← single public barrel, ALL consumers import from here
+```
+
+**Rule: cross-group imports inside shared/ui use relative paths going up to the group level**, e.g. `buttons/IconButton` imports Icon as `../../icons/Icon/Icon`.
 
 **Dependency rule:** domain ← application ← infrastructure ← HTTP layer. Inner layers never import outer layers.
 
@@ -176,6 +207,146 @@ OTP-based email authentication. Flow: `RequestCodeUseCase` → sends OTP via ema
 | `POST /api/auth/logout` | `LogoutUseCase` |
 | `GET /api/auth/me` | `GetMeUseCase` |
 
+### Agent Workflow — UI Component Implementation
+
+Every UI component follows a two-phase workflow: **implement → review**.
+The review is mandatory and always runs as a separate agent after implementation.
+
+#### Phase 1 — Implementation agent prompt (include verbatim)
+
+```
+Before writing any code:
+1. Read src/shared/ui/index.ts — this is the authoritative list of existing components.
+2. Use existing components instead of raw HTML. Rules in CLAUDE.md section
+   "UI Component Composition — CRITICAL RULES" are mandatory and non-negotiable.
+3. Place the new component in the correct shared/ui group (icons/buttons/inputs/feedback/data/).
+4. Export it from src/shared/ui/index.ts.
+5. For every CSS value from Figma, map it to a token using this priority:
+   component token (--button-*, --card-*…) if one already exists for this component →
+   context token (--ctx-*) that semantically matches the intent →
+   if nothing fits: add the missing token to src/styles/tokens/context.css, never hardcode the value.
+   STRICT: --primitive-* tokens are FORBIDDEN in CSS Modules and component.css — only context.css may reference them.
+   font-weight is NEVER a token — write a numeric literal with a Figma text style comment:
+     font-weight: 500; /* [Desktop]/Utilities/Medium */
+   --ctx-font-size-h1/h2/h3/h4 are ONLY for heading roles matching Figma [Desktop]/Headings/* styles.
+   Do NOT create a new --mycomp-* token family unless it's a true override or a fixed Figma dimension.
+```
+
+#### Phase 2 — Review agent prompt (include verbatim)
+
+After implementation, launch a separate review agent with:
+
+```
+Review the component at <path>. Check each item and report PASS or FAIL with evidence:
+
+1. RAW HTML — search the file for <button, <input, <textarea, <select, <a .
+   Each must be replaced by an existing shared/ui component. FAIL if any found.
+2. BARREL — open src/shared/ui/index.ts and confirm the new component is exported.
+   FAIL if missing.
+3. GROUP — confirm the file is inside one of: icons/ buttons/ inputs/ feedback/ data/.
+   FAIL if placed at shared/ui root or in wrong group.
+4. TOKENS — search the CSS module for:
+   a) hex values (#) or named colors — FAIL if a matching ctx/component token exists.
+   b) px literals other than 0, 1px/2px borders, or values with a "/* Figma: … */" comment — FAIL.
+   c) --primitive-* references — ALWAYS FAIL, no exceptions (primitives are forbidden in CSS Modules).
+5. IMPORTS — confirm cross-group imports inside shared/ui use relative paths (../../group/…).
+   FAIL if @/shared/ui barrel is used inside the library itself.
+6. TYPESCRIPT — run: npx tsc --noEmit. FAIL if any errors.
+
+Return a summary table: rule | result | detail.
+If any FAIL: fix the issue, then re-run the failed check to confirm it passes.
+```
+
+---
+
+### UI Component Composition — CRITICAL RULES
+
+These rules are **non-negotiable**. Every agent and developer must follow them.
+
+#### Rule 1 — Read the barrel first
+
+**Always read `src/shared/ui/index.ts` before implementing any component** to see what already exists. Never reimplement something that's already there.
+
+#### Rule 2 — Compose, don't reimplement
+
+When a component is built from other UI components, **import and use those components** — never rewrite their HTML/CSS from scratch.
+
+- `Search` = `InputBase` + `IconButton` — not `<input>` + `<button>`
+- `CartButton` = `IconButton` + badge `<span>` — not `<button>` + `<Icon>`
+- `MobilePanelCartButton` = `MobilePanelButton` + badge `<span>`
+
+#### Rule 3 — Mandatory HTML → component substitutions
+
+Before writing any raw HTML element, use this table:
+
+```
+Raw HTML                          → Use instead
+─────────────────────────────────────────────────────────
+<button> with icon only           → IconButton (xs/sm/md/lg × white/gray/red)
+<button> with text                → Button (primary/secondary/tertiary/ghost)
+<button> arrow navigation         → ArrowButton (sm/md/lg × left/right)
+<input type="text"> standalone    → InputBase (size/color/error)
+<input type="text"> + label/hint  → Input (wraps InputBase)
+<textarea>                        → TextField
+Two ArrowButtons side by side     → ArrowsContainer
+Heart toggle button               → LikeButton
+Social network button             → SocialButton (whatsapp/telegram/vk)
+Cart icon button with badge       → CartButton
+Mobile nav item                   → MobilePanelButton
+Mobile nav cart item              → MobilePanelCartButton
+```
+
+**This table covers currently implemented components and is not exhaustive.**
+`src/shared/ui/index.ts` is the authoritative source — always read it before implementing.
+
+#### Rule 4 — Placement of new shared/ui components
+
+Every new component goes into the correct group:
+
+```
+icons/    — standalone visual primitives (Icon, Logo, decorative SVGs)
+buttons/  — any interactive element that triggers an action
+inputs/   — any element that accepts user text/selection input
+feedback/ — status indicators, overlays, notifications
+data/     — tables, cards, stat displays
+```
+
+If a component doesn't fit any group, create a new group — never add to the flat `shared/ui/` root.
+
+#### CSS Token System — Rules for agents
+
+**Three-layer rule (STRICT):**
+- `primitive.css` → `context.css` → `component.css` → CSS Module
+- `--primitive-*` only in `context.css`. Forbidden everywhere else.
+- `--ctx-*` in CSS Modules and `component.css`.
+- Component tokens (`--button-*`, `--card-*` …) are justified **only** when:
+  - **(a)** the token contains a fixed value from Figma not present in the ctx layer (px/rem/rgba literals, e.g. `240px`, `6px`, `rgba(255,255,255,0.08)`), OR
+  - **(b)** the token combines multiple ctx-tokens into a single multi-value shorthand, e.g. `--button-padding-sm: var(--ctx-space-inset-sm) 12px`.
+- **A single-line alias is FORBIDDEN:** `--comp-x: var(--ctx-y)` — use the ctx token directly in the CSS Module. Do NOT create a component token that is a pure pass-through for one ctx token.
+
+**font-weight is never tokenized.** Always write a numeric literal:
+```css
+font-weight: 450; /* [Desktop]/Utilities/Regular */
+font-weight: 500; /* [Desktop]/Utilities/Medium */
+font-weight: 600; /* Semibold */
+font-weight: 700; /* Bold */
+```
+
+**Figma text styles → token mapping:**
+
+| Figma text style | Token | Weight (literal) |
+|---|---|---|
+| [Desktop]/Headings/Heading 1 | `--ctx-font-size-h1` (40px) | `700` |
+| [Desktop]/Headings/Heading 2 | `--ctx-font-size-h2` (36px) | `700` |
+| [Desktop]/Headings/Heading 3 | `--ctx-font-size-h3` (24px) | `700` |
+| [Desktop]/Headings/Heading 4 | `--ctx-font-size-h4` (20px) | `700` |
+| [Desktop]/Body / H5 | `--ctx-font-size-body` (18px) | `450` or `500` |
+| [Desktop]/Utilities/Caption | `--ctx-font-size-caption` (16px) | `450` |
+| [Desktop]/Utilities/Secondary | `--ctx-font-size-label` (14px) | `500` |
+| [Mobile]/Utilities/Secondary | `--ctx-font-size-xs` (12px) | `450` |
+
+`--ctx-font-size-h1/h2/h3/h4` are **only** for heading roles. Do not use them as arbitrary size aliases.
+
 ### Code Style
 
 - **Аккуратность и лаконичность:** код должен быть чистым и компактным — без лишних абстракций, без дублирования, без избыточных комментариев там, где код говорит сам за себя.
@@ -192,6 +363,7 @@ OTP-based email authentication. Flow: `RequestCodeUseCase` → sends OTP via ema
 - **Delivery timestamps**: `outForDeliveryAt` and `deliveredAt` are set by courier transitions and used for SLA calculation.
 - Use cases receive repositories/gateways via constructor injection; HTTP route handlers are responsible for wiring dependencies.
 - Path alias `@/*` maps to `src/*`.
+- **Customer layout standard**: All customer-facing page containers must use `max-width: var(--ctx-layout-max-width)` and `padding-inline: var(--ctx-space-page-desktop)` on desktop. Do not use 1440/150 legacy values or `--primitive-*` spacing in CSS Modules.
 
 ### Infrastructure Layout
 

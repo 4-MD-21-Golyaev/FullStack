@@ -1,0 +1,82 @@
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ctx-space-inline-sm);
+  padding: var(--ctx-space-inset-sm);
+  background: var(--ctx-color-bg-subtle);
+  border: 1px solid var(--ctx-color-border-default);
+  border-radius: var(--ctx-radius-card);
+}
+
+.search {
+  font-size: var(--ctx-font-size-body);
+  border: var(--input-border);
+  border-radius: var(--ctx-radius-control);
+  background: var(--ctx-color-bg-surface);
+  color: var(--ctx-color-text-default);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  outline: none;
+  min-width: 200px;
+  flex: 1;
+  transition: border-color var(--ctx-transition);
+}
+
+.search:focus {
+  border: var(--input-border-focus);
+}
+
+.statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ctx-space-inset-xs);
+}
+
+.statusBtn {
+  padding: var(--ctx-space-inset-xs) 12px; /* Figma: status pill padding */
+  border: 1px solid var(--ctx-color-border-default);
+  border-radius: var(--ctx-radius-badge);
+  background: var(--ctx-color-bg-surface);
+  color: var(--ctx-color-text-secondary);
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  cursor: pointer;
+  transition: all 100ms ease;
+}
+
+.statusBtn:hover {
+  border-color: var(--ctx-color-action-primary);
+  color: var(--ctx-color-action-primary);
+}
+
+.statusBtnActive {
+  background: var(--ctx-color-action-primary);
+  border-color: var(--ctx-color-action-primary);
+  color: var(--ctx-color-text-inverse);
+}
+
+.statusBtnActive:hover {
+  background: var(--ctx-color-action-primary-hover);
+  border-color: var(--ctx-color-action-primary-hover);
+  color: var(--ctx-color-text-inverse);
+}
+
+.dates {
+  display: flex;
+  gap: var(--ctx-space-inline-sm);
+}
+
+.dateInput {
+  font-size: var(--ctx-font-size-body);
+  border: var(--input-border);
+  border-radius: var(--ctx-radius-control);
+  background: var(--ctx-color-bg-surface);
+  color: var(--ctx-color-text-default);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  outline: none;
+  transition: border-color var(--ctx-transition);
+}
+
+.dateInput:focus {
+  border: var(--input-border-focus);
+}

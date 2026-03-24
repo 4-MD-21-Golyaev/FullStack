@@ -1,0 +1,6 @@
+.root {
+  display: block;
+  flex-shrink: 0;
+  color: var(--ctx-color-bg-surface);
+  transition: color 150ms ease;
+}

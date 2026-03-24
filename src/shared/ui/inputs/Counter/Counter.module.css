@@ -1,0 +1,32 @@
+/* Counter — pill-shaped ± counter wrapping two IconButtons and NumInput */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  background-color: var(--ctx-color-bg-subtle);
+}
+
+/* L size: outer radius 16px, button height 44px (no matching token — matches IconButton md) */
+.lg {
+  border-radius: var(--ctx-radius-control); /* 16px */
+}
+
+/* S size: outer radius 12px, button height 36px (no matching token — matches IconButton sm) */
+.sm {
+  border-radius: var(--ctx-radius-lg); /* 12px */
+}
+
+/* NumInput stretches to fill the remaining space between buttons */
+.numInput {
+  flex: 1;
+  width: auto;
+  height: 100%;
+}
+
+/* Remove border-radius from buttons — container's overflow:hidden clips them to pill shape */
+.btnMinus,
+.btnPlus {
+  border-radius: 0;
+  flex-shrink: 0;
+}

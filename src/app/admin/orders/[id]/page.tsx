@@ -10,7 +10,7 @@ import {
   SlaTimer,
   ConfirmDialog,
   Button,
-} from '@/components/ui';
+} from '@/shared/ui';
 import { ORDER_STATE_TIMELINE, getOrderStatusConfig } from '@/lib/order-status-config';
 import { OrderState } from '@/domain/order/OrderState';
 import { formatDistanceToNow } from 'date-fns';

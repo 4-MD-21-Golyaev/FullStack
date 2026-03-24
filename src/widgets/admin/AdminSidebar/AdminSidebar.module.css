@@ -1,0 +1,119 @@
+.root {
+  width: var(--sidebar-width);
+  min-height: 100vh;
+  background: var(--ctx-color-bg-inverse);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: width var(--ctx-transition);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.collapsed {
+  width: var(--sidebar-width-collapsed);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ctx-space-inset-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: 56px;
+}
+
+.logo {
+  color: var(--ctx-color-text-inverse);
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 700; /* Bold */
+}
+
+.toggle {
+  background: none;
+  border: none;
+  color: var(--ctx-color-text-inverse-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: var(--ctx-space-inset-xs);
+  border-radius: var(--ctx-radius-sm);
+  transition: background-color 100ms ease;
+  flex-shrink: 0;
+}
+
+.toggle:hover {
+  background: var(--sidebar-item-active-bg);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: var(--ctx-space-inset-sm) 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inline-sm);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  color: var(--ctx-color-text-inverse-secondary);
+  text-decoration: none;
+  font-size: var(--ctx-font-size-label);
+  transition: background-color 100ms ease,
+              color 100ms ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.navItem:hover {
+  background: var(--sidebar-item-active-bg);
+  color: var(--ctx-color-text-inverse);
+}
+
+.navItemActive {
+  background: var(--sidebar-item-active-bg);
+  color: var(--ctx-color-text-inverse);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+}
+
+.navIcon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.navLabel {
+  flex: 1;
+}
+
+.badge {
+  background: var(--ctx-color-status-danger);
+  color: var(--ctx-color-text-inverse);
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 700; /* Bold */
+  border-radius: var(--ctx-radius-badge);
+  padding: 1px 6px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.badgeDot {
+  width: 8px;
+  height: 8px;
+  background: var(--ctx-color-status-danger);
+  border-radius: var(--ctx-radius-badge);
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+@media (max-width: 768px) {
+  .root {
+    display: none;
+  }
+}

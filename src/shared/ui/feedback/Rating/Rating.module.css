@@ -1,0 +1,36 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ctx-space-inline-sm);
+}
+
+/* ── Size S ── */
+.sizeS .value {
+  font-family: var(--ctx-font-body);
+  font-size: var(--ctx-font-size-label);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+  white-space: nowrap;
+}
+
+/* ── Size L ── */
+.sizeL .value {
+  font-family: var(--ctx-font-body);
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 600; /* Semibold */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+  white-space: nowrap;
+}
+
+/* ── Review count ── */
+.count {
+  font-family: var(--ctx-font-body);
+  font-size: var(--ctx-font-size-label);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-secondary);
+  white-space: nowrap;
+  margin-left: var(--ctx-space-inline-sm);
+}

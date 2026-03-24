@@ -1,0 +1,70 @@
+/* NumInput — inline numeric field, 60×36px, no border-radius (used as Counter middle segment) */
+
+.root {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+/* Background per type */
+.type_amount { background-color: var(--ctx-color-bg-subtle); }
+.type_weight  { background-color: var(--ctx-color-bg-subtle-hover); }
+
+/* Reset InputBase defaults — no radius, full size, centered, transparent bg */
+.input {
+  width: 100%;
+  height: 100%;
+  min-height: unset;
+  border-radius: 0;
+  background-color: transparent;
+  padding: 0;
+  text-align: center;
+  font-size: var(--ctx-font-size-body);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
+  line-height: var(--ctx-line-height-normal);
+
+  /* Hide number input spinners */
+  -moz-appearance: textfield;
+}
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* State: text visible, real value editable */
+.activated {
+  color: var(--ctx-color-text-default);
+}
+
+/* State: real input transparent — overlay renders the display value */
+.enabled {
+  color: transparent;
+  caret-color: var(--ctx-color-text-secondary);
+}
+.enabled:focus {
+  color: var(--ctx-color-text-default);
+}
+.enabled:focus ~ .overlay {
+  display: none;
+}
+
+/* Overlay — shows "N шт" / "N кг" in enabled state */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ctx-font-size-body);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-secondary);
+  pointer-events: none;
+  white-space: nowrap;
+}
+

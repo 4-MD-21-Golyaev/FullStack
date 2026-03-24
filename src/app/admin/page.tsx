@@ -6,7 +6,7 @@ import { Package, CreditCard, Settings } from 'lucide-react';
 import { ordersApi } from '@/lib/api/orders';
 import { paymentsApi } from '@/lib/api/payments';
 import { jobsApi, type JobName } from '@/lib/api/jobs';
-import { StatCard, OrderStatusBadge } from '@/components/ui';
+import { StatCard, OrderStatusBadge } from '@/shared/ui';
 import { OrderState } from '@/domain/order/OrderState';
 import styles from './page.module.css';
 

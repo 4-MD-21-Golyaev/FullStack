@@ -1,9 +1,9 @@
 'use client';
 
 import { useRoleGuard } from '@/lib/auth/guards';
-import { AdminSidebar } from '@/components/admin/AdminSidebar/AdminSidebar';
-import { AdminHeader } from '@/components/admin/AdminHeader/AdminHeader';
-import { Spinner } from '@/components/ui';
+import { AdminSidebar } from '@/widgets/admin/AdminSidebar/AdminSidebar';
+import { AdminHeader } from '@/widgets/admin/AdminHeader/AdminHeader';
+import { Spinner } from '@/shared/ui';
 import styles from './layout.module.css';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

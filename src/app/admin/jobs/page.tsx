@@ -2,7 +2,7 @@
 
 import { useQueries, useMutation, useQueryClient } from '@tanstack/react-query';
 import { jobsApi, type JobName, type JobStatusResponse } from '@/lib/api/jobs';
-import { Button } from '@/components/ui';
+import { Button } from '@/shared/ui';
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import styles from './page.module.css';

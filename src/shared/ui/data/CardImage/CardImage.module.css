@@ -1,0 +1,28 @@
+.root {
+  position: relative;
+  background: var(--ctx-color-bg-surface);
+  border-radius: var(--ctx-radius-card);
+  flex-shrink: 0;
+}
+
+.sizeL {
+  width: var(--card-image-w-l);
+  height: var(--card-image-h-l);
+  padding: var(--ctx-space-inset-sm);
+}
+
+.sizeM {
+  width: var(--card-image-size-m);
+  height: var(--card-image-size-m);
+  padding: var(--ctx-space-inset-xs);
+}
+
+.sizeS {
+  width: var(--card-image-size-s);
+  height: var(--card-image-size-s);
+  padding: var(--card-image-padding-s);
+}
+
+.image {
+  object-fit: contain;
+}

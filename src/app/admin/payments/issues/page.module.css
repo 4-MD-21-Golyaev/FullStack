@@ -11,8 +11,8 @@
 }
 
 .title {
-  font-size: var(--primitive-font-size-2xl);
-  font-weight: var(--primitive-font-weight-bold);
+  font-size: var(--primitive-font-size-24);
+  font-weight: var(--primitive-font-weight-700);
   color: var(--ctx-color-text-default);
   margin: 0;
 }
@@ -33,27 +33,27 @@
 
 .rowActions {
   display: flex;
-  gap: var(--primitive-space-2);
+  gap: var(--primitive-space-200);
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: var(--primitive-space-1);
+  gap: var(--primitive-space-100);
 }
 
 .label {
   font-size: var(--ctx-font-size-label);
-  font-weight: var(--primitive-font-weight-medium);
+  font-weight: var(--primitive-font-weight-500);
   color: var(--ctx-color-text-default);
 }
 
 .textarea {
-  font-size: var(--input-font-size);
+  font-size: var(--ctx-font-size-body);
   border: var(--input-border);
-  border-radius: var(--input-radius);
-  background: var(--input-bg);
-  color: var(--input-text);
+  border-radius: var(--ctx-radius-control);
+  background: var(--ctx-color-bg-surface);
+  color: var(--ctx-color-text-default);
   padding: var(--input-padding);
   outline: none;
   resize: vertical;
@@ -70,3 +70,4 @@
   font-size: var(--ctx-font-size-caption);
   color: var(--ctx-color-text-danger);
 }
+

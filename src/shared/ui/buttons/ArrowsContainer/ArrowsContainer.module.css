@@ -1,0 +1,25 @@
+.root {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.root > * {
+  pointer-events: auto;
+}
+
+.root.sm {
+  left: calc(var(--slider-arrows-overhang-sm) * -1);
+  right: calc(var(--slider-arrows-overhang-sm) * -1);
+}
+
+.root.md {
+  left: calc(var(--slider-arrows-overhang-md) * -1);
+  right: calc(var(--slider-arrows-overhang-md) * -1);
+}

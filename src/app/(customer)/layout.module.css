@@ -1,0 +1,9 @@
+.main {
+  background-color: var(--ctx-color-bg-surface);
+}
+
+.container {
+  max-width: var(--ctx-layout-max-width);
+  margin-inline: auto;
+  padding: var(--ctx-space-stack-md) var(--ctx-space-page-desktop) 0;
+}

@@ -1,0 +1,15 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sale-slider-title-gap);
+}
+
+.title {
+  font-family: var(--sale-slider-title-font-family);
+  font-size: var(--sale-slider-title-font-size);
+  font-weight: var(--sale-slider-title-font-weight);
+  line-height: var(--sale-slider-title-line-height);
+  color: var(--sale-slider-title-color);
+  margin: 0;
+}

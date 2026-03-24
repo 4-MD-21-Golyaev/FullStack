@@ -1,0 +1,53 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--app-market-btn-gap);
+  height: var(--app-market-btn-height);
+  padding: var(--app-market-btn-padding);
+  border-radius: var(--ctx-radius-control);
+  background-color: var(--ctx-color-bg-subtle);
+  color: var(--ctx-color-text-default);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--ctx-transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.root:hover {
+  background-color: var(--ctx-color-bg-subtle-hover);
+}
+
+.root:focus-visible {
+  background-color: var(--ctx-color-bg-subtle-focus);
+  outline: none;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.caption {
+  font-family: var(--ctx-font-body);
+  font-size: var(--ctx-font-size-xs);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+}
+
+.name {
+  font-family: var(--ctx-font-body);
+  font-size: var(--ctx-font-size-label);
+  font-weight: 600; /* Semibold */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+}

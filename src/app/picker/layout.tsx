@@ -1,8 +1,8 @@
 'use client';
 
 import { useRoleGuard } from '@/lib/auth/guards';
-import { WorkerHeader } from '@/components/WorkerHeader/WorkerHeader';
-import { Spinner } from '@/components/ui';
+import { WorkerHeader } from '@/widgets/WorkerHeader/WorkerHeader';
+import { Spinner } from '@/shared/ui';
 import styles from './layout.module.css';
 
 export default function PickerLayout({ children }: { children: React.ReactNode }) {

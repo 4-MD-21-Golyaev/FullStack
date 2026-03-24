@@ -1,0 +1,57 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  /* Fixed component dimension — 20×20px per Figma spec */
+  width: 20px;
+  height: 20px;
+}
+
+.input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.circle {
+  display: block;
+  /* Fixed component dimension — 20×20px per Figma spec */
+  width: 20px;
+  height: 20px;
+  border-radius: var(--ctx-radius-badge);
+  background-color: var(--ctx-color-text-disabled);
+  position: relative;
+  transition: background-color var(--ctx-transition);
+  pointer-events: none;
+}
+
+.circle.checked {
+  background-color: var(--ctx-color-action-primary);
+}
+
+.circle.checked::after {
+  content: '';
+  display: block;
+  position: absolute;
+  /* Fixed dot dimension — 12×12px per Figma spec */
+  width: 12px;
+  height: 12px;
+  border-radius: var(--ctx-radius-badge);
+  background-color: var(--ctx-color-bg-surface);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

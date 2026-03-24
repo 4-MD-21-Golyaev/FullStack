@@ -1,0 +1,40 @@
+.root {
+  background: var(--ctx-color-bg-surface);
+  border: var(--card-border);
+  border-radius: var(--ctx-radius-card);
+  padding: var(--ctx-space-inset-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inline-sm);
+  flex-wrap: wrap;
+}
+
+.id {
+  font-family: var(--ctx-font-code);
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+}
+
+.total {
+  font-size: var(--ctx-font-size-label);
+  font-weight: 600; /* Semibold */
+  color: var(--ctx-color-text-default);
+}
+
+.ago {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+  margin-left: auto;
+}
+
+.address {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-default);
+  margin: 0;
+}

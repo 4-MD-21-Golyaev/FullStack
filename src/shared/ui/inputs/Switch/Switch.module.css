@@ -1,0 +1,41 @@
+.root {
+  /* Component-specific dimensions: 36×20px pill, no token equivalent */
+  width: 36px;
+  height: 20px;
+  border-radius: var(--ctx-radius-badge);
+  border: none;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+  transition: background-color var(--ctx-transition);
+  flex-shrink: 0;
+}
+
+.root:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.off {
+  background-color: var(--ctx-color-text-disabled);
+}
+
+.on {
+  background-color: var(--ctx-color-action-primary);
+}
+
+.thumb {
+  /* Component-specific: 16×16px circle, 2px inset — no token equivalents */
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--ctx-radius-badge);
+  background-color: var(--ctx-color-bg-surface);
+  top: 2px;
+  left: 2px;
+  transition: left var(--ctx-transition);
+}
+
+.on .thumb {
+  left: 18px; /* 36px - 16px - 2px */
+}

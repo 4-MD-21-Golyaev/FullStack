@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { paymentsApi, type PaymentIssueDto } from '@/lib/api/payments';
-import { DataTable, ConfirmDialog, Button, type Column } from '@/components/ui';
+import { DataTable, ConfirmDialog, Button, type Column } from '@/shared/ui';
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import Link from 'next/link';

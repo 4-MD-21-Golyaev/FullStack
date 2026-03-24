@@ -1,76 +1,116 @@
-/* tokens/component.css — per-component tokens, reference only context tokens */
+/* tokens/component.css — per-component tokens
+ *
+ * RULE: A component token is justified ONLY when it:
+ *   (a) Contains a fixed value from Figma not present in the ctx layer
+ *       (px/rem/rgba literals, e.g. 240px, 6px, rgba(255,255,255,0.08))
+ *   (b) Combines multiple ctx-tokens into a single multi-value shorthand property,
+ *       e.g. `--button-padding-sm: var(--ctx-space-inset-sm) 12px`
+ *
+ * A single-line alias `--comp-x: var(--ctx-y)` is FORBIDDEN — use the ctx token directly
+ * in the CSS Module instead.
+ *
+ * font-weight is NOT tokenized — use a numeric literal with a Figma text style comment.
+ */
 :root {
 
   /* ── Button ── */
-  --button-font-size:        var(--ctx-font-size-label);
-  --button-font-weight:      var(--primitive-font-weight-medium);
-  --button-radius:           var(--ctx-radius-control);
-  --button-transition:       var(--ctx-transition);
+  --button-font-weight:      500; /* [Desktop]/Utilities/Medium */
 
-  --button-primary-bg:       var(--ctx-color-action-primary);
-  --button-primary-bg-hover: var(--ctx-color-action-primary-hover);
-  --button-primary-text:     var(--ctx-color-text-inverse);
-
-  --button-secondary-bg:       var(--ctx-color-bg-subtle);
-  --button-secondary-bg-hover: var(--ctx-color-bg-subtle-hover);
-  --button-secondary-text:     var(--ctx-color-text-default);
-
-  --button-danger-bg:       var(--ctx-color-action-danger);
-  --button-danger-bg-hover: var(--ctx-color-action-primary-active);
-  --button-danger-text:     var(--ctx-color-text-inverse);
-
-  --button-padding-sm: var(--ctx-space-inset-sm) var(--primitive-space-3);
+  /* Fixed Figma padding recipes (vertical ctx-token, horizontal Figma-literal) */
+  --button-padding-sm: var(--ctx-space-inset-sm) 12px;   /* Figma: sm 8/12 */
   --button-padding-md: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
-  --button-padding-lg: var(--primitive-space-3)  var(--ctx-space-inset-lg);
+  --button-padding-lg: var(--ctx-space-inset-md) var(--ctx-space-inset-lg);
+
+  /* ── LikeButton ── */
+  --like-button-radius: var(--ctx-radius-lg);
 
   /* ── Input ── */
-  --input-font-size:    var(--ctx-font-size-body);
-  --input-radius:       var(--ctx-radius-control);
-  --input-border:       1px solid var(--ctx-color-border-default);
-  --input-border-focus: 2px solid var(--ctx-color-border-focus);
+  --input-border:        1px solid var(--ctx-color-border-default);
+  --input-border-focus:  2px solid var(--ctx-color-border-focus);
   --input-border-danger: 1px solid var(--ctx-color-border-danger);
-  --input-bg:           var(--ctx-color-bg-surface);
-  --input-text:         var(--ctx-color-text-default);
-  --input-placeholder:  var(--ctx-color-text-disabled);
-  --input-padding:      var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  --input-padding:       var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  /* Fixed Figma height/padding per size */
+  --input-height-lg:    56px;    /* Figma: Input L */
+  --input-height-md:    52px;    /* Figma: Input M */
+  --input-height-sm:    44px;    /* Figma: Input S */
+  --input-padding-lg:   var(--ctx-space-inset-md) 32px;  /* Figma: L horizontal 32px */
+  --input-padding-md:   var(--ctx-space-inset-md) var(--ctx-space-inset-md);
+  --input-padding-sm:   12px var(--ctx-space-inset-lg);  /* Figma: S vertical 12px */
 
   /* ── Badge ── */
-  --badge-font-size:   var(--ctx-font-size-label);
-  --badge-font-weight: var(--primitive-font-weight-semibold);
-  --badge-radius:      var(--ctx-radius-badge);
-  --badge-padding:     var(--primitive-space-1) var(--primitive-space-2);
+  /* Override: 6px vertical not in spacing scale */
+  --badge-padding-s: var(--ctx-space-inset-xs) var(--ctx-space-inset-sm);  /* 4px 8px */
+  --badge-padding-m: 6px 12px;   /* Figma: M badge — 6px/12px not in scale */
 
   /* ── Card ── */
-  --card-bg:      var(--ctx-color-bg-surface);
-  --card-radius:  var(--ctx-radius-card);
-  --card-shadow:  var(--ctx-shadow-card);
   --card-border:  1px solid var(--ctx-color-border-default);
-  --card-padding: var(--ctx-space-inset-lg);
-
-  /* ── Modal ── */
-  --modal-bg:      var(--ctx-color-bg-surface);
-  --modal-radius:  var(--ctx-radius-modal);
-  --modal-shadow:  var(--ctx-shadow-modal);
-  --modal-overlay: var(--ctx-color-bg-overlay);
-  --modal-z:       var(--ctx-z-modal);
 
   /* ── Table (admin) ── */
-  --table-header-bg:    var(--ctx-color-bg-subtle);
-  --table-header-text:  var(--ctx-color-text-secondary);
-  --table-row-hover-bg: var(--ctx-color-bg-subtle-hover);
-  --table-border:       var(--ctx-color-border-default);
   --table-cell-padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
 
-  /* ── SlaTimer ── */
+  /* ── SlaTimer (override: maps timer states to status colors) ── */
   --sla-color-ok:      var(--ctx-color-status-success);
   --sla-color-warning: var(--ctx-color-status-warning);
   --sla-color-overdue: var(--ctx-color-status-danger);
 
-  /* ── Sidebar (admin) ── */
-  --sidebar-bg:              var(--primitive-color-neutral-900);
-  --sidebar-text:            var(--primitive-color-neutral-400);
-  --sidebar-text-active:     var(--primitive-color-neutral-0);
+  /* ── Sidebar (admin dark theme — fixed pixel dimensions) ── */
   --sidebar-item-active-bg:  rgba(255, 255, 255, 0.08);
   --sidebar-width:           240px;
   --sidebar-width-collapsed: 56px;
+
+  /* ── CardImage (fixed Figma dimensions) ── */
+  --card-image-padding-s: 2px;                          /* Figma: S thumbnail padding */
+  --card-image-w-l:       210px;   /* Figma: L product card image width */
+  --card-image-h-l:       176px;   /* Figma: L product card image height */
+  --card-image-size-m:    60px;    /* Figma: M thumbnail */
+  --card-image-size-s:    52px;    /* Figma: S thumbnail */
+
+  /* ── PaginationBullet (fixed non-scale sizes) ── */
+  --pagination-bullet-size:         6px;   /* Figma: bullet inactive width */
+  --pagination-bullet-size-active:  12px;  /* Figma: bullet active width */
+
+  /* ── Pagination ── */
+  --pagination-gap: 12px;   /* Figma: gap between bullets */
+
+  /* ── Link (fixed optical alignment) ── */
+  --link-icon-offset: 2px;   /* optical alignment — no 2px primitive */
+
+  /* ── Price (semantic override: heading sizes used in non-heading context) ── */
+  --price-current-font-size-m: var(--ctx-font-size-h4);   /* 20px — ProductCard */
+  --price-current-font-size-l: var(--ctx-font-size-h3);   /* 24px — detail page */
+
+  /* ── ProductCard (fixed Figma dimensions only) ── */
+  --product-card-w-l:         201px;   /* Figma: L card width */
+  --product-card-h-l:         306px;   /* Figma: L card height */
+  --product-card-w-s:         165px;   /* Figma: S card width */
+  --product-card-img-h-l:     176px;   /* Figma: L card image height */
+  --product-card-img-h-s:     160px;   /* Figma: S card image height */
+  --product-card-like-top:    4px;     /* optical offset */
+  --product-card-badge-left:  6px;     /* badge offset from image edge */
+
+  /* ── Rating (fixed Figma star sizes) ── */
+  --rating-star-size-s:  16px;   /* Figma: S star */
+  --rating-star-size-l:  28px;   /* Figma: L star */
+
+  /* ── AppMarketButton (fixed Figma dimensions) ── */
+  --app-market-btn-height:  44px;   /* Figma: fixed height */
+  --app-market-btn-padding: 10px var(--ctx-space-inset-lg);  /* 10px — no scale equivalent */
+  --app-market-btn-gap:     12px;   /* Figma: icon-text gap */
+
+  /* ── Slider ── */
+  --slider-gap-l: 12px;   /* Figma: gap between cards, L */
+  --slider-gap-s: 6px;    /* Figma: gap between cards, S */
+  --slider-arrows-overhang-sm: 16px; /* Arrow container overhang, S */
+  --slider-arrows-overhang-md: 20px; /* Arrow container overhang, M */
+
+  /* ── Header (customer — fixed layout dimensions) ── */
+  --header-height:              155px;   /* topbar + mainbar combined */
+  --header-topbar-height:       65px;    /* first level */
+  --header-mainbar-height:      90px;    /* second level */
+  --header-catalog-btn-width:   128px;
+  --header-catalog-btn-height:  52px;
+  --header-phone-item-gap:      2px;     /* optical label/number gap */
+  --header-breakpoint-mobile:   767px;
+
+  /* ── Footer (customer — fixed layout dimensions) ── */
 }

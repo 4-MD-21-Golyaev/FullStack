@@ -1,0 +1,74 @@
+/* LabelInput — floating-label pill input */
+
+.root {
+  display: flex;
+  align-items: center;
+  border-radius: var(--ctx-radius-control);
+  /* 66px — component-specific fixed height (Figma: enabled state) */
+  height: 66px;
+  width: 100%;
+  transition: background-color var(--ctx-transition);
+  cursor: text;
+  box-sizing: border-box;
+}
+
+/* ── State modifiers ── */
+.enabled  { background-color: var(--ctx-color-bg-subtle); }
+.activated { background-color: var(--ctx-color-bg-subtle-hover); }
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Sizes (M / S) ── */
+.size_md { padding: 12px 32px; /* Figma: M LabelInput 12px/32px */ }
+.size_sm { padding: 12px var(--ctx-space-inset-md); /* Figma: S LabelInput vertical 12px */ }
+
+/* ── Icon slot (32×32) ── */
+.icon {
+  flex-shrink: 0;
+  width: 32px;   /* icon slot — no matching token; Figma specifies 32×32 */
+  height: 32px;  /* icon slot — no matching token; Figma specifies 32×32 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px; /* Figma: icon-to-text gap */
+}
+
+/* ── Inner column: label row + input row ── */
+.inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Floating label (visible only in activated state) ── */
+.label {
+  display: block;
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-tight);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── InputBase reset: transparent bg, no border, no padding ── */
+.inputOverride {
+  background: transparent;
+  padding: 0;
+  min-height: unset;
+  border-radius: 0;
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-text-default);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  line-height: var(--ctx-line-height-tight);
+  width: 100%;
+}
+
+.inputOverride::placeholder {
+  color: var(--ctx-color-text-secondary);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
+}

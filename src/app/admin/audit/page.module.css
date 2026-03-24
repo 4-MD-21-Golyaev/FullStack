@@ -5,8 +5,8 @@
 }
 
 .title {
-  font-size: var(--primitive-font-size-2xl);
-  font-weight: var(--primitive-font-weight-bold);
+  font-size: var(--primitive-font-size-24);
+  font-weight: var(--primitive-font-weight-700);
   color: var(--ctx-color-text-default);
   margin: 0;
 }
@@ -18,11 +18,11 @@
 }
 
 .dateInput {
-  font-size: var(--input-font-size);
+  font-size: var(--ctx-font-size-body);
   border: var(--input-border);
-  border-radius: var(--input-radius);
-  background: var(--input-bg);
-  color: var(--input-text);
+  border-radius: var(--ctx-radius-control);
+  background: var(--ctx-color-bg-surface);
+  color: var(--ctx-color-text-default);
   padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
   outline: none;
   transition: border-color var(--ctx-transition);
@@ -57,11 +57,11 @@
 .timeline {
   display: flex;
   flex-direction: column;
-  gap: var(--primitive-space-2);
+  gap: var(--primitive-space-200);
 }
 
 .entry {
-  background: var(--card-bg);
+  background: var(--ctx-color-bg-surface);
   border: var(--card-border);
   border-radius: var(--ctx-radius-control);
   overflow: hidden;
@@ -84,7 +84,7 @@
 
 .entryAction {
   font-size: var(--ctx-font-size-label);
-  font-weight: var(--primitive-font-weight-semibold);
+  font-weight: var(--primitive-font-weight-600);
   color: var(--ctx-color-text-default);
 }
 
@@ -127,12 +127,12 @@
   min-width: 200px;
   display: flex;
   flex-direction: column;
-  gap: var(--primitive-space-1);
+  gap: var(--primitive-space-100);
 }
 
 .diffLabel {
   font-size: var(--ctx-font-size-caption);
-  font-weight: var(--primitive-font-weight-semibold);
+  font-weight: var(--primitive-font-weight-600);
   color: var(--ctx-color-text-secondary);
   text-transform: uppercase;
 }
@@ -146,3 +146,4 @@
   max-height: 300px;
   overflow-y: auto;
 }
+

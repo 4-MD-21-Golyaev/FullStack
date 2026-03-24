@@ -1,0 +1,35 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ctx-space-stack-sm);
+  cursor: text;
+  position: relative;
+}
+
+.segments {
+  display: flex;
+  flex-direction: row;
+  gap: var(--ctx-space-inset-sm);
+}
+
+/* Visually hidden — still focusable and functional */
+.hiddenInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.errorMessage {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-danger);
+  line-height: var(--ctx-line-height-loose);
+}

@@ -1,0 +1,175 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inline-md);
+}
+
+.orderId {
+  font-family: var(--ctx-font-code);
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+}
+
+.total {
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 700; /* Bold */
+  color: var(--ctx-color-text-default);
+}
+
+.address {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+  margin: 0;
+}
+
+.releaseBtn {
+  background: none;
+  border: 1px solid var(--ctx-color-border-default);
+  color: var(--ctx-color-text-secondary);
+  font-size: var(--ctx-font-size-label);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  border-radius: var(--ctx-radius-control);
+  cursor: pointer;
+  transition: all 100ms ease;
+}
+
+.releaseBtn:hover {
+  border-color: var(--ctx-color-status-danger);
+  color: var(--ctx-color-status-danger);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-sm);
+}
+
+.itemRow {
+  background: var(--ctx-color-bg-surface);
+  border: var(--card-border);
+  border-radius: var(--ctx-radius-control);
+  padding: var(--ctx-space-inset-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-sm);
+}
+
+.itemInfo {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ctx-space-inline-sm);
+  flex-wrap: wrap;
+}
+
+.itemName {
+  font-size: var(--ctx-font-size-body);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  color: var(--ctx-color-text-default);
+  flex: 1;
+}
+
+.itemArticle {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+  font-family: var(--ctx-font-code);
+}
+
+.itemPrice {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+}
+
+.absenceInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inline-sm);
+  flex-wrap: wrap;
+  background: var(--ctx-color-bg-subtle);
+  border-radius: var(--ctx-radius-control);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+}
+
+.absenceLabel {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+}
+
+.absenceValue {
+  font-size: var(--ctx-font-size-label);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  color: var(--ctx-color-text-default);
+}
+
+.customerPhone {
+  margin-left: auto;
+  font-size: var(--ctx-font-size-label);
+  font-weight: 600; /* Semibold */
+  color: var(--ctx-color-text-default);
+}
+
+.itemControls {
+  display: flex;
+  gap: var(--ctx-space-inline-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.qtySpinner {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inset-sm);
+  background: var(--ctx-color-bg-subtle);
+  border-radius: var(--ctx-radius-control);
+  padding: var(--ctx-space-inset-xs);
+}
+
+.qtyBtn {
+  width: 36px;
+  height: 36px;
+  background: var(--ctx-color-bg-surface);
+  border: 1px solid var(--ctx-color-border-default);
+  border-radius: var(--ctx-radius-sm);
+  font-size: var(--ctx-font-size-body);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ctx-color-text-default);
+}
+
+.qtyBtn:hover:not(:disabled) {
+  background: var(--ctx-color-border-default);
+}
+
+.qtyBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.qtyValue {
+  min-width: 36px;
+  text-align: center;
+  font-size: var(--ctx-font-size-body);
+  font-weight: 600; /* Semibold */
+  font-variant-numeric: tabular-nums;
+}
+
+
+.itemSubtotal {
+  font-size: var(--ctx-font-size-label);
+  font-weight: 600; /* Semibold */
+  color: var(--ctx-color-text-default);
+  text-align: right;
+}

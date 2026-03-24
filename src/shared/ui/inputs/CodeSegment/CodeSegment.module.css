@@ -1,0 +1,38 @@
+.root {
+  /* Figma 1678:41329 — fixed segment dimensions */
+  width: 60px;  /* hardcoded per spec */
+  height: 64px; /* hardcoded per spec */
+  border-radius: var(--ctx-radius-control);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── States ── */
+.state_enabled {
+  background-color: var(--ctx-color-bg-subtle);
+}
+
+.state_activated {
+  background-color: var(--ctx-color-bg-subtle);
+}
+
+.state_error {
+  background-color: var(--ctx-color-action-danger-bg);
+}
+
+/* ── Digit typography ── */
+.digit {
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 700; /* Bold */
+  line-height: var(--ctx-line-height-loose);
+}
+
+.state_activated .digit {
+  color: var(--ctx-color-text-default);
+}
+
+.state_error .digit {
+  color: var(--ctx-color-status-danger);
+}

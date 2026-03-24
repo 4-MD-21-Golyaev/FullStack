@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { productsApi, type ProductDto } from '@/lib/api/products';
-import { DataTable, FilterBar, Button, type Column } from '@/components/ui';
+import { DataTable, FilterBar, Button, type Column } from '@/shared/ui';
 import styles from './page.module.css';
 
 const PAGE_SIZE = 20;

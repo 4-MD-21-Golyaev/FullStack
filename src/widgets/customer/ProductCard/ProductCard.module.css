@@ -1,0 +1,87 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: var(--product-card-w-l);
+  height: var(--product-card-h-l);
+  background: var(--ctx-color-bg-surface);
+  border-radius: var(--ctx-radius-card);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ── Image link ── */
+.imageLink {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: var(--product-card-img-h-l);
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+/* Override CardImage to fill the link area */
+.imageLink > div {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+/* ── Discount badge (overlays image, bottom-left) ── */
+.discountBadge {
+  position: absolute;
+  bottom: var(--ctx-space-inset-sm);
+  left: var(--product-card-badge-left);
+  pointer-events: none;
+}
+
+/* ── Like button — absolute, top-right over image ── */
+.likeButton {
+  position: absolute;
+  top: var(--product-card-like-top);
+  right: var(--product-card-like-top);
+  z-index: 1;
+}
+
+/* ── Info section ── */
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-sm);
+  padding: var(--ctx-space-stack-sm) var(--ctx-space-inset-md) var(--ctx-space-inset-md);
+  flex: 1;
+}
+
+/* ── Name link ── */
+.nameLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.name {
+  font-family: var(--ctx-font-body);
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+  /* Clamp to 2 lines */
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Bottom row: price + cart button ── */
+.bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+/* ── In-cart state: cart button uses gray variant (already handled via prop) ── */
+.cartButton {
+  flex-shrink: 0;
+}

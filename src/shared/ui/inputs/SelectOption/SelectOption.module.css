@@ -1,0 +1,39 @@
+.root {
+  width: 100%;
+  text-align: left;
+  background-color: var(--ctx-color-bg-subtle);
+  color: var(--ctx-color-text-default);
+  font-size: var(--ctx-font-size-body);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  line-height: var(--ctx-line-height-normal);
+  cursor: pointer;
+  transition: background-color var(--ctx-transition);
+  user-select: none;
+}
+
+.root:hover {
+  background-color: var(--ctx-color-bg-subtle-hover);
+}
+
+/* ── Sizes ── */
+.lg { padding: var(--ctx-space-inset-md) 32px; /* Figma: L horizontal 32px */ }
+.sm { padding: 12px var(--ctx-space-inset-lg); /* Figma: S vertical 12px */ }
+
+/* ── Selected state ── */
+.isSelected {
+  font-weight: 600; /* Semibold */
+}
+
+/* ── Multiselect mode ── */
+.multiselect {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Figma: checkbox-label gap */
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--ctx-color-text-default);
+}

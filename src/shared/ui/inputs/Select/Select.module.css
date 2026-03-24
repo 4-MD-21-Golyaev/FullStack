@@ -1,0 +1,71 @@
+.root {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+/* ── Trigger button ── */
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background-color: var(--ctx-color-bg-subtle);
+  color: var(--ctx-color-text-default);
+  border: none;
+  border-radius: var(--ctx-radius-control);
+  font-size: var(--ctx-font-size-body);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  line-height: var(--ctx-line-height-normal);
+  cursor: pointer;
+  transition: background-color var(--ctx-transition);
+  text-align: left;
+}
+
+.trigger:hover:not(:disabled) {
+  background-color: var(--ctx-color-bg-subtle-hover);
+}
+
+.trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Sizes ── */
+.trigger.lg {
+  padding: var(--ctx-space-inset-md) 32px; /* Figma: L select horizontal 32px */
+  min-height: 52px;
+}
+
+.trigger.sm {
+  padding: 12px var(--ctx-space-inset-lg); /* Figma: S select vertical 12px */
+  min-height: 44px;
+}
+
+/* ── Label / Placeholder ── */
+.label {
+  flex: 1;
+  color: var(--ctx-color-text-default);
+}
+
+.placeholder {
+  flex: 1;
+  color: var(--ctx-color-text-secondary);
+}
+
+.chevron {
+  flex-shrink: 0;
+  margin-left: var(--ctx-space-inset-sm);
+}
+
+/* ── Dropdown list ── */
+.dropdown {
+  position: absolute;
+  top: calc(100% + var(--ctx-space-inset-xs));
+  left: 0;
+  width: 100%;
+  border-radius: var(--ctx-radius-control);
+  overflow: hidden;
+  z-index: var(--ctx-z-dropdown);
+  box-shadow: var(--ctx-shadow-card);
+}

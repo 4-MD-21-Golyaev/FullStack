@@ -1,0 +1,19 @@
+.bullet {
+  display: block;
+  width: var(--pagination-bullet-size);
+  height: var(--pagination-bullet-size);
+  border-radius: var(--ctx-radius-badge);
+  background-color: var(--ctx-color-icon-secondary);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color var(--ctx-transition);
+}
+
+.bullet:hover {
+  background-color: var(--ctx-color-text-secondary);
+}
+
+.bullet.active {
+  background-color: var(--ctx-color-action-primary);
+}

@@ -5,8 +5,9 @@
 }
 
 .title {
-  font-size: var(--primitive-font-size-2xl);
-  font-weight: var(--primitive-font-weight-bold);
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700; /* Bold */
   color: var(--ctx-color-text-default);
   margin: 0;
 }
+

@@ -1,0 +1,35 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 64px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.root:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.enabled {
+  background-color: var(--ctx-color-bg-surface);
+  color: var(--ctx-color-icon-default);
+}
+
+.enabled:hover:not(:disabled) {
+  background-color: var(--ctx-color-bg-subtle);
+}
+
+.focused {
+  background-color: var(--ctx-color-bg-subtle);
+  color: var(--ctx-color-icon-default);
+}
+
+.activated {
+  background-color: var(--ctx-color-bg-surface);
+  color: var(--ctx-color-action-primary);
+}
