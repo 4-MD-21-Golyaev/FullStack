@@ -1,0 +1,184 @@
+/* ── Footer widget ── */
+
+.root {
+  background-color: var(--ctx-color-bg-surface);
+  width: 100%;
+}
+
+.inner {
+  max-width: var(--ctx-layout-max-width);
+  margin-inline: auto;
+  padding: var(--ctx-space-stack-xl) var(--ctx-space-page-desktop) var(--ctx-space-stack-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-xl);
+}
+
+/* ── Logo ── */
+
+.logo {
+  flex-shrink: 0;
+}
+
+/* ── Content (two rows) ── */
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-lg);
+}
+
+/* ── Row 1: columns ── */
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ctx-space-stack-lg);
+}
+
+/* ── Support column ── */
+
+.support {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-lg);
+  flex-shrink: 0;
+}
+
+.supportHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-sm);
+}
+
+.supportSchedule {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+}
+
+.contacts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-lg);
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Figma: contact item gap */
+}
+
+.contactText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-sm);
+}
+
+.contactLabel {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 700; /* Bold */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+}
+
+.messengers {
+  display: flex;
+  gap: 12px; /* Figma: messenger buttons gap */
+}
+
+/* ── Nav columns ── */
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-md);
+  flex-shrink: 0;
+}
+
+.colTitle {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 700; /* Bold */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+}
+
+.linkList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-md);
+}
+
+/* ── Row 2: addresses + app buttons ── */
+
+.rowBottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--ctx-space-stack-lg);
+}
+
+.addressBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Figma: address block gap */
+}
+
+.addresses {
+  display: flex;
+  gap: var(--ctx-space-stack-lg);
+}
+
+.address {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Figma: address item gap */
+}
+
+.addressText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-sm);
+}
+
+.addressName {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+}
+
+.appButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px; /* Figma: app buttons gap */
+  align-items: center;
+}
+
+/* ── Copyright ── */
+
+.copyright {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-lg);
+  padding-top: var(--ctx-space-inset-lg);
+  position: relative;
+}
+
+.divider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--ctx-color-border-default);
+}
+
+.copyrightText {
+  font-size: var(--ctx-font-size-label);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-secondary);
+}

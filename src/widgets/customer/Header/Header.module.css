@@ -1,0 +1,123 @@
+/* ── Header (customer widget) ── */
+
+.root {
+  position: sticky;
+  top: 0;
+  z-index: var(--ctx-z-dropdown);
+  background-color: var(--ctx-color-bg-surface);
+  box-shadow: var(--ctx-shadow-card);
+}
+
+/* ── Shared container ── */
+
+.container {
+  width: 100%;
+  max-width: var(--ctx-layout-max-width);
+  margin-inline: auto;
+  padding-inline: var(--ctx-space-page-desktop);
+  display: flex;
+  align-items: center;
+}
+
+/* ── Top bar ── */
+
+.topBar {
+  height: var(--header-topbar-height);
+  background-color: var(--ctx-color-bg-surface);
+}
+
+.topBar .container {
+  height: 100%;
+  justify-content: flex-end;
+  padding-bottom: var(--ctx-space-inset-sm);
+  padding-top: var(--ctx-space-inset-md);
+}
+
+.phones {
+  display: flex;
+  gap: var(--ctx-space-stack-xl);
+}
+
+.phoneItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--header-phone-item-gap);
+}
+
+.phoneNumber {
+  font-size: var(--ctx-font-size-body);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.phoneLabel {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}
+
+/* ── Main bar ── */
+
+.mainBar {
+  height: var(--header-mainbar-height);
+  background-color: var(--ctx-color-bg-surface);
+}
+
+.mainBar .container {
+  height: 100%;
+  gap: var(--ctx-space-stack-lg);
+  padding-block: var(--ctx-space-inset-md);
+}
+
+/* ── Logo ── */
+
+.logo {
+  flex-shrink: 0;
+}
+
+/* ── Search ── */
+
+.searchWrap {
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+.search {
+  width: 100%;
+}
+
+/* ── Actions ── */
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-stack-lg);
+  flex-shrink: 0;
+}
+
+.catalogBtnLink {
+  text-decoration: none;
+}
+
+/* ── Mobile ── */
+
+@media (max-width: 767px) { /* --header-breakpoint-mobile */
+  .topBar {
+    display: none;
+  }
+
+  .mainBar .container {
+    gap: 12px; /* Figma: mobile header gap */
+    padding-inline: var(--ctx-space-page-mobile);
+  }
+
+  .phones {
+    display: none;
+  }
+
+  .catalogBtn {
+    display: none;
+  }
+}
