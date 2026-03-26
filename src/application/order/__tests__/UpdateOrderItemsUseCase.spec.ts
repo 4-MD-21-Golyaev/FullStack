@@ -51,7 +51,9 @@ function makeRunner(order: Order | null, product: Product | null = null) {
         findByIds: vi.fn(),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
+        findByCategoryIds: vi.fn(),
         findByArticle: vi.fn(),
+        findBySearch: vi.fn(),
     };
 
     const runner: TransactionRunner = {
@@ -148,12 +150,26 @@ describe('UpdateOrderItemsUseCase', () => {
         ).rejects.toThrow('at least one item');
     });
 
-    it('throws if quantity is zero or negative', async () => {
+    it('excludes items with qty=0 from result (absent/unprocessed)', async () => {
+        const order = makeOrder(OrderState.PICKING);
+        const { runner, orderRepo } = makeRunner(order);
+
+        const result = await new UpdateOrderItemsUseCase(runner).execute({
+            orderId: 'order-1',
+            items: [{ productId: 'p1', quantity: 3 }, { productId: 'p2', quantity: 0 }],
+        });
+
+        expect(result.items).toHaveLength(1);
+        expect(result.items[0]).toMatchObject({ productId: 'p1', quantity: 3 });
+        expect(orderRepo.save).toHaveBeenCalledWith(result);
+    });
+
+    it('throws if quantity is negative', async () => {
         const { runner } = makeRunner(makeOrder(OrderState.PICKING));
 
         await expect(
-            new UpdateOrderItemsUseCase(runner).execute({ orderId: 'order-1', items: [{ productId: 'p1', quantity: 0 }] })
-        ).rejects.toThrow('quantity must be positive');
+            new UpdateOrderItemsUseCase(runner).execute({ orderId: 'order-1', items: [{ productId: 'p1', quantity: -1 }] })
+        ).rejects.toThrow('cannot be negative');
     });
 
     it('throws if new product is not found in the repository', async () => {

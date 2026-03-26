@@ -45,7 +45,9 @@ function makeProductRepo(resolvedProduct: any): ProductRepository {
         findByIds: vi.fn(),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
+        findByCategoryIds: vi.fn(),
         findByArticle: vi.fn(),
+        findBySearch: vi.fn(),
         save: vi.fn(),
     };
 }

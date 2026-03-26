@@ -55,7 +55,9 @@ function makeTransactionRunner(order: Order | null, product: Product | null): Tr
         findByIds: vi.fn(),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
+        findByCategoryIds: vi.fn(),
         findByArticle: vi.fn(),
+        findBySearch: vi.fn(),
     };
 
     const runner: any = {

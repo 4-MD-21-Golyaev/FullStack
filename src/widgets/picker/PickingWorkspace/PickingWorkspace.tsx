@@ -4,9 +4,10 @@ import { useState, useCallback, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi, type OrderItemDto, type OrderDto } from '@/lib/api/orders';
 import { pickerApi } from '@/lib/api/picker';
-import { Button, ConfirmDialog } from '@/shared/ui';
+import { Button, ConfirmDialog, Counter } from '@/shared/ui';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 import { OrderState } from '@/domain/order/OrderState';
+import { ProductSearchModal, type ProductSearchResult } from '@/features/product-search';
 import styles from './PickingWorkspace.module.css';
 
 const ABSENCE_LABELS: Record<AbsenceResolutionStrategy, string> = {
@@ -21,14 +22,47 @@ const CALL_STRATEGIES = new Set<AbsenceResolutionStrategy>([
   AbsenceResolutionStrategy.CALL_REMOVE,
 ]);
 
-interface ItemRowProps {
-  item: OrderItemDto;
-  onQtyChange: (productId: string, qty: number) => void;
-  localQty: number;
+const REPLACE_STRATEGIES = new Set<AbsenceResolutionStrategy>([
+  AbsenceResolutionStrategy.AUTO_REPLACE,
+  AbsenceResolutionStrategy.CALL_REPLACE,
+]);
+
+type ItemLocalState = {
+  qty: number;
   maxQty: number;
+  absent: boolean;
+  replacementProductIds: string[];
+};
+
+type ReplacementLocalState = {
+  name: string;
+  article: string;
+  price: number;
+  qty: number;
+  replacementFor: string;
+};
+
+type ItemMode = 'unprocessed' | 'collected' | 'absent' | 'replaced';
+
+function deriveMode(state: ItemLocalState): ItemMode {
+  if (state.absent && state.replacementProductIds.length > 0) return 'replaced';
+  if (state.absent) return 'absent';
+  if (state.qty > 0) return 'collected';
+  return 'unprocessed';
 }
 
-function ItemRow({ item, onQtyChange, localQty, maxQty }: ItemRowProps) {
+interface ItemRowProps {
+  item: OrderItemDto;
+  mode: ItemMode;
+  localQty: number;
+  maxQty: number;
+  onQtyChange: (productId: string, qty: number) => void;
+  onMarkAbsent: (productId: string) => void;
+  onRestore: (productId: string) => void;
+  onAddReplacement?: (productId: string) => void;
+}
+
+function ItemRow({ item, mode, localQty, maxQty, onQtyChange, onMarkAbsent, onRestore, onAddReplacement }: ItemRowProps) {
   return (
     <div className={styles.itemRow}>
       <div className={styles.itemInfo}>
@@ -36,29 +70,75 @@ function ItemRow({ item, onQtyChange, localQty, maxQty }: ItemRowProps) {
         <span className={styles.itemArticle}>{item.article}</span>
         <span className={styles.itemPrice}>{item.price.toLocaleString('ru')} ₽</span>
       </div>
+
       <div className={styles.itemControls}>
-        <div className={styles.qtySpinner}>
-          <button
-            type="button"
-            className={styles.qtyBtn}
-            onClick={() => onQtyChange(item.productId, Math.max(0, localQty - 1))}
-          >
-            −
-          </button>
-          <span className={styles.qtyValue}>{localQty} / {maxQty}</span>
-          <button
-            type="button"
-            className={styles.qtyBtn}
-            disabled={localQty >= maxQty}
-            onClick={() => onQtyChange(item.productId, localQty + 1)}
-          >
-            +
-          </button>
+        {mode !== 'absent' ? (
+          <>
+            <div className={styles.qtyWrapper}>
+              <Counter
+                value={localQty}
+                min={0}
+                max={maxQty}
+                size="lg"
+                onChange={(qty) => onQtyChange(item.productId, qty)}
+              />
+              <span className={styles.maxQty}>/ {maxQty}</span>
+            </div>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => onMarkAbsent(item.productId)}
+            >
+              Отсутствует
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => onRestore(item.productId)}
+            >
+              Восстановить
+            </Button>
+            {onAddReplacement && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => onAddReplacement(item.productId)}
+              >
+                Выбрать замену
+              </Button>
+            )}
+          </>
+        )}
+      </div>
+
+      {mode === 'collected' && (
+        <div className={styles.itemSubtotal}>
+          {(item.price * localQty).toLocaleString('ru')} ₽
         </div>
+      )}
+    </div>
+  );
+}
+
+interface ItemGroupProps {
+  title: string;
+  count: number;
+  variant?: 'default' | 'absent' | 'collected' | 'replaced';
+  children: React.ReactNode;
+}
+
+function ItemGroup({ title, count, variant = 'default', children }: ItemGroupProps) {
+  const cls = [styles.group, styles[`group_${variant}`]].filter(Boolean).join(' ');
+  return (
+    <div className={cls}>
+      <div className={styles.groupHeader}>
+        <span className={styles.groupTitle}>{title}</span>
+        <span className={styles.groupCount}>{count}</span>
       </div>
-      <div className={styles.itemSubtotal}>
-        {(item.price * localQty).toLocaleString('ru')} ₽
-      </div>
+      <div className={styles.groupItems}>{children}</div>
     </div>
   );
 }
@@ -72,14 +152,22 @@ export function PickingWorkspace({ order }: Props) {
   const [showRelease, setShowRelease] = useState(false);
   const [showComplete, setShowComplete] = useState(false);
 
-  const [localItems, setLocalItems] = useState<Record<string, { qty: number; maxQty: number }>>(() =>
+  // Capture initial items once — server may later drop qty=0 items from order.items
+  const allItems = useRef(order.items).current;
+
+  const [localItems, setLocalItems] = useState<Record<string, ItemLocalState>>(() =>
     Object.fromEntries(
-      order.items.map((item) => [
-        item.productId,
-        { qty: item.quantity, maxQty: item.quantity },
-      ]),
-    ),
+      allItems.map(item => [item.productId, { qty: 0, maxQty: item.quantity, absent: false, replacementProductIds: [] }])
+    )
   );
+  const localItemsRef = useRef(localItems);
+  localItemsRef.current = localItems;
+
+  const [replacements, setReplacements] = useState<Record<string, ReplacementLocalState>>({});
+  const replacementsRef = useRef(replacements);
+  replacementsRef.current = replacements;
+
+  const [searchForProductId, setSearchForProductId] = useState<string | null>(null);
 
   const saveDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -97,8 +185,34 @@ export function PickingWorkspace({ order }: Props) {
     },
   });
 
+  const scheduleUpdate = useCallback(() => {
+    if (saveDebounceRef.current) clearTimeout(saveDebounceRef.current);
+    saveDebounceRef.current = setTimeout(() => {
+      const snapshot = localItemsRef.current;
+      const repsSnapshot = replacementsRef.current;
+      const originalItems = allItems.map(item => ({
+        ...item,
+        quantity: snapshot[item.productId]?.absent ? 0 : (snapshot[item.productId]?.qty ?? 0),
+      }));
+      const replacementItems = Object.entries(repsSnapshot).map(([productId, r]) => ({
+        productId,
+        name: r.name,
+        article: r.article,
+        price: r.price,
+        quantity: r.qty,
+      }));
+      updateMutation.mutate([...originalItems, ...replacementItems]);
+    }, 500);
+  }, [allItems, updateMutation]);
+
   const completeMutation = useMutation({
-    mutationFn: () => ordersApi.completePicking(order.id),
+    mutationFn: () => {
+      const snapshot = localItemsRef.current;
+      const unprocessedIds = allItems
+        .filter(i => deriveMode(snapshot[i.productId]) === 'unprocessed')
+        .map(i => i.productId);
+      return ordersApi.completePicking(order.id, unprocessedIds);
+    },
     onSuccess: () => {
       queryClient.setQueryData(['picker', 'me'], { order: null });
       setShowComplete(false);
@@ -113,28 +227,100 @@ export function PickingWorkspace({ order }: Props) {
     },
   });
 
-  const scheduleUpdate = useCallback(() => {
-    if (saveDebounceRef.current) clearTimeout(saveDebounceRef.current);
-    saveDebounceRef.current = setTimeout(() => {
-      const items = order.items.map((item) => ({
-        ...item,
-        quantity: localItems[item.productId]?.qty ?? item.quantity,
-      }));
-      updateMutation.mutate(items);
-    }, 500);
-  }, [localItems, order.items, updateMutation]);
-
-  const handleQtyChange = (productId: string, qty: number) => {
-    setLocalItems((prev) => ({ ...prev, [productId]: { ...prev[productId], qty } }));
+  const handleQtyChange = useCallback((productId: string, qty: number) => {
+    setLocalItems(prev => ({ ...prev, [productId]: { ...prev[productId], qty, absent: false } }));
     scheduleUpdate();
-  };
+  }, [scheduleUpdate]);
 
-  const localTotal = order.items.reduce((sum, item) => {
-    return sum + item.price * (localItems[item.productId]?.qty ?? item.quantity);
-  }, 0);
+  const handleMarkAbsent = useCallback((productId: string) => {
+    setLocalItems(prev => ({ ...prev, [productId]: { ...prev[productId], absent: true, qty: 0 } }));
+    scheduleUpdate();
+  }, [scheduleUpdate]);
+
+  const handleRestore = useCallback((productId: string) => {
+    const repIds = localItemsRef.current[productId]?.replacementProductIds ?? [];
+    setReplacements(prev => {
+      const next = { ...prev };
+      repIds.forEach(id => delete next[id]);
+      return next;
+    });
+    setLocalItems(prev => ({ ...prev, [productId]: { ...prev[productId], absent: false, qty: 0, replacementProductIds: [] } }));
+    scheduleUpdate();
+  }, [scheduleUpdate]);
+
+  const handleSelectReplacement = useCallback((absentProductId: string, product: ProductSearchResult) => {
+    const repId = product.id;
+    setReplacements(prev => ({
+      ...prev,
+      [repId]: { name: product.name, article: product.article, price: product.price, qty: 1, replacementFor: absentProductId },
+    }));
+    setLocalItems(prev => ({
+      ...prev,
+      [absentProductId]: {
+        ...prev[absentProductId],
+        replacementProductIds: [...prev[absentProductId].replacementProductIds, repId],
+      },
+    }));
+    setSearchForProductId(null);
+    scheduleUpdate();
+  }, [scheduleUpdate]);
+
+  const handleRemoveReplacement = useCallback((absentProductId: string, replacementProductId: string) => {
+    setReplacements(prev => {
+      const next = { ...prev };
+      delete next[replacementProductId];
+      return next;
+    });
+    setLocalItems(prev => ({
+      ...prev,
+      [absentProductId]: {
+        ...prev[absentProductId],
+        replacementProductIds: prev[absentProductId].replacementProductIds.filter(id => id !== replacementProductId),
+      },
+    }));
+    scheduleUpdate();
+  }, [scheduleUpdate]);
+
+  const handleReplacementQtyChange = useCallback((replacementProductId: string, qty: number) => {
+    setReplacements(prev => ({ ...prev, [replacementProductId]: { ...prev[replacementProductId], qty } }));
+    scheduleUpdate();
+  }, [scheduleUpdate]);
+
+  // Derive groups
+  const unprocessed = allItems.filter(i => deriveMode(localItems[i.productId]) === 'unprocessed');
+  const absent = allItems.filter(i => deriveMode(localItems[i.productId]) === 'absent');
+  const collected = allItems.filter(i => deriveMode(localItems[i.productId]) === 'collected');
+  const replaced = allItems.filter(i => deriveMode(localItems[i.productId]) === 'replaced');
+
+  // Completion guards (UI-side enforcement of ADR-003)
+  const isReplaceStrategy = REPLACE_STRATEGIES.has(order.absenceResolutionStrategy);
+  const canComplete =
+    unprocessed.length === 0 &&
+    (collected.length > 0 || replaced.length > 0);
+
+  let completeHint = '';
+  if (unprocessed.length > 0) {
+    completeHint = `Необработано: ${unprocessed.length} поз.`;
+  } else if (collected.length === 0 && replaced.length === 0) {
+    completeHint = 'Нет собранных товаров';
+  }
+  if (!completeHint && isReplaceStrategy && absent.length > 0) {
+    completeHint = `${absent.length} поз. без замены — будут удалены из заказа`;
+  }
+
+  const localTotal =
+    collected.reduce((sum, item) => sum + item.price * (localItems[item.productId]?.qty ?? 0), 0) +
+    Object.values(replacements).reduce((sum, r) => sum + r.price * r.qty, 0);
+
+  const canReplaceAbsent = order.absenceResolutionStrategy !== AbsenceResolutionStrategy.AUTO_REMOVE;
 
   const isNotStarted = order.state === OrderState.CREATED;
   const isPicking = order.state === OrderState.PICKING;
+
+  if (isPicking && allItems.length === 0) {
+    return <p className={styles.address}>Ошибка: заказ не содержит товаров.</p>;
+  }
+
   const needsCall = CALL_STRATEGIES.has(order.absenceResolutionStrategy);
 
   return (
@@ -144,19 +330,24 @@ export function PickingWorkspace({ order }: Props) {
           <span className={styles.orderId}>Заказ #{order.id.slice(0, 8)}</span>
           <span className={styles.total}>{localTotal.toLocaleString('ru')} ₽</span>
         </div>
-        <button className={styles.releaseBtn} onClick={() => setShowRelease(true)}>
-          Освободить
-        </button>
+        <div className={styles.headerRight}>
+          {needsCall && order.customerPhone && (
+            // raw <a> intentional: no shared/ui component supports tel: protocol links
+            <a href={`tel:${order.customerPhone}`} className={styles.telBtn}>
+              Позвонить
+            </a>
+          )}
+          <Button variant="ghost" size="sm" onClick={() => setShowRelease(true)}>
+            Освободить
+          </Button>
+        </div>
       </div>
 
       <p className={styles.address}>{order.address}</p>
 
       <div className={styles.absenceInfo}>
-        <span className={styles.absenceLabel}>При отсутствии товара:</span>
+        <span className={styles.absenceLabel}>При отсутствии:</span>
         <span className={styles.absenceValue}>{ABSENCE_LABELS[order.absenceResolutionStrategy]}</span>
-        {needsCall && order.customerPhone && (
-          <span className={styles.customerPhone}>Телефон: {order.customerPhone}</span>
-        )}
       </div>
 
       {isNotStarted && (
@@ -172,26 +363,121 @@ export function PickingWorkspace({ order }: Props) {
 
       {isPicking && (
         <>
-          <div className={styles.items}>
-            {order.items.map((item) => (
-              <ItemRow
-                key={item.productId}
-                item={item}
-                localQty={localItems[item.productId]?.qty ?? item.quantity}
-                maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
-                onQtyChange={handleQtyChange}
-              />
-            ))}
-          </div>
+          {unprocessed.length > 0 && (
+            <ItemGroup title="Необработано" count={unprocessed.length}>
+              {unprocessed.map(item => (
+                <ItemRow
+                  key={item.productId}
+                  item={item}
+                  mode="unprocessed"
+                  localQty={localItems[item.productId]?.qty ?? 0}
+                  maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
+                  onQtyChange={handleQtyChange}
+                  onMarkAbsent={handleMarkAbsent}
+                  onRestore={handleRestore}
+                />
+              ))}
+            </ItemGroup>
+          )}
 
-          <Button
-            variant="primary"
-            size="lg"
-            loading={completeMutation.isPending}
-            onClick={() => setShowComplete(true)}
-          >
-            Завершить сборку
-          </Button>
+          {absent.length > 0 && (
+            <ItemGroup title="Отсутствует" count={absent.length} variant="absent">
+              {absent.map(item => (
+                <ItemRow
+                  key={item.productId}
+                  item={item}
+                  mode="absent"
+                  localQty={0}
+                  maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
+                  onQtyChange={handleQtyChange}
+                  onMarkAbsent={handleMarkAbsent}
+                  onRestore={handleRestore}
+                  onAddReplacement={canReplaceAbsent ? (id) => setSearchForProductId(id) : undefined}
+                />
+              ))}
+            </ItemGroup>
+          )}
+
+          {replaced.length > 0 && (
+            <ItemGroup title="Заменено" count={replaced.length} variant="replaced">
+              {replaced.map(item => {
+                const repIds = localItems[item.productId]?.replacementProductIds ?? [];
+                return (
+                  <div key={item.productId} className={styles.replacedBlock}>
+                    {/* Исходный товар */}
+                    <div className={styles.absentOriginal}>
+                      <span className={styles.itemName}>{item.name}</span>
+                      <span className={styles.itemArticle}>{item.article}</span>
+                      <Button variant="ghost" size="sm" onClick={() => handleRestore(item.productId)}>
+                        Восстановить
+                      </Button>
+                    </div>
+                    {/* Замены */}
+                    {repIds.map(repId => {
+                      const rep = replacements[repId];
+                      if (!rep) return null;
+                      return (
+                        <div key={repId} className={styles.replacementRow}>
+                          <div className={styles.itemInfo}>
+                            <span className={styles.itemName}>{rep.name}</span>
+                            <span className={styles.itemArticle}>{rep.article}</span>
+                            <span className={styles.itemPrice}>{rep.price.toLocaleString('ru')} ₽</span>
+                          </div>
+                          <div className={styles.itemControls}>
+                            <Counter
+                              value={rep.qty}
+                              min={1}
+                              size="lg"
+                              onChange={(qty) => handleReplacementQtyChange(repId, qty)}
+                            />
+                            <Button variant="danger" size="sm" onClick={() => handleRemoveReplacement(item.productId, repId)}>
+                              Убрать
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {/* Добавить ещё замену */}
+                    {canReplaceAbsent && (
+                      <Button variant="ghost" size="sm" onClick={() => setSearchForProductId(item.productId)}>
+                        + Ещё замену
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
+            </ItemGroup>
+          )}
+
+          {collected.length > 0 && (
+            <ItemGroup title="Собрано" count={collected.length} variant="collected">
+              {collected.map(item => (
+                <ItemRow
+                  key={item.productId}
+                  item={item}
+                  mode="collected"
+                  localQty={localItems[item.productId]?.qty ?? 0}
+                  maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
+                  onQtyChange={handleQtyChange}
+                  onMarkAbsent={handleMarkAbsent}
+                  onRestore={handleRestore}
+                />
+              ))}
+            </ItemGroup>
+          )}
+
+          <div className={styles.completeSection}>
+            {completeHint && <p className={styles.completeHint}>{completeHint}</p>}
+            <Button
+              variant="primary"
+              size="lg"
+              disabled={!canComplete}
+              loading={completeMutation.isPending}
+              onClick={() => setShowComplete(true)}
+            >
+              Завершить сборку
+            </Button>
+          </div>
         </>
       )}
 
@@ -215,6 +501,14 @@ export function PickingWorkspace({ order }: Props) {
         loading={completeMutation.isPending}
         onConfirm={() => completeMutation.mutate()}
         onCancel={() => setShowComplete(false)}
+      />
+
+      <ProductSearchModal
+        open={searchForProductId !== null}
+        onSelect={(product) => {
+          if (searchForProductId) handleSelectReplacement(searchForProductId, product);
+        }}
+        onClose={() => setSearchForProductId(null)}
       />
     </div>
   );

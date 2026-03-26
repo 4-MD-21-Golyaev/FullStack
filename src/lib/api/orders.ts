@@ -55,6 +55,8 @@ export interface AdminOrdersResponse {
 }
 
 export const ordersApi = {
+  getMyOrders: () => apiClient.get<OrderDto[]>('/api/orders'),
+
   getOrder: (id: string) => apiClient.get<OrderDto>(`/api/orders/${id}`),
 
   adminList: (params: AdminOrdersParams = {}) => {
@@ -83,6 +85,6 @@ export const ordersApi = {
   startPicking: (id: string) =>
     apiClient.post<OrderDto>(`/api/orders/${id}/start-picking`),
 
-  completePicking: (id: string) =>
-    apiClient.post<OrderDto>(`/api/orders/${id}/complete-picking`),
+  completePicking: (id: string, unprocessedProductIds: string[]) =>
+    apiClient.post<OrderDto>(`/api/orders/${id}/complete-picking`, { unprocessedProductIds }),
 };

@@ -1,0 +1,86 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+  padding: var(--ctx-space-inset-lg);
+  min-width: 480px;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--ctx-font-size-h4);
+  /* 600 — Figma: [Desktop]/Headings/Heading 4 */
+  font-weight: 600;
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.spinnerWrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--ctx-space-inset-lg) 0;
+  flex: 1;
+}
+
+.hint {
+  margin: 0;
+  padding: var(--ctx-space-inset-lg) 0;
+  text-align: center;
+  font-size: var(--ctx-font-size-label);
+  /* 400 — Figma: [Desktop]/Utilities/Secondary */
+  font-weight: 400;
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}
+
+/* Raw <button> for list items — no shared/ui equivalent for selectable rows */
+.resultItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-xs);
+  width: 100%;
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--ctx-color-border-default);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--ctx-transition);
+}
+
+.resultItem:last-child {
+  border-bottom: none;
+}
+
+.resultItem:hover {
+  background-color: var(--ctx-color-bg-surface-hover);
+}
+
+.resultItem:active {
+  background-color: var(--ctx-color-bg-surface-active);
+}
+
+.resultName {
+  font-size: var(--ctx-font-size-caption);
+  /* 400 — Figma: [Desktop]/Body */
+  font-weight: 400;
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.resultMeta {
+  font-size: var(--ctx-font-size-label);
+  /* 400 — Figma: [Desktop]/Utilities/Secondary */
+  font-weight: 400;
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}

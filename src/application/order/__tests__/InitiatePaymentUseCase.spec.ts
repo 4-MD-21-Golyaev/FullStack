@@ -68,7 +68,9 @@ function makeRepos(order: Order | null, product: Product | null) {
         findByIds: vi.fn(),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
+        findByCategoryIds: vi.fn(),
         findByArticle: vi.fn(),
+        findBySearch: vi.fn(),
     };
     // TransactionRunner calls the callback with the same repos (simulates in-process transaction)
     const transactionRunner: TransactionRunner = {

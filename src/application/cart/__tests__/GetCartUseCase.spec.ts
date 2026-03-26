@@ -29,7 +29,9 @@ function makeProductRepo(products: any[] = [mockProduct]): ProductRepository {
         findByIds: vi.fn().mockResolvedValue(products),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
+        findByCategoryIds: vi.fn(),
         findByArticle: vi.fn(),
+        findBySearch: vi.fn(),
         save: vi.fn(),
     };
 }

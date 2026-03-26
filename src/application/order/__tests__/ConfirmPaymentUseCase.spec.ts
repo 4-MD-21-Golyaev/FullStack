@@ -76,7 +76,9 @@ function makeDeps(payment: Payment | null, order: Order | null, product: Product
         findByIds: vi.fn(),
         findAll: vi.fn(),
         findByCategoryId: vi.fn(),
+        findByCategoryIds: vi.fn(),
         findByArticle: vi.fn(),
+        findBySearch: vi.fn(),
     };
 
     const txOutboxRepo = {

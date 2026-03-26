@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto';
 
 interface CompletePickingInput {
     orderId: string;
+    unprocessedProductIds: string[];
 }
 
 export class CompletePickingUseCase {
@@ -15,6 +16,14 @@ export class CompletePickingUseCase {
 
             if (!order) {
                 throw new Error('Order not found');
+            }
+
+            if (input.unprocessedProductIds.length > 0) {
+                throw new Error('Cannot complete picking: there are unprocessed items');
+            }
+
+            if (order.items.length === 0) {
+                throw new Error('Cannot complete picking: no items were collected');
             }
 
             const updated = registerPayment(order);
