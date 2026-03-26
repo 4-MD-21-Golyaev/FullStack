@@ -39,9 +39,13 @@ export class CourierConfirmDeliveredUseCase {
             await outboxRepository.save({
                 id: randomUUID(),
                 eventType: 'ORDER_COMPLETED',
-                payload: {
-                    orderId: closed.id,
-                },
+                payload: { orderId: closed.id },
+            });
+
+            await outboxRepository.save({
+                id: randomUUID(),
+                eventType: 'ORDER_DELIVERED',
+                payload: { orderId: closed.id },
             });
 
             return closed;

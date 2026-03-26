@@ -2,13 +2,16 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Category } from '@/shared/ui';
+import { Category, Container } from '@/shared/ui';
 import ProductCard from '@/widgets/customer/ProductCard/ProductCard';
+import { ProductCardSkeleton } from '@/widgets/customer/ProductCard/ProductCardSkeleton';
 import CatalogSidebar from '@/widgets/customer/CatalogSidebar/CatalogSidebar';
 import { SubcategoryList } from '@/widgets/customer/SubcategoryList/SubcategoryList';
 import { useCatalog, buildCategoryPath } from '../CatalogContext';
 import { useBreadcrumbs } from '../../BreadcrumbsContext';
 import styles from './category.module.css';
+
+const SKELETON_COUNT = 8;
 
 interface ApiProduct {
   id: string;
@@ -50,9 +53,10 @@ export default function CatalogCategoryPage() {
 
   const [productsByCategory, setProductsByCategory] = useState<Record<string, ApiProduct[]>>({});
   const [categoryProducts, setCategoryProducts] = useState<ApiProduct[]>([]);
+  const [categoryProductsLoading, setCategoryProductsLoading] = useState(false);
 
   const fetchProducts = useCallback(async (catId: string): Promise<ApiProduct[]> => {
-    const res = await fetch(`/api/products?categoryId=${encodeURIComponent(catId)}`);
+    const res = await fetch(`/api/products?categoryId=${encodeURIComponent(catId)}&includeDescendants=true`);
     if (!res.ok) throw new Error('Failed to load products');
     return res.json();
   }, []);
@@ -81,13 +85,20 @@ export default function CatalogCategoryPage() {
       setCategoryProducts([]);
       return;
     }
+    setCategoryProductsLoading(true);
     let active = true;
     fetchProducts(categoryId)
       .then(items => {
-        if (active) setCategoryProducts(items);
+        if (active) {
+          setCategoryProducts(items);
+          setCategoryProductsLoading(false);
+        }
       })
       .catch(() => {
-        if (active) setCategoryProducts([]);
+        if (active) {
+          setCategoryProducts([]);
+          setCategoryProductsLoading(false);
+        }
       });
     return () => {
       active = false;
@@ -98,7 +109,7 @@ export default function CatalogCategoryPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.container}>
+      <Container className={styles.pageInner}>
         <h1 className={isLeafCategory ? styles.categoryTitle : styles.title}>{pageTitle}</h1>
 
         <div className={styles.layout}>
@@ -128,44 +139,48 @@ export default function CatalogCategoryPage() {
                 </section>
 
                 <div className={styles.sliders}>
-                  {subcategories.map(sub => {
-                    const items = productsByCategory[sub.id] ?? [];
-                    return (
-                      <SubcategoryList key={sub.id} title={sub.name} href={`/catalog/${sub.id}`}>
-                        {items.map(p => (
-                          <ProductCard
-                            key={p.id}
-                            id={p.id}
-                            slug={`product/${p.id}`}
-                            name={p.name}
-                            image={p.imagePath ?? '/images/placeholder.png'}
-                            price={p.price}
-                          />
-                        ))}
-                      </SubcategoryList>
-                    );
-                  })}
+                  {subcategories.map(sub => (
+                    <SubcategoryList
+                      key={sub.id}
+                      title={sub.name}
+                      href={`/catalog/${sub.id}`}
+                      loading={!(sub.id in productsByCategory)}
+                    >
+                      {(productsByCategory[sub.id] ?? []).map(p => (
+                        <ProductCard
+                          key={p.id}
+                          id={p.id}
+                          slug={p.id}
+                          name={p.name}
+                          image={p.imagePath ?? '/images/placeholder.png'}
+                          price={p.price}
+                        />
+                      ))}
+                    </SubcategoryList>
+                  ))}
                 </div>
               </>
             )}
 
             {isLeafCategory && (
               <section className={styles.productGrid}>
-                {categoryProducts.map(p => (
-                  <ProductCard
-                    key={p.id}
-                    id={p.id}
-                    slug={`product/${p.id}`}
-                    name={p.name}
-                    image={p.imagePath ?? '/images/placeholder.png'}
-                    price={p.price}
-                  />
-                ))}
+                {categoryProductsLoading
+                  ? Array.from({ length: SKELETON_COUNT }, (_, i) => <ProductCardSkeleton key={i} />)
+                  : categoryProducts.map(p => (
+                      <ProductCard
+                        key={p.id}
+                        id={p.id}
+                        slug={p.id}
+                        name={p.name}
+                        image={p.imagePath ?? '/images/placeholder.png'}
+                        price={p.price}
+                      />
+                    ))}
               </section>
             )}
           </div>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

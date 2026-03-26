@@ -89,6 +89,8 @@
   --ctx-space-page-desktop: var(--primitive-space-800);   /* 32px page padding */
   --ctx-space-page-mobile:  var(--primitive-space-300);   /* 12px */
   --ctx-layout-max-width:   1200px;   /* standard content width (customer pages) */
+  --ctx-grid-columns:       12;       /* 12-column layout grid */
+  --ctx-grid-gutter:        12px;     /* gap between grid columns and product cards */
 
   /* ── Typography by context ── */
   --ctx-font-body:         var(--primitive-font-family-sans);

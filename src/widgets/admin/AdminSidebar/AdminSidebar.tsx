@@ -8,9 +8,7 @@ import {
   Package,
   CreditCard,
   Users,
-  ShoppingBag,
   Settings,
-  ClipboardList,
   Menu,
   X,
 } from 'lucide-react';
@@ -50,9 +48,7 @@ export function AdminSidebar() {
       badge: issuesCount > 0 ? issuesCount : undefined,
     },
     { label: 'Пользователи', href: '/admin/users', icon: <Users size={18} /> },
-    { label: 'Каталог', href: '/admin/catalog/products', icon: <ShoppingBag size={18} /> },
     { label: 'Задачи', href: '/admin/jobs', icon: <Settings size={18} /> },
-    { label: 'Аудит', href: '/admin/audit', icon: <ClipboardList size={18} /> },
   ];
 
   return (

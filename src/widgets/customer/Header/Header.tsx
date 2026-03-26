@@ -1,16 +1,17 @@
 ﻿'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { Logo, Search, IconButton, CartButton, Button } from '@/shared/ui';
+import { useCart } from '@/app/(customer)/CartContext';
+import { useAuth } from '@/app/(customer)/AuthContext';
 import styles from './Header.module.css';
 
-interface HeaderProps {
-  cartCount?: number;
-  onCartClick?: () => void;
-  onProfileClick?: () => void;
-}
-
-export function Header({ cartCount = 0, onCartClick, onProfileClick }: HeaderProps) {
+export function Header() {
+  const { totalItems } = useCart();
+  const { user, openAuthModal } = useAuth();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
   return (
     <header className={styles.root}>
       {/* Top bar — phone numbers */}
@@ -49,7 +50,7 @@ export function Header({ cartCount = 0, onCartClick, onProfileClick }: HeaderPro
               size="lg"
               variant="white"
               aria-label="Профиль"
-              onClick={onProfileClick}
+              onClick={user ? undefined : openAuthModal}
             />
             <IconButton
               icon="like"
@@ -57,11 +58,9 @@ export function Header({ cartCount = 0, onCartClick, onProfileClick }: HeaderPro
               variant="white"
               aria-label="Избранное"
             />
-            <CartButton
-              count={cartCount}
-              onClick={onCartClick}
-              aria-label="Корзина"
-            />
+            <Link href="/cart" aria-label="Корзина">
+              <CartButton count={mounted ? totalItems : 0} />
+            </Link>
           </div>
         </div>
       </div>

@@ -1,6 +1,8 @@
 import { OutboxRepository } from '@/application/ports/OutboxRepository';
 import { OrderRepository } from '@/application/ports/OrderRepository';
+import { UserRepository } from '@/application/ports/UserRepository';
 import { MoySkladOrderGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladOrderGateway';
+import { EmailGateway } from '@/application/ports/EmailGateway';
 import { OutboxPrerequisiteNotReadyError } from './errors/OutboxPrerequisiteNotReadyError';
 
 const MAX_RETRIES = 3;
@@ -17,6 +19,8 @@ export class ProcessOutboxUseCase {
         private outboxRepository: OutboxRepository,
         private moySkladGateway: MoySkladOrderGateway,
         private orderRepository: OrderRepository,
+        private userRepository: UserRepository,
+        private emailGateway: EmailGateway,
     ) {}
 
     async execute(): Promise<ProcessOutboxResult> {
@@ -100,9 +104,30 @@ export class ProcessOutboxUseCase {
                 await this.moySkladGateway.updateCustomerOrderState(order.moySkladId);
                 break;
             }
+            case 'ORDER_CONFIRMED':
+            case 'ORDER_OUT_FOR_DELIVERY':
+            case 'ORDER_DELIVERED': {
+                const { email, order } = await this.resolveOrderEmail(p.orderId);
+                if (eventType === 'ORDER_CONFIRMED') {
+                    await this.emailGateway.sendOrderConfirmed(email, order.id, order.totalAmount);
+                } else if (eventType === 'ORDER_OUT_FOR_DELIVERY') {
+                    await this.emailGateway.sendOrderOutForDelivery(email, order.id);
+                } else {
+                    await this.emailGateway.sendOrderDelivered(email, order.id);
+                }
+                break;
+            }
             default:
                 // Unknown event type — skip silently
                 break;
         }
+    }
+
+    private async resolveOrderEmail(orderId: string): Promise<{ email: string; order: NonNullable<Awaited<ReturnType<OrderRepository['findById']>>> }> {
+        const order = await this.orderRepository.findById(orderId);
+        if (!order) throw new Error(`Order ${orderId} not found`);
+        const user = await this.userRepository.findById(order.userId);
+        if (!user) throw new Error(`User ${order.userId} not found`);
+        return { email: user.email, order };
     }
 }

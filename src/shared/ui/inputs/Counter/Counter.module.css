@@ -4,8 +4,13 @@
   display: inline-flex;
   align-items: center;
   overflow: hidden;
-  background-color: var(--ctx-color-bg-subtle);
 }
+
+/* Variants */
+.gray  { background-color: var(--ctx-color-bg-subtle); }
+.white { background-color: var(--ctx-color-bg-surface); }
+
+.numInputWhite { background-color: var(--ctx-color-bg-surface); }
 
 /* L size: outer radius 16px, button height 44px (no matching token — matches IconButton md) */
 .lg {
@@ -29,4 +34,15 @@
 .btnPlus {
   border-radius: 0;
   flex-shrink: 0;
+}
+
+/* fluid — counter fills 100% of parent height */
+.fluid {
+  height: 100%;
+}
+
+.btnFluid {
+  height: 100% !important;
+  width: auto !important;
+  aspect-ratio: 1;
 }

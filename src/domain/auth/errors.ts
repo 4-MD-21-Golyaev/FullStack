@@ -32,3 +32,17 @@ export class InvalidRefreshTokenError extends Error {
         this.name = 'InvalidRefreshTokenError';
     }
 }
+
+export class InvalidVkSignatureError extends Error {
+    constructor() {
+        super('VK launch params signature is invalid');
+        this.name = 'InvalidVkSignatureError';
+    }
+}
+
+export class VkIdentityNotLinkedError extends Error {
+    constructor() {
+        super('This VK account is not linked to any user');
+        this.name = 'VkIdentityNotLinkedError';
+    }
+}

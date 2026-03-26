@@ -87,6 +87,11 @@ export async function proxy(req: NextRequest) {
         return NextResponse.next();
     }
 
+    // VK Mini App auth — публичный, /vk/link остаётся защищённым
+    if (pathname === '/api/auth/vk' && req.method === 'POST') {
+        return NextResponse.next({ request: { headers: requestHeaders } });
+    }
+
     if (isPublic(pathname)) {
         return NextResponse.next({ request: { headers: requestHeaders } });
     }

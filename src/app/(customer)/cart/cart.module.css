@@ -1,0 +1,144 @@
+.page {
+  background: var(--ctx-color-bg-surface);
+  padding-block: var(--ctx-space-stack-xl);
+}
+
+/* Empty state */
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-lg);
+  align-items: flex-start;
+}
+
+.emptyText {
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}
+
+/* Title row */
+.titleRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: var(--ctx-space-stack-lg);
+}
+
+.title {
+  font-size: var(--ctx-font-size-h1);
+  font-weight: 700; /* [Desktop]/Headings/Heading 1 */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+}
+
+/* Two-column content layout */
+.content {
+  display: flex;
+  gap: 64px; /* Figma: gap between list and sidebar */
+  align-items: flex-start;
+}
+
+.list {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-lg);
+}
+
+/* Section (В наличии / Нет в наличии) */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-lg);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.sectionLabel {
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700; /* [Desktop]/Headings/Heading 3 */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+}
+
+.sectionCount {
+  font-size: var(--ctx-font-size-body);
+  font-weight: 700;
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-secondary);
+}
+
+/* Pending delete row (undo timer) */
+.pendingRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.pendingInfo {
+  display: flex;
+  gap: var(--ctx-space-inline-md);
+  align-items: flex-start;
+  width: 390px; /* mirrors WideProductCard info column */
+  flex-shrink: 0;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--ctx-color-text-default);
+}
+
+.pendingActions {
+  display: flex;
+  gap: var(--ctx-space-inline-lg);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Circular countdown */
+.countdown {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--ctx-color-border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ctx-font-size-body);
+  font-weight: 400;
+  color: var(--ctx-color-text-default);
+  flex-shrink: 0;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 276px; /* Figma: sidebar width */
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.checkoutBtn {
+  width: 100%;
+}
+
+.clearBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: var(--ctx-font-size-body);
+  font-weight: 500;
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-normal);
+}

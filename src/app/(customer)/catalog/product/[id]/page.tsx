@@ -3,9 +3,10 @@
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { Button, LikeButton, Price, Spinner, Tab } from '@/shared/ui';
+import { Button, Container, Counter, LikeButton, Price, Spinner, Tab } from '@/shared/ui';
 import { useCatalog, buildCategoryPath } from '../../CatalogContext';
 import { useBreadcrumbs } from '../../../BreadcrumbsContext';
+import { useCart } from '../../../CartContext';
 import styles from './product.module.css';
 
 interface ApiProduct {
@@ -22,6 +23,7 @@ export default function ProductPage() {
 
   const { rootCategories, childrenByParent } = useCatalog();
   const { setCustomCrumbs } = useBreadcrumbs();
+  const { addItem, removeItem, updateQuantity, items } = useCart();
 
   const [product, setProduct] = useState<ApiProduct | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,7 +92,7 @@ export default function ProductPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.container}>
+      <Container className={styles.pageInner}>
         {loading && (
           <div className={styles.loading}>
             <Spinner />
@@ -132,7 +134,40 @@ export default function ProductPage() {
               <div className={styles.buyCard}>
                 <Price value={product.price} size="L" />
                 <div className={styles.actions}>
-                  <Button size="lg">В корзину</Button>
+                  {(() => {
+                    const cartItem = items.find(i => i.productId === product.id);
+                    if (cartItem) {
+                      return (
+                        <Counter
+                          size="lg"
+                          variant="white"
+                          fluid
+                          value={cartItem.quantity}
+                          min={0}
+                          max={cartItem.stock}
+                          onChange={qty => qty === 0
+                            ? removeItem(product.id)
+                            : updateQuantity(product.id, qty)
+                          }
+                          className={styles.counter}
+                        />
+                      );
+                    }
+                    return (
+                      <Button
+                        size="lg"
+                        onClick={() => addItem({
+                          productId: product.id,
+                          name: product.name,
+                          price: product.price,
+                          imagePath: product.imagePath,
+                          stock: 999,
+                        })}
+                      >
+                        В корзину
+                      </Button>
+                    );
+                  })()}
                   <LikeButton variant="white" size="lg" aria-label="Добавить в избранное" />
                 </div>
               </div>
@@ -161,7 +196,7 @@ export default function ProductPage() {
             </div>
           </div>
         )}
-      </div>
+      </Container>
     </div>
   );
 }

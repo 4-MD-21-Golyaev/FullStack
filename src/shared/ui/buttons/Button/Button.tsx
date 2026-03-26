@@ -1,3 +1,4 @@
+import { Spinner } from '../../feedback/Spinner/Spinner';
 import styles from './Button.module.css';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'tertiary';
@@ -30,7 +31,7 @@ export function Button({
       disabled={disabled || loading}
       {...rest}
     >
-      {loading ? <span className={styles.spinner} aria-hidden /> : null}
+      {loading ? <Spinner size="sm" variant="current" /> : null}
       {children}
     </button>
   );

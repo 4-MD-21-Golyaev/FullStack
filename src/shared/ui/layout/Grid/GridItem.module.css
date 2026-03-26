@@ -1,0 +1,7 @@
+.item {
+  grid-column: span var(--span, 12);
+}
+
+@media (max-width: 1200px) { .item { grid-column: span var(--span-lg, 12); } }
+@media (max-width: 900px)  { .item { grid-column: span var(--span-md, 12); } }
+@media (max-width: 600px)  { .item { grid-column: span var(--span-sm, 12); } }

@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ProcessOutboxUseCase } from '@/application/order/ProcessOutboxUseCase';
 import { PrismaOutboxRepository } from '@/infrastructure/repositories/OutboxRepository.prisma';
 import { PrismaOrderRepository } from '@/infrastructure/repositories/OrderRepository.prisma';
+import { PrismaUserRepository } from '@/infrastructure/repositories/UserRepository.prisma';
 import { HttpMoySkladOrderGateway } from '@/infrastructure/moysklad/HttpMoySkladGateway';
+import { NodemailerEmailGateway } from '@/infrastructure/auth/NodemailerEmailGateway';
 import { assertInternalJobAuth } from '@/lib/internal-job-auth';
 
 export const dynamic = 'force-dynamic';
@@ -20,6 +22,8 @@ export async function GET(req: NextRequest) {
                 agentId:        process.env.MOYSKLAD_AGENT_ID!,
             }),
             new PrismaOrderRepository(),
+            new PrismaUserRepository(),
+            new NodemailerEmailGateway(),
         );
         const result = await useCase.execute();
         return NextResponse.json({ ok: true, result });

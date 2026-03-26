@@ -33,7 +33,7 @@ describe('RequestCodeUseCase', () => {
         const result = await uc.execute({ email: 'a@b.com' });
 
         expect(result.ok).toBe(true);
-        expect(result.code).toMatch(/^\d{6}$/);
+        expect(result.code).toMatch(/^\d{4}$/);
         expect(otpRepo.create).toHaveBeenCalledWith('a@b.com', expect.any(String), expect.any(Date));
     });
 

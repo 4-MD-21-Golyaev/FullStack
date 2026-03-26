@@ -1,0 +1,74 @@
+.jobCard {
+  background: var(--ctx-color-bg-surface);
+  border: var(--card-border);
+  border-radius: var(--ctx-radius-card);
+  padding: var(--ctx-space-inset-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.jobHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ctx-space-inline-md);
+}
+
+.jobName {
+  font-size: var(--ctx-font-size-heading);
+  font-weight: 600; /* Semibold */
+  color: var(--ctx-color-text-default);
+  margin: 0 0 var(--ctx-space-inset-xs);
+}
+
+.jobDesc {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+  margin: 0;
+}
+
+.jobMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ctx-space-stack-sm) var(--ctx-space-inline-md);
+  font-size: var(--ctx-font-size-caption);
+  padding-top: var(--ctx-space-stack-sm);
+  border-top: 1px solid var(--ctx-color-border-default);
+}
+
+.jobStatus {
+  font-weight: 600; /* Semibold */
+  text-transform: uppercase;
+  font-size: var(--ctx-font-size-caption);
+}
+
+.jobTime {
+  color: var(--ctx-color-text-secondary);
+}
+
+.jobStat {
+  color: var(--ctx-color-text-secondary);
+}
+
+.jobError {
+  width: 100%;
+  color: var(--ctx-color-status-danger);
+  font-size: var(--ctx-font-size-caption);
+}
+
+.statusSuccess {
+  color: var(--ctx-color-status-success);
+}
+
+.statusFailed {
+  color: var(--ctx-color-status-danger);
+}
+
+.statusRunning {
+  color: var(--ctx-color-status-warning);
+}
+
+.statusUnknown {
+  color: var(--ctx-color-text-disabled);
+}

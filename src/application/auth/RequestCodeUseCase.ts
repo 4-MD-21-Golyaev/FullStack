@@ -18,7 +18,7 @@ export class RequestCodeUseCase {
     ) {}
 
     async execute(input: RequestCodeInput): Promise<RequestCodeOutput> {
-        const code = String(randomInt(0, 1_000_000)).padStart(6, '0');
+        const code = String(randomInt(0, 10_000)).padStart(4, '0');
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
         await this.otpRepository.create(input.email, code, expiresAt);

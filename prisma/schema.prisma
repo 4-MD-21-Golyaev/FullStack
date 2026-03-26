@@ -70,6 +70,18 @@ model User {
   refreshTokens RefreshToken[]
   pickerClaims    Order[] @relation("PickerClaims")
   deliveryClaims  Order[] @relation("DeliveryClaims")
+  vkIdentity      VkIdentity?
+}
+
+//////////////////////////////////////////////////////
+// VK IDENTITY
+//////////////////////////////////////////////////////
+
+model VkIdentity {
+  vkUserId  String @id
+  userId    String @unique
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 //////////////////////////////////////////////////////

@@ -25,22 +25,6 @@
   color: var(--ctx-color-text-default);
 }
 
-.releaseBtn {
-  background: none;
-  border: 1px solid var(--ctx-color-border-default);
-  color: var(--ctx-color-text-secondary);
-  font-size: var(--ctx-font-size-label);
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
-  border-radius: var(--ctx-radius-control);
-  cursor: pointer;
-  transition: all 100ms ease;
-}
-
-.releaseBtn:hover {
-  border-color: var(--ctx-color-status-danger);
-  color: var(--ctx-color-status-danger);
-}
-
 .addressCard {
   display: flex;
   align-items: flex-start;
@@ -61,7 +45,7 @@
 .mapPin {
   color: var(--ctx-color-action-primary);
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 2px; /* intentional — optical alignment of icon with text baseline */
 }
 
 .address {
@@ -114,7 +98,7 @@
   padding: var(--input-padding);
   outline: none;
   resize: vertical;
-  min-height: 80px;
+  min-height: 80px; /* intentional — minimum textarea height, no token */
   font-family: inherit;
   transition: border-color var(--ctx-transition);
 }
@@ -126,4 +110,15 @@
 .error {
   font-size: var(--ctx-font-size-caption);
   color: var(--ctx-color-text-danger);
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-wrap: wrap;
+    gap: var(--ctx-space-stack-sm);
+  }
+
+  .actions {
+    padding-bottom: var(--ctx-space-stack-lg);
+  }
 }

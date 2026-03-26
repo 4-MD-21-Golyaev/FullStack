@@ -1,0 +1,39 @@
+.root {
+  background: var(--ctx-color-bg-page);
+  border-radius: var(--ctx-radius-control);
+  padding: var(--ctx-space-inset-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerLabel,
+.headerValue {
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 400;
+}
+
+.itemsLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inline-sm);
+}
+
+.weight {
+  color: var(--ctx-color-text-secondary);
+}

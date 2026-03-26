@@ -72,6 +72,7 @@ src/
 **shared/ui internal groups:**
 ```
 src/shared/ui/
+├── layout/     Container, Grid, GridItem
 ├── icons/      Icon, Logo
 ├── buttons/    Button, IconButton, ArrowButton, ArrowsContainer, ArrowBg,
 │               LikeButton, SocialButton, CartButton, MobilePanelButton, MobilePanelCartButton
@@ -106,3 +107,19 @@ State transitions enforced in `src/domain/order/transitions.ts`.
 - **MoySklad** — product catalog sync and order export
 - **jose** for JWT, **nodemailer** for email OTP
 - **Vitest** for unit tests; test files in `__tests__/` subdirectories alongside the code
+
+## Agent Delegation — Hard Rules
+
+These rules apply regardless of task size, file count, or apparent simplicity.
+
+**UI files** (`src/shared/ui/**`, `src/widgets/**`, `src/features/**`, `src/entities/**`, `src/app/**/page.tsx`, `src/app/**/layout.tsx`):
+- Never implement directly in main conversation.
+- Always: Implementation agent → Review agent (prompts in `.claude/rules/ui-components.md`).
+- 1-line change still requires Review agent. No exceptions.
+
+**Backend files** (`src/domain/**`, `src/application/**`, `src/infrastructure/**`, `src/app/api/**`):
+- Implementation may be direct for small changes, **unless the task also touches UI** — then always use an agent to enable parallel execution.
+- Test+Review agent is always required after any code change (prompt in `.claude/rules/testing.md`).
+- No exceptions.
+
+**The only case requiring no agents:** non-code edits — typos in strings, comment updates, static text changes with no logic touched.

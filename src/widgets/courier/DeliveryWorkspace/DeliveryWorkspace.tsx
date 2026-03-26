@@ -75,9 +75,9 @@ export function DeliveryWorkspace({ order }: Props) {
           <span className={styles.total}>{order.totalAmount.toLocaleString('ru')} ₽</span>
         </div>
         {isAssigned && (
-          <button className={styles.releaseBtn} onClick={() => setShowRelease(true)}>
+          <Button variant="ghost" size="sm" onClick={() => setShowRelease(true)}>
             Освободить
-          </button>
+          </Button>
         )}
       </div>
 

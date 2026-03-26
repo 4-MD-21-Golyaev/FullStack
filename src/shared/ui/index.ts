@@ -1,3 +1,8 @@
+// layout
+export { Container } from './layout/Container/Container';
+export { Grid } from './layout/Grid/Grid';
+export { GridItem } from './layout/Grid/GridItem';
+
 // icons
 export { Icon } from './icons/Icon/Icon';
 export type { IconName } from './icons/Icon/Icon';
@@ -87,3 +92,7 @@ export { Price } from './data/Price/Price';
 export { SaleSliderTitle } from './data/SaleSliderTitle/SaleSliderTitle';
 export { Category } from './data/Category/Category';
 export type { CategoryProps } from './data/Category/Category';
+export { WideProductCard } from './data/WideProductCard/WideProductCard';
+export type { WideProductCardProps } from './data/WideProductCard/WideProductCard';
+export { OrderSummary } from './data/OrderSummary/OrderSummary';
+export type { OrderSummaryProps } from './data/OrderSummary/OrderSummary';

@@ -45,10 +45,10 @@ describe('POST /api/auth/verify-code', () => {
         expect(res.status).toBe(400);
     });
 
-    it('returns 401 for invalid OTP', async () => {
+    it('returns 422 for invalid OTP', async () => {
         mockExecute.mockRejectedValue(new InvalidOtpError());
         const res = await POST(makeReq({ email: 'user@example.com', code: '000000' }));
-        expect(res.status).toBe(401);
+        expect(res.status).toBe(422);
     });
 
     it('returns 404 when user not found', async () => {

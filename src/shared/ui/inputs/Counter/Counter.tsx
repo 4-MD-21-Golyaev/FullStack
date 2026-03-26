@@ -9,6 +9,9 @@ export interface CounterProps {
   max?: number;
   type?: 'amount' | 'weight';
   size?: 'lg' | 'sm';
+  variant?: 'gray' | 'white';
+  /** Stretches counter to 100% of parent height; use when parent has a fixed height */
+  fluid?: boolean;
   className?: string;
 }
 
@@ -19,6 +22,8 @@ export function Counter({
   max,
   type = 'amount',
   size = 'lg',
+  variant = 'gray',
+  fluid = false,
   className,
 }: CounterProps) {
   const isAtMin = min !== undefined && value <= min;
@@ -26,34 +31,37 @@ export function Counter({
 
   /* IconButton size: lg Counter uses md (44px), sm Counter uses sm (36px) */
   const btnSize = size === 'lg' ? 'md' : 'sm';
+  const btnVariant = variant === 'white' ? 'white' : 'gray';
   const inputState = 'enabled';
 
+  const btnCls = [styles.btnMinus, fluid ? styles.btnFluid : ''].join(' ').trim();
+
   return (
-    <span className={[styles.root, styles[size], className ?? ''].join(' ').trim()}>
+    <span className={[styles.root, styles[size], styles[variant], fluid ? styles.fluid : '', className ?? ''].join(' ').trim()}>
       <IconButton
         icon="minus"
         size={btnSize}
-        variant="gray"
+        variant={btnVariant}
         disabled={isAtMin}
         onClick={() => onChange?.(value - 1)}
         aria-label="Уменьшить"
-        className={styles.btnMinus}
+        className={btnCls}
       />
       <NumInput
         value={value}
         onChange={onChange}
         type={type}
         state={inputState}
-        className={styles.numInput}
+        className={[styles.numInput, variant === 'white' ? styles.numInputWhite : ''].join(' ').trim()}
       />
       <IconButton
         icon="plus"
         size={btnSize}
-        variant="gray"
+        variant={btnVariant}
         disabled={isAtMax}
         onClick={() => onChange?.(value + 1)}
         aria-label="Увеличить"
-        className={styles.btnPlus}
+        className={btnCls}
       />
     </span>
   );

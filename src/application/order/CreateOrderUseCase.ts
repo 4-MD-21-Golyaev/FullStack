@@ -71,6 +71,12 @@ export class CreateOrderUseCase {
                 },
             });
 
+            await outboxRepository.save({
+                id: randomUUID(),
+                eventType: 'ORDER_CONFIRMED',
+                payload: { orderId: order.id },
+            });
+
             return order;
         });
     }

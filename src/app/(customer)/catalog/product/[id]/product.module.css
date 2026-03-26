@@ -2,10 +2,8 @@
   background-color: transparent;
 }
 
-.container {
-  max-width: var(--ctx-layout-max-width);
-  margin-inline: auto;
-  padding: var(--ctx-space-stack-xl) var(--ctx-space-page-desktop) var(--ctx-space-stack-xl);
+.pageInner {
+  padding-block: var(--ctx-space-stack-xl);
 }
 
 .loading {
@@ -21,7 +19,7 @@
 
 .layout {
   display: flex;
-  gap: var(--primitive-space-600);
+  gap: var(--ctx-space-inline-lg);
   align-items: flex-start;
 }
 
@@ -94,7 +92,7 @@
 
 .buyCard {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
   gap: var(--ctx-space-stack-lg);
   padding: var(--ctx-space-inset-md);
@@ -106,6 +104,10 @@
   display: flex;
   align-items: center;
   gap: var(--ctx-space-stack-sm);
+}
+
+.counter {
+  width: fit-content;
 }
 
 .tabs {
@@ -140,10 +142,6 @@
 }
 
 @media (max-width: 600px) {
-  .container {
-    padding-inline: var(--ctx-space-page-mobile);
-  }
-
   .mainImage {
     min-height: 320px;
   }

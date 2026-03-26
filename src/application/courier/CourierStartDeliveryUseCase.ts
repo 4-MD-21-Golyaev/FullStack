@@ -13,7 +13,7 @@ export class CourierStartDeliveryUseCase {
     constructor(private transactionRunner: TransactionRunner) {}
 
     async execute(input: CourierStartDeliveryInput) {
-        return this.transactionRunner.run(async ({ orderRepository, auditLogRepository }) => {
+        return this.transactionRunner.run(async ({ orderRepository, auditLogRepository, outboxRepository }) => {
             const order = await orderRepository.findById(input.orderId);
             if (!order) throw new Error('Order not found');
 
@@ -33,6 +33,12 @@ export class CourierStartDeliveryUseCase {
                 before: { state: order.state },
                 after: { state: updated.state, outForDeliveryAt: updated.outForDeliveryAt },
                 correlationId: input.correlationId,
+            });
+
+            await outboxRepository.save({
+                id: randomUUID(),
+                eventType: 'ORDER_OUT_FOR_DELIVERY',
+                payload: { orderId: updated.id },
             });
 
             return updated;

@@ -1,5 +1,5 @@
 .root {
-  height: 56px;
+  height: 56px; /* intentional — sticky header height, no token */
   background: var(--ctx-color-bg-surface);
   border-bottom: 1px solid var(--ctx-color-border-default);
   display: flex;
@@ -51,4 +51,14 @@
 .logout:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .root {
+    padding: 0 var(--ctx-space-inset-md);
+  }
+
+  .name {
+    display: none;
+  }
 }

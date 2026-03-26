@@ -1,0 +1,41 @@
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  background: var(--ctx-color-bg-page);
+}
+
+/* Error / loading card */
+.card {
+  background: var(--ctx-color-bg-surface);
+  border-radius: var(--ctx-radius-card);
+  box-shadow: var(--ctx-shadow-card);
+  padding: var(--ctx-space-stack-lg);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.title {
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700;
+  color: var(--ctx-color-text-default);
+  margin: 0;
+}
+
+.message {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+  margin: 0;
+}
+
+/* AuthForm wrapper — full screen on mobile */
+.formCard {
+  width: 100%;
+  height: 100svh;
+  background: var(--ctx-color-bg-surface);
+  overflow: hidden;
+}

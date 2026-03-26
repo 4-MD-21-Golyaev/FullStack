@@ -9,8 +9,7 @@ export interface MeResponse {
 }
 
 export interface VerifyCodeResponse {
-  accessToken: string;
-  refreshToken: string;
+  ok: boolean;
   role: string;
 }
 

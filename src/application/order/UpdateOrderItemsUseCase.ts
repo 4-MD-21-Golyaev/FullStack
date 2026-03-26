@@ -36,9 +36,10 @@ export class UpdateOrderItemsUseCase {
             const newItems: OrderItem[] = [];
 
             for (const { productId, quantity } of input.items) {
-                if (quantity <= 0) {
-                    throw new Error('Item quantity must be positive');
+                if (quantity < 0) {
+                    throw new Error('Item quantity cannot be negative');
                 }
+                if (quantity === 0) continue; // absent/unprocessed — exclude from collected items
 
                 const existing = existingByProductId.get(productId);
 

@@ -20,21 +20,6 @@
   animation: slideUp var(--ctx-transition); /* 200ms ease */
 }
 
-.header {
-  padding: var(--ctx-space-inset-md) var(--ctx-space-inset-lg);
-  border-bottom: 1px solid var(--ctx-color-border-default);
-}
-
-.title {
-  font-size: var(--ctx-font-size-h4);
-  font-weight: 600; /* Semibold */
-  color: var(--ctx-color-text-default);
-}
-
-.body {
-  padding: var(--ctx-space-inset-lg);
-}
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }

@@ -1,23 +1,27 @@
 'use client';
 import { Icon } from '../../icons/Icon/Icon';
 import type { IconName } from '../../icons/Icon/Icon';
+import { Spinner } from '../../feedback/Spinner/Spinner';
 import styles from './IconButton.module.css';
 
 type IconButtonSize = 'xs' | 'sm' | 'md' | 'lg';
 type IconButtonVariant = 'white' | 'gray' | 'red';
 
 const ICON_SIZES: Record<IconButtonSize, number> = { xs: 12, sm: 16, md: 20, lg: 24 };
+const SPINNER_SIZES: Record<IconButtonSize, 'sm' | 'md'> = { xs: 'sm', sm: 'sm', md: 'sm', lg: 'md' };
 
 interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon: IconName;
   size?: IconButtonSize;
   variant?: IconButtonVariant;
+  loading?: boolean;
 }
 
 export function IconButton({
   icon,
   size = 'md',
   variant = 'gray',
+  loading = false,
   disabled,
   className,
   ...rest
@@ -25,11 +29,14 @@ export function IconButton({
   return (
     <button
       type="button"
-      className={[styles.root, styles[size], styles[variant], className ?? ''].join(' ').trim()}
-      disabled={disabled}
+      className={[styles.root, styles[size], styles[variant], loading ? styles.isLoading : '', className ?? ''].join(' ').trim()}
+      disabled={disabled || loading}
       {...rest}
     >
-      <Icon name={icon} size={ICON_SIZES[size]} />
+      {loading
+        ? <Spinner size={SPINNER_SIZES[size]} variant="current" />
+        : <Icon name={icon} size={ICON_SIZES[size]} />
+      }
     </button>
   );
 }

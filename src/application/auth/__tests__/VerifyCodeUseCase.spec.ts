@@ -53,6 +53,7 @@ describe('VerifyCodeUseCase', () => {
 
         expect(result.accessToken).toBe('access-jwt');
         expect(result.refreshToken).toBe('refresh-jwt');
+        expect(result.role).toBe('CUSTOMER');
         expect(tokenSvc.signAccessToken).toHaveBeenCalledWith({ sub: 'u1', role: 'CUSTOMER', email: 'a@b.com' });
         expect(tokenSvc.signRefreshToken).toHaveBeenCalledWith({ sub: 'u1', jti: expect.any(String) });
         expect(rtRepo.save).toHaveBeenCalledWith(expect.objectContaining({

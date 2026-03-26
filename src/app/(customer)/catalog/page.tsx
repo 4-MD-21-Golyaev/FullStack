@@ -1,6 +1,6 @@
 'use client';
 
-import { Category } from '@/shared/ui';
+import { Category, Container } from '@/shared/ui';
 import CatalogSidebar from '@/widgets/customer/CatalogSidebar/CatalogSidebar';
 import { useCatalog } from './CatalogContext';
 import styles from './catalog.module.css';
@@ -10,7 +10,7 @@ export default function CatalogPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.container}>
+      <Container className={styles.pageInner}>
         <h1 className={styles.title}>Каталог</h1>
 
         <div className={styles.layout}>
@@ -36,7 +36,7 @@ export default function CatalogPage() {
             ))}
           </section>
         </div>
-      </div>
+      </Container>
     </div>
   );
 }

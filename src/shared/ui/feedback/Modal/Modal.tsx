@@ -6,11 +6,11 @@ import styles from './Modal.module.css';
 interface ModalProps {
   open: boolean;
   onClose: () => void;
-  title?: string;
   children: React.ReactNode;
+  className?: string;
 }
 
-export function Modal({ open, onClose, title, children }: ModalProps) {
+export function Modal({ open, onClose, children, className }: ModalProps) {
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -22,9 +22,8 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
 
   return (
     <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal>
-      <div className={styles.root} onClick={e => e.stopPropagation()}>
-        {title ? <div className={styles.header}><h2 className={styles.title}>{title}</h2></div> : null}
-        <div className={styles.body}>{children}</div>
+      <div className={[styles.root, className].filter(Boolean).join(' ')} onClick={e => e.stopPropagation()}>
+        {children}
       </div>
     </div>
   );

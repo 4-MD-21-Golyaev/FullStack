@@ -3,13 +3,12 @@
 import { useEffect, useState } from 'react';
 import {
   ArrowsContainer,
+  Container,
   Pagination,
-  SaleSliderTitle,
-  SliderContainer,
   AppMarketButton,
   Link,
 } from '@/shared/ui';
-import ProductCard from '@/widgets/customer/ProductCard/ProductCard';
+import { SaleSlider } from '@/widgets/customer/SaleSlider/SaleSlider';
 import styles from './home.module.css';
 
 /* ── Hero slides ── */
@@ -44,7 +43,7 @@ const HERO_SLIDES: HeroSlide[] = [
 
 /* ── Category sliders ── */
 
-const CATEGORY_IDS = ['CAT-2-3', 'CAT-4-1', 'CAT-1-2-1'];
+const CATEGORY_IDS = ['CAT-2-3', 'CAT-4-1-1', 'CAT-1-2-1'];
 
 interface ApiCategory {
   id: string;
@@ -69,7 +68,7 @@ interface SliderData {
 async function fetchSliderData(id: string): Promise<SliderData> {
   const [catRes, productsRes] = await Promise.all([
     fetch(`/api/categories/${id}`),
-    fetch(`/api/products?categoryId=${encodeURIComponent(id)}`),
+    fetch(`/api/products?categoryId=${encodeURIComponent(id)}&includeDescendants=true`),
   ]);
   const cat: ApiCategory = catRes.ok ? await catRes.json() : { id, name: id };
   const products: ApiProduct[] = productsRes.ok ? await productsRes.json() : [];
@@ -87,10 +86,14 @@ const BENEFITS = [
 
 export default function HomePage() {
   const [activeSlide, setActiveSlide] = useState(0);
-  const [sliders, setSliders] = useState<SliderData[]>([]);
+  const [sliderMap, setSliderMap] = useState<Record<string, SliderData>>({});
 
   useEffect(() => {
-    Promise.all(CATEGORY_IDS.map(fetchSliderData)).then(setSliders);
+    Promise.all(CATEGORY_IDS.map(fetchSliderData)).then(results => {
+      const map: Record<string, SliderData> = {};
+      results.forEach(s => { map[s.id] = s; });
+      setSliderMap(map);
+    });
   }, []);
 
   const goTo = (index: number) => setActiveSlide(index);
@@ -104,7 +107,7 @@ export default function HomePage() {
 
       {/* ── 1. Hero ── */}
       <section className={styles.hero}>
-        <div className={styles.section}>
+        <Container>
           <div className={styles.heroInner}>
 
             {/* Slide */}
@@ -136,41 +139,31 @@ export default function HomePage() {
               />
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* ── 2. Sale sliders ── */}
       <div className={styles.sliders}>
-        {sliders.map(({ id, name, imagePath, products }) => (
-          <section key={id} className={styles.sliderSection}>
-            <div className={styles.section}>
-              <div className={styles.sliderRow}>
-                <div className={styles.sliderTitleCol}>
-                  <SaleSliderTitle title={name} imageSrc={imagePath ?? undefined} />
-                </div>
-                <div className={styles.sliderTrackCol}>
-                  <SliderContainer>
-                    {products.map(p => (
-                      <ProductCard
-                        key={p.id}
-                        id={p.id}
-                        slug={`product/${p.id}`}
-                        name={p.name}
-                        price={p.price}
-                        image={p.imagePath ?? '/images/placeholder.png'}
-                      />
-                    ))}
-                  </SliderContainer>
-                </div>
-              </div>
-            </div>
-          </section>
-        ))}
+        {CATEGORY_IDS.map(id => {
+          const data = sliderMap[id];
+          return (
+            <section key={id} className={styles.sliderSection}>
+              <Container>
+                <SaleSlider
+                  title={data?.name ?? ''}
+                  imageSrc={data?.imagePath}
+                  products={data?.products ?? []}
+                  loading={!data}
+                />
+              </Container>
+            </section>
+          );
+        })}
       </div>
 
       {/* ── 3. Loyalty ── */}
       <section className={styles.loyalty}>
-        <div className={styles.section}>
+        <Container>
           <div className={styles.loyaltyInner}>
             <h2 className={styles.loyaltyHeading}>Единая программа лояльности</h2>
 
@@ -210,7 +203,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
     </div>

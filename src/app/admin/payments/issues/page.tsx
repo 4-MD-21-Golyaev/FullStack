@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { paymentsApi, type PaymentIssueDto } from '@/lib/api/payments';
-import { DataTable, ConfirmDialog, Button, type Column } from '@/shared/ui';
+import { DataTable, ConfirmDialog, Button, TextField, type Column } from '@/shared/ui';
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import Link from 'next/link';
@@ -132,19 +132,14 @@ export default function PaymentIssuesPage() {
         )}
         onCancel={() => { setFailTarget(null); reasonForm.reset(); }}
       >
-        <div className={styles.field}>
-          <label className={styles.label}>Причина *</label>
-          <textarea
-            className={styles.textarea}
-            placeholder="Укажите причину (минимум 5 символов)"
-            {...reasonForm.register('reason')}
-          />
-          {reasonForm.formState.errors.reason && (
-            <span className={styles.error}>
-              {reasonForm.formState.errors.reason.message}
-            </span>
-          )}
-        </div>
+        <TextField
+          label="Причина *"
+          placeholder="Укажите причину (минимум 5 символов)"
+          size="md"
+          error={!!reasonForm.formState.errors.reason}
+          hint={reasonForm.formState.errors.reason?.message}
+          {...reasonForm.register('reason')}
+        />
       </ConfirmDialog>
     </div>
   );

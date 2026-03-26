@@ -13,6 +13,7 @@ export interface VerifyCodeInput {
 export interface VerifyCodeOutput {
     accessToken: string;
     refreshToken: string;
+    role: string;
 }
 
 const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -55,6 +56,6 @@ export class VerifyCodeUseCase {
             createdAt: now,
         });
 
-        return { accessToken, refreshToken };
+        return { accessToken, refreshToken, role: user.role };
     }
 }

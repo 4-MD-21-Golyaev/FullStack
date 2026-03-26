@@ -90,17 +90,3 @@
 .isLoading {
   pointer-events: none;
 }
-
-.spinner {
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  border-radius: var(--ctx-radius-badge);
-  animation: spin 300ms linear infinite; /* Figma: spinner rotation speed */
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}

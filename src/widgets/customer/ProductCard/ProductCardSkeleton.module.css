@@ -1,0 +1,57 @@
+@keyframes shimmer {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: var(--product-card-w-l);
+  height: var(--product-card-h-l);
+  background: var(--ctx-color-bg-surface);
+  border-radius: var(--ctx-radius-card);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sizeS {
+  width: var(--product-card-w-s);
+  height: var(--product-card-h-s);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: var(--product-card-img-h-l);
+  flex-shrink: 0;
+  background-color: var(--ctx-color-bg-subtle);
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.sizeS .image {
+  height: var(--product-card-img-h-s);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--ctx-space-stack-sm);
+  padding: var(--ctx-space-stack-sm) var(--ctx-space-inset-md) var(--ctx-space-inset-md);
+  flex: 1;
+  min-height: 0;
+}
+
+.nameLines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}

@@ -1,0 +1,14 @@
+.root {
+  display: flex;
+  gap: var(--ctx-space-inset-md);
+  align-items: flex-start;
+}
+
+.titleCol {
+  flex-shrink: 0;
+}
+
+.trackCol {
+  flex: 1;
+  min-width: 0;
+}

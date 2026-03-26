@@ -11,9 +11,9 @@ interface Product {
   name: string;
   price: number;
   image: string;
+  stock?: number;
   oldPrice?: number;
   discount?: string;
-  inCart?: boolean;
 }
 
 interface CategoryInfo {
@@ -75,7 +75,7 @@ export default function ProductSlider({ category, products }: ProductSliderProps
                     oldPrice={p.oldPrice}
                     discount={p.discount}
                     image={p.image}
-                    inCart={p.inCart}
+                    stock={p.stock}
                   />
                 ))
               )}

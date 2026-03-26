@@ -245,11 +245,23 @@ describe('CourierReleaseOrderUseCase', () => {
 // ---------------------------------------------------------------------------
 
 describe('CourierStartDeliveryUseCase', () => {
-    it('transitions DELIVERY_ASSIGNED → OUT_FOR_DELIVERY for the assigned courier', async () => {
+    it('transitions DELIVERY_ASSIGNED → OUT_FOR_DELIVERY for the assigned courier and emits ORDER_OUT_FOR_DELIVERY', async () => {
         const order = makeOrder({ state: OrderState.DELIVERY_ASSIGNED, deliveryClaimUserId: 'courier-1' });
         const orderRepo = makeOrderRepo({ findById: vi.fn().mockResolvedValue(order) });
         const audit = makeAuditRepo();
-        const useCase = new CourierStartDeliveryUseCase(makeTransactionRunner(orderRepo, audit));
+        const outboxSave = vi.fn();
+        const txRunner: TransactionRunner = {
+            run: vi.fn().mockImplementation((work: (ctx: TransactionContext) => Promise<any>) =>
+                work({
+                    orderRepository: orderRepo,
+                    paymentRepository: {} as any,
+                    productRepository: {} as any,
+                    outboxRepository: { save: outboxSave, claimPending: vi.fn(), markProcessed: vi.fn(), markFailed: vi.fn(), incrementRetry: vi.fn() },
+                    auditLogRepository: audit,
+                })
+            ),
+        };
+        const useCase = new CourierStartDeliveryUseCase(txRunner);
 
         const result = await useCase.execute(BASE_INPUT);
 
@@ -257,6 +269,7 @@ describe('CourierStartDeliveryUseCase', () => {
         expect(result.outForDeliveryAt).toBeInstanceOf(Date);
         expect(orderRepo.save).toHaveBeenCalledWith(expect.objectContaining({ state: OrderState.OUT_FOR_DELIVERY }));
         expect(audit.save).toHaveBeenCalledWith(expect.objectContaining({ action: 'COURIER_START_DELIVERY' }));
+        expect(outboxSave).toHaveBeenCalledWith(expect.objectContaining({ eventType: 'ORDER_OUT_FOR_DELIVERY' }));
     });
 
     it('throws when order is not found', async () => {
@@ -305,6 +318,7 @@ describe('CourierConfirmDeliveredUseCase', () => {
         expect(orderRepo.save).toHaveBeenCalledWith(expect.objectContaining({ state: OrderState.CLOSED }));
         expect(audit.save).toHaveBeenCalledWith(expect.objectContaining({ action: 'COURIER_CONFIRM_DELIVERED' }));
         expect(outboxSave).toHaveBeenCalledWith(expect.objectContaining({ eventType: 'ORDER_COMPLETED' }));
+        expect(outboxSave).toHaveBeenCalledWith(expect.objectContaining({ eventType: 'ORDER_DELIVERED' }));
     });
 
     it('throws when order is not found', async () => {

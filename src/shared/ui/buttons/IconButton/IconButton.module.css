@@ -13,6 +13,10 @@
   opacity: 1;
 }
 
+.isLoading {
+  pointer-events: none;
+}
+
 /* Sizes */
 .xs { width: 20px; height: 20px; border-radius: var(--ctx-radius-card); }
 .sm { width: 36px; height: 36px; border-radius: var(--ctx-radius-lg); }

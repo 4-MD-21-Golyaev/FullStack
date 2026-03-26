@@ -1,25 +1,7 @@
 'use client';
 
-import { useRoleGuard } from '@/lib/auth/guards';
-import { WorkerHeader } from '@/widgets/WorkerHeader/WorkerHeader';
-import { Spinner } from '@/shared/ui';
-import styles from './layout.module.css';
+import { WorkerLayout } from '@/widgets/worker/WorkerLayout/WorkerLayout';
 
 export default function PickerLayout({ children }: { children: React.ReactNode }) {
-  const { isLoading } = useRoleGuard(['PICKER', 'STAFF', 'ADMIN']);
-
-  if (isLoading) {
-    return (
-      <div className={styles.loading}>
-        <Spinner size="lg" label="Загрузка..." />
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.root}>
-      <WorkerHeader />
-      <main className={styles.content}>{children}</main>
-    </div>
-  );
+  return <WorkerLayout roles={['PICKER', 'STAFF', 'ADMIN']}>{children}</WorkerLayout>;
 }

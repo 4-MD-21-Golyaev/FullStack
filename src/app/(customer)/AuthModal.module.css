@@ -1,0 +1,9 @@
+/* ── Modal size (overrides Modal.root fluid defaults) ── */
+.modal {
+  width: 400px;
+  height: 700px;
+  min-width: unset;
+  max-width: unset;
+  max-height: unset;
+  overflow: hidden;
+}

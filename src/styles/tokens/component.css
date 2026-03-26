@@ -83,10 +83,12 @@
   --product-card-w-l:         201px;   /* Figma: L card width */
   --product-card-h-l:         306px;   /* Figma: L card height */
   --product-card-w-s:         165px;   /* Figma: S card width */
+  --product-card-h-s:         282px;   /* Figma: S card height */
   --product-card-img-h-l:     176px;   /* Figma: L card image height */
   --product-card-img-h-s:     160px;   /* Figma: S card image height */
   --product-card-like-top:    4px;     /* optical offset */
   --product-card-badge-left:  6px;     /* badge offset from image edge */
+  --product-card-counter-l:   136px;   /* Figma: Counter width in L in-cart state */
 
   /* ── Rating (fixed Figma star sizes) ── */
   --rating-star-size-s:  16px;   /* Figma: S star */

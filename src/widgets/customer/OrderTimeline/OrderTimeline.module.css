@@ -1,0 +1,104 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.cancelledBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--ctx-space-inset-xs) var(--ctx-space-inset-sm);
+  border-radius: var(--ctx-radius-badge);
+  background: var(--ctx-color-status-danger-bg);
+  color: var(--ctx-color-status-danger);
+  font-size: var(--ctx-font-size-label);
+  font-weight: 600;
+  line-height: var(--ctx-line-height-normal);
+  align-self: flex-start;
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.step {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--ctx-space-inline-sm);
+}
+
+.indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: var(--ctx-font-size-xs);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.done {
+  background: var(--ctx-color-status-success);
+  border: 2px solid var(--ctx-color-status-success);
+  color: var(--ctx-color-text-inverse);
+}
+
+.active {
+  background: var(--ctx-color-action-primary);
+  border: 2px solid var(--ctx-color-action-primary);
+  color: var(--ctx-color-text-inverse);
+}
+
+.pending {
+  background: transparent;
+  border: 2px solid var(--ctx-color-border-default);
+  color: transparent;
+}
+
+.check {
+  line-height: 1;
+}
+
+.line {
+  width: 2px;
+  height: 24px;
+  background: var(--ctx-color-border-default);
+  flex-shrink: 0;
+}
+
+.label {
+  padding-top: 2px;
+  font-size: var(--ctx-font-size-label);
+  line-height: var(--ctx-line-height-normal);
+  padding-bottom: var(--ctx-space-stack-xs);
+}
+
+.label_done {
+  color: var(--ctx-color-status-success);
+  font-weight: 600;
+}
+
+.label_active {
+  color: var(--ctx-color-action-primary);
+  font-weight: 700;
+}
+
+.label_pending {
+  color: var(--ctx-color-text-secondary);
+  font-weight: 400;
+}

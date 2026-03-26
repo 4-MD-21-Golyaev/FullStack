@@ -3,6 +3,8 @@ import { ProcessOutboxUseCase } from '../ProcessOutboxUseCase';
 import { OutboxRepository, OutboxEvent } from '@/application/ports/OutboxRepository';
 import { MoySkladOrderGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladOrderGateway';
 import { OrderRepository } from '@/application/ports/OrderRepository';
+import { UserRepository } from '@/application/ports/UserRepository';
+import { EmailGateway } from '@/application/ports/EmailGateway';
 import { Order } from '@/domain/order/Order';
 import { OrderState } from '@/domain/order/OrderState';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
@@ -79,6 +81,35 @@ function makeOrderRepo(order: Order | null = baseOrder): OrderRepository {
     };
 }
 
+function makeUserRepo(): UserRepository {
+    return {
+        findById: vi.fn().mockResolvedValue({ id: 'user-1', email: 'customer@example.com', role: 'CUSTOMER', phone: '+79000000000', address: null }),
+        findByEmail: vi.fn(),
+        create: vi.fn(),
+    };
+}
+
+function makeEmailGateway(): EmailGateway {
+    return {
+        sendOtp: vi.fn(),
+        sendOrderConfirmed: vi.fn().mockResolvedValue(undefined),
+        sendOrderOutForDelivery: vi.fn().mockResolvedValue(undefined),
+        sendOrderDelivered: vi.fn().mockResolvedValue(undefined),
+    };
+}
+
+function makeUseCase(
+    events: OutboxEvent[],
+    orderRepo: OrderRepository = makeOrderRepo(),
+    userRepo: UserRepository = makeUserRepo(),
+    emailGateway: EmailGateway = makeEmailGateway(),
+) {
+    return {
+        useCase: new ProcessOutboxUseCase(makeRepo(events), makeGateway(), orderRepo, userRepo, emailGateway),
+        repo: makeRepo(events),
+    };
+}
+
 describe('ProcessOutboxUseCase', () => {
 
     it('ORDER_CREATED: createCustomerOrder вызван, moySkladId записан в order', async () => {
@@ -87,7 +118,7 @@ describe('ProcessOutboxUseCase', () => {
         const gateway = makeGateway();
         const orderRepo = makeOrderRepo({ ...baseOrder, moySkladId: null });
 
-        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo).execute();
+        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo, makeUserRepo(), makeEmailGateway()).execute();
 
         expect(gateway.createCustomerOrder).toHaveBeenCalledWith('order-1', expect.any(Array), 200);
         expect(orderRepo.save).toHaveBeenCalledWith(expect.objectContaining({ moySkladId: 'ms-123' }));
@@ -108,7 +139,7 @@ describe('ProcessOutboxUseCase', () => {
         const gateway = makeGateway();
         const orderRepo = makeOrderRepo();
 
-        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo).execute();
+        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo, makeUserRepo(), makeEmailGateway()).execute();
 
         expect(gateway.updateCustomerOrder).toHaveBeenCalledWith('ms-123', expect.any(Array), 200);
         expect(repo.markProcessed).toHaveBeenCalledWith(event.id);
@@ -124,7 +155,7 @@ describe('ProcessOutboxUseCase', () => {
         const gateway = makeGateway();
         const orderRepo = makeOrderRepo();
 
-        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo).execute();
+        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo, makeUserRepo(), makeEmailGateway()).execute();
 
         expect(gateway.createPaymentIn).toHaveBeenCalledWith('ms-123', 200, 'order-1');
         expect(repo.markProcessed).toHaveBeenCalledWith(event.id);
@@ -140,7 +171,7 @@ describe('ProcessOutboxUseCase', () => {
         const gateway = makeGateway();
         const orderRepo = makeOrderRepo();
 
-        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo).execute();
+        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo, makeUserRepo(), makeEmailGateway()).execute();
 
         expect(gateway.updateCustomerOrderState).toHaveBeenCalledWith('ms-123');
         expect(repo.markProcessed).toHaveBeenCalledWith(event.id);
@@ -156,7 +187,7 @@ describe('ProcessOutboxUseCase', () => {
         const gateway = makeGateway();
         const orderRepo = makeOrderRepo({ ...baseOrder, moySkladId: null });
 
-        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo).execute();
+        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo, makeUserRepo(), makeEmailGateway()).execute();
 
         expect(gateway.updateCustomerOrder).not.toHaveBeenCalled();
         expect(repo.incrementRetry).toHaveBeenCalledWith(event.id);
@@ -174,7 +205,7 @@ describe('ProcessOutboxUseCase', () => {
         const gateway = makeGateway();
         const orderRepo = makeOrderRepo({ ...baseOrder, moySkladId: null });
 
-        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo).execute();
+        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo, makeUserRepo(), makeEmailGateway()).execute();
 
         // Should still retry, not fail
         expect(repo.incrementRetry).toHaveBeenCalledWith(event.id);
@@ -187,7 +218,7 @@ describe('ProcessOutboxUseCase', () => {
         const gateway = makeGateway();
         const orderRepo = makeOrderRepo();
 
-        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo).execute();
+        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo, makeUserRepo(), makeEmailGateway()).execute();
 
         expect(gateway.createCustomerOrder).not.toHaveBeenCalled();
         expect(result).toEqual({ processed: 0, retried: 0, failed: 0 });
@@ -200,7 +231,7 @@ describe('ProcessOutboxUseCase', () => {
         (gateway.createCustomerOrder as any).mockRejectedValue(new MoySkladProductNotFoundError(['A1']));
         const orderRepo = makeOrderRepo({ ...baseOrder, moySkladId: null });
 
-        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo).execute();
+        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo, makeUserRepo(), makeEmailGateway()).execute();
 
         expect(repo.markFailed).toHaveBeenCalledWith(event.id, expect.stringContaining('A1'));
         expect(repo.incrementRetry).not.toHaveBeenCalled();
@@ -214,7 +245,7 @@ describe('ProcessOutboxUseCase', () => {
         (gateway.createCustomerOrder as any).mockRejectedValue(new Error('network error'));
         const orderRepo = makeOrderRepo({ ...baseOrder, moySkladId: null });
 
-        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo).execute();
+        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo, makeUserRepo(), makeEmailGateway()).execute();
 
         expect(repo.incrementRetry).toHaveBeenCalledWith(event.id);
         expect(repo.markFailed).not.toHaveBeenCalled();
@@ -228,7 +259,7 @@ describe('ProcessOutboxUseCase', () => {
         (gateway.createCustomerOrder as any).mockRejectedValue(new Error('network error'));
         const orderRepo = makeOrderRepo({ ...baseOrder, moySkladId: null });
 
-        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo).execute();
+        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo, makeUserRepo(), makeEmailGateway()).execute();
 
         expect(repo.markFailed).toHaveBeenCalledWith(event.id, 'network error');
         expect(repo.incrementRetry).not.toHaveBeenCalled();
@@ -241,12 +272,49 @@ describe('ProcessOutboxUseCase', () => {
         const gateway = makeGateway();
         const orderRepo = makeOrderRepo();
 
-        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo).execute();
+        const result = await new ProcessOutboxUseCase(repo, gateway, orderRepo, makeUserRepo(), makeEmailGateway()).execute();
 
         expect(gateway.createCustomerOrder).not.toHaveBeenCalled();
         expect(gateway.updateCustomerOrder).not.toHaveBeenCalled();
         expect(gateway.createPaymentIn).not.toHaveBeenCalled();
         expect(gateway.updateCustomerOrderState).not.toHaveBeenCalled();
+        expect(repo.markProcessed).toHaveBeenCalledWith(event.id);
+        expect(result).toEqual({ processed: 1, retried: 0, failed: 0 });
+    });
+
+    it('ORDER_CONFIRMED: sendOrderConfirmed вызван с email покупателя', async () => {
+        const event = makeEvent({ eventType: 'ORDER_CONFIRMED', payload: { orderId: 'order-1' } });
+        const repo = makeRepo([event]);
+        const emailGateway = makeEmailGateway();
+        const userRepo = makeUserRepo();
+
+        const result = await new ProcessOutboxUseCase(repo, makeGateway(), makeOrderRepo(), userRepo, emailGateway).execute();
+
+        expect(emailGateway.sendOrderConfirmed).toHaveBeenCalledWith('customer@example.com', 'order-1', 200);
+        expect(repo.markProcessed).toHaveBeenCalledWith(event.id);
+        expect(result).toEqual({ processed: 1, retried: 0, failed: 0 });
+    });
+
+    it('ORDER_OUT_FOR_DELIVERY: sendOrderOutForDelivery вызван', async () => {
+        const event = makeEvent({ eventType: 'ORDER_OUT_FOR_DELIVERY', payload: { orderId: 'order-1' } });
+        const repo = makeRepo([event]);
+        const emailGateway = makeEmailGateway();
+
+        const result = await new ProcessOutboxUseCase(repo, makeGateway(), makeOrderRepo(), makeUserRepo(), emailGateway).execute();
+
+        expect(emailGateway.sendOrderOutForDelivery).toHaveBeenCalledWith('customer@example.com', 'order-1');
+        expect(repo.markProcessed).toHaveBeenCalledWith(event.id);
+        expect(result).toEqual({ processed: 1, retried: 0, failed: 0 });
+    });
+
+    it('ORDER_DELIVERED: sendOrderDelivered вызван', async () => {
+        const event = makeEvent({ eventType: 'ORDER_DELIVERED', payload: { orderId: 'order-1' } });
+        const repo = makeRepo([event]);
+        const emailGateway = makeEmailGateway();
+
+        const result = await new ProcessOutboxUseCase(repo, makeGateway(), makeOrderRepo(), makeUserRepo(), emailGateway).execute();
+
+        expect(emailGateway.sendOrderDelivered).toHaveBeenCalledWith('customer@example.com', 'order-1');
         expect(repo.markProcessed).toHaveBeenCalledWith(event.id);
         expect(result).toEqual({ processed: 1, retried: 0, failed: 0 });
     });

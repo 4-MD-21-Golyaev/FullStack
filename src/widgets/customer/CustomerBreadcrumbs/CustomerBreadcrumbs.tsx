@@ -34,7 +34,14 @@ export default function CustomerBreadcrumbs() {
     return null;
   }
 
-  const crumbs = customCrumbs ?? buildCrumbsFromPathname(pathname);
+  const hasDynamicSegments = pathname
+    .split('/')
+    .filter(Boolean)
+    .some(seg => !(seg in SEGMENT_LABELS));
+
+  const crumbs = customCrumbs ?? (hasDynamicSegments ? null : buildCrumbsFromPathname(pathname));
+
+  if (!crumbs) return null;
 
   return <Breadcrumbs crumbs={crumbs} size="L" />;
 }

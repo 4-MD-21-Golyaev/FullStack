@@ -23,9 +23,9 @@ export async function POST(req: NextRequest) {
             new JoseTokenService(),
         );
 
-        const { accessToken, refreshToken } = await useCase.execute({ email, code });
+        const { accessToken, refreshToken, role } = await useCase.execute({ email, code });
 
-        const res = NextResponse.json({ ok: true });
+        const res = NextResponse.json({ ok: true, role });
         setTokenCookies(res, accessToken, refreshToken);
         return res;
     } catch (error: unknown) {
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: error.message }, { status: 429 });
         }
         if (error instanceof InvalidOtpError) {
-            return NextResponse.json({ message: error.message }, { status: 401 });
+            return NextResponse.json({ message: error.message }, { status: 422 });
         }
         if (error instanceof UserNotFoundError) {
             return NextResponse.json({ message: error.message }, { status: 404 });

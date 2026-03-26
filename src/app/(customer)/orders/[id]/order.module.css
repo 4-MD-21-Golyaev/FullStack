@@ -1,0 +1,200 @@
+.page {
+  padding-block: var(--ctx-space-stack-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-lg);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ctx-space-inline-md);
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-sm);
+}
+
+.orderId {
+  font-family: var(--ctx-font-code);
+  font-size: var(--ctx-font-size-h2);
+  font-weight: 700;
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+  margin: 0;
+}
+
+.date {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.notFound {
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-text-secondary);
+}
+
+/* Body layout */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-lg);
+}
+
+/* Section common */
+.sectionTitle {
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700;
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+  margin: 0 0 var(--ctx-space-stack-md);
+}
+
+/* Timeline section */
+.timelineSection {
+  background: var(--ctx-color-bg-surface);
+  border: 1px solid var(--ctx-color-border-default);
+  border-radius: var(--ctx-radius-card);
+  padding: var(--ctx-space-inset-lg);
+}
+
+/* Items section */
+.itemsSection {
+  background: var(--ctx-color-bg-surface);
+  border: 1px solid var(--ctx-color-border-default);
+  border-radius: var(--ctx-radius-card);
+  padding: var(--ctx-space-inset-lg);
+}
+
+.itemList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ctx-space-inline-md);
+  padding-block: var(--ctx-space-stack-md);
+  border-bottom: 1px solid var(--ctx-color-border-default);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.itemName {
+  font-size: var(--ctx-font-size-body);
+  font-weight: 500;
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.itemArticle {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.itemPricing {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--ctx-space-stack-sm);
+  flex-shrink: 0;
+}
+
+.itemQty {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.itemSubtotal {
+  font-size: var(--ctx-font-size-body);
+  font-weight: 600;
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-normal);
+}
+
+/* Totals */
+.totals {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-sm);
+  margin-top: var(--ctx-space-stack-md);
+  padding-top: var(--ctx-space-stack-md);
+  border-top: 1px solid var(--ctx-color-border-default);
+}
+
+.totalRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.totalRowFinal {
+  margin-top: var(--ctx-space-stack-xs);
+}
+
+.totalLabel {
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.totalValue {
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-text-default);
+  font-weight: 500;
+  line-height: var(--ctx-line-height-normal);
+}
+
+.totalValueFinal {
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 700;
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-tight);
+}
+
+/* Address section */
+.addressSection {
+  background: var(--ctx-color-bg-surface);
+  border: 1px solid var(--ctx-color-border-default);
+  border-radius: var(--ctx-radius-card);
+  padding: var(--ctx-space-inset-lg);
+}
+
+.address {
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-loose);
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+  }
+
+  .orderId {
+    font-size: var(--ctx-font-size-h3);
+  }
+}
