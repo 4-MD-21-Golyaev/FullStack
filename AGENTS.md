@@ -29,6 +29,7 @@ SMTP_PORT                 # SMTP port (587 or 465)
 SMTP_USER                 # SMTP username
 SMTP_PASS                 # SMTP password
 SMTP_FROM                 # Sender address
+YANDEX_SUGGEST_API_KEY    # Yandex Maps Suggest API key
 ```
 
 ## Architecture

@@ -12,6 +12,8 @@ interface CreateOrderInput {
         productId: string;
         quantity: number;
     }[];
+    scheduledDate?: Date | null;
+    scheduledTimeSlot?: string | null;
 }
 
 export class CreateOrderUseCase {
@@ -50,7 +52,9 @@ export class CreateOrderUseCase {
                 input.userId,
                 input.address,
                 orderItems,
-                input.absenceResolutionStrategy
+                input.absenceResolutionStrategy,
+                input.scheduledDate,
+                input.scheduledTimeSlot
             );
 
             await orderRepository.save(order);

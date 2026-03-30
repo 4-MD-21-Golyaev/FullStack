@@ -115,4 +115,7 @@
   --header-breakpoint-mobile:   767px;
 
   /* ── Footer (customer — fixed layout dimensions) ── */
+
+  /* ── StageIcon (fixed Figma rgba value — translucent white on primary bg) ── */
+  --stage-icon-inner-activated-bg: rgba(255, 255, 255, 0.18);   /* Figma: inner circle overlay on activated state */
 }

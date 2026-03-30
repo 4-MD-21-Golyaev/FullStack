@@ -30,7 +30,9 @@ export function createOrder(
     userId: string,
     address: string,
     items: OrderItem[],
-    absenceResolutionStrategy: AbsenceResolutionStrategy
+    absenceResolutionStrategy: AbsenceResolutionStrategy,
+    scheduledDate?: Date | null,
+    scheduledTimeSlot?: string | null
 ): Order {
 
     if (!items || items.length === 0) {
@@ -65,6 +67,8 @@ export function createOrder(
         totalAmount,
         state: OrderState.CREATED,
         absenceResolutionStrategy,
+        scheduledDate: scheduledDate ?? null,
+        scheduledTimeSlot: scheduledTimeSlot ?? null,
         createdAt: now,
         updatedAt: now,
     };

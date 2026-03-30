@@ -8,10 +8,17 @@
 }
 
 .card {
+  position: relative;
   width: 400px;
-  height: 700px;
   background: var(--ctx-color-bg-surface);
   border-radius: var(--ctx-radius-card);
   box-shadow: var(--ctx-shadow-card);
   overflow: hidden;
+}
+
+.backBtn {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 1;
 }

@@ -185,4 +185,93 @@ describe('CreateOrderUseCase', () => {
         })).rejects.toThrow('Address is required');
     });
 
+    it('stores scheduledDate and scheduledTimeSlot when provided', async () => {
+        const mockOrderRepo = makeOrderRepo();
+        const mockProductRepo = makeProductRepo({
+            id: 'p1',
+            name: 'Product 1',
+            article: 'A1',
+            price: 100,
+            stock: 10,
+            imagePath: null,
+            categoryId: 'c1',
+        });
+
+        const useCase = new CreateOrderUseCase(
+            makeTransactionRunner(mockOrderRepo, mockProductRepo)
+        );
+
+        const scheduledDate = new Date('2026-04-15T00:00:00.000Z');
+
+        const order = await useCase.execute({
+            userId: 'u1',
+            address: 'Test address',
+            absenceResolutionStrategy: AbsenceResolutionStrategy.CALL_REPLACE,
+            items: [{ productId: 'p1', quantity: 1 }],
+            scheduledDate,
+            scheduledTimeSlot: '12:00 - 14:00',
+        });
+
+        expect(order.scheduledDate).toEqual(scheduledDate);
+        expect(order.scheduledTimeSlot).toBe('12:00 - 14:00');
+    });
+
+    it('creates order without scheduledDate and scheduledTimeSlot (backward compat)', async () => {
+        const mockOrderRepo = makeOrderRepo();
+        const mockProductRepo = makeProductRepo({
+            id: 'p1',
+            name: 'Product 1',
+            article: 'A1',
+            price: 100,
+            stock: 10,
+            imagePath: null,
+            categoryId: 'c1',
+        });
+
+        const useCase = new CreateOrderUseCase(
+            makeTransactionRunner(mockOrderRepo, mockProductRepo)
+        );
+
+        const order = await useCase.execute({
+            userId: 'u1',
+            address: 'Test address',
+            absenceResolutionStrategy: AbsenceResolutionStrategy.CALL_REPLACE,
+            items: [{ productId: 'p1', quantity: 1 }],
+            // scheduledDate and scheduledTimeSlot deliberately omitted
+        });
+
+        expect(order.state).toBe(OrderState.CREATED);
+        expect(order.scheduledDate).toBeNull();
+        expect(order.scheduledTimeSlot).toBeNull();
+    });
+
+    it('stores null when scheduledDate is explicitly null', async () => {
+        const mockOrderRepo = makeOrderRepo();
+        const mockProductRepo = makeProductRepo({
+            id: 'p1',
+            name: 'Product 1',
+            article: 'A1',
+            price: 100,
+            stock: 10,
+            imagePath: null,
+            categoryId: 'c1',
+        });
+
+        const useCase = new CreateOrderUseCase(
+            makeTransactionRunner(mockOrderRepo, mockProductRepo)
+        );
+
+        const order = await useCase.execute({
+            userId: 'u1',
+            address: 'Test address',
+            absenceResolutionStrategy: AbsenceResolutionStrategy.CALL_REPLACE,
+            items: [{ productId: 'p1', quantity: 1 }],
+            scheduledDate: null,
+            scheduledTimeSlot: null,
+        });
+
+        expect(order.scheduledDate).toBeNull();
+        expect(order.scheduledTimeSlot).toBeNull();
+    });
+
 });

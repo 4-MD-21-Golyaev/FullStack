@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
             categoryId: p.categoryId,
         }));
 
-        return NextResponse.json(result);
+        return NextResponse.json({ products: result, total: result.length });
     } catch (error: any) {
         return NextResponse.json(
             { message: error.message },

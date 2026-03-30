@@ -18,6 +18,8 @@ export interface Order {
     outForDeliveryAt?: Date | null;
     deliveredAt?: Date | null;
     moySkladId?: string | null;
+    scheduledDate?: Date | null;
+    scheduledTimeSlot?: string | null;
     createdAt: Date;
     updatedAt: Date;
 }

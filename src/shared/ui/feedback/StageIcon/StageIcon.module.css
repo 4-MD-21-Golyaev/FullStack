@@ -1,0 +1,49 @@
+.root {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.enabled {
+  background-color: var(--ctx-color-bg-subtle);
+}
+
+.activated {
+  background-color: var(--ctx-color-action-primary);
+}
+
+.inner {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.enabled .inner {
+  background-color: var(--ctx-color-bg-surface);
+}
+
+.activated .inner {
+  background-color: var(--stage-icon-inner-activated-bg);
+}
+
+.iconSlot {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.enabled .iconSlot {
+  color: var(--ctx-color-text-default);
+}
+
+.activated .iconSlot {
+  color: var(--ctx-color-text-inverse);
+}

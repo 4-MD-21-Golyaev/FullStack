@@ -47,19 +47,19 @@
   --ctx-color-status-success: var(--primitive-color-green-500);
   --ctx-color-status-warning: var(--primitive-color-orange-400);
   --ctx-color-status-danger:  var(--primitive-color-error-500);
-  --ctx-color-status-info:    var(--primitive-color-blue-500);
+  --ctx-color-status-info:    var(--primitive-color-neutral-500);
   /* bg — for subtle backgrounds */
   --ctx-color-status-success-bg: var(--primitive-color-green-50);
   --ctx-color-status-warning-bg: var(--primitive-color-orange-50);
   --ctx-color-status-danger-bg:  var(--primitive-color-pink-50);
-  --ctx-color-status-info-bg:    var(--primitive-color-blue-50);
+  --ctx-color-status-info-bg:    var(--primitive-color-neutral-100);
   --ctx-color-status-payment-bg: var(--primitive-color-purple-50);
   --ctx-color-status-neutral-bg: var(--primitive-color-cream-50);
   --ctx-color-bg-category:       var(--primitive-color-cream-50);  /* category tile background — Pastel/Cream */
 
   /* ── Order status colors (bg + text pair for badges) ── */
-  --ctx-color-order-created-bg:    var(--primitive-color-blue-50);
-  --ctx-color-order-created-text:  var(--primitive-color-red-500);
+  --ctx-color-order-created-bg:    var(--primitive-color-neutral-100);
+  --ctx-color-order-created-text:  var(--primitive-color-neutral-500);
   --ctx-color-order-picking-bg:    var(--primitive-color-orange-50);
   --ctx-color-order-picking-text:  var(--primitive-color-neutral-900);
   --ctx-color-order-payment-bg:    var(--primitive-color-purple-50);
@@ -89,6 +89,7 @@
   --ctx-space-page-desktop: var(--primitive-space-800);   /* 32px page padding */
   --ctx-space-page-mobile:  var(--primitive-space-300);   /* 12px */
   --ctx-layout-max-width:   1200px;   /* standard content width (customer pages) */
+  --ctx-layout-narrow-width: 480px;  /* narrow centered content (success, empty states) */
   --ctx-grid-columns:       12;       /* 12-column layout grid */
   --ctx-grid-gutter:        12px;     /* gap between grid columns and product cards */
 

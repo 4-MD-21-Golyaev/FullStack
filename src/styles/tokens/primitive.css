@@ -12,7 +12,7 @@
   --primitive-color-neutral-250: #dedede;   /* Gray/Focused */
   --primitive-color-neutral-300: #cccccc;   /* Gray/Disabled */
   --primitive-color-neutral-400: #9c9999;   /* Dark Gray/Enabled — secondary icons */
-  --primitive-color-neutral-500: #999999;   /* Gray contrast — secondary text */
+  --primitive-color-neutral-500: #767676;   /* Gray contrast — secondary text (WCAG AA 4.54:1 on white) */
   --primitive-color-neutral-900: #282828;   /* Signal black — primary text */
 
   /* ── Red brand scale (accent/primary) ── */
@@ -31,14 +31,12 @@
 
   /* ── Admin UI status colors (no Figma variable — admin panel only) ── */
   --primitive-color-green-500: #0a9e5c;
-  --primitive-color-blue-500:  #0070f3;
 
   /* ── Pastel scale (status/tag backgrounds) ── */
   --primitive-color-cream-50:  #fff8e4;
   --primitive-color-orange-50: #fdf0e2;
   --primitive-color-green-50:  #e8fcea;
   --primitive-color-pink-50:   #ffebeb;
-  --primitive-color-blue-50:   #e9f0fc;
   --primitive-color-purple-50: #f3e9fb;
 
   /* ── Spacing scale (base unit 4px) ── */
@@ -103,4 +101,3 @@
   --primitive-z-modal:    200;
   --primitive-z-toast:    300;
 }
-

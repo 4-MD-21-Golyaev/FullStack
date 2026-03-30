@@ -1,0 +1,84 @@
+.subtitle {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+  text-align: center;
+  line-height: var(--ctx-line-height-normal);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.streetWrapper {
+  position: relative;
+}
+
+.streetRow {
+  display: flex;
+  gap: var(--ctx-space-inline-sm);
+  align-items: flex-start;
+}
+
+.streetRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.row {
+  display: flex;
+  gap: var(--ctx-space-inline-sm);
+}
+
+.row > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.flexItem {
+  flex: 1;
+  min-width: 0;
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--ctx-color-bg-surface);
+  border-radius: var(--ctx-radius-control);
+  box-shadow: var(--ctx-shadow-card);
+  overflow: hidden;
+  margin-top: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.suggestionItem {
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.suggestionItem:hover {
+  background: var(--ctx-color-bg-subtle-hover);
+}
+
+.suggestionTitle {
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-text-default);
+}
+
+.suggestionSubtitle {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-secondary);
+}
+
+.error {
+  font-size: var(--ctx-font-size-caption);
+  color: var(--ctx-color-text-danger);
+}

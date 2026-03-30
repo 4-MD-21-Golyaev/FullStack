@@ -30,6 +30,8 @@ export async function POST(req: NextRequest) {
             address: body.address,
             absenceResolutionStrategy: body.absenceResolutionStrategy,
             items: body.items,
+            scheduledDate: body.scheduledDate ? new Date(body.scheduledDate) : null,
+            scheduledTimeSlot: body.scheduledTimeSlot ?? null,
         });
 
         // Корзина — это незафиксированный заказ. После подтверждения очищаем её.

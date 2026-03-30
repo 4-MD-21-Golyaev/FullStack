@@ -71,6 +71,7 @@ model User {
   pickerClaims    Order[] @relation("PickerClaims")
   deliveryClaims  Order[] @relation("DeliveryClaims")
   vkIdentity      VkIdentity?
+  addresses       UserAddress[]
 }
 
 //////////////////////////////////////////////////////
@@ -187,6 +188,8 @@ model Order {
 
   deliveryAt  DateTime?
   address     String
+  scheduledDate      DateTime?  // customer-selected delivery/pickup date
+  scheduledTimeSlot  String?    // customer-selected time range e.g. "12:00 - 14:00"
   absenceResolutionStrategyId String
   absenceResolutionStrategy   AbsenceResolutionStrategy @relation(fields: [absenceResolutionStrategyId], references: [id])
 
@@ -210,6 +213,20 @@ model Order {
   payments         Payment[]
   pickerClaimer    User?     @relation("PickerClaims",   fields: [pickerClaimUserId],   references: [id])
   deliveryClaimer  User?     @relation("DeliveryClaims", fields: [deliveryClaimUserId], references: [id])
+}
+
+//////////////////////////////////////////////////////
+// USER ADDRESS
+//////////////////////////////////////////////////////
+
+model UserAddress {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address   String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 //////////////////////////////////////////////////////

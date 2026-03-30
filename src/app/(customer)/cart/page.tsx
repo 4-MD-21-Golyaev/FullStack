@@ -2,8 +2,10 @@
 
 import NextLink from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button, Container, OrderSummary, WideProductCard } from '@/shared/ui';
 import { useCart } from '../CartContext';
+import { useAuth } from '../AuthContext';
 import styles from './cart.module.css';
 
 const DELIVERY_COST = 300;
@@ -16,6 +18,8 @@ interface PendingDelete {
 }
 
 export default function CartPage() {
+  const router = useRouter();
+  const { user, openAuthModal } = useAuth();
   const { items, removeItem, updateQuantity, clearCart } = useCart();
   const [pendingDeletes, setPendingDeletes] = useState<PendingDelete[]>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -94,9 +98,9 @@ export default function CartPage() {
           <>
             <div className={styles.titleRow}>
               <h1 className={styles.title}>Корзина</h1>
-              <button type="button" className={styles.clearBtn} onClick={clearCart}>
+              <Button variant="ghost" size="md" className={styles.clearBtn} onClick={clearCart}>
                 Очистить корзину
-              </button>
+              </Button>
             </div>
 
             <div className={styles.content}>
@@ -171,11 +175,15 @@ export default function CartPage() {
               </div>
 
               <aside className={styles.sidebar}>
-                <NextLink href="/checkout" className={styles.checkoutBtn}>
-                  <Button size="lg" className={styles.checkoutBtn}>
-                    Перейти к оформлению
-                  </Button>
-                </NextLink>
+                <Button
+                  size="lg"
+                  className={styles.checkoutBtn}
+                  onClick={() => {
+                    if (!user) { openAuthModal('/checkout'); } else { router.push('/checkout'); }
+                  }}
+                >
+                  Перейти к оформлению
+                </Button>
                 {totalInStockQty > 0 && (
                   <OrderSummary
                     itemCount={totalInStockQty}

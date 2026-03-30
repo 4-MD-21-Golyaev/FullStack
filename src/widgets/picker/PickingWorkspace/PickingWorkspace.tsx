@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi, type OrderItemDto, type OrderDto } from '@/lib/api/orders';
 import { pickerApi } from '@/lib/api/picker';
 import { Button, ConfirmDialog, Counter } from '@/shared/ui';
+import { CheckCircle2, XCircle, ArrowLeftRight } from 'lucide-react';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 import { OrderState } from '@/domain/order/OrderState';
 import { ProductSearchModal, type ProductSearchResult } from '@/features/product-search';
@@ -32,6 +34,7 @@ type ItemLocalState = {
   maxQty: number;
   absent: boolean;
   replacementProductIds: string[];
+  processedAt?: number; // incrementing counter, set when item first leaves unprocessed state
 };
 
 type ReplacementLocalState = {
@@ -64,11 +67,16 @@ interface ItemRowProps {
 
 function ItemRow({ item, mode, localQty, maxQty, onQtyChange, onMarkAbsent, onRestore, onAddReplacement }: ItemRowProps) {
   return (
-    <div className={styles.itemRow}>
+    <motion.div
+      className={styles.itemRow}
+      initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
+      animate={{ opacity: 1, height: 'auto', overflow: 'hidden' }}
+      exit={{ opacity: 0, height: 0, paddingTop: 0, paddingBottom: 0, overflow: 'hidden' }}
+      transition={{ duration: 0.25, ease: 'easeInOut' }}
+    >
       <div className={styles.itemInfo}>
         <span className={styles.itemName}>{item.name}</span>
         <span className={styles.itemArticle}>{item.article}</span>
-        <span className={styles.itemPrice}>{item.price.toLocaleString('ru')} ₽</span>
       </div>
 
       <div className={styles.itemControls}>
@@ -80,6 +88,7 @@ function ItemRow({ item, mode, localQty, maxQty, onQtyChange, onMarkAbsent, onRe
                 min={0}
                 max={maxQty}
                 size="lg"
+                className={styles.counter}
                 onChange={(qty) => onQtyChange(item.productId, qty)}
               />
               <span className={styles.maxQty}>/ {maxQty}</span>
@@ -87,6 +96,7 @@ function ItemRow({ item, mode, localQty, maxQty, onQtyChange, onMarkAbsent, onRe
             <Button
               variant="danger"
               size="sm"
+              className={styles.absentBtn}
               onClick={() => onMarkAbsent(item.productId)}
             >
               Отсутствует
@@ -114,32 +124,36 @@ function ItemRow({ item, mode, localQty, maxQty, onQtyChange, onMarkAbsent, onRe
         )}
       </div>
 
-      {mode === 'collected' && (
-        <div className={styles.itemSubtotal}>
-          {(item.price * localQty).toLocaleString('ru')} ₽
-        </div>
-      )}
-    </div>
+    </motion.div>
   );
 }
 
 interface ItemGroupProps {
   title: string;
   count: number;
-  variant?: 'default' | 'absent' | 'collected' | 'replaced';
+  accent?: 'default' | 'absent' | 'collected' | 'replaced';
+  icon?: React.ReactNode;
   children: React.ReactNode;
 }
 
-function ItemGroup({ title, count, variant = 'default', children }: ItemGroupProps) {
-  const cls = [styles.group, styles[`group_${variant}`]].filter(Boolean).join(' ');
+function ItemGroup({ title, count, accent = 'default', icon, children }: ItemGroupProps) {
   return (
-    <div className={cls}>
+    <motion.div
+      className={`${styles.group} ${styles[`accent_${accent}`]}`}
+      initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
+      animate={{ opacity: 1, height: 'auto', overflow: 'hidden' }}
+      exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
+      transition={{ duration: 0.25, ease: 'easeInOut' }}
+    >
       <div className={styles.groupHeader}>
-        <span className={styles.groupTitle}>{title}</span>
+        <div className={styles.groupHeaderLeft}>
+          {icon}
+          <span className={styles.groupTitle}>{title}</span>
+        </div>
         <span className={styles.groupCount}>{count}</span>
       </div>
       <div className={styles.groupItems}>{children}</div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -162,6 +176,8 @@ export function PickingWorkspace({ order }: Props) {
   );
   const localItemsRef = useRef(localItems);
   localItemsRef.current = localItems;
+
+  const processedCounterRef = useRef(0);
 
   const [replacements, setReplacements] = useState<Record<string, ReplacementLocalState>>({});
   const replacementsRef = useRef(replacements);
@@ -228,12 +244,27 @@ export function PickingWorkspace({ order }: Props) {
   });
 
   const handleQtyChange = useCallback((productId: string, qty: number) => {
-    setLocalItems(prev => ({ ...prev, [productId]: { ...prev[productId], qty, absent: false } }));
+    setLocalItems(prev => {
+      const current = prev[productId];
+      const wasUnprocessed = deriveMode(current) === 'unprocessed';
+      return {
+        ...prev,
+        [productId]: {
+          ...current,
+          qty,
+          absent: false,
+          processedAt: wasUnprocessed && qty > 0 ? ++processedCounterRef.current : current.processedAt,
+        },
+      };
+    });
     scheduleUpdate();
   }, [scheduleUpdate]);
 
   const handleMarkAbsent = useCallback((productId: string) => {
-    setLocalItems(prev => ({ ...prev, [productId]: { ...prev[productId], absent: true, qty: 0 } }));
+    setLocalItems(prev => ({
+      ...prev,
+      [productId]: { ...prev[productId], absent: true, qty: 0, processedAt: ++processedCounterRef.current },
+    }));
     scheduleUpdate();
   }, [scheduleUpdate]);
 
@@ -244,7 +275,7 @@ export function PickingWorkspace({ order }: Props) {
       repIds.forEach(id => delete next[id]);
       return next;
     });
-    setLocalItems(prev => ({ ...prev, [productId]: { ...prev[productId], absent: false, qty: 0, replacementProductIds: [] } }));
+    setLocalItems(prev => ({ ...prev, [productId]: { ...prev[productId], absent: false, qty: 0, replacementProductIds: [], processedAt: undefined } }));
     scheduleUpdate();
   }, [scheduleUpdate]);
 
@@ -288,9 +319,13 @@ export function PickingWorkspace({ order }: Props) {
 
   // Derive groups
   const unprocessed = allItems.filter(i => deriveMode(localItems[i.productId]) === 'unprocessed');
-  const absent = allItems.filter(i => deriveMode(localItems[i.productId]) === 'absent');
-  const collected = allItems.filter(i => deriveMode(localItems[i.productId]) === 'collected');
-  const replaced = allItems.filter(i => deriveMode(localItems[i.productId]) === 'replaced');
+
+  const byProcessedDesc = (a: OrderItemDto, b: OrderItemDto) =>
+    (localItems[b.productId]?.processedAt ?? 0) - (localItems[a.productId]?.processedAt ?? 0);
+
+  const absent = allItems.filter(i => deriveMode(localItems[i.productId]) === 'absent').sort(byProcessedDesc);
+  const collected = allItems.filter(i => deriveMode(localItems[i.productId]) === 'collected').sort(byProcessedDesc);
+  const replaced = allItems.filter(i => deriveMode(localItems[i.productId]) === 'replaced').sort(byProcessedDesc);
 
   // Completion guards (UI-side enforcement of ADR-003)
   const isReplaceStrategy = REPLACE_STRATEGIES.has(order.absenceResolutionStrategy);
@@ -326,16 +361,14 @@ export function PickingWorkspace({ order }: Props) {
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <div className={styles.headerLeft}>
-          <span className={styles.orderId}>Заказ #{order.id.slice(0, 8)}</span>
-          <span className={styles.total}>{localTotal.toLocaleString('ru')} ₽</span>
+        <div className={styles.headerMeta}>
+          <span className={styles.orderTag}>#{order.id.slice(0, 8)}</span>
         </div>
-        <div className={styles.headerRight}>
+        <div className={styles.headerActions}>
           {needsCall && order.customerPhone && (
-            // raw <a> intentional: no shared/ui component supports tel: protocol links
-            <a href={`tel:${order.customerPhone}`} className={styles.telBtn}>
+            <Button href={`tel:${order.customerPhone}`} variant="secondary" size="sm">
               Позвонить
-            </a>
+            </Button>
           )}
           <Button variant="ghost" size="sm" onClick={() => setShowRelease(true)}>
             Освободить
@@ -345,9 +378,9 @@ export function PickingWorkspace({ order }: Props) {
 
       <p className={styles.address}>{order.address}</p>
 
-      <div className={styles.absenceInfo}>
-        <span className={styles.absenceLabel}>При отсутствии:</span>
-        <span className={styles.absenceValue}>{ABSENCE_LABELS[order.absenceResolutionStrategy]}</span>
+      <div className={`${styles.absenceBanner} ${CALL_STRATEGIES.has(order.absenceResolutionStrategy) ? styles.absenceBannerCall : ''}`}>
+        <span className={styles.absenceBannerLabel}>При отсутствии</span>
+        <span className={styles.absenceBannerValue}>{ABSENCE_LABELS[order.absenceResolutionStrategy]}</span>
       </div>
 
       {isNotStarted && (
@@ -363,121 +396,155 @@ export function PickingWorkspace({ order }: Props) {
 
       {isPicking && (
         <>
+          <div className={styles.progressBlock}>
+            <div className={styles.progressHeader}>
+              <span className={styles.progressLabel}>Прогресс сборки</span>
+              <span className={styles.progressCount}>
+                {collected.length + absent.length + replaced.length} / {allItems.length}
+              </span>
+            </div>
+            <div className={styles.progressTrack}>
+              <motion.div
+                className={styles.progressFill}
+                initial={{ width: 0 }}
+                animate={{ width: `${((collected.length + absent.length + replaced.length) / allItems.length) * 100}%` }}
+                transition={{ type: 'spring', stiffness: 120, damping: 20 }}
+              />
+            </div>
+          </div>
+
+          <AnimatePresence mode="sync">
           {unprocessed.length > 0 && (
-            <ItemGroup title="Необработано" count={unprocessed.length}>
-              {unprocessed.map(item => (
-                <ItemRow
-                  key={item.productId}
-                  item={item}
-                  mode="unprocessed"
-                  localQty={localItems[item.productId]?.qty ?? 0}
-                  maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
-                  onQtyChange={handleQtyChange}
-                  onMarkAbsent={handleMarkAbsent}
-                  onRestore={handleRestore}
-                />
-              ))}
+            <ItemGroup key="unprocessed" title="Необработано" count={unprocessed.length}>
+              <AnimatePresence mode="popLayout">
+                {unprocessed.map(item => (
+                  <ItemRow
+                    key={item.productId}
+                    item={item}
+                    mode="unprocessed"
+                    localQty={localItems[item.productId]?.qty ?? 0}
+                    maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
+                    onQtyChange={handleQtyChange}
+                    onMarkAbsent={handleMarkAbsent}
+                    onRestore={handleRestore}
+                  />
+                ))}
+              </AnimatePresence>
             </ItemGroup>
           )}
 
           {absent.length > 0 && (
-            <ItemGroup title="Отсутствует" count={absent.length} variant="absent">
-              {absent.map(item => (
-                <ItemRow
-                  key={item.productId}
-                  item={item}
-                  mode="absent"
-                  localQty={0}
-                  maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
-                  onQtyChange={handleQtyChange}
-                  onMarkAbsent={handleMarkAbsent}
-                  onRestore={handleRestore}
-                  onAddReplacement={canReplaceAbsent ? (id) => setSearchForProductId(id) : undefined}
-                />
-              ))}
+            <ItemGroup key="absent" title="Отсутствует" count={absent.length} accent="absent" icon={<XCircle size={14} />}>
+              <AnimatePresence mode="popLayout">
+                {absent.map(item => (
+                  <ItemRow
+                    key={item.productId}
+                    item={item}
+                    mode="absent"
+                    localQty={0}
+                    maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
+                    onQtyChange={handleQtyChange}
+                    onMarkAbsent={handleMarkAbsent}
+                    onRestore={handleRestore}
+                    onAddReplacement={canReplaceAbsent ? (id) => setSearchForProductId(id) : undefined}
+                  />
+                ))}
+              </AnimatePresence>
             </ItemGroup>
           )}
 
           {replaced.length > 0 && (
-            <ItemGroup title="Заменено" count={replaced.length} variant="replaced">
-              {replaced.map(item => {
-                const repIds = localItems[item.productId]?.replacementProductIds ?? [];
-                return (
-                  <div key={item.productId} className={styles.replacedBlock}>
-                    {/* Исходный товар */}
-                    <div className={styles.absentOriginal}>
-                      <span className={styles.itemName}>{item.name}</span>
-                      <span className={styles.itemArticle}>{item.article}</span>
-                      <Button variant="ghost" size="sm" onClick={() => handleRestore(item.productId)}>
-                        Восстановить
-                      </Button>
+            <ItemGroup key="replaced" title="Заменено" count={replaced.length} accent="replaced" icon={<ArrowLeftRight size={14} />}>
+              <AnimatePresence mode="popLayout">
+                {replaced.map(item => {
+                  const repIds = localItems[item.productId]?.replacementProductIds ?? [];
+                  return (
+                    <div key={item.productId} className={styles.replacedBlock}>
+                      {/* Исходный товар */}
+                      <div className={styles.absentOriginal}>
+                        <span className={styles.itemName}>{item.name}</span>
+                        <span className={styles.itemArticle}>{item.article}</span>
+                        <Button variant="ghost" size="sm" onClick={() => handleRestore(item.productId)}>
+                          Восстановить
+                        </Button>
+                      </div>
+                      {/* Замены */}
+                      {repIds.map(repId => {
+                        const rep = replacements[repId];
+                        if (!rep) return null;
+                        return (
+                          <div key={repId} className={styles.replacementRow}>
+                            <div className={styles.itemInfo}>
+                              <span className={styles.itemName}>{rep.name}</span>
+                              <span className={styles.itemArticle}>{rep.article}</span>
+                            </div>
+                            <div className={styles.itemControls}>
+                              <Counter
+                                value={rep.qty}
+                                min={1}
+                                size="lg"
+                                className={styles.counter}
+                                onChange={(qty) => handleReplacementQtyChange(repId, qty)}
+                              />
+                              <Button variant="danger" size="sm" onClick={() => handleRemoveReplacement(item.productId, repId)}>
+                                Убрать
+                              </Button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {/* Добавить ещё замену */}
+                      {canReplaceAbsent && (
+                        <Button variant="ghost" size="sm" onClick={() => setSearchForProductId(item.productId)}>
+                          + Ещё замену
+                        </Button>
+                      )}
                     </div>
-                    {/* Замены */}
-                    {repIds.map(repId => {
-                      const rep = replacements[repId];
-                      if (!rep) return null;
-                      return (
-                        <div key={repId} className={styles.replacementRow}>
-                          <div className={styles.itemInfo}>
-                            <span className={styles.itemName}>{rep.name}</span>
-                            <span className={styles.itemArticle}>{rep.article}</span>
-                            <span className={styles.itemPrice}>{rep.price.toLocaleString('ru')} ₽</span>
-                          </div>
-                          <div className={styles.itemControls}>
-                            <Counter
-                              value={rep.qty}
-                              min={1}
-                              size="lg"
-                              onChange={(qty) => handleReplacementQtyChange(repId, qty)}
-                            />
-                            <Button variant="danger" size="sm" onClick={() => handleRemoveReplacement(item.productId, repId)}>
-                              Убрать
-                            </Button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {/* Добавить ещё замену */}
-                    {canReplaceAbsent && (
-                      <Button variant="ghost" size="sm" onClick={() => setSearchForProductId(item.productId)}>
-                        + Ещё замену
-                      </Button>
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </AnimatePresence>
             </ItemGroup>
           )}
 
           {collected.length > 0 && (
-            <ItemGroup title="Собрано" count={collected.length} variant="collected">
-              {collected.map(item => (
-                <ItemRow
-                  key={item.productId}
-                  item={item}
-                  mode="collected"
-                  localQty={localItems[item.productId]?.qty ?? 0}
-                  maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
-                  onQtyChange={handleQtyChange}
-                  onMarkAbsent={handleMarkAbsent}
-                  onRestore={handleRestore}
-                />
-              ))}
+            <ItemGroup key="collected" title="Собрано" count={collected.length} accent="collected" icon={<CheckCircle2 size={14} />}>
+              <AnimatePresence mode="popLayout">
+                {collected.map(item => (
+                  <ItemRow
+                    key={item.productId}
+                    item={item}
+                    mode="collected"
+                    localQty={localItems[item.productId]?.qty ?? 0}
+                    maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
+                    onQtyChange={handleQtyChange}
+                    onMarkAbsent={handleMarkAbsent}
+                    onRestore={handleRestore}
+                  />
+                ))}
+              </AnimatePresence>
             </ItemGroup>
           )}
+          </AnimatePresence>
 
-          <div className={styles.completeSection}>
-            {completeHint && <p className={styles.completeHint}>{completeHint}</p>}
-            <Button
-              variant="primary"
-              size="lg"
-              disabled={!canComplete}
-              loading={completeMutation.isPending}
-              onClick={() => setShowComplete(true)}
-            >
-              Завершить сборку
-            </Button>
-          </div>
+          <motion.div
+            className={styles.completeSectionWrap}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.35, ease: 'easeOut' }}
+          >
+            <div className={styles.completeSection}>
+              {completeHint && <p className={styles.completeHint}>{completeHint}</p>}
+              <Button
+                variant="primary"
+                size="lg"
+                disabled={!canComplete}
+                loading={completeMutation.isPending}
+                onClick={() => setShowComplete(true)}
+              >
+                Завершить сборку
+              </Button>
+            </div>
+          </motion.div>
         </>
       )}
 

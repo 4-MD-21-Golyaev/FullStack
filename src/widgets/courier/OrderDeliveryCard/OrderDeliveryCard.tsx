@@ -1,3 +1,4 @@
+import { MapPin } from 'lucide-react';
 import { Button } from '@/shared/ui';
 import type { OrderDto } from '@/lib/api/orders';
 import { formatDistanceToNow } from 'date-fns';
@@ -17,10 +18,15 @@ export function OrderDeliveryCard({ order, onClaim, isClaiming = false }: OrderD
 
   return (
     <div className={styles.root}>
-      <div className={styles.info}>
-        <span className={styles.id}>#{order.id.slice(0, 8)}</span>
-        <span className={styles.total}>{order.totalAmount.toLocaleString('ru')} ₽</span>
-        <span className={styles.ago}>{assignedAgo}</span>
+      <div className={styles.top}>
+        <div className={styles.meta}>
+          <span className={styles.orderTag}>#{order.id.slice(0, 8)}</span>
+          <span className={styles.total}>{order.totalAmount.toLocaleString('ru')} ₽</span>
+        </div>
+        <div className={styles.itemsCount}>
+          <MapPin size={14} className={styles.mapPinIcon} />
+          <span>{assignedAgo}</span>
+        </div>
       </div>
       <p className={styles.address}>{order.address}</p>
       <Button
@@ -29,7 +35,7 @@ export function OrderDeliveryCard({ order, onClaim, isClaiming = false }: OrderD
         loading={isClaiming}
         onClick={() => onClaim(order.id)}
       >
-        Взять в доставку
+        Взять доставку
       </Button>
     </div>
   );

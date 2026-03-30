@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Logo, Search, IconButton, CartButton, Button } from '@/shared/ui';
+import { useRouter } from 'next/navigation';
+import { Logo, IconButton, CartButton, Button } from '@/shared/ui';
+import { SearchBar } from '@/features/product-search';
 import { useCart } from '@/app/(customer)/CartContext';
 import { useAuth } from '@/app/(customer)/AuthContext';
 import styles from './Header.module.css';
@@ -10,6 +12,7 @@ import styles from './Header.module.css';
 export function Header() {
   const { totalItems } = useCart();
   const { user, openAuthModal } = useAuth();
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
   return (
@@ -36,7 +39,11 @@ export function Header() {
           <Logo variant="default" className={styles.logo} />
 
           <div className={styles.searchWrap}>
-            <Search size="lg" placeholder="Поиск" className={styles.search} />
+            <SearchBar
+              placeholder="Поиск"
+              className={styles.search}
+              onSelect={(product) => router.push(`/catalog/product/${product.id}`)}
+            />
           </div>
 
           <div className={styles.actions}>
@@ -50,7 +57,7 @@ export function Header() {
               size="lg"
               variant="white"
               aria-label="Профиль"
-              onClick={user ? undefined : openAuthModal}
+              onClick={user ? undefined : () => openAuthModal()}
             />
             <IconButton
               icon="like"

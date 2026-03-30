@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect, KeyboardEvent, ClipboardEvent } from 'react';
-import { IconButton, Button, Input, Spinner } from '@/shared/ui';
+import { useState, useRef, useEffect, useCallback, KeyboardEvent, ClipboardEvent } from 'react';
+import { Button, Input, Spinner } from '@/shared/ui';
 import styles from './AuthForm.module.css';
 
 // ── OTP 4-box input ───────────────────────────────────────────────────────────
@@ -79,19 +79,22 @@ function CodeInput({ value, onChange, hasError, autoFocus }: CodeInputProps) {
 
 // ── AuthForm ──────────────────────────────────────────────────────────────────
 
-type Step = 'email' | 'code' | 'register';
+export type Step = 'email' | 'code' | 'register';
 
 const RESEND_TIMEOUT_SEC = 60;
 
 export interface AuthFormProps {
+  step: Step;
+  onStepChange: (step: Step) => void;
   /** Called after successful authentication. Can be async (e.g. refresh user state). */
   onSuccess: (role: string) => void | Promise<void>;
-  /** If provided, shows an × close button in the header. */
-  onClose?: () => void;
+  /** Called whenever the resend countdown changes (including when set to 0). */
+  onResendSecondsChange?: (seconds: number) => void;
+  /** Ref that will be assigned the resend handler so the parent can trigger it. */
+  resendTriggerRef?: React.MutableRefObject<(() => void) | null>;
 }
 
-export function AuthForm({ onSuccess, onClose }: AuthFormProps) {
-  const [step, setStep] = useState<Step>('email');
+export function AuthForm({ step, onStepChange, onSuccess, onResendSecondsChange, resendTriggerRef }: AuthFormProps) {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [phone, setPhone] = useState('');
@@ -100,6 +103,14 @@ export function AuthForm({ onSuccess, onClose }: AuthFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [resendSeconds, setResendSeconds] = useState(0);
+
+  useEffect(() => {
+    setError(null);
+  }, [step]);
+
+  useEffect(() => {
+    onResendSecondsChange?.(resendSeconds);
+  }, [resendSeconds, onResendSecondsChange]);
 
   useEffect(() => {
     if (resendSeconds <= 0) return;
@@ -127,7 +138,7 @@ export function AuthForm({ onSuccess, onClose }: AuthFormProps) {
       setDevCode(newDevCode);
       setCode('');
       setResendSeconds(RESEND_TIMEOUT_SEC);
-      setStep('code');
+      onStepChange('code');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ошибка сети');
     } finally {
@@ -151,7 +162,7 @@ export function AuthForm({ onSuccess, onClose }: AuthFormProps) {
       }
       const data = await res.json() as { message?: string };
       if (res.status === 404) {
-        setStep('register');
+        onStepChange('register');
         return;
       }
       if (res.status === 429) {
@@ -174,7 +185,7 @@ export function AuthForm({ onSuccess, onClose }: AuthFormProps) {
     }
   }
 
-  async function handleResend() {
+  const handleResend = useCallback(async () => {
     setLoading(true);
     setError(null);
     setCode('');
@@ -187,7 +198,9 @@ export function AuthForm({ onSuccess, onClose }: AuthFormProps) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [email]);
+
+  if (resendTriggerRef) resendTriggerRef.current = handleResend;
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
@@ -208,7 +221,7 @@ export function AuthForm({ onSuccess, onClose }: AuthFormProps) {
       setDevCode(newDevCode);
       setCode('');
       setResendSeconds(RESEND_TIMEOUT_SEC);
-      setStep('code');
+      onStepChange('code');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ошибка сети');
     } finally {
@@ -220,31 +233,6 @@ export function AuthForm({ onSuccess, onClose }: AuthFormProps) {
 
   return (
     <div className={styles.dialog}>
-      {/* ── Header ── */}
-      <div className={styles.header}>
-        {step !== 'email' && (
-          <IconButton
-            icon="arrow_left"
-            variant="white"
-            size="md"
-            className={styles.backBtn}
-            aria-label="Назад"
-            onClick={() => { setStep(step === 'code' ? 'email' : 'code'); setError(null); }}
-          />
-        )}
-        <p className={styles.title}>Авторизация</p>
-        {onClose && (
-          <IconButton
-            icon="cross"
-            variant="white"
-            size="md"
-            className={styles.closeBtn}
-            aria-label="Закрыть"
-            onClick={onClose}
-          />
-        )}
-      </div>
-
       {/* ── Step: email ── */}
       {step === 'email' && (
         <form className={styles.body} onSubmit={handleRequestCode}>
@@ -268,12 +256,6 @@ export function AuthForm({ onSuccess, onClose }: AuthFormProps) {
               </Button>
             </div>
           </div>
-          <footer className={styles.footer}>
-            <p className={styles.footerText}>
-              Продолжая авторизацию, вы даете{' '}
-              <span className={styles.footerLink}>согласие на обработку персональных данных</span>
-            </p>
-          </footer>
         </form>
       )}
 
@@ -298,23 +280,6 @@ export function AuthForm({ onSuccess, onClose }: AuthFormProps) {
               <p className={styles.devCode}>[DEV] Код: <strong>{devCode}</strong></p>
             )}
           </div>
-          <footer className={styles.footer}>
-            {resendSeconds > 0 ? (
-              <p className={styles.footerText}>
-                Вы сможете отправить код повторно через {resendSeconds} сек.
-              </p>
-            ) : (
-              <Button
-                type="button"
-                variant="tertiary"
-                size="lg"
-                loading={loading}
-                onClick={handleResend}
-              >
-                Отправить код повторно
-              </Button>
-            )}
-          </footer>
         </div>
       )}
 

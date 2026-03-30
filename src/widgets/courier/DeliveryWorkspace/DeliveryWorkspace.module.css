@@ -2,7 +2,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-stack-md);
+  padding-bottom: 100px; /* intentional — space for sticky actions */
 }
+
+/* ── Header ── */
 
 .header {
   display: flex;
@@ -10,42 +13,51 @@
   justify-content: space-between;
 }
 
-.orderId {
-  display: block;
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inline-md);
+}
+
+.orderTag {
   font-family: var(--ctx-font-code);
-  font-size: var(--ctx-font-size-label);
+  font-size: var(--ctx-font-size-xs);
   color: var(--ctx-color-text-secondary);
-  margin-bottom: var(--ctx-space-inset-xs);
+  background: var(--ctx-color-bg-subtle);
+  padding: 2px 8px; /* intentional — compact tag sizing */
+  border-radius: var(--ctx-radius-badge);
 }
 
 .total {
-  display: block;
   font-size: var(--ctx-font-size-h4);
   font-weight: 700; /* Bold */
   color: var(--ctx-color-text-default);
 }
+
+/* ── Address card ── */
 
 .addressCard {
   display: flex;
   align-items: flex-start;
   gap: var(--ctx-space-inline-sm);
   background: var(--ctx-color-bg-surface);
-  border: var(--card-border);
+  border: 1px solid var(--ctx-color-border-default);
   border-radius: var(--ctx-radius-card);
   padding: var(--ctx-space-inset-lg);
   text-decoration: none;
   color: var(--ctx-color-text-default);
-  transition: border-color 100ms ease;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
 .addressCard:hover {
   border-color: var(--ctx-color-action-primary);
+  box-shadow: var(--ctx-shadow-card);
 }
 
 .mapPin {
   color: var(--ctx-color-action-primary);
   flex-shrink: 0;
-  margin-top: 2px; /* intentional — optical alignment of icon with text baseline */
+  margin-top: 2px; /* intentional — optical alignment with text baseline */
 }
 
 .address {
@@ -53,9 +65,11 @@
   line-height: var(--ctx-line-height-normal);
 }
 
+/* ── SLA card ── */
+
 .slaCard {
   background: var(--ctx-color-bg-surface);
-  border: var(--card-border);
+  border: 1px solid var(--ctx-color-border-default);
   border-radius: var(--ctx-radius-card);
   padding: var(--ctx-space-inset-lg);
   display: flex;
@@ -64,61 +78,40 @@
 }
 
 .slaLabel {
-  font-size: var(--ctx-font-size-caption);
+  font-size: var(--ctx-font-size-xs);
   color: var(--ctx-color-text-secondary);
-  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  font-weight: 600; /* SemiBold */
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+/* ── Sticky actions ── */
+
+.actionsWrap {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--ctx-z-dropdown);
+  background: var(--ctx-color-bg-surface);
+  border-top: 1px solid var(--ctx-color-border-default);
+  padding: var(--ctx-space-inset-md);
 }
 
 .actions {
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-stack-sm);
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ctx-space-inset-xs);
-}
-
-.label {
-  font-size: var(--ctx-font-size-label);
-  font-weight: 500; /* [Desktop]/Utilities/Medium */
-  color: var(--ctx-color-text-default);
-}
-
-.textarea {
-  font-size: var(--ctx-font-size-body);
-  border: var(--input-border);
-  border-radius: var(--ctx-radius-control);
-  background: var(--ctx-color-bg-surface);
-  color: var(--ctx-color-text-default);
-  padding: var(--input-padding);
-  outline: none;
-  resize: vertical;
-  min-height: 80px; /* intentional — minimum textarea height, no token */
-  font-family: inherit;
-  transition: border-color var(--ctx-transition);
-}
-
-.textarea:focus {
-  border: var(--input-border-focus);
-}
-
-.error {
-  font-size: var(--ctx-font-size-caption);
-  color: var(--ctx-color-text-danger);
-}
+/* ── Mobile ── */
 
 @media (max-width: 480px) {
   .header {
     flex-wrap: wrap;
     gap: var(--ctx-space-stack-sm);
-  }
-
-  .actions {
-    padding-bottom: var(--ctx-space-stack-lg);
   }
 }

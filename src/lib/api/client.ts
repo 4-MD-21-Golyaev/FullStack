@@ -8,9 +8,25 @@ export class ApiError extends Error {
   }
 }
 
+// Singleton refresh promise — prevents concurrent token refresh races
+let refreshPromise: Promise<boolean> | null = null;
+
+async function tryRefresh(): Promise<boolean> {
+  if (!refreshPromise) {
+    refreshPromise = fetch('/api/auth/refresh', { method: 'POST' })
+      .then((res) => res.ok)
+      .catch(() => false)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
 async function request<T>(
   path: string,
   options?: RequestInit,
+  isRetry = false,
 ): Promise<T> {
   const res = await fetch(path, {
     ...options,
@@ -20,8 +36,11 @@ async function request<T>(
     },
   });
 
-  if (res.status === 401) {
-    // Redirect to login, preserve current path
+  if (res.status === 401 && !isRetry) {
+    const refreshed = await tryRefresh();
+    if (refreshed) {
+      return request<T>(path, options, true);
+    }
     if (typeof window !== 'undefined') {
       const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
       window.location.href = `/login?returnTo=${returnTo}`;

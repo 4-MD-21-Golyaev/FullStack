@@ -4,6 +4,12 @@
   gap: var(--ctx-space-stack-md);
 }
 
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
 .title {
   font-size: var(--ctx-font-size-h4);
   font-weight: 700; /* Bold */
@@ -11,27 +17,70 @@
   margin: 0;
 }
 
-.centered {
+.refreshSection {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inline-sm);
+}
+
+.refreshHint {
+  font-size: var(--ctx-font-size-xs);
+  color: var(--ctx-color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.refreshBtn {
+  color: var(--ctx-color-text-secondary);
+  padding: var(--ctx-space-inset-xs);
+  min-width: 32px;
+  min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--ctx-space-stack-lg);
-}
-
-.empty {
-  text-align: center;
-  padding: var(--ctx-space-stack-lg);
-  color: var(--ctx-color-text-secondary);
-}
-
-.hint {
-  font-size: var(--ctx-font-size-caption);
-  color: var(--ctx-color-text-disabled);
-  margin-top: var(--ctx-space-stack-sm);
 }
 
 .list {
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-stack-sm);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ctx-space-stack-sm);
+  padding-top: 48px; /* intentional — vertical breathing room for empty state */
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 64px; /* intentional — fixed icon container size */
+  height: 64px;
+  border-radius: var(--ctx-radius-badge);
+  background: var(--ctx-color-bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyTitle {
+  font-size: var(--ctx-font-size-body);
+  font-weight: 600; /* SemiBold */
+  color: var(--ctx-color-text-default);
+  margin: 0;
+}
+
+.emptySubtitle {
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px; /* intentional — loading state minimum height */
 }

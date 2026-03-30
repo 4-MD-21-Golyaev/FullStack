@@ -10,14 +10,68 @@
 }
 
 .root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: var(--ctx-color-bg-surface);
   border-radius: var(--ctx-radius-modal);
   box-shadow: var(--ctx-shadow-modal);
-  min-width: 320px;
-  max-width: 90vw;
-  max-height: 90vh;
-  overflow-y: auto;
   animation: slideUp var(--ctx-transition); /* 200ms ease */
+}
+
+.md {
+  width: 400px;
+  height: 700px;
+  overflow: hidden;
+}
+
+.lg {
+  width: 700px;
+  height: 700px;
+  overflow: hidden;
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.headerSlot {
+  width: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.headerTitle {
+  flex: 1;
+  text-align: center;
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700; /* Figma: [Desktop]/Headings/Heading 3 */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.content {
+  width: 100%;
+  padding: 0 24px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes fadeIn {

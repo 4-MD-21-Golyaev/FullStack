@@ -27,7 +27,7 @@ export default function OrdersPage() {
       {!authLoading && !user && (
         <div className={styles.empty}>
           <p className={styles.emptyText}>Войдите, чтобы увидеть свои заказы</p>
-          <Button variant="primary" size="lg" onClick={openAuthModal}>
+          <Button variant="primary" size="lg" onClick={() => openAuthModal()}>
             Войти
           </Button>
         </div>

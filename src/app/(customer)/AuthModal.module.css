@@ -7,3 +7,26 @@
   max-height: unset;
   overflow: hidden;
 }
+
+/* ── Auth Modal footer content ── */
+.consentText {
+  font-size: var(--ctx-font-size-label);
+  font-weight: 450; /* Figma: label regular */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+  text-align: center;
+  margin: 0;
+}
+
+.consentLink {
+  text-decoration: underline;
+}
+
+.resendTimer {
+  font-size: var(--ctx-font-size-label);
+  font-weight: 450; /* Figma: label regular */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+  text-align: center;
+  margin: 0;
+}

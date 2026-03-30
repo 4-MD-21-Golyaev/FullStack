@@ -25,7 +25,7 @@
 /* Size L — product detail page (24px current, row layout with baseline alignment) */
 .sizeL {
   flex-direction: row;
-  align-items: baseline;
+  align-items: center;
   gap: var(--ctx-space-inline-sm);
 }
 

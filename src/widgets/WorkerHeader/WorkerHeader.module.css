@@ -11,10 +11,27 @@
   z-index: var(--ctx-z-dropdown);
 }
 
-.logo {
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inline-sm);
+}
+
+.brandName {
   font-size: var(--ctx-font-size-label);
-  font-weight: 600; /* Semibold */
+  font-weight: 700; /* Bold */
   color: var(--ctx-color-text-default);
+}
+
+.roleBadge {
+  background: var(--ctx-color-bg-subtle);
+  color: var(--ctx-color-text-secondary);
+  border-radius: var(--ctx-radius-badge);
+  font-size: var(--ctx-font-size-xs);
+  font-weight: 600; /* Semibold */
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
 }
 
 .right {
@@ -23,34 +40,9 @@
   gap: var(--ctx-space-inline-md);
 }
 
-.name {
+.email {
   font-size: var(--ctx-font-size-label);
   color: var(--ctx-color-text-secondary);
-}
-
-.logout {
-  display: flex;
-  align-items: center;
-  gap: var(--ctx-space-inset-xs);
-  background: none;
-  border: none;
-  color: var(--ctx-color-text-secondary);
-  font-size: var(--ctx-font-size-label);
-  cursor: pointer;
-  padding: var(--ctx-space-inset-xs) var(--ctx-space-inset-sm);
-  border-radius: var(--ctx-radius-control);
-  transition: color 100ms ease,
-              background-color 100ms ease;
-}
-
-.logout:hover {
-  color: var(--ctx-color-text-danger);
-  background: var(--ctx-color-bg-subtle);
-}
-
-.logout:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 @media (max-width: 480px) {
@@ -58,7 +50,11 @@
     padding: 0 var(--ctx-space-inset-md);
   }
 
-  .name {
+  .email {
+    display: none;
+  }
+
+  .logoutText {
     display: none;
   }
 }

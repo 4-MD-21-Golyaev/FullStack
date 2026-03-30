@@ -36,10 +36,11 @@ export default function ProductPage() {
     fetch('/api/products')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load products');
-        return res.json() as Promise<ApiProduct[]>;
+        return res.json();
       })
-      .then(products => {
+      .then((data: { products: ApiProduct[] } | ApiProduct[]) => {
         if (!active) return;
+        const products = (data as { products?: ApiProduct[] }).products ?? (data as ApiProduct[]);
         const found = products.find(p => p.id === productId) ?? null;
         setProduct(found);
       })
@@ -109,10 +110,10 @@ export default function ProductPage() {
               {hasThumbnails && (
                 <div className={styles.thumbnails}>
                   {galleryImages.map((src, index) => (
-                    <button key={src} className={styles.thumb} type="button">
+                    <Button key={src} variant="ghost" className={styles.thumb}>
                       <Image src={src} alt={product.name} fill sizes="72px" />
                       <span className={styles.thumbIndex}>{index + 1}</span>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}

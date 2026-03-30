@@ -16,17 +16,23 @@
   height: var(--product-card-h-s, 282px); /* Figma: S card height */
 }
 
-/* ── Image link ── */
-.imageLink {
+/* ── Overlay link — covers entire card, z-index: 1 ── */
+.overlayLink {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ── Image area ── */
+.imageArea {
   display: block;
   position: relative;
   width: 100%;
   height: var(--product-card-img-h-l);
   flex-shrink: 0;
-  text-decoration: none;
 }
 
-.sizeS .imageLink {
+.sizeS .imageArea {
   height: var(--product-card-img-h-s);
 }
 
@@ -45,12 +51,12 @@
   pointer-events: none;
 }
 
-/* ── Like button — absolute, top-right over image ── */
+/* ── Like button — absolute, top-right over image, above overlay ── */
 .likeButton {
   position: absolute;
   top: var(--product-card-like-top);
   right: var(--product-card-like-top);
-  z-index: 1;
+  z-index: 2;
 }
 
 /* ── Info section ── */
@@ -69,13 +75,6 @@
   display: flex;
   flex-direction: column;
   gap: 4px; /* Figma: 4px gap between name and price in in-cart state */
-}
-
-/* ── Name link ── */
-.nameLink {
-  display: block;
-  text-decoration: none;
-  color: inherit;
 }
 
 .name {
@@ -117,31 +116,39 @@
   text-decoration: line-through;
 }
 
-/* ── Bottom row: price + cart button OR controls ── */
+/* ── Bottom row: price + cart button OR controls, above overlay ── */
 .bottom {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  position: relative;
+  z-index: 2;
 }
 
-/* ── Cart button ── */
+/* ── Cart button — above overlay ── */
 .cartButton {
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
-/* ── In-cart controls: Counter + delete (L size) ── */
+/* ── In-cart controls: Counter + delete (L size), above overlay ── */
 .controls {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  position: relative;
+  z-index: 2;
 }
 
 .counter {
   width: var(--product-card-counter-l);
 }
 
-/* ── Full-width counter (S size in-cart) ── */
+/* ── Full-width counter (S size in-cart), above overlay ── */
 .counterFull {
   width: 100%;
+  position: relative;
+  z-index: 2;
 }

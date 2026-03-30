@@ -5,9 +5,15 @@
 }
 
 .label {
-  font-size: var(--ctx-font-size-label);
-  font-weight: 500; /* [Desktop]/Utilities/Medium */
-  color: var(--ctx-color-text-default);
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .wrapper {
@@ -38,14 +44,18 @@
   background-color: var(--ctx-color-bg-subtle-hover);
 }
 
+.textarea::-webkit-resizer {
+  display: none;
+}
+
 .textarea:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   resize: none;
 }
 
-.lg { padding: 16px 32px; /* Figma: L textarea padding */ }
-.md { padding: 16px 24px; /* Figma: M textarea padding */ }
+.lg { padding: var(--ctx-space-inset-md) var(--ctx-space-page-desktop); /* Figma: L textarea padding 16px 32px */ }
+.md { padding: var(--ctx-space-inset-md) var(--ctx-space-inset-lg);   /* Figma: M textarea padding 16px 24px */ }
 
 .isError {
   outline: 2px solid var(--ctx-color-border-danger);
@@ -57,6 +67,7 @@
   bottom: 8px;
   right: 8px;
   pointer-events: none;
+  color: var(--ctx-color-icon-secondary);
 }
 
 .hint {

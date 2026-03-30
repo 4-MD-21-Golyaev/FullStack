@@ -23,9 +23,14 @@ export function WorkerHeader() {
 
   return (
     <header className={styles.root}>
-      <span className={styles.logo}>Order Management</span>
+      <div className={styles.brand}>
+        <span className={styles.brandName}>Управление заказами</span>
+        {user && (
+          <span className={styles.roleBadge}>{user.role}</span>
+        )}
+      </div>
       <div className={styles.right}>
-        {user && <span className={styles.name}>{user.email}</span>}
+        {user && <span className={styles.email}>{user.email}</span>}
         <Button
           variant="ghost"
           size="sm"
@@ -34,7 +39,7 @@ export function WorkerHeader() {
           title="Выйти"
         >
           <LogOut size={16} />
-          Выйти
+          <span className={styles.logoutText}>Выйти</span>
         </Button>
       </div>
     </header>

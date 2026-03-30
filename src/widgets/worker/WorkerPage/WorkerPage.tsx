@@ -1,9 +1,12 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Spinner } from '@/shared/ui';
+import { Package, RefreshCw } from 'lucide-react';
+import { Button, Spinner } from '@/shared/ui';
 import type { OrderDto } from '@/lib/api/orders';
 import styles from './WorkerPage.module.css';
+
+const REFRESH_INTERVAL = 15;
 
 interface WorkerApi {
   myOrder(): Promise<{ order: OrderDto | null }>;
@@ -21,6 +24,7 @@ interface WorkerPageProps {
 
 export function WorkerPage({ queryKey, api, WorkspaceComponent, CardComponent, title = 'Доступные заказы' }: WorkerPageProps) {
   const queryClient = useQueryClient();
+  const [countdown, setCountdown] = useState(REFRESH_INTERVAL);
 
   const { data: myOrderData, isLoading: myLoading } = useQuery({
     queryKey: [queryKey, 'me'],
@@ -42,6 +46,26 @@ export function WorkerPage({ queryKey, api, WorkspaceComponent, CardComponent, t
     },
   });
 
+  // Countdown timer — paused when in workspace mode
+  useEffect(() => {
+    if (myOrderData?.order) return;
+    const timer = setInterval(() => {
+      setCountdown(prev => (prev <= 1 ? REFRESH_INTERVAL : prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [myOrderData?.order]);
+
+  // Reset countdown after refetch
+  useEffect(() => {
+    setCountdown(REFRESH_INTERVAL);
+  }, [availableData]);
+
+  const handleRefresh = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: [queryKey, 'available'] });
+    queryClient.invalidateQueries({ queryKey: [queryKey, 'me'] });
+    setCountdown(REFRESH_INTERVAL);
+  }, [queryClient, queryKey]);
+
   if (myLoading) {
     return (
       <div className={styles.centered}>
@@ -58,7 +82,15 @@ export function WorkerPage({ queryKey, api, WorkspaceComponent, CardComponent, t
 
   return (
     <div className={styles.root}>
-      <h1 className={styles.title}>{title}</h1>
+      <div className={styles.listHeader}>
+        <h1 className={styles.title}>{title}</h1>
+        <div className={styles.refreshSection}>
+          <span className={styles.refreshHint}>Обновление через {countdown} с</span>
+          <Button variant="ghost" size="sm" onClick={handleRefresh} className={styles.refreshBtn}>
+            <RefreshCw size={16} />
+          </Button>
+        </div>
+      </div>
 
       {availableLoading ? (
         <div className={styles.centered}>
@@ -66,8 +98,11 @@ export function WorkerPage({ queryKey, api, WorkspaceComponent, CardComponent, t
         </div>
       ) : !availableData?.orders.length ? (
         <div className={styles.empty}>
-          <p>Нет доступных заказов</p>
-          <p className={styles.hint}>Список обновляется каждые 15 секунд</p>
+          <div className={styles.emptyIcon}>
+            <Package size={28} color="var(--ctx-color-text-secondary)" />
+          </div>
+          <p className={styles.emptyTitle}>Нет заказов</p>
+          <p className={styles.emptySubtitle}>Обновление через {countdown} с</p>
         </div>
       ) : (
         <div className={styles.list}>

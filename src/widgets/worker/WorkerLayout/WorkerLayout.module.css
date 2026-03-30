@@ -7,7 +7,7 @@
 
 .content {
   flex: 1;
-  padding: var(--ctx-space-inset-md);
+  padding: var(--ctx-space-stack-lg) var(--ctx-space-inset-md);
   max-width: 600px;
   margin: 0 auto;
   width: 100%;

@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { courierApi } from '@/lib/api/courier';
-import { SlaTimer, Button, ConfirmDialog } from '@/shared/ui';
+import { SlaTimer, Button, ConfirmDialog, TextField } from '@/shared/ui';
 import { OrderState } from '@/domain/order/OrderState';
 import type { OrderDto } from '@/lib/api/orders';
 import { MapPin } from 'lucide-react';
@@ -70,9 +71,11 @@ export function DeliveryWorkspace({ order }: Props) {
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <div>
-          <span className={styles.orderId}>Заказ #{order.id.slice(0, 8)}</span>
-          <span className={styles.total}>{order.totalAmount.toLocaleString('ru')} ₽</span>
+        <div className={styles.headerMeta}>
+          <span className={styles.orderTag}>#{order.id.slice(0, 8)}</span>
+          {order.totalAmount > 0 && (
+            <span className={styles.total}>{order.totalAmount.toLocaleString('ru')} ₽</span>
+          )}
         </div>
         {isAssigned && (
           <Button variant="ghost" size="sm" onClick={() => setShowRelease(true)}>
@@ -81,6 +84,7 @@ export function DeliveryWorkspace({ order }: Props) {
         )}
       </div>
 
+      {/* Address card — raw <a> intentional: no shared/ui component supports external map links */}
       <a
         href={mapsUrl}
         target="_blank"
@@ -91,7 +95,7 @@ export function DeliveryWorkspace({ order }: Props) {
         <span className={styles.address}>{order.address}</span>
       </a>
 
-      {/* SLA Timer */}
+      {/* SLA card */}
       <div className={styles.slaCard}>
         {isAssigned && order.deliveryClaimedAt && (
           <>
@@ -107,39 +111,31 @@ export function DeliveryWorkspace({ order }: Props) {
         )}
       </div>
 
-      {/* Actions */}
-      <div className={styles.actions}>
-        {isAssigned && (
-          <Button
-            variant="primary"
-            size="lg"
-            loading={startDeliveryMutation.isPending}
-            onClick={() => startDeliveryMutation.mutate()}
-          >
-            Начать доставку
-          </Button>
-        )}
-
-        {isEnRoute && (
-          <>
-            <Button
-              variant="primary"
-              size="lg"
-              loading={confirmDeliveredMutation.isPending}
-              onClick={() => setShowDelivered(true)}
-            >
-              Доставлено ✓
+      {/* Sticky actions */}
+      <motion.div
+        className={styles.actionsWrap}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15, duration: 0.35, ease: 'easeOut' }}
+      >
+        <div className={styles.actions}>
+          {isAssigned && (
+            <Button variant="primary" size="lg" loading={startDeliveryMutation.isPending} onClick={() => startDeliveryMutation.mutate()}>
+              Начать доставку
             </Button>
-            <Button
-              variant="danger"
-              size="lg"
-              onClick={() => setShowFailed(true)}
-            >
-              Не удалось доставить
-            </Button>
-          </>
-        )}
-      </div>
+          )}
+          {isEnRoute && (
+            <>
+              <Button variant="primary" size="lg" loading={confirmDeliveredMutation.isPending} onClick={() => setShowDelivered(true)}>
+                Доставлено ✓
+              </Button>
+              <Button variant="danger" size="lg" onClick={() => setShowFailed(true)}>
+                Не удалось доставить
+              </Button>
+            </>
+          )}
+        </div>
+      </motion.div>
 
       {/* Release dialog */}
       <ConfirmDialog
@@ -175,17 +171,13 @@ export function DeliveryWorkspace({ order }: Props) {
         onConfirm={failForm.handleSubmit((data) => markFailedMutation.mutate(data))}
         onCancel={() => { setShowFailed(false); failForm.reset(); }}
       >
-        <div className={styles.field}>
-          <label className={styles.label}>Причина *</label>
-          <textarea
-            className={styles.textarea}
-            placeholder="Опишите причину (минимум 10 символов)"
-            {...failForm.register('reason')}
-          />
-          {failForm.formState.errors.reason && (
-            <span className={styles.error}>{failForm.formState.errors.reason.message}</span>
-          )}
-        </div>
+        <TextField
+          label="Причина *"
+          placeholder="Опишите причину (минимум 10 символов)"
+          error={!!failForm.formState.errors.reason}
+          hint={failForm.formState.errors.reason?.message}
+          {...failForm.register('reason')}
+        />
       </ConfirmDialog>
     </div>
   );

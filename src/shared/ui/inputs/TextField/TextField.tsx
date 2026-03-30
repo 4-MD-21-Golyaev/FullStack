@@ -1,3 +1,4 @@
+import { Icon } from '../../icons/Icon/Icon';
 import styles from './TextField.module.css';
 
 type TextFieldSize = 'lg' | 'md';
@@ -28,12 +29,7 @@ export function TextField({
           {...rest}
         />
         <span className={styles.resizeIcon} aria-hidden>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <circle cx="4" cy="4" r="1.5" fill="#9c9999"/>
-            <circle cx="8" cy="4" r="1.5" fill="#9c9999"/>
-            <circle cx="4" cy="8" r="1.5" fill="#9c9999"/>
-            <circle cx="8" cy="8" r="1.5" fill="#9c9999"/>
-          </svg>
+          <Icon name="drag" size={12} color="currentColor" />
         </span>
       </div>
       {hint ? (

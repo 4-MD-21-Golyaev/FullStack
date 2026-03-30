@@ -1,0 +1,47 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { Icon } from '../../icons/Icon/Icon';
+import { AccountTab } from '../AccountTab/AccountTab';
+import { Button } from '../../buttons/Button/Button';
+import styles from './AccountTabs.module.css';
+
+export interface AccountTabsProps {
+  activeTab?: 'profile' | 'discounts' | 'addresses' | 'payment' | 'orders';
+  onLogout?: () => void;
+  className?: string;
+}
+
+const tabs = [
+  { id: 'profile' as const, label: 'Личные данные', icon: 'account' as const, href: '/profile' },
+  { id: 'discounts' as const, label: 'Скидки и бонусы', icon: 'percent' as const, href: '/profile/discounts' },
+  { id: 'addresses' as const, label: 'Адреса доставки', icon: 'location' as const, href: '/profile/addresses' },
+  { id: 'payment' as const, label: 'Способы оплаты', icon: 'payment' as const, href: '/profile/payment' },
+  { id: 'orders' as const, label: 'История заказов', icon: 'cart' as const, href: '/orders' },
+];
+
+export function AccountTabs({ activeTab, onLogout, className }: AccountTabsProps) {
+  const router = useRouter();
+
+  return (
+    <div className={[styles.root, className].filter(Boolean).join(' ')}>
+      <div className={styles.sections}>
+        {tabs.map(tab => (
+          <AccountTab
+            key={tab.id}
+            icon={<Icon name={tab.icon} size={20} />}
+            active={activeTab === tab.id}
+            onClick={() => router.push(tab.href)}
+          >
+            {tab.label}
+          </AccountTab>
+        ))}
+      </div>
+      {onLogout && (
+        <Button variant="tertiary" onClick={onLogout}>
+          Выйти
+        </Button>
+      )}
+    </div>
+  );
+}

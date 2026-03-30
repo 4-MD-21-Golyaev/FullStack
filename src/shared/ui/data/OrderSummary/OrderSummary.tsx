@@ -5,7 +5,7 @@ export interface OrderSummaryProps {
   itemCount: number;
   totalWeightKg?: number;
   subtotal: number;
-  deliveryCost: number;
+  deliveryCost?: number;
   discount: number;
   discountPercent: number;
   total: number;
@@ -47,10 +47,12 @@ export function OrderSummary({
         <span>{formatPrice(subtotal)}</span>
       </div>
 
-      <div className={styles.row}>
-        <span>Доставка</span>
-        <span>{formatPrice(deliveryCost)}</span>
-      </div>
+      {deliveryCost !== undefined && (
+        <div className={styles.row}>
+          <span>Доставка</span>
+          <span>{formatPrice(deliveryCost)}</span>
+        </div>
+      )}
 
       <div className={styles.row}>
         <span>Скидка</span>

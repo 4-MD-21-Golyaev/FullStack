@@ -91,7 +91,7 @@
 }
 
 .name {
-  font-size: 16px;
+  font-size: var(--ctx-font-size-caption);
   font-weight: 500;
   line-height: 1.15;
   color: var(--ctx-color-text-default);
@@ -133,12 +133,6 @@
 }
 
 .clearBtn {
-  background: none;
-  border: none;
   padding: 0;
-  cursor: pointer;
-  font-size: var(--ctx-font-size-body);
-  font-weight: 500;
-  color: var(--ctx-color-text-default);
   line-height: var(--ctx-line-height-normal);
 }

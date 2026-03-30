@@ -13,26 +13,42 @@ interface AuthContextValue {
   isLoading: boolean;
   refresh: () => Promise<void>;
   authModalOpen: boolean;
-  openAuthModal: () => void;
+  openAuthModal: (redirectTo?: string) => void;
   closeAuthModal: () => void;
+  authRedirectAfter: string | null;
+  clearAuthRedirect: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+
+async function fetchMe(): Promise<AuthUser | null> {
+  const res = await fetch('/api/auth/me');
+  if (res.ok) return res.json() as Promise<AuthUser>;
+  return null;
+}
+
+async function tryRefreshThenFetchMe(): Promise<AuthUser | null> {
+  const refreshRes = await fetch('/api/auth/refresh', { method: 'POST' });
+  if (!refreshRes.ok) return null;
+  return fetchMe();
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authRedirectAfter, setAuthRedirectAfter] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     try {
-      const res = await fetch('/api/auth/me');
-      if (res.ok) {
-        const data = await res.json() as AuthUser;
-        setUser(data);
-      } else {
-        setUser(null);
+      // Try /me first; if 401 try token refresh, then /me again
+      const me = await fetchMe();
+      if (me) {
+        setUser(me);
+        return;
       }
+      const meAfterRefresh = await tryRefreshThenFetchMe();
+      setUser(meAfterRefresh);
     } catch {
       setUser(null);
     } finally {
@@ -50,8 +66,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isLoading,
       refresh,
       authModalOpen,
-      openAuthModal: () => setAuthModalOpen(true),
-      closeAuthModal: () => setAuthModalOpen(false),
+      openAuthModal: (redirectTo?: string) => { setAuthRedirectAfter(redirectTo ?? null); setAuthModalOpen(true); },
+      closeAuthModal: () => { setAuthModalOpen(false); setAuthRedirectAfter(null); },
+      authRedirectAfter,
+      clearAuthRedirect: () => setAuthRedirectAfter(null),
     }}>
       {children}
     </AuthContext.Provider>

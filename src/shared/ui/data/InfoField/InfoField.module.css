@@ -1,0 +1,55 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: var(--ctx-radius-control);
+  background-color: var(--ctx-color-bg-subtle);
+  padding: 16px;
+  width: 100%;
+}
+
+.withButton {
+  padding-right: 64px;
+}
+
+.sizeM .name {
+  font-size: 20px;
+  font-weight: 700; /* Figma: Heading 4/Bold */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-tight);
+}
+
+.sizeM .value {
+  font-size: 18px;
+  font-weight: 500; /* Figma: UI/Medium */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-tight);
+}
+
+.sizeS .name {
+  font-size: 16px;
+  font-weight: 700; /* Figma: Caption/Bold */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-tight);
+}
+
+.sizeS .value {
+  font-size: 16px;
+  font-weight: 500; /* Figma: Caption/Medium */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-tight);
+}
+
+.editButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.transitionButton {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+}

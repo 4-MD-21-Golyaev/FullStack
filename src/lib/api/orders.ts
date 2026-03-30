@@ -35,6 +35,8 @@ export interface OrderDto {
   deliveryClaimedAt?: string | null;
   outForDeliveryAt?: string | null;
   deliveredAt?: string | null;
+  scheduledDate?: string | null;
+  scheduledTimeSlot?: string | null;
   createdAt: string;
   updatedAt: string;
   payment?: PaymentDto | null;
@@ -54,7 +56,21 @@ export interface AdminOrdersResponse {
   total: number;
 }
 
+export interface CreateOrderBody {
+  address: string;
+  absenceResolutionStrategy: AbsenceResolutionStrategy;
+  items: Array<{ productId: string; quantity: number }>;
+  scheduledDate?: string | null;
+  scheduledTimeSlot?: string | null;
+}
+
 export const ordersApi = {
+  createOrder: (body: CreateOrderBody) =>
+    apiClient.post<OrderDto>('/api/orders', body),
+
+  initiatePayment: (orderId: string) =>
+    apiClient.post<{ confirmationUrl: string }>(`/api/orders/${orderId}/pay`),
+
   getMyOrders: () => apiClient.get<OrderDto[]>('/api/orders'),
 
   getOrder: (id: string) => apiClient.get<OrderDto>(`/api/orders/${id}`),

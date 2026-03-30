@@ -58,7 +58,8 @@ export default function CatalogCategoryPage() {
   const fetchProducts = useCallback(async (catId: string): Promise<ApiProduct[]> => {
     const res = await fetch(`/api/products?categoryId=${encodeURIComponent(catId)}&includeDescendants=true`);
     if (!res.ok) throw new Error('Failed to load products');
-    return res.json();
+    const data = await res.json();
+    return (data.products ?? data) as ApiProduct[];
   }, []);
 
   useEffect(() => {

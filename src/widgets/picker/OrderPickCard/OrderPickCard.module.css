@@ -1,39 +1,75 @@
 .root {
   background: var(--ctx-color-bg-surface);
-  border: var(--card-border);
+  border: 1px solid var(--ctx-color-border-default);
   border-radius: var(--ctx-radius-card);
   padding: var(--ctx-space-inset-lg);
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--ctx-space-stack-sm);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
-.info {
+.root:hover {
+  border-color: var(--ctx-color-action-primary);
+  box-shadow: var(--ctx-shadow-card);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.meta {
   display: flex;
   align-items: center;
   gap: var(--ctx-space-inline-md);
 }
 
-.id {
+.orderTag {
   font-family: var(--ctx-font-code);
-  font-size: var(--ctx-font-size-label);
+  font-size: var(--ctx-font-size-xs);
   color: var(--ctx-color-text-secondary);
-}
-
-.items {
-  font-size: var(--ctx-font-size-label);
-  color: var(--ctx-color-text-secondary);
+  background: var(--ctx-color-bg-subtle);
+  padding: 2px 8px; /* intentional — compact tag sizing */
+  border-radius: var(--ctx-radius-badge);
 }
 
 .total {
-  font-size: var(--ctx-font-size-label);
-  font-weight: 600; /* Semibold */
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 700; /* Bold — prominent amount */
   color: var(--ctx-color-text-default);
-  margin-left: auto;
+}
+
+.itemsCount {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* intentional — tight icon+text pairing */
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-secondary);
+}
+
+.packageIcon {
+  color: var(--ctx-color-text-secondary);
+  flex-shrink: 0;
 }
 
 .address {
   font-size: var(--ctx-font-size-label);
-  color: var(--ctx-color-text-default);
+  color: var(--ctx-color-text-secondary);
   margin: 0;
+  line-height: var(--ctx-line-height-normal);
+}
+
+.timeRow {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* intentional — tight icon+text pairing */
+  font-size: var(--ctx-font-size-xs);
+  color: var(--ctx-color-text-secondary);
+}
+
+.timeIcon {
+  color: var(--ctx-color-text-secondary);
+  flex-shrink: 0;
 }

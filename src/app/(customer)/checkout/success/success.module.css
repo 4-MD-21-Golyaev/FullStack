@@ -1,0 +1,22 @@
+.page { padding-block: var(--ctx-space-stack-xl); }
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ctx-space-stack-md);
+  text-align: center;
+  max-width: var(--ctx-layout-narrow-width);
+  margin-inline: auto;
+}
+.title {
+  font-size: var(--ctx-font-size-h2);
+  font-weight: 700; /* [Desktop]/Headings/Heading 2 */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-loose);
+}
+.text {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 450; /* PT Root UI VF Regular */
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}

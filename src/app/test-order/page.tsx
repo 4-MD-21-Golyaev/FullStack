@@ -287,7 +287,8 @@ export default function TestOrderPage() {
         if (children.length > 0) {
             setCategoryPath(newPath); setCurrentCategories(children); setCurrentProducts(null);
         } else {
-            const products: ProductCard[] = await fetch(`/api/products?categoryId=${category.id}`).then(r => r.json());
+            const data = await fetch(`/api/products?categoryId=${category.id}`).then(r => r.json());
+            const products: ProductCard[] = data.products ?? data;
             setCategoryPath(newPath); setCurrentCategories([]); setCurrentProducts(products);
         }
         setCatalogLoading(false);

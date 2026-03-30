@@ -58,6 +58,8 @@ export class PrismaOrderRepository implements OrderRepository {
                 outForDeliveryAt: order.outForDeliveryAt ?? null,
                 deliveredAt: order.deliveredAt ?? null,
                 moySkladId: order.moySkladId ?? null,
+                scheduledDate: order.scheduledDate ?? null,
+                scheduledTimeSlot: order.scheduledTimeSlot ?? null,
                 items: {
                     deleteMany: {},
                     create: order.items.map(item => ({
@@ -85,6 +87,8 @@ export class PrismaOrderRepository implements OrderRepository {
                 outForDeliveryAt: order.outForDeliveryAt ?? null,
                 deliveredAt: order.deliveredAt ?? null,
                 moySkladId: order.moySkladId ?? null,
+                scheduledDate: order.scheduledDate ?? null,
+                scheduledTimeSlot: order.scheduledTimeSlot ?? null,
                 items: {
                     create: order.items.map(item => ({
                         productId: item.productId,
@@ -114,6 +118,8 @@ export class PrismaOrderRepository implements OrderRepository {
             outForDeliveryAt: record.outForDeliveryAt ?? null,
             deliveredAt: record.deliveredAt ?? null,
             moySkladId: record.moySkladId ?? null,
+            scheduledDate: record.scheduledDate ?? null,
+            scheduledTimeSlot: record.scheduledTimeSlot ?? null,
             createdAt: record.createdAt,
             updatedAt: record.updatedAt,
             items: record.items.map((item: any) => ({

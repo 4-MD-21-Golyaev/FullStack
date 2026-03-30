@@ -1,7 +1,10 @@
 .root {
   display: flex;
   align-items: center;
-  gap: 12px; /* Figma: radio-label gap */
+  gap: var(--ctx-space-stack-xs);
+  background-color: var(--ctx-color-bg-subtle);
+  padding: var(--ctx-space-stack-xs) var(--ctx-space-inline-lg);
+  border-radius: var(--ctx-radius-control);
   cursor: pointer;
 }
 
@@ -13,7 +16,14 @@
 
 .text {
   font-family: var(--ctx-font-body);
-  font-size: var(--ctx-font-size-caption);
+  font-size: var(--ctx-font-size-ui);
+  font-weight: 500; /* PT Root UI VF Medium */
   color: var(--ctx-color-text-default);
-  line-height: var(--ctx-line-height-normal);
+  line-height: var(--ctx-line-height-tight);
+}
+
+.infoIcon {
+  color: var(--ctx-color-text-secondary);
+  display: flex;
+  align-items: center;
 }

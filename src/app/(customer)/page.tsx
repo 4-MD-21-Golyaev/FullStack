@@ -71,7 +71,8 @@ async function fetchSliderData(id: string): Promise<SliderData> {
     fetch(`/api/products?categoryId=${encodeURIComponent(id)}&includeDescendants=true`),
   ]);
   const cat: ApiCategory = catRes.ok ? await catRes.json() : { id, name: id };
-  const products: ApiProduct[] = productsRes.ok ? await productsRes.json() : [];
+  const productsData = productsRes.ok ? await productsRes.json() : { products: [] };
+  const products: ApiProduct[] = productsData.products ?? [];
   return { id, name: cat.name, imagePath: cat.imagePath ?? null, products };
 }
 

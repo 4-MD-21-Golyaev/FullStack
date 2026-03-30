@@ -45,17 +45,20 @@ export default function ProductCard({
 
   return (
     <div className={[styles.root, size === 'S' ? styles.sizeS : '', inCart ? styles.inCart : '', className ?? ''].filter(Boolean).join(' ')}>
+      {/* Overlay link — covers entire card, z-index: 0 */}
+      <Link href={`/catalog/product/${slug}`} className={styles.overlayLink} aria-label={name} />
+
       {/* Image area */}
-      <Link href={`/catalog/product/${slug}`} className={styles.imageLink}>
+      <div className={styles.imageArea}>
         <CardImage src={image} alt={name} size={size === 'S' ? 'M' : 'L'} className={styles.cardImage} />
         {discount && (
           <span className={styles.discountBadge}>
             <Badge variant="discount" size="S">{discount}</Badge>
           </span>
         )}
-      </Link>
+      </div>
 
-      {/* Like button — top-right over image */}
+      {/* Like button — top-right over image, z-index: 1 */}
       <LikeButton
         active={liked}
         onClick={onToggleLike}
@@ -67,9 +70,7 @@ export default function ProductCard({
       <div className={styles.info}>
         {/* Title block: name + price (price moves here when in cart) */}
         <div className={styles.titleBlock}>
-          <Link href={`/catalog/product/${slug}`} className={styles.nameLink}>
-            <p className={styles.name}>{name}</p>
-          </Link>
+          <p className={styles.name}>{name}</p>
 
           {inCart && (
             <div className={styles.inCartPrice}>

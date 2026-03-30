@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import bridge from '@vkontakte/vk-bridge';
-import { Spinner } from '@/shared/ui';
-import { AuthForm } from '@/features/auth/AuthForm';
+import { Spinner, IconButton } from '@/shared/ui';
+import { AuthForm, type Step } from '@/features/auth/AuthForm';
 import styles from './vk.module.css';
 
 type State =
@@ -39,6 +39,7 @@ export default function VkEntryPage({ initialQueryString }: { initialQueryString
     const router = useRouter();
     const queryStringRef = useRef(initialQueryString);
     const [state, setState] = useState<State>({ status: 'loading' });
+    const [step, setStep] = useState<Step>('email');
 
     useEffect(() => {
         bridge.send('VKWebAppInit');
@@ -146,8 +147,18 @@ export default function VkEntryPage({ initialQueryString }: { initialQueryString
 
     return (
         <div className={styles.page}>
-            <div className={styles.formCard}>
-                <AuthForm onSuccess={handleAuthSuccess} />
+            <div className={styles.formCard} style={{ position: 'relative' }}>
+                {step !== 'email' && (
+                    <IconButton
+                        icon="arrow_left"
+                        variant="white"
+                        size="md"
+                        onClick={() => setStep(step === 'register' ? 'code' : 'email')}
+                        aria-label="Назад"
+                        style={{ position: 'absolute', top: 24, left: 24 }}
+                    />
+                )}
+                <AuthForm step={step} onStepChange={setStep} onSuccess={handleAuthSuccess} />
             </div>
         </div>
     );

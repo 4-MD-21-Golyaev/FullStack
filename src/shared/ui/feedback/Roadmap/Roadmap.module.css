@@ -1,0 +1,20 @@
+.root {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  width: 100%;
+}
+
+.line {
+  position: absolute;
+  height: 3px;
+  top: 40px; /* 8px padding-top + 32px (center of 64px icon) */
+}
+
+.clickable {
+  cursor: pointer;
+}

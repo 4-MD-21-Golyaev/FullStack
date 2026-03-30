@@ -1,0 +1,128 @@
+.page { padding-block: var(--ctx-space-stack-lg); }
+
+.leftCol {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: var(--ctx-space-stack-lg);
+  align-items: start;
+}
+
+.roadmapRow {
+  grid-column: 1 / -1;
+}
+
+.sidebarCol {
+  grid-column: 10 / 13;
+}
+
+@media (max-width: 900px) {
+  .sidebarCol { grid-column: 1 / -1; }
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+  position: sticky;
+  top: var(--ctx-space-stack-md);
+}
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-lg);
+  grid-column: 1 / 7;
+}
+
+.stepTitle {
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700; /* [Desktop]/Headings/Heading 3 */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-loose);
+}
+
+.tabs { display: flex; gap: var(--ctx-space-inline-sm); }
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-xs);
+}
+
+.pickupNote {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 450; /* PT Root UI VF Regular */
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.itemsTitle {
+  font-size: var(--ctx-font-size-ui);
+  font-weight: 700; /* [Desktop]/Headings/Heading 5 */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-tight);
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-xs);
+}
+
+.sectionTitle {
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 700; /* [Desktop]/Headings/Heading 4 */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-loose);
+}
+
+.sectionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dateTabsRow {
+  display: flex;
+  gap: 0;
+  width: 100%;
+}
+
+.dateTabsRow > * {
+  flex: 1;
+}
+
+.pickupInfo {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 450; /* PT Root UI VF Regular */
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.addAddressRow {
+  display: flex;
+  gap: var(--ctx-space-inline-sm);
+  align-items: center;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+/* All Radio items fill the group width */
+.radioGroup > * {
+  width: 100%;
+}
+
+/* Utility: full-width element */
+.fullWidth {
+  width: 100%;
+}
+
+/* In the add-address row: Button grows, IconButton stays fixed */
+.addAddressRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}

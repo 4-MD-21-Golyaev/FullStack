@@ -54,14 +54,14 @@ Customer-авторизация — не отдельные страницы, а
 
 | # | Страница | Маршрут | Статус | Figma node-id | Примечание |
 |---|---|---|---|---|---|
-| 12 | Главная | `/` | ⏳ | `606:24335` | Hero, слайдер, категории, хиты |
-| 13 | Каталог (верх, 2 уровень, нижн) | `/catalog` | ⏳ | `606:25173` / `606:25242` / `606:25265` | Плитки категорий, сайдбар, подкатегории |
-| 14 | Карточка товара | `/catalog/[slug]` | ⏳ | `606:25383` | Фото, описание, Tabs, Counter, кнопка в корзину |
-| 15 | Корзина | `/cart` | ⏳ | `606:25552` | Позиции, итого, переход к оформлению |
-| 16 | Оформление заказа | `/checkout` | ⏳ | `606:26048`…`606:27312` | Адрес, способ оплаты, подтверждение |
-| 17 | Спасибо | `/checkout/success` | ⏳ | `606:27368` | Header + текст + Button + Footer |
-| 18 | ЛК — история заказов | `/account/orders` | ⏳ | `606:25948` | Список заказов пользователя |
-| 19 | ЛК — детали заказа | `/account/orders/[id]` | ⏳ | `1097:43020` | Детали заказа, статус, позиции |
+| 12 | Главная | `/` | ✅ | `606:24335` | Hero, слайдер, категории, хиты |
+| 13 | Каталог (верх, 2 уровень, нижн) | `/catalog`, `/catalog/[categoryId]` | ✅ | `606:25173` / `606:25242` / `606:25265` | Плитки категорий, сайдбар, подкатегории |
+| 14 | Карточка товара | `/catalog/product/[id]` | ✅ | `606:25383` | Фото, описание, Tabs, Counter, кнопка в корзину. Маршрут отличается от планового `/catalog/[slug]` |
+| 15 | Корзина | `/cart` | ✅ | `606:25552` | Позиции, итого, переход к оформлению |
+| 16 | Оформление заказа | `/checkout` | ✅ | `606:26048`…`606:27312` | Адрес, стратегия сборки, оплата, подтверждение. Подключён к API: POST /api/orders + POST /api/orders/{id}/pay |
+| 17 | Спасибо | `/checkout/success` | ✅ | `606:27368` | orderId из sessionStorage, ссылка на заказ и каталог |
+| 18 | ЛК — история заказов | `/orders` | ✅ | `606:25948` | Список заказов пользователя. Маршрут отличается от планового `/account/orders` |
+| 19 | ЛК — детали заказа | `/orders/[id]` | ✅ | `1097:43020` | Детали заказа, статус, позиции. Маршрут отличается от планового `/account/orders/[id]` |
 
 ---
 
@@ -92,52 +92,51 @@ Customer-авторизация — не отдельные страницы, а
 | LikeButton | — | ✅ | На ProductCard |
 | SocialButton | — | ✅ | WA/TG в Footer |
 | CartButton | — | ✅ | Header |
-| **PaginationBullet** | `731:36037` | ⏳ | Hero-слайдер (точки) |
-| **Pagination** | `95:3501` | ⏳ | Hero-слайдер, оборачивает PaginationBullet |
-| **SaleSliderTitle** | `1396:113459` | ⏳ | Заголовок каждого Sale slider |
-| **ProductCard** | `49:8613` | ⏳ | Внутри Slider (L/S, Enabled/In cart) |
-| **Price** | `73:2363` | ⏳ | Внутри ProductCard (актуальная + зачёркнутая) |
-| **Badge** | `270:10355` | ⚠️ | Скидка на ProductCard; существующий Badge (admin) не подходит — нужен red-pill вариант |
-| **CardImage** | `1103:109741` | ⏳ | Контейнер изображения в ProductCard |
-| **Slider** | `1106:58701` | ⏳ | Горизонтальный список ProductCard |
-| **SliderContainer** | `1121:47056` | ⏳ | Обёртка Slider + стрелки навигации |
-| **Link** | `145:4987` | ⏳ | Ссылки в Footer, Loyalty |
-| **AppMarketButton** | `706:23000`–`980:46785` | ⏳ | Google Play / App Store / AppGallery / RuStore (Footer + Loyalty) |
-| **Rating** | `1103:98494` | ⏳ | Опционально на ProductCard (showRating=false по умолчанию) |
+| **PaginationBullet** | `731:36037` | ✅ | Hero-слайдер (точки) |
+| **Pagination** | `95:3501` | ✅ | Hero-слайдер, оборачивает PaginationBullet |
+| **SaleSliderTitle** | `1396:113459` | ✅ | Заголовок каждого Sale slider |
+| **ProductCard** | `49:8613` | ✅ | Внутри Slider (L/S, Enabled/In cart). Реализован в `widgets/customer/ProductCard` |
+| **Price** | `73:2363` | ✅ | Внутри ProductCard (актуальная + зачёркнутая) |
+| **Badge** | `270:10355` | ✅ | Скидка на ProductCard; red-pill вариант реализован |
+| **CardImage** | `1103:109741` | ✅ | Контейнер изображения в ProductCard |
+| **Slider** | `1106:58701` | ✅ | Горизонтальный список ProductCard |
+| **SliderContainer** | `1121:47056` | ✅ | Обёртка Slider + стрелки навигации |
+| **Link** | `145:4987` | ✅ | Ссылки в Footer, Loyalty |
+| **AppMarketButton** | `706:23000`–`980:46785` | ✅ | Google Play / App Store / AppGallery / RuStore (Footer + Loyalty) |
+| **Rating** | `1103:98494` | ✅ | Опционально на ProductCard (showRating=false по умолчанию) |
 
 #### Виджеты (`src/widgets/customer/`)
 
 | Виджет | Статус | Зависит от shared/ui |
 |---|---|---|
-| **Header** | ⏳ | Logo, IconButton, CartButton, Button |
-| **Footer** | ⏳ | Logo, Link, SocialButton, AppMarketButton, IconButton |
+| **Header** | ✅ | Logo, IconButton, CartButton, Button |
+| **Hero** | ✅ | ArrowsContainer, Pagination |
+| **SaleSlider** | ✅ | SaleSliderTitle, SliderContainer, ProductCard |
+| **LoyaltySection** | ✅ | Logo, Icon, Link, AppMarketButton |
+| **Footer** | ✅ | Logo, Link, SocialButton, AppMarketButton, IconButton |
 
 #### Критический путь (минимум для рендера страницы)
-
-Без Rating (опционально) и без OldPrice (опционально через `showOld`):
 
 ```
 Главная
 ├── Header → Logo, IconButton, CartButton, Button               [всё ✅]
 ├── Hero
 │   ├── ArrowsContainer → ArrowButton, ArrowBg, Icon           [всё ✅]
-│   └── Pagination → PaginationBullet                          [⏳ ⏳]
+│   └── Pagination → PaginationBullet                          [✅ ✅]
 ├── Sale slider × 4
-│   ├── SaleSliderTitle                                         [⏳]
+│   ├── SaleSliderTitle                                         [✅]
 │   └── SliderContainer → Slider → ProductCard
 │                                   ├── LikeButton             [✅]
-│                                   ├── Price (+ OldPrice)     [⏳]
-│                                   ├── Badge (discount)       [⏳]
-│                                   ├── CardImage              [⏳]
+│                                   ├── Price (+ OldPrice)     [✅]
+│                                   ├── Badge (discount)       [✅]
+│                                   ├── CardImage              [✅]
 │                                   └── IconButton             [✅]
 ├── Loyalty section
 │   ├── Logo, Icon                                             [всё ✅]
-│   ├── Link                                                   [⏳]
-│   └── AppMarketButton × 4                                    [⏳]
-└── Footer → Logo, Link, SocialButton, AppMarketButton, IconButton
+│   ├── Link                                                   [✅]
+│   └── AppMarketButton × 4                                    [✅]
+└── Footer → Logo, Link, SocialButton, AppMarketButton, IconButton  [всё ✅]
 ```
-
-**Итого нужно реализовать:** 10 shared/ui компонентов + 2 виджета
 
 ### Каталог (`/catalog`) — nodes `606:25173` / `606:25242` / `606:25265`
 
@@ -148,20 +147,20 @@ Customer-авторизация — не отдельные страницы, а
 | Компонент | Figma node | Статус | Используется в |
 |---|---|---|---|
 | CategoryNavItem | — | ✅ | Сайдбар категорий |
-| **Breadcrumbs** | `1196:68225` | ⏳ | Хлебные крошки; только Icon (стрелка) внутри, нет вложенных shared/ui |
-| **Category** (плитка) | `1121:43467` | ⏳ | Сетка категорий верхнего уровня; содержит CategoryImage (img) |
-| **SubcategoryList** | `1196:70878` | ⏳ | Блок «название + Link + SliderContainer»; зависит от Link, SliderContainer, ProductCard |
-| *(все компоненты Главной)* | — | ⏳/✅ | Header, Footer, ProductCard, Price, Badge, CardImage, Slider, SliderContainer, Link, AppMarketButton |
+| **Breadcrumbs** | `1196:68225` | ✅ | Хлебные крошки. Реализован в `widgets/customer/CustomerBreadcrumbs` |
+| **Category** (плитка) | `1121:43467` | ✅ | Сетка категорий верхнего уровня |
+| **SubcategoryList** | `1196:70878` | ✅ | Блок «название + Link + SliderContainer». Реализован в `widgets/customer/SubcategoryList` |
+| *(все компоненты Главной)* | — | ✅ | Header, Footer, ProductCard, Price, Badge, CardImage, Slider, SliderContainer, Link, AppMarketButton |
 
 Критический путь дополнения:
 ```
-Каталог верх: Category (плитка) → CategoryImage (inline img)
-Каталог 2/3:  SubcategoryList → Link + SliderContainer → Slider → ProductCard → (Price, Badge, CardImage, LikeButton✅, IconButton✅)
+Каталог верх: Category (плитка) → CategoryImage (inline img)          [✅]
+Каталог 2/3:  SubcategoryList → Link + SliderContainer → Slider → ProductCard → (Price✅, Badge✅, CardImage✅, LikeButton✅, IconButton✅)  [✅]
 ```
 
 ---
 
-### Карточка товара (`/catalog/[slug]`) — nodes `606:25383` / `606:25493` / `1976:46874`
+### Карточка товара (`/catalog/product/[id]`) — nodes `606:25383` / `606:25493` / `1976:46874`
 
 Три варианта: базовый · «нет в наличии» (out-of-stock) · «в наличии» (in-stock с Counter).
 
@@ -172,7 +171,7 @@ Customer-авторизация — не отдельные страницы, а
 | Tab | `79:4000` | ✅ | Вкладки «Характеристики / Пищевая ценность / …» |
 | Counter | — | ✅ | Количество (только in-stock вариант: `1976:46874`) |
 | **Image** | `1103:57777` | ⏳ | L (350px, default) · S/Enabled (64px thumbnail) · S/Activated (selected); кнопки для S |
-| *(все компоненты Каталога)* | — | ⏳/✅ | Breadcrumbs, ProductCard в «Похожих» / «Недавно просмотренных» |
+| *(все компоненты Каталога)* | — | ✅ | Breadcrumbs, ProductCard в «Похожих» / «Недавно просмотренных» |
 
 Уточнения по Price и Badge из вариантов:
 - **Price L** (product page) = actual (24px) + OldPrice + **Badge** (inline в секции Old). Размер отличается от Price M на ProductCard.
@@ -208,15 +207,15 @@ Custom layouts (не shared/ui):
 
 | Компонент | Figma node | Статус | Используется в |
 |---|---|---|---|
-| **WideProductCard** | `196:8569` | ⏳ | Список позиций корзины (В наличии / Нет в наличии) |
-| **OrderSummary** | `777:20579` | ⏳ | Sidebar итого; содержит Price + Badge (скидка) |
+| **WideProductCard** | `196:8569` | ✅ | Список позиций корзины (В наличии / Нет в наличии) |
+| **OrderSummary** | `777:20579` | ✅ | Sidebar итого; содержит Price + Badge (скидка) |
 | **AlertBlock** | `1621:30302` | ⏳ | Предупреждения в sidebar |
 
 Критический путь дополнения:
 ```
-WideProductCard → CardImage, Price, Counter✅, LikeButton✅, IconButton✅
-OrderSummary    → Price, Badge
-AlertBlock      → (автономный, inline icon + text)
+WideProductCard → CardImage✅, Price✅, Counter✅, LikeButton✅, IconButton✅   [✅]
+OrderSummary    → Price✅, Badge✅                                              [✅]
+AlertBlock      → (автономный, inline icon + text)                             [⏳]
 ```
 
 ---
@@ -232,7 +231,7 @@ AlertBlock      → (автономный, inline icon + text)
 | **Roadmap** | `850:31020` | ⏳ | Прогресс-трекер 4 этапа; содержит Stage + StageIcon |
 | **Stage** | `1735:52934` | ⏳ | Один шаг Roadmap (label + StageIcon + линия) |
 | **StageIcon** | `222:7856` | ⏳ | Иконка этапа (64px круг, active/inactive) |
-| **OrderSummary** | `777:20579` | ⏳ | Sidebar итого (этапы 2–4) |
+| **OrderSummary** | `777:20579` | ✅ | Sidebar итого (этапы 2–4) |
 
 #### Этап 1 — Способ доставки (node `606:26048` / `606:26149` / `1735:53917`)
 
@@ -257,9 +256,9 @@ AlertBlock      → (автономный, inline icon + text)
 | **AlertBlock** | `1621:30302` | ⏳ | Информационные блоки |
 
 ```
-Roadmap   → Stage → StageIcon
-InfoField → (автономный, IconButton✅ для edit/transition)
-NarrowProductCard → CardImage, Price S
+Roadmap   → Stage → StageIcon                               [⏳]
+InfoField → (автономный, IconButton✅ для edit/transition)  [⏳]
+NarrowProductCard → CardImage✅, Price S✅                  [⏳]
 ```
 
 ---
@@ -271,7 +270,9 @@ NarrowProductCard → CardImage, Price S
 
 ---
 
-### ЛК — История заказов (`/account/orders`) — node `606:25948`
+### ЛК — История заказов (`/orders`) — node `606:25948`
+
+> Фактический маршрут: `/orders` (плановый: `/account/orders`)
 
 Структура страницы:
 - **Header** (виджет)
@@ -287,17 +288,19 @@ NarrowProductCard → CardImage, Price S
 
 | Компонент | Figma node | Статус | Используется в |
 |---|---|---|---|
-| **AccountTabs** | `1047:41265` | ⏳ | Sidebar ЛК (обёртка над AccountTab list + кнопка выхода) |
+| **AccountTabs** | `1047:41265` | ⏳ | Sidebar ЛК (обёртка над AccountTab list + кнопка выхода). AccountTab (атом) ✅ уже есть |
 | **OrderStateBadge** (customer) | `1097:18614` | ⚠️ | Badge для статуса заказа: В сборке / В пути / Доставлен / Отменен. Существующий `OrderStatusBadge` в shared/ui — admin-вариант, нужно проверить совместимость |
 
 ```
-AccountTabs → AccountTab✅ × N + Button tertiary✅
-Order row → CardImage⏳, Price⏳, OrderStateBadge(customer)
+AccountTabs → AccountTab✅ × N + Button tertiary✅   [⏳ обёртка]
+Order row → CardImage✅, Price✅, OrderStateBadge(customer)  [⚠️]
 ```
 
 ---
 
-### ЛК — Детали заказа (`/account/orders/[id]`) — node `1097:43020`
+### ЛК — Детали заказа (`/orders/[id]`) — node `1097:43020`
+
+> Фактический маршрут: `/orders/[id]` (плановый: `/account/orders/[id]`)
 
 Структура страницы:
 - **Header** (виджет)
@@ -317,9 +320,9 @@ Order row → CardImage⏳, Price⏳, OrderStateBadge(customer)
 | **ProfileField** | `4031:48892` | ⏳ | Readonly поле: label + value (Получатель, адрес и т.д.) |
 
 ```
-ProfileField → (автономный, только текст)
-WideProductCard (type=History) → CardImage⏳, Price⏳, LikeButton✅, IconButton✅
-OrderSummary → Price⏳, Badge⏳
+ProfileField → (автономный, только текст)                           [⏳]
+WideProductCard (type=History) → CardImage✅, Price✅, LikeButton✅, IconButton✅  [✅]
+OrderSummary → Price✅, Badge✅                                      [✅]
 ```
 
 ---
@@ -328,40 +331,38 @@ OrderSummary → Price⏳, Badge⏳
 
 Упорядочены по уровню зависимостей (атомы → молекулы → виджеты).
 
-| # | Компонент | Figma node | Нужен для страниц | Зависит от |
-|---|---|---|---|---|
-| 1 | **PaginationBullet** | `731:36037` | Главная | — |
-| 2 | **Breadcrumbs** | `1196:68225` | Каталог, Товар | Icon✅ |
-| 3 | **SaleSliderTitle** | `1396:113459` | Главная | — |
-| 4 | **Category** (плитка) | `1121:43467` | Каталог верх | — |
-| 5 | **StageIcon** | `222:7856` | Чекаут | — |
-| 6 | **Price** | `73:2363` | Главная, Каталог, Товар, Корзина, Чекаут | Badge (для L-варианта) |
-| 7 | **Badge** (discount) | `270:10355` | ProductCard (abs), Price L (inline), OrderSummary | — |
-| 8 | **CardImage** | `1103:109741` | Главная, Каталог, Товар, Корзина, Чекаут | — |
-| 9 | **Image** (product) | `1103:57777` | Товар | — |
-| 10 | **Link** | `145:4987` | Главная, Каталог, Корзина | — |
-| 11 | **AlertBlock** | `1621:30302` | Корзина, Чекаут | — |
-| 12 | **AppMarketButton** × 4 | `706:23000`… | Главная, все (Footer) | — |
-| 13 | **Pagination** | `95:3501` | Главная | PaginationBullet |
-| 14 | **Stage** | `1735:52934` | Чекаут | StageIcon |
-| 15 | **InfoField** | `1738:46288` | Чекаут (этап 4) | IconButton✅ |
-| 16 | **ProductCard** | `49:8613` | Главная, Каталог, Товар, Корзина | Price, Badge, CardImage, LikeButton✅, IconButton✅ |
-| 17 | **NarrowProductCard** | `247:8394` | Чекаут (этап 4) | CardImage, Price |
-| 18 | **WideProductCard** | `196:8569` | Корзина | CardImage, Price, Counter✅, LikeButton✅ |
-| 19 | **Slider** | `1106:58701` | Главная, Каталог, Товар, Корзина | ProductCard |
-| 20 | **SliderContainer** | `1121:47056` | Главная, Каталог, Товар, Корзина | Slider, ArrowButton✅ |
-| 21 | **SubcategoryList** | `1196:70878` | Каталог, Товар | Link, SliderContainer, ProductCard |
-| 22 | **OrderSummary** | `777:20579` | Корзина, Чекаут, ЛК заказ | Price, Badge |
-| 23 | **Roadmap** | `850:31020` | Чекаут | Stage, StageIcon |
-| 24 | **ProfileField** | `4031:48892` | ЛК заказ | — |
-| 25 | **AccountTabs** | `1047:41265` | ЛК все страницы | AccountTab✅, Button✅ |
-| — | **Header** (виджет) | `765:25905` | все | Logo✅, IconButton✅, CartButton✅, Button✅ |
-| — | **Footer** (виджет) | `1121:55505` | все | Logo✅, Link, SocialButton✅, AppMarketButton, IconButton✅ |
-| — | **Rating** | `1103:98494` | опционально | — |
+| # | Компонент | Figma node | Нужен для страниц | Зависит от | Статус |
+|---|---|---|---|---|---|
+| 1 | **PaginationBullet** | `731:36037` | Главная | — | ✅ |
+| 2 | **Breadcrumbs** | `1196:68225` | Каталог, Товар | Icon✅ | ✅ |
+| 3 | **SaleSliderTitle** | `1396:113459` | Главная | — | ✅ |
+| 4 | **Category** (плитка) | `1121:43467` | Каталог верх | — | ✅ |
+| 5 | **StageIcon** | `222:7856` | Чекаут | — | ⏳ |
+| 6 | **Price** | `73:2363` | Главная, Каталог, Товар, Корзина, Чекаут | Badge (для L-варианта) | ✅ |
+| 7 | **Badge** (discount) | `270:10355` | ProductCard (abs), Price L (inline), OrderSummary | — | ✅ |
+| 8 | **CardImage** | `1103:109741` | Главная, Каталог, Товар, Корзина, Чекаут | — | ✅ |
+| 9 | **Image** (product) | `1103:57777` | Товар | — | ⏳ |
+| 10 | **Link** | `145:4987` | Главная, Каталог, Корзина | — | ✅ |
+| 11 | **AlertBlock** | `1621:30302` | Корзина, Чекаут | — | ⏳ |
+| 12 | **AppMarketButton** × 4 | `706:23000`… | Главная, все (Footer) | — | ✅ |
+| 13 | **Pagination** | `95:3501` | Главная | PaginationBullet | ✅ |
+| 14 | **Stage** | `1735:52934` | Чекаут | StageIcon | ⏳ |
+| 15 | **InfoField** | `1738:46288` | Чекаут (этап 4) | IconButton✅ | ⏳ |
+| 16 | **ProductCard** | `49:8613` | Главная, Каталог, Товар, Корзина | Price, Badge, CardImage, LikeButton✅, IconButton✅ | ✅ (`widgets/customer/`) |
+| 17 | **NarrowProductCard** | `247:8394` | Чекаут (этап 4) | CardImage, Price | ⏳ |
+| 18 | **WideProductCard** | `196:8569` | Корзина | CardImage, Price, Counter✅, LikeButton✅ | ✅ |
+| 19 | **Slider** | `1106:58701` | Главная, Каталог, Товар, Корзина | ProductCard | ✅ |
+| 20 | **SliderContainer** | `1121:47056` | Главная, Каталог, Товар, Корзина | Slider, ArrowButton✅ | ✅ |
+| 21 | **SubcategoryList** | `1196:70878` | Каталог, Товар | Link, SliderContainer, ProductCard | ✅ (`widgets/customer/`) |
+| 22 | **OrderSummary** | `777:20579` | Корзина, Чекаут, ЛК заказ | Price, Badge | ✅ |
+| 23 | **Roadmap** | `850:31020` | Чекаут | Stage, StageIcon | ⏳ |
+| 24 | **ProfileField** | `4031:48892` | ЛК заказ | — | ⏳ |
+| 25 | **AccountTabs** | `1047:41265` | ЛК все страницы | AccountTab✅, Button✅ | ⏳ |
+| — | **Header** (виджет) | `765:25905` | все | Logo✅, IconButton✅, CartButton✅, Button✅ | ✅ |
+| — | **Footer** (виджет) | `1121:55505` | все | Logo✅, Link, SocialButton✅, AppMarketButton, IconButton✅ | ✅ |
+| — | **Rating** | `1103:98494` | опционально | — | ✅ |
 
-**Итого: 25 shared/ui компонентов + 2 виджета** (Rating — опциональный, можно отложить)
-
-> `OrderStateBadge` (customer) — **заменяет** существующий `OrderStatusBadge`: существующий компонент расширяется customer-состояниями (В сборке / В пути / Доставлен / Отменен) и переименовывается. Отдельный компонент не создаётся.
+> `OrderStateBadge` (customer) — **расширяет** существующий `OrderStatusBadge`: добавить customer-состояния (В сборке / В пути / Доставлен / Отменен). Отдельный компонент не создаётся. Статус: ⚠️ требует проверки совместимости.
 
 ---
 
@@ -387,58 +388,71 @@ OrderSummary → Price⏳, Badge⏳
 
 ### Компоненты: только новые / расширяемые
 
-Из 86 компонентов UI Kit для реализации всех customer-страниц нужен 21 новый + 1 расширение:
-
-| # | Компонент | Figma node | Нужен для |
-|---|---|---|---|
-| 1 | **Link** | `145:4987` | Главная, Каталог, Корзина, Footer |
-| 2 | **PaginationBullet** | `731:36037` | Главная |
-| 3 | **SaleSliderTitle** | `1396:113459` | Главная |
-| 4 | **Badge** (discount, red-pill) | `270:10355` | ProductCard, Price L, OrderSummary |
-| 5 | **Price** | `73:2363` | Главная, Каталог, Товар, Корзина, Чекаут, ЛК |
-| 6 | **CardImage** | `1103:109741` | Главная, Каталог, Товар, Корзина, ЛК |
-| 7 | **Image** (product gallery) | `1103:57777` | Карточка товара |
-| 8 | **AlertBlock** | `1621:30302` | Корзина, Чекаут |
-| 9 | **StageIcon** | `222:7856` | Чекаут |
-| 10 | **AppMarketButton** (4 варианта) | `706:23000`… | Главная, Footer |
-| 11 | **Breadcrumbs** | `1196:68225` | Каталог, Товар |
-| 12 | **Category** (плитка) | `1121:43467` | Каталог верхний |
-| 13 | **Pagination** | `95:3501` | Главная |
-| 14 | **Stage** | `1735:52934` | Чекаут |
-| 15 | **InfoField** | `1738:46288` | Чекаут этап 4 |
-| 16 | **ProfileField** | `4031:48892` | ЛК заказ |
-| 17 | **AccountTabs** | `1047:41265` | ЛК все страницы |
-| 18 | **ProductCard** | `49:8613` | Главная, Каталог, Товар, Корзина |
-| 19 | **NarrowProductCard** | `247:8394` | Чекаут этап 4 |
-| 20 | **WideProductCard** | `196:8569` | Корзина, ЛК заказ |
-| 21 | **OrderSummary** | `777:20579` | Корзина, Чекаут, ЛК заказ |
-| 22 | **Slider** | `1106:58701` | Главная, Каталог, Корзина |
-| 23 | **SliderContainer** | `1121:47056` | Главная, Каталог, Корзина |
-| 24 | **SubcategoryList** | `1196:70878` | Каталог, Товар |
-| 25 | **Roadmap** | `850:31020` | Чекаут |
-| ↺ | **OrderStatusBadge** (расширить) | `1097:18614` | ЛК история, ЛК заказ — добавить customer-состояния |
+| # | Компонент | Figma node | Нужен для | Статус |
+|---|---|---|---|---|
+| 1 | **Link** | `145:4987` | Главная, Каталог, Корзина, Footer | ✅ |
+| 2 | **PaginationBullet** | `731:36037` | Главная | ✅ |
+| 3 | **SaleSliderTitle** | `1396:113459` | Главная | ✅ |
+| 4 | **Badge** (discount, red-pill) | `270:10355` | ProductCard, Price L, OrderSummary | ✅ |
+| 5 | **Price** | `73:2363` | Главная, Каталог, Товар, Корзина, Чекаут, ЛК | ✅ |
+| 6 | **CardImage** | `1103:109741` | Главная, Каталог, Товар, Корзина, ЛК | ✅ |
+| 7 | **Image** (product gallery) | `1103:57777` | Карточка товара | ⏳ |
+| 8 | **AlertBlock** | `1621:30302` | Корзина, Чекаут | ✅ |
+| 9 | **StageIcon** | `222:7856` | Чекаут | ✅ |
+| 10 | **AppMarketButton** (4 варианта) | `706:23000`… | Главная, Footer | ✅ |
+| 11 | **Breadcrumbs** | `1196:68225` | Каталог, Товар | ✅ |
+| 12 | **Category** (плитка) | `1121:43467` | Каталог верхний | ✅ |
+| 13 | **Pagination** | `95:3501` | Главная | ✅ |
+| 14 | **Stage** | `1735:52934` | Чекаут | ✅ |
+| 15 | **InfoField** | `1738:46288` | Чекаут этап 4 | ✅ |
+| 16 | **ProfileField** | `4031:48892` | ЛК заказ | ⏳ |
+| 17 | **AccountTabs** | `1047:41265` | ЛК все страницы | ⏳ |
+| 18 | **ProductCard** | `49:8613` | Главная, Каталог, Товар, Корзина | ✅ (`widgets/customer/`) |
+| 19 | **NarrowProductCard** | `247:8394` | Чекаут этап 4 | ✅ |
+| 20 | **WideProductCard** | `196:8569` | Корзина, ЛК заказ | ✅ |
+| 21 | **OrderSummary** | `777:20579` | Корзина, Чекаут, ЛК заказ | ✅ |
+| 22 | **Slider** | `1106:58701` | Главная, Каталог, Корзина | ✅ |
+| 23 | **SliderContainer** | `1121:47056` | Главная, Каталог, Корзина | ✅ |
+| 24 | **SubcategoryList** | `1196:70878` | Каталог, Товар | ✅ (`widgets/customer/`) |
+| 25 | **Roadmap** | `850:31020` | Чекаут | ✅ |
+| ↺ | **OrderStatusBadge** (расширить) | `1097:18614` | ЛК история, ЛК заказ — добавить customer-состояния | ⚠️ |
 
 ### Виджеты: новые
 
-| # | Виджет | Figma node | Нужен для |
-|---|---|---|---|
-| 1 | **Header** | `765:25905` | Все customer-страницы |
-| 2 | **Footer** | `1121:55505` | Все customer-страницы |
-| 3 | **MobilePanel** | `1702:46474` | Мобильная навигация (все страницы) |
-| 4 | **CartPanel** | `1732:36508` | Мобильная панель корзины |
-| 5 | **OrderPanel** | `1738:50199` | Мобильная панель заказа |
-| 6 | **MobileOverlay** | `1732:34767` | Обёртка для CartPanel и OrderPanel |
+| # | Виджет | Figma node | Нужен для | Статус |
+|---|---|---|---|---|
+| 1 | **Header** | `765:25905` | Все customer-страницы | ✅ |
+| 2 | **Footer** | `1121:55505` | Все customer-страницы | ✅ |
+| 3 | **MobilePanel** | `1702:46474` | Мобильная навигация (все страницы) | ⏳ |
+| 4 | **CartPanel** | `1732:36508` | Мобильная панель корзины | ⏳ |
+| 5 | **OrderPanel** | `1738:50199` | Мобильная панель заказа | ⏳ |
+| 6 | **MobileOverlay** | `1732:34767` | Обёртка для CartPanel и OrderPanel | ⏳ |
 
 MobilePanel зависит от MobilePanelButton ✅ и MobilePanelCartButton ✅ (уже реализованы).
 MobileOverlay зависит от CartPanel и OrderPanel.
 
 ### Итог
 
-| Категория | Кол-во |
-|---|---|
-| Новые shared/ui компоненты | **25** |
-| Расширение существующего компонента | **1** (OrderStatusBadge) |
-| Новые виджеты | **6** |
-| **Итого единиц работ** | **32** |
+| Категория | Всего | Готово | Осталось |
+|---|---|---|---|
+| Новые shared/ui компоненты | **25** | **22** | **3** |
+| Расширение существующего компонента | **1** (OrderStatusBadge) | — | **1** ⚠️ |
+| Новые виджеты | **6** | **2** | **4** |
+| **Итого единиц работ** | **32** | **24** | **8** |
 
 Из 86 компонентов UI Kit **56 не нужны** для текущего объёма (реализуются по мере появления новых требований).
+
+### Оставшийся минимум для защиты (чекаут)
+
+Для завершения пользовательского пути нужно реализовать страницы `/checkout` и `/checkout/success`. Компоненты в порядке зависимостей:
+
+```
+✅ StageIcon → Stage → Roadmap   (реализованы)
+✅ AlertBlock                     (реализован)
+✅ InfoField                      (реализован)
+✅ NarrowProductCard               (реализован)
+⏳ Image (product gallery)        — для страницы товара (опционально)
+⏳ AccountTabs (обёртка)          — для ЛК
+⏳ ProfileField                   — для ЛК заказа
+⚠️ OrderStatusBadge (customer states) — для ЛК
+```

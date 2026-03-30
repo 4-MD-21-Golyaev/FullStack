@@ -1,7 +1,9 @@
 'use client';
 
-import { Modal } from '@/shared/ui';
-import { AuthForm } from '@/features/auth/AuthForm';
+import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { Modal, Button } from '@/shared/ui';
+import { AuthForm, type Step } from '@/features/auth/AuthForm';
 import { useAuth } from './AuthContext';
 import styles from './AuthModal.module.css';
 
@@ -11,13 +13,60 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ open, onClose }: AuthModalProps) {
-  const { refresh } = useAuth();
+  const router = useRouter();
+  const { refresh, authRedirectAfter, clearAuthRedirect } = useAuth();
+  const [step, setStep] = useState<Step>('email');
+  const resendTriggerRef = useRef<(() => void) | null>(null);
+  const [resendSeconds, setResendSeconds] = useState(0);
+
+  const handleClose = () => {
+    setStep('email');
+    setResendSeconds(0);
+    onClose();
+  };
+
+  const handleBack = step !== 'email'
+    ? () => setStep(step === 'register' ? 'code' : 'email')
+    : undefined;
+
+  const footer = (() => {
+    if (step === 'email') {
+      return (
+        <p className={styles.consentText}>
+          Продолжая авторизацию, вы даете{' '}
+          <span className={styles.consentLink}>согласие на обработку персональных данных</span>
+        </p>
+      );
+    }
+    if (step === 'code') {
+      return resendSeconds > 0
+        ? <p className={styles.resendTimer}>Вы сможете отправить код повторно через {resendSeconds} сек.</p>
+        : <Button variant="tertiary" size="lg" onClick={() => resendTriggerRef.current?.()}>Отправить код повторно</Button>;
+    }
+    return undefined;
+  })();
 
   return (
-    <Modal open={open} onClose={onClose} className={styles.modal}>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      title="Авторизация"
+      onBack={handleBack}
+      footer={footer}
+    >
       <AuthForm
-        onClose={onClose}
-        onSuccess={async () => { await refresh(); onClose(); }}
+        step={step}
+        onStepChange={setStep}
+        onResendSecondsChange={setResendSeconds}
+        resendTriggerRef={resendTriggerRef}
+        onSuccess={async () => {
+          await refresh();
+          handleClose();
+          if (authRedirectAfter) {
+            router.push(authRedirectAfter);
+            clearAuthRedirect();
+          }
+        }}
       />
     </Modal>
   );
