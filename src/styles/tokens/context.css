@@ -76,8 +76,9 @@
   /* ── Spacing by usage context ── */
   --ctx-space-inset-xs:     var(--primitive-space-100);   /* 4px  padding tiny elements */
   --ctx-space-inset-sm:     var(--primitive-space-200);   /* 8px  padding small components */
-  --ctx-space-inset-md:     var(--primitive-space-400);   /* 16px padding buttons, inputs */
-  --ctx-space-inset-lg:     var(--primitive-space-600);   /* 24px padding cards */
+  --ctx-space-inset-md:     var(--primitive-space-300);
+  --ctx-space-inset-lg:     var(--primitive-space-400);   /* 16px padding buttons, inputs */
+  --ctx-space-inset-xl:     var(--primitive-space-600);   /* 24px padding cards */
   --ctx-space-stack-xs:     var(--primitive-space-300);   /* 12px vertical gap extra-small */
   --ctx-space-stack-sm:     var(--primitive-space-200);   /* 8px  vertical gap small */
   --ctx-space-stack-md:     var(--primitive-space-400);   /* 16px */

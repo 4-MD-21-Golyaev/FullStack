@@ -54,8 +54,8 @@
   resize: none;
 }
 
-.lg { padding: var(--ctx-space-inset-md) var(--ctx-space-page-desktop); /* Figma: L textarea padding 16px 32px */ }
-.md { padding: var(--ctx-space-inset-md) var(--ctx-space-inset-lg);   /* Figma: M textarea padding 16px 24px */ }
+.lg { padding: var(--ctx-space-inset-lg) var(--ctx-space-page-desktop); /* Figma: L textarea padding 16px 32px */ }
+.md { padding: var(--ctx-space-inset-lg) var(--ctx-space-inset-xl);   /* Figma: M textarea padding 16px 24px */ }
 
 .isError {
   outline: 2px solid var(--ctx-color-border-danger);

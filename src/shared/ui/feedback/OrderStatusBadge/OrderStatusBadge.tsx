@@ -1,32 +1,19 @@
-import { getOrderStatusConfig, getCustomerOrderStatusConfig } from '@/lib/order-status-config';
-import type { OrderState } from '@/domain/order/OrderState';
 import styles from './OrderStatusBadge.module.css';
 
-interface OrderStatusBadgeProps {
-  state: OrderState;
-  variant?: 'admin' | 'customer';
+export interface OrderStatusBadgeProps {
+  label: string;
+  bgColor: string;
+  color: string;
+  className?: string;
 }
 
-export function OrderStatusBadge({ state, variant = 'admin' }: OrderStatusBadgeProps) {
-  if (variant === 'customer') {
-    const config = getCustomerOrderStatusConfig(state);
-    return (
-      <span
-        className={styles.root}
-        style={{ color: 'var(--ctx-color-text-inverse)', background: config.bgColor }}
-      >
-        {config.label}
-      </span>
-    );
-  }
-
-  const config = getOrderStatusConfig(state);
+export function OrderStatusBadge({ label, bgColor, color, className }: OrderStatusBadgeProps) {
   return (
     <span
-      className={styles.root}
-      style={{ color: config.color, background: config.bgColor }}
+      className={[styles.root, className].filter(Boolean).join(' ')}
+      style={{ color, background: bgColor }}
     >
-      {config.label}
+      {label}
     </span>
   );
 }

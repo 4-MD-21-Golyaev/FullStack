@@ -9,6 +9,7 @@ export interface OrderItemDto {
   article: string;
   price: number;
   quantity: number;
+  imageSrc?: string | null; // product image at request time
 }
 
 export interface PaymentDto {

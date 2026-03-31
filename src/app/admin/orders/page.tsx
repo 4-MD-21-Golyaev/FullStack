@@ -12,7 +12,7 @@ import {
   type FilterOption,
 } from '@/shared/ui';
 import { OrderState } from '@/domain/order/OrderState';
-import { ORDER_STATUS_CONFIG } from '@/lib/order-status-config';
+import { ORDER_STATUS_CONFIG, getOrderStatusConfig } from '@/lib/order-status-config';
 import type { OrderDto } from '@/lib/api/orders';
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
@@ -30,7 +30,7 @@ function formatTimeInState(updatedAt: string): string {
 
 const COLUMNS: Column<OrderDto>[] = [
   { key: 'id', header: 'ID', width: '100px', render: (row) => row.id.slice(0, 8) + '…' },
-  { key: 'state', header: 'Статус', render: (row) => <OrderStatusBadge state={row.state} /> },
+  { key: 'state', header: 'Статус', render: (row) => { const c = getOrderStatusConfig(row.state); return <OrderStatusBadge label={c.label} bgColor={c.bgColor} color={c.color} />; } },
   { key: 'total', header: 'Сумма', render: (row) => `${row.totalAmount.toLocaleString('ru')} ₽` },
   { key: 'address', header: 'Адрес', render: (row) => row.address },
   {

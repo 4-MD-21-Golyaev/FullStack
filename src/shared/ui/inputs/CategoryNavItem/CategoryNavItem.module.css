@@ -4,8 +4,8 @@
   align-items: center;
   width: 100%;
   height: 50px; /* Figma: fixed row height */
-  padding-top: var(--ctx-space-inset-md);
-  padding-bottom: var(--ctx-space-inset-md);
+  padding-top: var(--ctx-space-inset-lg);
+  padding-bottom: var(--ctx-space-inset-lg);
   padding-right: var(--ctx-space-inset-sm);
   gap: 12px; /* Figma: icon-label gap */
 
@@ -35,7 +35,7 @@
 }
 
 .level2 {
-  padding-left: var(--ctx-space-inset-md);
+  padding-left: var(--ctx-space-inset-lg);
 }
 
 /* Hovered state */

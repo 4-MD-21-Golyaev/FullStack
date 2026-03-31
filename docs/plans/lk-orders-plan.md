@@ -115,15 +115,28 @@ interface ProfileFieldProps {
 ```
 
 **CSS:**
+
 ```css
 .root {
-  background: var(--ctx-color-bg-page);       /* #F7F7F7 */
-  border-radius: var(--ctx-radius-control);   /* 16px */
-  padding: var(--ctx-space-stack-xs) var(--ctx-space-inset-lg);  /* 12px 24px */
-  display: flex; flex-direction: column; gap: 8px;
+    background: var(--ctx-color-bg-page); /* #F7F7F7 */
+    border-radius: var(--ctx-radius-control); /* 16px */
+    padding: var(--ctx-space-stack-xs) var(--ctx-space-inset-xl); /* 12px 24px */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
-.label { font-size: var(--ctx-font-size-caption); /* 16px */ font-weight: 450; color: var(--ctx-color-text-default); }
-.value { font-size: var(--ctx-font-size-body);   /* 18px */ font-weight: 700; color: var(--ctx-color-text-default); }
+
+.label {
+    font-size: var(--ctx-font-size-caption); /* 16px */
+    font-weight: 450;
+    color: var(--ctx-color-text-default);
+}
+
+.value {
+    font-size: var(--ctx-font-size-body); /* 18px */
+    font-weight: 700;
+    color: var(--ctx-color-text-default);
+}
 ```
 
 ### 5. `OrderStatusBadge` — customer variant

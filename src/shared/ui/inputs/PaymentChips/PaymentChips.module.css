@@ -2,7 +2,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--ctx-space-inset-sm);
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
   border-radius: var(--ctx-radius-control);
 
   /* Enabled state */

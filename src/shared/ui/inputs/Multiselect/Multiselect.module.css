@@ -33,12 +33,12 @@
 
 /* ── Sizes ── */
 .trigger.lg {
-  padding: var(--ctx-space-inset-md) 32px; /* Figma: L horizontal 32px */
+  padding: var(--ctx-space-inset-lg) 32px; /* Figma: L horizontal 32px */
   min-height: 52px;
 }
 
 .trigger.sm {
-  padding: 12px var(--ctx-space-inset-lg); /* Figma: S vertical 12px */
+  padding: 12px var(--ctx-space-inset-xl); /* Figma: S vertical 12px */
   min-height: 44px;
 }
 

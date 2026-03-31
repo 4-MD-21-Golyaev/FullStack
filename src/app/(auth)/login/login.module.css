@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   background: var(--ctx-color-bg-page);
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--ctx-space-inset-xl);
 }
 
 .card {

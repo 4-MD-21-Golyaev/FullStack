@@ -9,7 +9,7 @@
 .L {
   max-width: var(--ctx-layout-max-width);
   margin-inline: auto;
-  padding: var(--ctx-space-inset-md) var(--ctx-space-page-desktop); /* 16px 32px */
+  padding: var(--ctx-space-inset-lg) var(--ctx-space-page-desktop); /* 16px 32px */
 }
 
 .S {

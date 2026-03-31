@@ -68,6 +68,7 @@ export type { CategoryNavItemProps } from './inputs/CategoryNavItem/CategoryNavI
 // feedback
 export { Badge } from './feedback/Badge/Badge';
 export { OrderStatusBadge } from './feedback/OrderStatusBadge/OrderStatusBadge';
+export type { OrderStatusBadgeProps } from './feedback/OrderStatusBadge/OrderStatusBadge';
 export { PaymentStatusBadge } from './feedback/PaymentStatusBadge/PaymentStatusBadge';
 export { Spinner } from './feedback/Spinner/Spinner';
 export { Skeleton } from './feedback/Skeleton/Skeleton';

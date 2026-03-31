@@ -1,5 +1,14 @@
 .page {
   padding-block: var(--ctx-space-stack-xl);
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+}
+
+.main {
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-stack-lg);
@@ -7,67 +16,51 @@
 
 .header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: var(--ctx-space-inline-md);
 }
 
 .headerLeft {
   display: flex;
-  flex-direction: column;
-  gap: var(--ctx-space-stack-sm);
+  align-items: center;
+  gap: var(--ctx-space-inline-md);
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
-.orderId {
-  font-family: var(--ctx-font-code);
-  font-size: var(--ctx-font-size-h2);
-  font-weight: 700;
+.title {
+  font-size: var(--ctx-font-size-h1);
+  font-weight: 700; /* Figma: Heading/H1 */
   line-height: var(--ctx-line-height-tight);
   color: var(--ctx-color-text-default);
-  margin: 0;
 }
 
-.date {
-  font-size: var(--ctx-font-size-label);
-  color: var(--ctx-color-text-secondary);
-  line-height: var(--ctx-line-height-normal);
+/* Info grid — 2-column layout for ProfileField */
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ctx-grid-gutter);
 }
 
-.notFound {
-  font-size: var(--ctx-font-size-body);
-  color: var(--ctx-color-text-secondary);
-}
-
-/* Body layout */
-.body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ctx-space-stack-lg);
-}
-
-/* Section common */
-.sectionTitle {
-  font-size: var(--ctx-font-size-h3);
-  font-weight: 700;
-  line-height: var(--ctx-line-height-normal);
-  color: var(--ctx-color-text-default);
-  margin: 0 0 var(--ctx-space-stack-md);
-}
-
-/* Timeline section */
-.timelineSection {
-  background: var(--ctx-color-bg-surface);
-  border: 1px solid var(--ctx-color-border-default);
-  border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-lg);
+@media (max-width: 600px) {
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Items section */
 .itemsSection {
-  background: var(--ctx-color-bg-surface);
-  border: 1px solid var(--ctx-color-border-default);
-  border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
+}
+
+.sectionTitle {
+  font-size: var(--ctx-font-size-h2);
+  font-weight: 700; /* Figma: Heading/H2 */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
 }
 
 .itemList {
@@ -76,125 +69,94 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 .item {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   gap: var(--ctx-space-inline-md);
-  padding-block: var(--ctx-space-stack-md);
+  padding-block: var(--ctx-space-stack-sm);
   border-bottom: 1px solid var(--ctx-color-border-default);
 }
 
-.item:last-child {
-  border-bottom: none;
+.itemImage {
+  flex-shrink: 0;
+}
+
+.itemImagePlaceholder {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: var(--ctx-radius-card);
+  background: var(--ctx-color-bg-surface);
 }
 
 .itemInfo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ctx-space-stack-sm);
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-inset-xs); /* 4px */
 }
 
 .itemName {
   font-size: var(--ctx-font-size-body);
-  font-weight: 500;
+  font-weight: 700; /* Figma: Body/Bold */
   color: var(--ctx-color-text-default);
-  line-height: var(--ctx-line-height-normal);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .itemArticle {
   font-size: var(--ctx-font-size-label);
+  font-weight: 450; /* Figma: Utilities/Secondary */
   color: var(--ctx-color-text-secondary);
-  line-height: var(--ctx-line-height-normal);
 }
 
 .itemPricing {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: var(--ctx-space-stack-sm);
+  gap: var(--ctx-space-inset-xs); /* 4px */
   flex-shrink: 0;
 }
 
 .itemQty {
   font-size: var(--ctx-font-size-label);
+  font-weight: 450; /* Figma: Utilities/Secondary */
   color: var(--ctx-color-text-secondary);
-  line-height: var(--ctx-line-height-normal);
+  display: flex;
+  align-items: center;
+  gap: var(--ctx-space-inset-xs); /* 4px */
 }
 
 .itemSubtotal {
   font-size: var(--ctx-font-size-body);
-  font-weight: 600;
+  font-weight: 700; /* Figma: Body/Bold */
   color: var(--ctx-color-text-default);
-  line-height: var(--ctx-line-height-normal);
 }
 
-/* Totals */
-.totals {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ctx-space-stack-sm);
-  margin-top: var(--ctx-space-stack-md);
-  padding-top: var(--ctx-space-stack-md);
-  border-top: 1px solid var(--ctx-color-border-default);
-}
-
-.totalRow {
+.total {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.totalRowFinal {
-  margin-top: var(--ctx-space-stack-xs);
+  padding-top: var(--ctx-space-stack-sm);
 }
 
 .totalLabel {
   font-size: var(--ctx-font-size-body);
-  color: var(--ctx-color-text-secondary);
-  line-height: var(--ctx-line-height-normal);
+  font-weight: 700; /* Figma: Body/Bold */
+  color: var(--ctx-color-text-default);
 }
 
 .totalValue {
+  font-size: var(--ctx-font-size-h2);
+  font-weight: 700; /* Figma: Heading/H2 */
+  color: var(--ctx-color-text-default);
+}
+
+.notFound {
   font-size: var(--ctx-font-size-body);
-  color: var(--ctx-color-text-default);
-  font-weight: 500;
-  line-height: var(--ctx-line-height-normal);
-}
-
-.totalValueFinal {
-  font-size: var(--ctx-font-size-h4);
-  font-weight: 700;
-  color: var(--ctx-color-text-default);
-  line-height: var(--ctx-line-height-tight);
-}
-
-/* Address section */
-.addressSection {
-  background: var(--ctx-color-bg-surface);
-  border: 1px solid var(--ctx-color-border-default);
-  border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-lg);
-}
-
-.address {
-  font-size: var(--ctx-font-size-body);
-  color: var(--ctx-color-text-default);
-  line-height: var(--ctx-line-height-loose);
-  margin: 0;
-}
-
-@media (max-width: 600px) {
-  .header {
-    flex-direction: column;
-  }
-
-  .orderId {
-    font-size: var(--ctx-font-size-h3);
-  }
+  color: var(--ctx-color-text-secondary);
 }

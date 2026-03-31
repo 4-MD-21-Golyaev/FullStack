@@ -6,14 +6,14 @@
   align-items: center;
   justify-content: center;
   z-index: var(--ctx-z-modal);
-  padding: var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-lg);
 }
 
 .dialog {
   background: var(--ctx-color-bg-surface);
   border-radius: var(--ctx-radius-modal);
   box-shadow: var(--ctx-shadow-modal);
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--ctx-space-inset-xl);
   width: 100%;
   max-width: 440px;
   display: flex;

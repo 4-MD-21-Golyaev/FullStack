@@ -23,7 +23,7 @@
 
 /* ── Sizes (M / S) ── */
 .size_md { padding: 12px 32px; /* Figma: M LabelInput 12px/32px */ }
-.size_sm { padding: 12px var(--ctx-space-inset-md); /* Figma: S LabelInput vertical 12px */ }
+.size_sm { padding: 12px var(--ctx-space-inset-lg); /* Figma: S LabelInput vertical 12px */ }
 
 /* ── Icon slot (32×32) ── */
 .icon {

@@ -3,7 +3,7 @@
   left: 0;
   right: 0;
   top: 100%;
-  margin-top: var(--ctx-space-inset-md);
+  margin-top: var(--ctx-space-inset-lg);
   display: flex;
   flex-direction: row;
   align-items: center;

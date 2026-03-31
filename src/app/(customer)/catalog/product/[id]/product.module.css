@@ -72,7 +72,7 @@
 
 .mainImageEl {
   object-fit: contain;
-  padding: var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-lg);
 }
 
 .info {
@@ -95,7 +95,7 @@
   align-items: stretch;
   justify-content: space-between;
   gap: var(--ctx-space-stack-lg);
-  padding: var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-lg);
   border-radius: var(--ctx-radius-lg);
   background: var(--ctx-color-bg-subtle);
 }

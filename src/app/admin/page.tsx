@@ -8,6 +8,7 @@ import { paymentsApi } from '@/lib/api/payments';
 import { jobsApi, type JobName } from '@/lib/api/jobs';
 import { StatCard, OrderStatusBadge } from '@/shared/ui';
 import { OrderState } from '@/domain/order/OrderState';
+import { getOrderStatusConfig } from '@/lib/order-status-config';
 import styles from './page.module.css';
 
 const JOB_NAMES: JobName[] = ['payment-timeout', 'process-outbox', 'sync-products'];
@@ -60,7 +61,7 @@ export default function AdminDashboard() {
           {KPI_STATES.map((state, i) => (
             <StatCard
               key={state}
-              label={<OrderStatusBadge state={state} /> as unknown as string}
+              label={(() => { const c = getOrderStatusConfig(state); return <OrderStatusBadge label={c.label} bgColor={c.bgColor} color={c.color} /> as unknown as string; })()}
               value={orderQueries[i].data?.total ?? '—'}
               icon={<Package size={16} />}
               loading={orderQueries[i].isLoading}

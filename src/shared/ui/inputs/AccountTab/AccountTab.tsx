@@ -1,4 +1,4 @@
-import { Icon } from '../../icons/Icon/Icon';
+import { Icon } from '@/shared/ui';
 import styles from './AccountTab.module.css';
 
 export interface AccountTabProps {
@@ -21,7 +21,7 @@ export function AccountTab({ children, icon, active, onClick, className }: Accou
       </span>
       <span className={styles.label}>{children}</span>
       <span className={styles.arrow} aria-hidden="true">
-        <Icon name="arrow_right" size={20} />
+        <Icon name="arrow_right" size={16} />
       </span>
     </button>
   );

@@ -8,7 +8,13 @@ import { prisma } from '../db/prismaClient';
 type DbClient = PrismaClient | Prisma.TransactionClient;
 
 const ORDER_INCLUDE = {
-    items: true,
+    items: {
+        include: {
+            product: {
+                select: { imagePath: true },
+            },
+        },
+    },
     status: true,
     absenceResolutionStrategy: true,
 };
@@ -128,6 +134,7 @@ export class PrismaOrderRepository implements OrderRepository {
                 article: item.article,
                 price: item.price.toNumber(),
                 quantity: item.quantity,
+                imageSrc: item.product?.imagePath ?? null,
             })),
         };
     }

@@ -138,12 +138,12 @@ export function Footer({ className }: FooterProps) {
               </div>
             </div>
 
-            <div className={styles.appButtons}>
+            {/* <div className={styles.appButtons}>
               <AppMarketButton store="google-play" href="#" />
               <AppMarketButton store="app-store"   href="#" />
               <AppMarketButton store="appgallery"  href="#" />
               <AppMarketButton store="rustore"     href="#" />
-            </div>
+            </div> */}
           </div>
         </div>
 

@@ -30,7 +30,7 @@
   height: 100%;
   justify-content: flex-end;
   padding-bottom: var(--ctx-space-inset-sm);
-  padding-top: var(--ctx-space-inset-md);
+  padding-top: var(--ctx-space-inset-lg);
 }
 
 .phones {
@@ -68,7 +68,7 @@
 .mainBar .container {
   height: 100%;
   gap: var(--ctx-space-stack-lg);
-  padding-block: var(--ctx-space-inset-md);
+  padding-block: var(--ctx-space-inset-lg);
 }
 
 /* ── Logo ── */

@@ -130,38 +130,38 @@ const ROLE_REDIRECT: Record<string, string> = {
 
 ```css
 .page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--ctx-color-bg-page);
-  padding: var(--ctx-space-inset-lg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ctx-color-bg-page);
+    padding: var(--ctx-space-inset-xl);
 }
 
 .card {
-  background: var(--ctx-color-bg-surface);
-  border: var(--card-border);
-  border-radius: var(--ctx-radius-card);
-  box-shadow: var(--ctx-shadow-card);
-  padding: var(--ctx-space-stack-lg);
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+    background: var(--ctx-color-bg-surface);
+    border: var(--card-border);
+    border-radius: var(--ctx-radius-card);
+    box-shadow: var(--ctx-shadow-card);
+    padding: var(--ctx-space-stack-lg);
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ctx-space-stack-md);
 }
 
 .title {
-  font-size: var(--ctx-font-size-h3);
-  font-weight: 700;
-  color: var(--ctx-color-text-default);
-  margin: 0;
+    font-size: var(--ctx-font-size-h3);
+    font-weight: 700;
+    color: var(--ctx-color-text-default);
+    margin: 0;
 }
 
 .message {
-  font-size: var(--ctx-font-size-label);
-  color: var(--ctx-color-text-secondary);
-  margin: 0;
+    font-size: var(--ctx-font-size-label);
+    color: var(--ctx-color-text-secondary);
+    margin: 0;
 }
 ```
 

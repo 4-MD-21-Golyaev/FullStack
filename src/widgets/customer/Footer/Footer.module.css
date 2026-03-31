@@ -42,7 +42,7 @@
 .support {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-lg);
+  gap: var(--ctx-space-inset-xl);
   flex-shrink: 0;
 }
 
@@ -62,7 +62,7 @@
 .contacts {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-lg);
+  gap: var(--ctx-space-inset-xl);
 }
 
 .contact {
@@ -94,7 +94,7 @@
 .column {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-md);
+  gap: var(--ctx-space-inset-lg);
   flex-shrink: 0;
 }
 
@@ -108,7 +108,7 @@
 .linkList {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-md);
+  gap: var(--ctx-space-inset-lg);
 }
 
 /* ── Row 2: addresses + app buttons ── */
@@ -162,8 +162,8 @@
 .copyright {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-lg);
-  padding-top: var(--ctx-space-inset-lg);
+  gap: var(--ctx-space-inset-xl);
+  padding-top: var(--ctx-space-inset-xl);
   position: relative;
 }
 

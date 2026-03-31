@@ -15,8 +15,8 @@ export interface AccountTabsProps {
 const tabs = [
   { id: 'profile' as const, label: 'Личные данные', icon: 'account' as const, href: '/profile' },
   { id: 'discounts' as const, label: 'Скидки и бонусы', icon: 'percent' as const, href: '/profile/discounts' },
-  { id: 'addresses' as const, label: 'Адреса доставки', icon: 'location' as const, href: '/profile/addresses' },
-  { id: 'payment' as const, label: 'Способы оплаты', icon: 'payment' as const, href: '/profile/payment' },
+  { id: 'addresses' as const, label: 'Адреса доставки', icon: 'address' as const, href: '/profile/addresses' },
+  { id: 'payment' as const, label: 'Способы оплаты', icon: 'card' as const, href: '/profile/payment' },
   { id: 'orders' as const, label: 'История заказов', icon: 'cart' as const, href: '/orders' },
 ];
 
@@ -38,7 +38,8 @@ export function AccountTabs({ activeTab, onLogout, className }: AccountTabsProps
         ))}
       </div>
       {onLogout && (
-        <Button variant="tertiary" onClick={onLogout}>
+        <Button variant="danger" className={styles.logoutButton} onClick={onLogout} size={"md"}>
+            <Icon name={"exit"} size={20} />
           Выйти
         </Button>
       )}

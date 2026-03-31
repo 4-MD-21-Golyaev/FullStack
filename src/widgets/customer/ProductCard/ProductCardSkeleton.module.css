@@ -39,7 +39,7 @@
   flex-direction: column;
   justify-content: space-between;
   gap: var(--ctx-space-stack-sm);
-  padding: var(--ctx-space-stack-sm) var(--ctx-space-inset-md) var(--ctx-space-inset-md);
+  padding: var(--ctx-space-stack-sm) var(--ctx-space-inset-lg) var(--ctx-space-inset-lg);
   flex: 1;
   min-height: 0;
 }

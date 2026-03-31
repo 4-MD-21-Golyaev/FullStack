@@ -1,6 +1,12 @@
 import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { createRequire } from 'module'
+import fs from 'fs'
+import path from 'path'
+
+const require = createRequire(import.meta.url)
+const catalogData = require('../docs/catalog_with_products.json')
 
 if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is not defined')
@@ -14,22 +20,100 @@ const prisma = new PrismaClient({
     adapter,
 })
 
+// ── Transliteration ───────────────────────────────────────────────────────────
+
+const TRANSLIT_MAP: Record<string, string> = {
+    а: 'a',  б: 'b',  в: 'v',  г: 'g',  д: 'd',  е: 'e',  ё: 'yo',
+    ж: 'zh', з: 'z',  и: 'i',  й: 'y',  к: 'k',  л: 'l',  м: 'm',
+    н: 'n',  о: 'o',  п: 'p',  р: 'r',  с: 's',  т: 't',  у: 'u',
+    ф: 'f',  х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '',
+    ы: 'y',  ь: '',   э: 'e',  ю: 'yu', я: 'ya',
+}
+
+function transliterate(text: string): string {
+    return text
+        .toLowerCase()
+        .split('')
+        .map(ch => TRANSLIT_MAP[ch] ?? ch)
+        .join('')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+}
+
+function makeId(name: string, usedIds: Set<string>): string {
+    const base = transliterate(name)
+    let id = base
+    let counter = 2
+    while (usedIds.has(id)) {
+        id = `${base}-${counter++}`
+    }
+    usedIds.add(id)
+    return id
+}
+
+// ── Image path normalization (products) ──────────────────────────────────────
+
+function normalizeImagePath(raw: string | null | undefined): string | null {
+    if (!raw) return null
+    const filename = raw.replace(/^images[\\\/]/, '')
+    if (filename === 'no_photo.png' || !filename) return null
+    return `/uploads/products/${filename}`
+}
+
+// ── Category image: rename Cyrillic file → transliterated ID, return web path ─
+
+const CATEGORIES_DIR = path.resolve(process.cwd(), 'public/uploads/categories')
+
+function resolveCategoryImage(name: string, id: string): string | null {
+    const srcPath  = path.join(CATEGORIES_DIR, `${name}.png`)
+    const destPath = path.join(CATEGORIES_DIR, `${id}.png`)
+
+    if (fs.existsSync(destPath)) {
+        // Already renamed from a previous seed run
+        return `/uploads/categories/${id}.png`
+    }
+    if (fs.existsSync(srcPath)) {
+        fs.renameSync(srcPath, destPath)
+        return `/uploads/categories/${id}.png`
+    }
+    return null
+}
+
+// ── Type helpers ──────────────────────────────────────────────────────────────
+
+interface RawProduct {
+    title: string
+    price: number | null
+    image: string | null
+}
+
+interface RawCategory {
+    name: string
+    url: string
+    children: RawCategory[]
+    products: RawProduct[]
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+
 async function main() {
+    // ── Reference data (always upsert) ────────────────────────────────────────
+
     const orderStatuses = [
         { code: 'CREATED',           name: 'Создан'                  },
         { code: 'PICKING',           name: 'Сборка'                  },
         { code: 'PAYMENT',           name: 'Ожидание оплаты'         },
-        { code: 'DELIVERY',          name: 'Доставка (устар.)'       }, // backward compat
+        { code: 'DELIVERY',          name: 'Доставка (устар.)'       },
         { code: 'DELIVERY_ASSIGNED', name: 'Назначена доставка'      },
         { code: 'OUT_FOR_DELIVERY',  name: 'В пути'                  },
         { code: 'DELIVERED',         name: 'Доставлен'               },
         { code: 'CLOSED',            name: 'Закрыт'                  },
         { code: 'CANCELLED',         name: 'Отменён'                 },
     ]
-
     for (const status of orderStatuses) {
         await prisma.orderStatus.upsert({
-            where: { code: status.code },
+            where:  { code: status.code },
             update: { name: status.name },
             create: status,
         })
@@ -38,12 +122,11 @@ async function main() {
     const paymentStatuses = [
         { code: 'PENDING', name: 'Ожидает' },
         { code: 'SUCCESS', name: 'Успешно' },
-        { code: 'FAILED', name: 'Ошибка' },
+        { code: 'FAILED',  name: 'Ошибка'  },
     ]
-
     for (const status of paymentStatuses) {
         await prisma.paymentStatus.upsert({
-            where: { code: status.code },
+            where:  { code: status.code },
             update: {},
             create: status,
         })
@@ -55,10 +138,9 @@ async function main() {
         { code: 'AUTO_REPLACE', name: 'Автоматически заменить'        },
         { code: 'AUTO_REMOVE',  name: 'Автоматически убрать'          },
     ]
-
     for (const strategy of absenceStrategies) {
         await prisma.absenceResolutionStrategy.upsert({
-            where: { code: strategy.code },
+            where:  { code: strategy.code },
             update: { name: strategy.name },
             create: { code: strategy.code, name: strategy.name },
         })
@@ -71,225 +153,174 @@ async function main() {
         { code: 'COURIER',  name: 'Курьер'           },
         { code: 'ADMIN',    name: 'Администратор'    },
     ]
-
     for (const role of userRoles) {
         await prisma.userRole.upsert({
-            where: { code: role.code },
+            where:  { code: role.code },
             update: { name: role.name },
             create: role,
         })
     }
 
-    // Тестовая категория (нужна для тестового товара)
-    await prisma.category.upsert({
-        where: { id: 'CT' },
-        update: {},
-        create: {
-            id: 'CT',
-            name: 'Тестовая категория',
-        },
-    })
+    // ── Test users (preserved across re-seeds) ─────────────────────────────────
 
-    // Тестовый пользователь
     await prisma.user.upsert({
-        where: { id: 'UT' },
+        where:  { email: 'test@example.com' },
         update: { role: 'CUSTOMER' },
         create: {
-            id: 'UT',
-            phone: '+70000000000',
-            email: 'test@example.com',
+            phone:   '+70000000000',
+            email:   'test@example.com',
             address: 'Тестовый адрес',
-            role: 'CUSTOMER',
+            role:    'CUSTOMER',
         },
     })
 
-    // Staff-пользователь для ручного тестирования
     await prisma.user.upsert({
-        where: { email: 'staff@example.com' },
+        where:  { email: 'staff@example.com' },
         update: { role: 'STAFF' },
         create: {
             phone: '+70000000001',
             email: 'staff@example.com',
-            role: 'STAFF',
+            role:  'STAFF',
         },
     })
 
-    // Admin-пользователь для ручного тестирования
     await prisma.user.upsert({
-        where: { email: 'admin@example.com' },
+        where:  { email: 'admin@example.com' },
         update: { role: 'ADMIN' },
         create: {
             phone: '+70000000002',
             email: 'admin@example.com',
-            role: 'ADMIN',
+            role:  'ADMIN',
         },
     })
 
-    // Picker-пользователь для ручного тестирования
     await prisma.user.upsert({
-        where: { email: 'picker@example.com' },
+        where:  { email: 'picker@example.com' },
         update: { role: 'PICKER' },
         create: {
             phone: '+70000000003',
             email: 'picker@example.com',
-            role: 'PICKER',
+            role:  'PICKER',
         },
     })
 
-    // Courier-пользователь для ручного тестирования
     await prisma.user.upsert({
-        where: { email: 'courier@example.com' },
+        where:  { email: 'courier@example.com' },
         update: { role: 'COURIER' },
         create: {
             phone: '+70000000004',
             email: 'courier@example.com',
-            role: 'COURIER',
+            role:  'COURIER',
         },
     })
 
-    // Тестовый товар
-    await prisma.product.upsert({
-        where: { id: 'PT' },
-        update: {},
-        create: {
-            id: 'PT',
-            name: 'Тестовый товар',
-            article: 'TEST-001',
-            price: 100,
-            stock: 100,
-            categoryId: 'CT',
-        },
-    })
+    // ── Clear old catalog (cascade order) ─────────────────────────────────────
+    // Must follow FK dependency order: cart/order items before orders before products before categories
 
-    // ── Категории уровень 1 ──────────────────────────────────────────────────
-    await prisma.category.createMany({
-        skipDuplicates: true,
-        data: [
-            { id: 'CAT-1', name: 'Электроника' },
-            { id: 'CAT-2', name: 'Продукты питания' },
-            { id: 'CAT-3', name: 'Бытовая техника' },
-            { id: 'CAT-4', name: 'Одежда и обувь' },
-            { id: 'CAT-5', name: 'Товары для дома' },
-        ],
-    })
+    console.log('Clearing old catalog...')
+    await prisma.cartItem.deleteMany()
+    await prisma.payment.deleteMany()
+    await prisma.orderItem.deleteMany()
+    await prisma.order.deleteMany()
+    await prisma.product.deleteMany()
+    // Delete child categories before parents
+    await prisma.category.deleteMany({ where: { parentId: { not: null } } })
+    await prisma.category.deleteMany()
+    console.log('Old catalog cleared.')
 
-    // ── Категории уровень 2 ──────────────────────────────────────────────────
-    await prisma.category.createMany({
-        skipDuplicates: true,
-        data: [
-            // Электроника
-            { id: 'CAT-1-1', name: 'Смартфоны',             parentId: 'CAT-1' },
-            { id: 'CAT-1-2', name: 'Ноутбуки',              parentId: 'CAT-1' },
-            { id: 'CAT-1-3', name: 'Телевизоры',            parentId: 'CAT-1' },
-            { id: 'CAT-1-4', name: 'Аксессуары для техники',parentId: 'CAT-1' },
-            // Продукты питания
-            { id: 'CAT-2-1', name: 'Молочные продукты',     parentId: 'CAT-2' },
-            { id: 'CAT-2-2', name: 'Мясо и рыба',           parentId: 'CAT-2' },
-            { id: 'CAT-2-3', name: 'Овощи и фрукты',        parentId: 'CAT-2' },
-            { id: 'CAT-2-4', name: 'Напитки',               parentId: 'CAT-2' },
-            // Бытовая техника
-            { id: 'CAT-3-1', name: 'Кухонная техника',      parentId: 'CAT-3' },
-            { id: 'CAT-3-2', name: 'Техника для уборки',    parentId: 'CAT-3' },
-            { id: 'CAT-3-3', name: 'Климатическая техника', parentId: 'CAT-3' },
-            // Одежда и обувь
-            { id: 'CAT-4-1', name: 'Мужская одежда',        parentId: 'CAT-4' },
-            { id: 'CAT-4-2', name: 'Женская одежда',        parentId: 'CAT-4' },
-            { id: 'CAT-4-3', name: 'Обувь',                 parentId: 'CAT-4' },
-            // Товары для дома
-            { id: 'CAT-5-1', name: 'Мебель',                parentId: 'CAT-5' },
-            { id: 'CAT-5-2', name: 'Текстиль',              parentId: 'CAT-5' },
-            { id: 'CAT-5-3', name: 'Посуда и кухня',        parentId: 'CAT-5' },
-        ],
-    })
+    // ── Build and seed new catalog ────────────────────────────────────────────
 
-    // ── Категории уровень 3 ──────────────────────────────────────────────────
-    await prisma.category.createMany({
-        skipDuplicates: true,
-        data: [
-            // Смартфоны
-            { id: 'CAT-1-1-1', name: 'Android-смартфоны',  parentId: 'CAT-1-1' },
-            { id: 'CAT-1-1-2', name: 'Смартфоны Apple',    parentId: 'CAT-1-1' },
-            // Ноутбуки
-            { id: 'CAT-1-2-1', name: 'Игровые ноутбуки',   parentId: 'CAT-1-2' },
-            { id: 'CAT-1-2-2', name: 'Ультрабуки',         parentId: 'CAT-1-2' },
-            // Молочные продукты
-            { id: 'CAT-2-1-1', name: 'Молоко и сливки',    parentId: 'CAT-2-1' },
-            { id: 'CAT-2-1-2', name: 'Сыры и творог',      parentId: 'CAT-2-1' },
-            // Мужская одежда
-            { id: 'CAT-4-1-1', name: 'Верхняя одежда',     parentId: 'CAT-4-1' },
-            { id: 'CAT-4-1-2', name: 'Спортивная одежда',  parentId: 'CAT-4-1' },
-        ],
-    })
+    const catalog = catalogData as RawCategory[]
+    const usedCatIds = new Set<string>()
+    const usedProductIds = new Set<string>()
 
-    // ── Товары (2 на каждую листовую категорию) ──────────────────────────────
-    await prisma.product.createMany({
-        skipDuplicates: true,
-        data: [
-            // CAT-1-3 Телевизоры
-            { id: 'P-TV-1',     name: 'Телевизор Samsung 55" QLED',         article: 'TV-001',    price: 89990,  stock: 15, categoryId: 'CAT-1-3' },
-            { id: 'P-TV-2',     name: 'Телевизор LG 65" OLED',              article: 'TV-002',    price: 129990, stock: 8,  categoryId: 'CAT-1-3' },
-            // CAT-1-4 Аксессуары для техники
-            { id: 'P-ACC-1',    name: 'Чехол универсальный',                article: 'ACC-001',   price: 990,    stock: 100,categoryId: 'CAT-1-4' },
-            { id: 'P-ACC-2',    name: 'Зарядное устройство USB-C 65 Вт',    article: 'ACC-002',   price: 1490,   stock: 80, categoryId: 'CAT-1-4' },
-            // CAT-2-2 Мясо и рыба
-            { id: 'P-MEAT-1',   name: 'Куриное филе охлаждённое 1 кг',      article: 'MEAT-001',  price: 350,    stock: 200,categoryId: 'CAT-2-2' },
-            { id: 'P-MEAT-2',   name: 'Лосось охлаждённый 500 г',           article: 'MEAT-002',  price: 890,    stock: 60, categoryId: 'CAT-2-2' },
-            // CAT-2-3 Овощи и фрукты
-            { id: 'P-VEG-1',    name: 'Яблоки Гала 1 кг',                   article: 'VEG-001',   price: 120,    stock: 300,categoryId: 'CAT-2-3' },
-            { id: 'P-VEG-2',    name: 'Помидоры черри 500 г',               article: 'VEG-002',   price: 180,    stock: 200,categoryId: 'CAT-2-3' },
-            // CAT-2-4 Напитки
-            { id: 'P-DRK-1',    name: 'Вода питьевая 5 л',                  article: 'DRK-001',   price: 90,     stock: 500,categoryId: 'CAT-2-4' },
-            { id: 'P-DRK-2',    name: 'Апельсиновый сок 1 л',              article: 'DRK-002',   price: 130,    stock: 300,categoryId: 'CAT-2-4' },
-            // CAT-3-1 Кухонная техника
-            { id: 'P-KAPP-1',   name: 'Мультиварка Redmond RMC-M800S',      article: 'KAPP-001',  price: 5990,   stock: 25, categoryId: 'CAT-3-1' },
-            { id: 'P-KAPP-2',   name: 'Кофемашина DeLonghi Magnifica',      article: 'KAPP-002',  price: 24990,  stock: 10, categoryId: 'CAT-3-1' },
-            // CAT-3-2 Техника для уборки
-            { id: 'P-CLEAN-1',  name: 'Пылесос Dyson V15 Detect',           article: 'CLEAN-001', price: 39990,  stock: 12, categoryId: 'CAT-3-2' },
-            { id: 'P-CLEAN-2',  name: 'Робот-пылесос iRobot Roomba j7',     article: 'CLEAN-002', price: 29990,  stock: 18, categoryId: 'CAT-3-2' },
-            // CAT-3-3 Климатическая техника
-            { id: 'P-CLIM-1',   name: 'Кондиционер Daikin FTXB25C',         article: 'CLIM-001',  price: 34990,  stock: 10, categoryId: 'CAT-3-3' },
-            { id: 'P-CLIM-2',   name: 'Вентилятор напольный Ballu BFF-850', article: 'CLIM-002',  price: 3990,   stock: 40, categoryId: 'CAT-3-3' },
-            // CAT-4-2 Женская одежда
-            { id: 'P-WCLTH-1',  name: 'Платье летнее с принтом',            article: 'WCLTH-001', price: 2990,   stock: 50, categoryId: 'CAT-4-2' },
-            { id: 'P-WCLTH-2',  name: 'Блуза шёлковая',                     article: 'WCLTH-002', price: 3490,   stock: 35, categoryId: 'CAT-4-2' },
-            // CAT-4-3 Обувь
-            { id: 'P-SHOE-1',   name: 'Кроссовки Nike Air Max 270',         article: 'SHOE-001',  price: 8990,   stock: 40, categoryId: 'CAT-4-3' },
-            { id: 'P-SHOE-2',   name: 'Ботинки кожаные осенние',            article: 'SHOE-002',  price: 6990,   stock: 30, categoryId: 'CAT-4-3' },
-            // CAT-5-1 Мебель
-            { id: 'P-FURN-1',   name: 'Диван угловой Comfort Plus',         article: 'FURN-001',  price: 49990,  stock: 8,  categoryId: 'CAT-5-1' },
-            { id: 'P-FURN-2',   name: 'Стол обеденный раздвижной',          article: 'FURN-002',  price: 19990,  stock: 15, categoryId: 'CAT-5-1' },
-            // CAT-5-2 Текстиль
-            { id: 'P-TEXT-1',   name: 'Комплект постельного белья 2-сп.',    article: 'TEXT-001',  price: 2490,   stock: 60, categoryId: 'CAT-5-2' },
-            { id: 'P-TEXT-2',   name: 'Полотенце банное 70×140 см, 2 шт.',  article: 'TEXT-002',  price: 890,    stock: 100,categoryId: 'CAT-5-2' },
-            // CAT-5-3 Посуда и кухня
-            { id: 'P-DISH-1',   name: 'Набор кастрюль Tefal 5 предметов',   article: 'DISH-001',  price: 4990,   stock: 30, categoryId: 'CAT-5-3' },
-            { id: 'P-DISH-2',   name: 'Сковорода с антипригарным покрытием', article: 'DISH-002',  price: 2490,   stock: 45, categoryId: 'CAT-5-3' },
-            // CAT-1-1-1 Android-смартфоны
-            { id: 'P-AND-1',    name: 'Samsung Galaxy S24',                  article: 'AND-001',   price: 79990,  stock: 30, categoryId: 'CAT-1-1-1' },
-            { id: 'P-AND-2',    name: 'Xiaomi 14',                           article: 'AND-002',   price: 59990,  stock: 25, categoryId: 'CAT-1-1-1' },
-            // CAT-1-1-2 Смартфоны Apple
-            { id: 'P-APL-1',    name: 'iPhone 15',                           article: 'APL-001',   price: 99990,  stock: 20, categoryId: 'CAT-1-1-2' },
-            { id: 'P-APL-2',    name: 'iPhone 15 Pro Max',                   article: 'APL-002',   price: 139990, stock: 12, categoryId: 'CAT-1-1-2' },
-            // CAT-1-2-1 Игровые ноутбуки
-            { id: 'P-GLAP-1',   name: 'ASUS ROG Strix G16',                  article: 'GLAP-001',  price: 129990, stock: 10, categoryId: 'CAT-1-2-1' },
-            { id: 'P-GLAP-2',   name: 'MSI Raider GE76',                     article: 'GLAP-002',  price: 149990, stock: 8,  categoryId: 'CAT-1-2-1' },
-            // CAT-1-2-2 Ультрабуки
-            { id: 'P-ULAP-1',   name: 'MacBook Air M3 13"',                  article: 'ULAP-001',  price: 119990, stock: 15, categoryId: 'CAT-1-2-2' },
-            { id: 'P-ULAP-2',   name: 'Dell XPS 13',                         article: 'ULAP-002',  price: 89990,  stock: 12, categoryId: 'CAT-1-2-2' },
-            // CAT-2-1-1 Молоко и сливки
-            { id: 'P-MILK-1',   name: 'Молоко пастеризованное 3,2% 1 л',    article: 'MILK-001',  price: 89,     stock: 500,categoryId: 'CAT-2-1-1' },
-            { id: 'P-MILK-2',   name: 'Сливки 20% 200 мл',                  article: 'MILK-002',  price: 79,     stock: 300,categoryId: 'CAT-2-1-1' },
-            // CAT-2-1-2 Сыры и творог
-            { id: 'P-DAIR-1',   name: 'Творог зернёный 5% 250 г',           article: 'DAIR-001',  price: 129,    stock: 200,categoryId: 'CAT-2-1-2' },
-            { id: 'P-DAIR-2',   name: 'Сыр Гауда 45% 200 г',               article: 'DAIR-002',  price: 249,    stock: 150,categoryId: 'CAT-2-1-2' },
-            // CAT-4-1-1 Верхняя одежда
-            { id: 'P-MCOAT-1',  name: 'Пальто мужское осеннее',             article: 'MCOAT-001', price: 12990,  stock: 20, categoryId: 'CAT-4-1-1' },
-            { id: 'P-MCOAT-2',  name: 'Куртка пуховая мужская',             article: 'MCOAT-002', price: 9990,   stock: 30, categoryId: 'CAT-4-1-1' },
-            // CAT-4-1-2 Спортивная одежда
-            { id: 'P-MSPT-1',   name: 'Костюм спортивный мужской',          article: 'MSPT-001',  price: 4990,   stock: 40, categoryId: 'CAT-4-1-2' },
-            { id: 'P-MSPT-2',   name: 'Шорты беговые',                      article: 'MSPT-002',  price: 1990,   stock: 60, categoryId: 'CAT-4-1-2' },
-        ],
-    })
+    // Pass 1: create top-level categories
+    const topCategoryRows: { id: string; name: string; imagePath: string | null }[] = []
+    for (const topCat of catalog) {
+        const id = makeId(topCat.name, usedCatIds)
+        topCategoryRows.push({ id, name: topCat.name, imagePath: resolveCategoryImage(topCat.name, id) })
+    }
+    await prisma.category.createMany({ data: topCategoryRows })
+    console.log(`Created ${topCategoryRows.length} top-level categories.`)
+
+    // Pass 2: create sub-categories
+    const subCategoryRows: { id: string; name: string; parentId: string; imagePath: string | null }[] = []
+    const subCategoryIdByIndex: string[][] = [] // parallel to catalog[i].children[j]
+
+    for (let i = 0; i < catalog.length; i++) {
+        const topCat = catalog[i]
+        const parentId = topCategoryRows[i].id
+        subCategoryIdByIndex.push([])
+
+        for (const subCat of topCat.children) {
+            const id = makeId(subCat.name, usedCatIds)
+            subCategoryRows.push({ id, name: subCat.name, parentId, imagePath: resolveCategoryImage(subCat.name, id) })
+            subCategoryIdByIndex[i].push(id)
+        }
+    }
+    await prisma.category.createMany({ data: subCategoryRows })
+    console.log(`Created ${subCategoryRows.length} sub-categories.`)
+
+    // Pass 3: create products in batches
+    const BATCH_SIZE = 200
+    let productRows: {
+        id: string
+        name: string
+        article: string
+        price: number
+        stock: number
+        imagePath: string | null
+        categoryId: string
+    }[] = []
+    let totalCreated = 0
+    let totalSkipped = 0
+
+    const flush = async () => {
+        if (productRows.length === 0) return
+        await prisma.product.createMany({ data: productRows, skipDuplicates: true })
+        totalCreated += productRows.length
+        productRows = []
+    }
+
+    for (let i = 0; i < catalog.length; i++) {
+        for (let j = 0; j < catalog[i].children.length; j++) {
+            const subCat = catalog[i].children[j]
+            const categoryId = subCategoryIdByIndex[i][j]
+
+            for (const product of subCat.products) {
+                // Skip invalid records
+                if (!product.price || product.price <= 0) {
+                    totalSkipped++
+                    continue
+                }
+                if (!product.title || product.title.startsWith('301 ') || product.title.startsWith('404 ')) {
+                    totalSkipped++
+                    continue
+                }
+
+                const id = makeId(product.title, usedProductIds)
+                const imagePath = normalizeImagePath(product.image)
+
+                productRows.push({
+                    id,
+                    name:       product.title,
+                    article:    id,        // slug doubles as article
+                    price:      product.price,
+                    stock:      10,        // default stock for seeded catalog
+                    imagePath,
+                    categoryId,
+                })
+
+                if (productRows.length >= BATCH_SIZE) {
+                    await flush()
+                }
+            }
+        }
+    }
+    await flush()
+
+    console.log(`Created ${totalCreated} products (skipped ${totalSkipped} invalid).`)
+    console.log('Seed complete.')
 }
 
 main()

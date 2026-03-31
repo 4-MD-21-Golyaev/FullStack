@@ -10,7 +10,7 @@
 
 .inner {
   display: flex;
-  gap: var(--ctx-space-inset-md);
+  gap: var(--ctx-space-inset-lg);
   align-items: flex-start;
 }
 
@@ -27,7 +27,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--ctx-space-stack-md);
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--ctx-space-inset-xl);
   overflow: hidden;
   position: relative;
 }
@@ -123,6 +123,6 @@
 .empty {
   font-size: var(--ctx-font-size-body);
   color: var(--ctx-color-text-secondary);
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--ctx-space-inset-xl);
   white-space: nowrap;
 }

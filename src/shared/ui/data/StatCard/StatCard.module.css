@@ -3,7 +3,7 @@
   border: var(--card-border);
   border-radius: var(--ctx-radius-card);
   box-shadow: var(--ctx-shadow-card);
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--ctx-space-inset-xl);
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-stack-sm);

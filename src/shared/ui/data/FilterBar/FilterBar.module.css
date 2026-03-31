@@ -15,7 +15,7 @@
   border-radius: var(--ctx-radius-control);
   background: var(--ctx-color-bg-surface);
   color: var(--ctx-color-text-default);
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
   outline: none;
   min-width: 200px;
   flex: 1;
@@ -72,7 +72,7 @@
   border-radius: var(--ctx-radius-control);
   background: var(--ctx-color-bg-surface);
   color: var(--ctx-color-text-default);
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
   outline: none;
   transition: border-color var(--ctx-transition);
 }

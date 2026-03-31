@@ -13,7 +13,7 @@
 
 .content {
   flex: 1;
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--ctx-space-inset-xl);
 }
 
 .loading {

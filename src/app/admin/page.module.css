@@ -57,7 +57,7 @@
   background: var(--ctx-color-bg-surface);
   border: var(--card-border);
   border-radius: var(--ctx-radius-control);
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
   font-size: var(--ctx-font-size-label);
 }
 

@@ -8,3 +8,9 @@
   display: flex;
   flex-direction: column;
 }
+
+.logoutButton {
+    display: flex;
+    justify-content: flex-start; /* горизонталь */
+    align-items: center;        /* вертикаль */
+}

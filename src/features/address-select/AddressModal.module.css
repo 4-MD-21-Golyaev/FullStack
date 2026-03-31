@@ -57,7 +57,7 @@
 }
 
 .suggestionItem {
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
   cursor: pointer;
   display: flex;
   flex-direction: column;

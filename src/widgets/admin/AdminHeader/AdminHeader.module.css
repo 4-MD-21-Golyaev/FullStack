@@ -4,7 +4,7 @@
   border-bottom: 1px solid var(--ctx-color-border-default);
   display: flex;
   align-items: center;
-  padding: 0 var(--ctx-space-inset-lg);
+  padding: 0 var(--ctx-space-inset-xl);
   position: sticky;
   top: 0;
   z-index: var(--ctx-z-dropdown);

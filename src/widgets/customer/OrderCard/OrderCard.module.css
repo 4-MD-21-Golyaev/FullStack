@@ -1,0 +1,86 @@
+.root {
+  border-bottom: 1px solid var(--ctx-color-border-default);
+  padding-block: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.date {
+  font-size: var(--ctx-font-size-body); /* 18px M — Figma: [Desktop]/H5 */
+  font-weight: 700;
+  color: var(--ctx-color-text-default);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sizeS .date {
+  font-size: var(--ctx-font-size-caption); /* 16px S */
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--ctx-font-size-label); /* 14px — Figma: [Desktop]/Utilities/Secondary */
+  font-weight: 450; /* [Desktop]/Utilities/Secondary */
+  color: var(--ctx-color-text-secondary);
+  white-space: nowrap;
+}
+
+.row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sizeS .row {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.images {
+  display: flex;
+  gap: 12px;
+}
+
+.sizeS .images {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.imagePlaceholder {
+  width: 60px; /* Figma: CardImage M = 60×60 */
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: var(--ctx-radius-card);
+  background: var(--ctx-color-bg-surface);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Figma: 10px */
+  flex-shrink: 0;
+}
+
+.sizeS .buttons {
+  width: 100%;
+}

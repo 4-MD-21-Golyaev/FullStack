@@ -57,7 +57,7 @@
   flex-wrap: wrap;
   background: var(--ctx-color-bg-subtle);
   border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
   border-left: 3px solid var(--ctx-color-border-default);
 }
 
@@ -193,7 +193,7 @@
   background: var(--ctx-color-bg-surface);
   border: 1px solid var(--ctx-color-border-default);
   border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-lg);
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-stack-sm);
@@ -273,7 +273,7 @@
   z-index: var(--ctx-z-dropdown);
   background: var(--ctx-color-bg-surface);
   border-top: 1px solid var(--ctx-color-border-default);
-  padding: var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-lg);
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-stack-sm);
@@ -324,7 +324,7 @@
   background: var(--ctx-color-bg-subtle);
   border: 1px solid var(--ctx-color-border-default);
   border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-lg);
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-stack-sm);

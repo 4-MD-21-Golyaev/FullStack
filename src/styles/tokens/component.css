@@ -17,9 +17,9 @@
   --button-font-weight:      500; /* [Desktop]/Utilities/Medium */
 
   /* Fixed Figma padding recipes (vertical ctx-token, horizontal Figma-literal) */
-  --button-padding-sm: var(--ctx-space-inset-sm) 12px;   /* Figma: sm 8/12 */
-  --button-padding-md: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
-  --button-padding-lg: var(--ctx-space-inset-md) var(--ctx-space-inset-lg);
+  --button-padding-sm: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  --button-padding-md: var(--ctx-space-inset-md) var(--ctx-space-inset-xl);
+  --button-padding-lg: var(--ctx-space-inset-lg) var(--ctx-space-inset-xl);
 
   /* ── LikeButton ── */
   --like-button-radius: var(--ctx-radius-lg);
@@ -28,14 +28,14 @@
   --input-border:        1px solid var(--ctx-color-border-default);
   --input-border-focus:  2px solid var(--ctx-color-border-focus);
   --input-border-danger: 1px solid var(--ctx-color-border-danger);
-  --input-padding:       var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  --input-padding:       var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
   /* Fixed Figma height/padding per size */
   --input-height-lg:    52px;    /* Figma: Input L */
   --input-height-md:    52px;    /* Figma: Input M */
   --input-height-sm:    44px;    /* Figma: Input S */
-  --input-padding-lg:   var(--ctx-space-inset-md) 32px;  /* Figma: L horizontal 32px */
-  --input-padding-md:   var(--ctx-space-inset-md) var(--ctx-space-inset-md);
-  --input-padding-sm:   12px var(--ctx-space-inset-lg);  /* Figma: S vertical 12px */
+  --input-padding-lg:   var(--ctx-space-inset-lg) 32px;  /* Figma: L horizontal 32px */
+  --input-padding-md:   var(--ctx-space-inset-lg) var(--ctx-space-inset-lg);
+  --input-padding-sm:   12px var(--ctx-space-inset-xl);  /* Figma: S vertical 12px */
 
   /* ── Badge ── */
   /* Override: 6px vertical not in spacing scale */
@@ -46,7 +46,7 @@
   --card-border:  1px solid var(--ctx-color-border-default);
 
   /* ── Table (admin) ── */
-  --table-cell-padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  --table-cell-padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
 
   /* ── SlaTimer (override: maps timer states to status colors) ── */
   --sla-color-ok:      var(--ctx-color-status-success);
@@ -96,7 +96,7 @@
 
   /* ── AppMarketButton (fixed Figma dimensions) ── */
   --app-market-btn-height:  44px;   /* Figma: fixed height */
-  --app-market-btn-padding: 10px var(--ctx-space-inset-lg);  /* 10px — no scale equivalent */
+  --app-market-btn-padding: 10px var(--ctx-space-inset-xl);  /* 10px — no scale equivalent */
   --app-market-btn-gap:     12px;   /* Figma: icon-text gap */
 
   /* ── Slider ── */

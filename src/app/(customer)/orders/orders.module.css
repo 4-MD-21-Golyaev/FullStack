@@ -2,12 +2,40 @@
   padding-block: var(--ctx-space-stack-xl);
 }
 
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-lg);
+}
+
 .title {
   font-size: var(--ctx-font-size-h1);
-  font-weight: 700;
+  font-weight: 700; /* Figma: Heading/H1 */
   line-height: var(--ctx-line-height-tight);
   color: var(--ctx-color-text-default);
-  margin-bottom: var(--ctx-space-stack-lg);
+}
+
+/* Chips filter row */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ctx-space-inline-sm);
+}
+
+/* Orders list */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ctx-space-stack-md);
 }
 
 /* Empty state */
@@ -24,71 +52,20 @@
   line-height: var(--ctx-line-height-normal);
 }
 
-/* Orders list */
-.list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--ctx-space-stack-md);
-}
-
-/* Order card */
-.card {
+/* Skeleton card placeholder */
+.skeletonCard {
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-stack-sm);
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--ctx-space-inset-xl);
   background: var(--ctx-color-bg-surface);
   border: 1px solid var(--ctx-color-border-default);
   border-radius: var(--ctx-radius-card);
-  text-decoration: none;
-  transition: background var(--ctx-transition);
-  cursor: pointer;
 }
 
-.card:hover {
-  background: var(--ctx-color-bg-surface-hover);
-}
-
-.cardTop {
+.skeletonRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--ctx-space-inline-md);
-}
-
-.orderId {
-  font-family: var(--ctx-font-code);
-  font-size: var(--ctx-font-size-body);
-  font-weight: 600;
-  color: var(--ctx-color-text-default);
-}
-
-.cardBottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ctx-space-inline-md);
-}
-
-.date {
-  font-size: var(--ctx-font-size-label);
-  color: var(--ctx-color-text-secondary);
-  line-height: var(--ctx-line-height-normal);
-}
-
-.meta {
-  font-size: var(--ctx-font-size-label);
-  color: var(--ctx-color-text-secondary);
-  line-height: var(--ctx-line-height-normal);
-}
-
-@media (max-width: 600px) {
-  .cardTop,
-  .cardBottom {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }

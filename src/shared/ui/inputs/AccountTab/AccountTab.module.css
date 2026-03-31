@@ -1,12 +1,11 @@
 .root {
-  display: flex;
-  align-items: center;
+  position: relative;
+  display: block;
   width: 100%;
   height: 52px; /* component-specific fixed height per Figma */
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-sm) var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
-  gap: 12px; /* Figma: icon-label gap */
+  padding: var(--ctx-space-inset-lg) 32px var(--ctx-space-inset-lg) 64px; /* 16px top/bottom, 32px right, 64px left (16 margin + 36 icon + 12 gap) */
   border: none;
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--ctx-radius-control); /* 16px */
   background-color: var(--ctx-color-bg-surface);
   cursor: pointer;
   overflow: hidden;
@@ -18,35 +17,44 @@
 }
 
 .root:focus-visible {
-  background-color: var(--ctx-color-bg-subtle);
+  background-color: var(--ctx-color-bg-surface-active);
   outline: none;
 }
 
 .iconFrame {
+  position: absolute;
+  left: 16px;
+  top: 8px;
+  width: 36px; /* component-specific icon frame size per Figma */
+  height: 36px; /* component-specific icon frame size per Figma */
+  border-radius: var(--ctx-radius-card); /* 8px */
+  background-color: var(--ctx-color-bg-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  width: 36px; /* component-specific icon frame size per Figma */
-  height: 36px; /* component-specific icon frame size per Figma */
-  border-radius: var(--ctx-radius-card);
-  background-color: var(--ctx-color-bg-subtle);
 }
 
 .label {
-  flex: 1;
+  display: block;
+  width: 100%;
   font-size: var(--ctx-font-size-body);
-  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  font-weight: 500; /* [Desktop]/Utilities/UI Medium */
   color: var(--ctx-color-text-default);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 20px; /* (52px height - 2 × 16px padding) = 20px to vertically center */
 }
 
 .arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
-  flex-shrink: 0;
   opacity: 0;
   transition: opacity 0.15s ease;
 }
@@ -57,16 +65,15 @@
 }
 
 .active {
-  background-color: var(--ctx-color-action-primary);
-  color: var(--ctx-color-text-inverse);
+  background-color: var(--ctx-color-bg-surface-active);
 }
-.active .iconFrame {
-  background-color: rgba(255, 255, 255, 0.2);
-}
+
+
 .active .arrow,
 .active:hover .arrow {
   opacity: 0;
 }
+
 .active:hover {
-  background-color: var(--ctx-color-action-primary);
+  background-color: var(--ctx-color-bg-surface-active);
 }

@@ -1,6 +1,6 @@
 .root {
   display: flex;
-  gap: var(--ctx-space-inset-md);
+  gap: var(--ctx-space-inset-lg);
   align-items: flex-start;
 }
 

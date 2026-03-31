@@ -43,7 +43,7 @@
   background: var(--ctx-color-bg-surface);
   border: 1px solid var(--ctx-color-border-default);
   border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--ctx-space-inset-xl);
   text-decoration: none;
   color: var(--ctx-color-text-default);
   transition: border-color 150ms ease, box-shadow 150ms ease;
@@ -71,7 +71,7 @@
   background: var(--ctx-color-bg-surface);
   border: 1px solid var(--ctx-color-border-default);
   border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--ctx-space-inset-xl);
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-inset-sm);
@@ -95,7 +95,7 @@
   z-index: var(--ctx-z-dropdown);
   background: var(--ctx-color-bg-surface);
   border-top: 1px solid var(--ctx-color-border-default);
-  padding: var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-lg);
 }
 
 .actions {

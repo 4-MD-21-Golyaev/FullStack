@@ -1,7 +1,7 @@
 .root {
   background: var(--ctx-color-bg-page);
   border-radius: var(--ctx-radius-control);
-  padding: var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-lg);
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-stack-md);

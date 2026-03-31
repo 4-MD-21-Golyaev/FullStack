@@ -4,7 +4,7 @@
 
   /* ── Neutral scale ── */
   --primitive-color-neutral-0:   #fefefe;   /* White/Enabled */
-  --primitive-color-neutral-50:  #fcfcfc;   /* White/Hovered */
+  --primitive-color-neutral-50:  #f8f8f8;   /* White/Hovered */
   --primitive-color-neutral-75:  #f7f7f7;   /* Light gray — page bg */
   --primitive-color-neutral-100: #f2f2f2;   /* Gray/Enabled — subtle bg */
   --primitive-color-neutral-150: #f0f0f0;   /* White/Activated */

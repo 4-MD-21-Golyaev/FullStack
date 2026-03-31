@@ -16,7 +16,7 @@
 .sizeL {
   width: 180px; /* Figma: Category/L width */
   height: 180px; /* Figma: Category/L height */
-  padding: var(--ctx-space-inset-md) 14px; /* 16px top/bottom, 14px Figma literal left/right */
+  padding: var(--ctx-space-inset-lg) 14px; /* 16px top/bottom, 14px Figma literal left/right */
 }
 
 .sizeS {

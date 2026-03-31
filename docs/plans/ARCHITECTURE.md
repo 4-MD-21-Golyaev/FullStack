@@ -236,121 +236,121 @@ Reference only `--primitive-*` tokens. CSS Modules and component.css reference t
 :root {
 
     /* ── Text color ── */
-    --ctx-color-text-default:   var(--primitive-color-neutral-900);
+    --ctx-color-text-default: var(--primitive-color-neutral-900);
     --ctx-color-text-secondary: var(--primitive-color-neutral-500);
-    --ctx-color-text-disabled:  var(--primitive-color-neutral-300);
-    --ctx-color-text-inverse:   var(--primitive-color-neutral-0);
-    --ctx-color-text-link:      var(--primitive-color-red-500);
-    --ctx-color-text-danger:    var(--primitive-color-error-500);
+    --ctx-color-text-disabled: var(--primitive-color-neutral-300);
+    --ctx-color-text-inverse: var(--primitive-color-neutral-0);
+    --ctx-color-text-link: var(--primitive-color-red-500);
+    --ctx-color-text-danger: var(--primitive-color-error-500);
 
     /* ── Background color ── */
-    --ctx-color-bg-page:           var(--primitive-color-neutral-75);
-    --ctx-color-bg-surface:        var(--primitive-color-neutral-0);
-    --ctx-color-bg-surface-hover:  var(--primitive-color-neutral-50);
+    --ctx-color-bg-page: var(--primitive-color-neutral-75);
+    --ctx-color-bg-surface: var(--primitive-color-neutral-0);
+    --ctx-color-bg-surface-hover: var(--primitive-color-neutral-50);
     --ctx-color-bg-surface-active: var(--primitive-color-neutral-150);
-    --ctx-color-bg-subtle:         var(--primitive-color-neutral-100);
-    --ctx-color-bg-subtle-hover:   var(--primitive-color-neutral-200);
-    --ctx-color-bg-subtle-focus:   var(--primitive-color-neutral-250);
-    --ctx-color-bg-overlay:        rgba(0, 0, 0, 0.4);
+    --ctx-color-bg-subtle: var(--primitive-color-neutral-100);
+    --ctx-color-bg-subtle-hover: var(--primitive-color-neutral-200);
+    --ctx-color-bg-subtle-focus: var(--primitive-color-neutral-250);
+    --ctx-color-bg-overlay: rgba(0, 0, 0, 0.4);
 
     /* ── Border color ── */
     --ctx-color-border-default: var(--primitive-color-neutral-200);
-    --ctx-color-border-focus:   var(--primitive-color-red-500);
-    --ctx-color-border-danger:  var(--primitive-color-error-500);
+    --ctx-color-border-focus: var(--primitive-color-red-500);
+    --ctx-color-border-danger: var(--primitive-color-error-500);
 
     /* ── Icon color ── */
-    --ctx-color-icon-default:   var(--primitive-color-neutral-900);
+    --ctx-color-icon-default: var(--primitive-color-neutral-900);
     --ctx-color-icon-secondary: var(--primitive-color-neutral-400);
-    --ctx-color-icon-disabled:  var(--primitive-color-neutral-300);
+    --ctx-color-icon-disabled: var(--primitive-color-neutral-300);
 
     /* ── Accent (stars, rating) ── */
     --ctx-color-accent: var(--primitive-color-orange-400);
 
     /* ── Actions (buttons, links) ── */
-    --ctx-color-action-primary:          var(--primitive-color-red-500);
-    --ctx-color-action-primary-hover:    var(--primitive-color-red-400);
-    --ctx-color-action-primary-active:   var(--primitive-color-red-300);
+    --ctx-color-action-primary: var(--primitive-color-red-500);
+    --ctx-color-action-primary-hover: var(--primitive-color-red-400);
+    --ctx-color-action-primary-active: var(--primitive-color-red-300);
     --ctx-color-action-primary-disabled: var(--primitive-color-red-700);
-    --ctx-color-action-danger:           var(--primitive-color-error-500);
-    --ctx-color-action-danger-bg:        var(--primitive-color-error-50);
+    --ctx-color-action-danger: var(--primitive-color-error-500);
+    --ctx-color-action-danger-bg: var(--primitive-color-error-50);
 
     /* ── Status colors ── */
     --ctx-color-status-success: var(--primitive-color-green-500);
     --ctx-color-status-warning: var(--primitive-color-orange-400);
-    --ctx-color-status-danger:  var(--primitive-color-error-500);
-    --ctx-color-status-info:    var(--primitive-color-blue-500);
+    --ctx-color-status-danger: var(--primitive-color-error-500);
+    --ctx-color-status-info: var(--primitive-color-blue-500);
     --ctx-color-status-success-bg: var(--primitive-color-green-50);
     --ctx-color-status-warning-bg: var(--primitive-color-orange-50);
-    --ctx-color-status-danger-bg:  var(--primitive-color-pink-50);
-    --ctx-color-status-info-bg:    var(--primitive-color-blue-50);
+    --ctx-color-status-danger-bg: var(--primitive-color-pink-50);
+    --ctx-color-status-info-bg: var(--primitive-color-blue-50);
     --ctx-color-status-payment-bg: var(--primitive-color-purple-50);
     --ctx-color-status-neutral-bg: var(--primitive-color-cream-50);
 
     /* ── Order status colors (bg + text pair for badges) ── */
-    --ctx-color-order-created-bg:     var(--primitive-color-blue-50);
-    --ctx-color-order-created-text:   var(--primitive-color-red-500);
-    --ctx-color-order-picking-bg:     var(--primitive-color-orange-50);
-    --ctx-color-order-picking-text:   var(--primitive-color-neutral-900);
-    --ctx-color-order-payment-bg:     var(--primitive-color-purple-50);
-    --ctx-color-order-payment-text:   var(--primitive-color-neutral-900);
-    --ctx-color-order-delivery-bg:    var(--primitive-color-green-50);
-    --ctx-color-order-delivery-text:  var(--primitive-color-neutral-900);
-    --ctx-color-order-delivered-bg:   var(--primitive-color-green-50);
+    --ctx-color-order-created-bg: var(--primitive-color-blue-50);
+    --ctx-color-order-created-text: var(--primitive-color-red-500);
+    --ctx-color-order-picking-bg: var(--primitive-color-orange-50);
+    --ctx-color-order-picking-text: var(--primitive-color-neutral-900);
+    --ctx-color-order-payment-bg: var(--primitive-color-purple-50);
+    --ctx-color-order-payment-text: var(--primitive-color-neutral-900);
+    --ctx-color-order-delivery-bg: var(--primitive-color-green-50);
+    --ctx-color-order-delivery-text: var(--primitive-color-neutral-900);
+    --ctx-color-order-delivered-bg: var(--primitive-color-green-50);
     --ctx-color-order-delivered-text: var(--primitive-color-neutral-900);
-    --ctx-color-order-closed-bg:      var(--primitive-color-neutral-100);
-    --ctx-color-order-closed-text:    var(--primitive-color-neutral-500);
-    --ctx-color-order-cancelled-bg:   var(--primitive-color-pink-50);
+    --ctx-color-order-closed-bg: var(--primitive-color-neutral-100);
+    --ctx-color-order-closed-text: var(--primitive-color-neutral-500);
+    --ctx-color-order-cancelled-bg: var(--primitive-color-pink-50);
     --ctx-color-order-cancelled-text: var(--primitive-color-error-500);
 
     /* ── Spacing by usage context ── */
-    --ctx-space-inset-xs:     var(--primitive-space-100);   /* 4px */
-    --ctx-space-inset-sm:     var(--primitive-space-200);   /* 8px */
-    --ctx-space-inset-md:     var(--primitive-space-400);   /* 16px */
-    --ctx-space-inset-lg:     var(--primitive-space-600);   /* 24px */
-    --ctx-space-stack-sm:     var(--primitive-space-200);   /* 8px */
-    --ctx-space-stack-md:     var(--primitive-space-400);   /* 16px */
-    --ctx-space-stack-lg:     var(--primitive-space-800);   /* 32px */
-    --ctx-space-stack-xl:     var(--primitive-space-1200);  /* 48px */
-    --ctx-space-inline-sm:    var(--primitive-space-200);   /* 8px */
-    --ctx-space-inline-md:    var(--primitive-space-400);   /* 16px */
-    --ctx-space-inline-lg:    var(--primitive-space-600);   /* 24px */
-    --ctx-space-page-desktop: var(--primitive-space-800);   /* 32px */
-    --ctx-space-page-mobile:  var(--primitive-space-300);   /* 12px */
+    --ctx-space-inset-xs: var(--primitive-space-100); /* 4px */
+    --ctx-space-inset-sm: var(--primitive-space-200); /* 8px */
+    --ctx-space-inset-lg: var(--primitive-space-400); /* 16px */
+    --ctx-space-inset-xl: var(--primitive-space-600); /* 24px */
+    --ctx-space-stack-sm: var(--primitive-space-200); /* 8px */
+    --ctx-space-stack-md: var(--primitive-space-400); /* 16px */
+    --ctx-space-stack-lg: var(--primitive-space-800); /* 32px */
+    --ctx-space-stack-xl: var(--primitive-space-1200); /* 48px */
+    --ctx-space-inline-sm: var(--primitive-space-200); /* 8px */
+    --ctx-space-inline-md: var(--primitive-space-400); /* 16px */
+    --ctx-space-inline-lg: var(--primitive-space-600); /* 24px */
+    --ctx-space-page-desktop: var(--primitive-space-800); /* 32px */
+    --ctx-space-page-mobile: var(--primitive-space-300); /* 12px */
 
     /* ── Typography by context ── */
     --ctx-font-body: var(--primitive-font-family-sans);
     --ctx-font-code: var(--primitive-font-family-mono);
 
     /* Font sizes — Figma [Desktop] text styles */
-    --ctx-font-size-xs:      var(--primitive-font-size-12);   /* 12px — [Mobile]/Utilities/Secondary */
-    --ctx-font-size-label:   var(--primitive-font-size-14);   /* 14px — [Desktop]/Utilities/Secondary */
-    --ctx-font-size-caption: var(--primitive-font-size-16);   /* 16px — [Desktop]/Utilities/Caption */
-    --ctx-font-size-body:    var(--primitive-font-size-18);   /* 18px — [Desktop]/Body, H5 */
-    --ctx-font-size-h4:      var(--primitive-font-size-20);   /* 20px — [Desktop]/Headings/H4 */
-    --ctx-font-size-h3:      var(--primitive-font-size-24);   /* 24px — [Desktop]/Headings/H3 */
-    --ctx-font-size-h2:      var(--primitive-font-size-36);   /* 36px — [Desktop]/Headings/H2 */
-    --ctx-font-size-h1:      var(--primitive-font-size-40);   /* 40px — [Desktop]/Headings/H1 */
+    --ctx-font-size-xs: var(--primitive-font-size-12); /* 12px — [Mobile]/Utilities/Secondary */
+    --ctx-font-size-label: var(--primitive-font-size-14); /* 14px — [Desktop]/Utilities/Secondary */
+    --ctx-font-size-caption: var(--primitive-font-size-16); /* 16px — [Desktop]/Utilities/Caption */
+    --ctx-font-size-body: var(--primitive-font-size-18); /* 18px — [Desktop]/Body, H5 */
+    --ctx-font-size-h4: var(--primitive-font-size-20); /* 20px — [Desktop]/Headings/H4 */
+    --ctx-font-size-h3: var(--primitive-font-size-24); /* 24px — [Desktop]/Headings/H3 */
+    --ctx-font-size-h2: var(--primitive-font-size-36); /* 36px — [Desktop]/Headings/H2 */
+    --ctx-font-size-h1: var(--primitive-font-size-40); /* 40px — [Desktop]/Headings/H1 */
 
     /* Line heights */
-    --ctx-line-height-tight:  var(--primitive-line-height-110);  /* 1.10 */
-    --ctx-line-height-normal: var(--primitive-line-height-115);  /* 1.15 */
-    --ctx-line-height-loose:  var(--primitive-line-height-120);  /* 1.20 */
+    --ctx-line-height-tight: var(--primitive-line-height-110); /* 1.10 */
+    --ctx-line-height-normal: var(--primitive-line-height-115); /* 1.15 */
+    --ctx-line-height-loose: var(--primitive-line-height-120); /* 1.20 */
 
     /* ── Shape (border-radius) ── */
-    --ctx-radius-sm:      var(--primitive-radius-100);    /* 4px */
-    --ctx-radius-card:    var(--primitive-radius-200);    /* 8px — cards */
-    --ctx-radius-lg:      var(--primitive-radius-300);    /* 12px */
-    --ctx-radius-control: var(--primitive-radius-400);    /* 16px — buttons, inputs */
-    --ctx-radius-modal:   var(--primitive-radius-800);    /* 32px — modals */
-    --ctx-radius-badge:   var(--primitive-radius-FULL);   /* 9999px — badges */
+    --ctx-radius-sm: var(--primitive-radius-100); /* 4px */
+    --ctx-radius-card: var(--primitive-radius-200); /* 8px — cards */
+    --ctx-radius-lg: var(--primitive-radius-300); /* 12px */
+    --ctx-radius-control: var(--primitive-radius-400); /* 16px — buttons, inputs */
+    --ctx-radius-modal: var(--primitive-radius-800); /* 32px — modals */
+    --ctx-radius-badge: var(--primitive-radius-FULL); /* 9999px — badges */
 
     /* ── Misc ── */
-    --ctx-shadow-card:  var(--primitive-shadow-card);
+    --ctx-shadow-card: var(--primitive-shadow-card);
     --ctx-shadow-modal: var(--primitive-shadow-modal);
-    --ctx-transition:   var(--primitive-duration-200) ease;
-    --ctx-z-dropdown:   var(--primitive-z-dropdown);
-    --ctx-z-modal:      var(--primitive-z-modal);
-    --ctx-z-toast:      var(--primitive-z-toast);
+    --ctx-transition: var(--primitive-duration-200) ease;
+    --ctx-z-dropdown: var(--primitive-z-dropdown);
+    --ctx-z-modal: var(--primitive-z-modal);
+    --ctx-z-toast: var(--primitive-z-toast);
 }
 ```
 
@@ -369,86 +369,86 @@ Per-component tokens. Reference `--ctx-*` tokens only.
 :root {
 
     /* ── Button ── */
-    --button-radius:           var(--ctx-radius-control);
-    --button-transition:       var(--ctx-transition);
-    --button-font-size:        var(--ctx-font-size-label);
-    --button-font-weight:      500; /* [Desktop]/Utilities/Medium */
-    --button-primary-bg:       var(--ctx-color-action-primary);
+    --button-radius: var(--ctx-radius-control);
+    --button-transition: var(--ctx-transition);
+    --button-font-size: var(--ctx-font-size-label);
+    --button-font-weight: 500; /* [Desktop]/Utilities/Medium */
+    --button-primary-bg: var(--ctx-color-action-primary);
     --button-primary-bg-hover: var(--ctx-color-action-primary-hover);
-    --button-primary-text:     var(--ctx-color-text-inverse);
-    --button-secondary-bg:     var(--ctx-color-bg-subtle);
+    --button-primary-text: var(--ctx-color-text-inverse);
+    --button-secondary-bg: var(--ctx-color-bg-subtle);
     --button-secondary-bg-hover: var(--ctx-color-bg-subtle-hover);
-    --button-secondary-text:   var(--ctx-color-text-default);
-    --button-danger-bg:        var(--ctx-color-action-danger);
-    --button-danger-bg-hover:  var(--ctx-color-action-primary-active);
-    --button-danger-text:      var(--ctx-color-text-inverse);
+    --button-secondary-text: var(--ctx-color-text-default);
+    --button-danger-bg: var(--ctx-color-action-danger);
+    --button-danger-bg-hover: var(--ctx-color-action-primary-active);
+    --button-danger-text: var(--ctx-color-text-inverse);
     /* Non-scale padding recipes */
     --button-padding-sm: var(--ctx-space-inset-sm) 12px;
-    --button-padding-md: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
-    --button-padding-lg: var(--ctx-space-inset-md) var(--ctx-space-inset-lg);
+    --button-padding-md: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
+    --button-padding-lg: var(--ctx-space-inset-lg) var(--ctx-space-inset-xl);
 
     /* ── Input ── */
-    --input-radius:        var(--ctx-radius-control);
-    --input-font-size:     var(--ctx-font-size-body);
-    --input-border:        1px solid var(--ctx-color-border-default);
-    --input-border-focus:  2px solid var(--ctx-color-border-focus);
+    --input-radius: var(--ctx-radius-control);
+    --input-font-size: var(--ctx-font-size-body);
+    --input-border: 1px solid var(--ctx-color-border-default);
+    --input-border-focus: 2px solid var(--ctx-color-border-focus);
     --input-border-danger: 1px solid var(--ctx-color-border-danger);
-    --input-bg:            var(--ctx-color-bg-surface);
-    --input-text:          var(--ctx-color-text-default);
-    --input-placeholder:   var(--ctx-color-text-disabled);
-    --input-padding:       var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+    --input-bg: var(--ctx-color-bg-surface);
+    --input-text: var(--ctx-color-text-default);
+    --input-placeholder: var(--ctx-color-text-disabled);
+    --input-padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
     /* Fixed Figma heights */
     --input-height-lg: 56px;
     --input-height-md: 52px;
     --input-height-sm: 44px;
 
     /* ── Badge — only non-scale padding values ── */
-    --badge-padding-s: var(--ctx-space-inset-xs) var(--ctx-space-inset-sm);  /* 4/8 */
-    --badge-padding-m: 6px 12px;   /* Figma: 6px/12px not in scale */
+    --badge-padding-s: var(--ctx-space-inset-xs) var(--ctx-space-inset-sm); /* 4/8 */
+    --badge-padding-m: 6px 12px; /* Figma: 6px/12px not in scale */
 
     /* ── Card ── */
-    --card-bg:      var(--ctx-color-bg-surface);
-    --card-radius:  var(--ctx-radius-card);
-    --card-shadow:  var(--ctx-shadow-card);
-    --card-border:  1px solid var(--ctx-color-border-default);
-    --card-padding: var(--ctx-space-inset-lg);
+    --card-bg: var(--ctx-color-bg-surface);
+    --card-radius: var(--ctx-radius-card);
+    --card-shadow: var(--ctx-shadow-card);
+    --card-border: 1px solid var(--ctx-color-border-default);
+    --card-padding: var(--ctx-space-inset-xl);
 
     /* ── Modal ── */
-    --modal-bg:      var(--ctx-color-bg-surface);
-    --modal-radius:  var(--ctx-radius-modal);
-    --modal-shadow:  var(--ctx-shadow-modal);
+    --modal-bg: var(--ctx-color-bg-surface);
+    --modal-radius: var(--ctx-radius-modal);
+    --modal-shadow: var(--ctx-shadow-modal);
     --modal-overlay: var(--ctx-color-bg-overlay);
-    --modal-z:       var(--ctx-z-modal);
+    --modal-z: var(--ctx-z-modal);
 
     /* ── Table (admin) ── */
-    --table-header-bg:    var(--ctx-color-bg-subtle);
-    --table-header-text:  var(--ctx-color-text-secondary);
+    --table-header-bg: var(--ctx-color-bg-subtle);
+    --table-header-text: var(--ctx-color-text-secondary);
     --table-row-hover-bg: var(--ctx-color-bg-subtle-hover);
-    --table-border:       var(--ctx-color-border-default);
-    --table-cell-padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+    --table-border: var(--ctx-color-border-default);
+    --table-cell-padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
 
     /* ── SlaTimer (override: maps timer states to status colors) ── */
-    --sla-color-ok:      var(--ctx-color-status-success);
+    --sla-color-ok: var(--ctx-color-status-success);
     --sla-color-warning: var(--ctx-color-status-warning);
     --sla-color-overdue: var(--ctx-color-status-danger);
 
     /* ── Sidebar (admin dark theme — no ctx equivalents) ── */
-    --sidebar-bg:              var(--primitive-color-neutral-900);
-    --sidebar-text:            var(--primitive-color-neutral-400);
-    --sidebar-text-active:     var(--primitive-color-neutral-0);
-    --sidebar-item-active-bg:  rgba(255, 255, 255, 0.08);
-    --sidebar-width:           240px;
+    --sidebar-bg: var(--primitive-color-neutral-900);
+    --sidebar-text: var(--primitive-color-neutral-400);
+    --sidebar-text-active: var(--primitive-color-neutral-0);
+    --sidebar-item-active-bg: rgba(255, 255, 255, 0.08);
+    --sidebar-width: 240px;
     --sidebar-width-collapsed: 56px;
 
     /* ── Link (override: default color ≠ text-link) ── */
-    --link-color:       var(--ctx-color-text-default);
+    --link-color: var(--ctx-color-text-default);
     --link-color-hover: var(--ctx-color-text-link);
-    --link-icon-offset: 2px;   /* optical alignment */
+    --link-icon-offset: 2px; /* optical alignment */
 
     /* ── Price (fixed Figma sizes only) ── */
     --price-current-font-size-m: var(--ctx-font-size-h4);
     --price-current-font-size-l: var(--ctx-font-size-h3);
-    --price-old-font-size:       var(--ctx-font-size-caption);
+    --price-old-font-size: var(--ctx-font-size-caption);
 
     /* ── ProductCard / Rating / AppMarketButton / Slider / Header / Footer
        (fixed Figma dimensions — see component.css for full list) ── */

@@ -4,4 +4,5 @@ export interface OrderItem {
     article: string;
     price: number;      // фиксируется при создании заказа
     quantity: number;
+    imageSrc?: string | null;
 }

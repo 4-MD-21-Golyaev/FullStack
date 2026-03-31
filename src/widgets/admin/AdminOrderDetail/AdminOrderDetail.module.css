@@ -34,7 +34,7 @@
   background: var(--ctx-color-bg-surface);
   border: var(--card-border);
   border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--ctx-space-inset-xl);
   display: flex;
   flex-direction: column;
   gap: var(--ctx-space-stack-md);
@@ -120,7 +120,7 @@
 
 .itemsTable th {
   text-align: left;
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
   background: var(--ctx-color-bg-subtle);
   color: var(--ctx-color-text-secondary);
   font-weight: 600; /* Semibold */
@@ -128,7 +128,7 @@
 }
 
 .itemsTable td {
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
   border-bottom: 1px solid var(--ctx-color-border-default);
   color: var(--ctx-color-text-default);
 }

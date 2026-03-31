@@ -20,13 +20,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--ctx-space-inset-lg) 0;
+  padding: var(--ctx-space-inset-xl) 0;
   flex: 1;
 }
 
 .hint {
   margin: 0;
-  padding: var(--ctx-space-inset-lg) 0;
+  padding: var(--ctx-space-inset-xl) 0;
   text-align: center;
   font-size: var(--ctx-font-size-label);
   /* 400 — Figma: [Desktop]/Utilities/Secondary */
@@ -41,7 +41,7 @@
   flex-direction: column;
   gap: var(--ctx-space-stack-xs);
   width: 100%;
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
   background: none;
   border: none;
   border-bottom: 1px solid var(--ctx-color-border-default);
@@ -80,7 +80,7 @@
 
 .showAll {
   display: block;
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
+  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
   border-top: 1px solid var(--ctx-color-border-default);
   text-decoration: none;
 }

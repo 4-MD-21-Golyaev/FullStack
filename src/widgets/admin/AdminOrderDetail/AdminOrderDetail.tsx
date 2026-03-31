@@ -47,6 +47,7 @@ export function AdminOrderDetail({ order }: AdminOrderDetailProps) {
   const canClose = order.state === OrderState.DELIVERED;
 
   const currentStateIndex = ORDER_STATE_TIMELINE.findIndex((s) => s === order.state);
+  const orderStatusConfig = getOrderStatusConfig(order.state);
 
   return (
     <div className={styles.root}>
@@ -57,7 +58,7 @@ export function AdminOrderDetail({ order }: AdminOrderDetailProps) {
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <h1 className={styles.title}>Заказ #{order.id.slice(0, 8)}</h1>
-          <OrderStatusBadge state={order.state} />
+          <OrderStatusBadge label={orderStatusConfig.label} bgColor={orderStatusConfig.bgColor} color={orderStatusConfig.color} />
         </div>
         <div className={styles.actions}>
           {canCancel && (
