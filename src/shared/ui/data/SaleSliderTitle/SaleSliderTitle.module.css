@@ -27,7 +27,6 @@
 .cardTitle {
   position: relative;
   z-index: 1;
-  font-family: var(--ctx-font-body);
   font-size: var(--ctx-font-size-h4); /* 20px — [Desktop]/Headings/Heading 4 */
   font-weight: 700; /* Bold */
   line-height: var(--ctx-line-height-loose); /* 1.2 */

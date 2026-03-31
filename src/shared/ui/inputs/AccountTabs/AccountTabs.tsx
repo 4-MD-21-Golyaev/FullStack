@@ -1,9 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Icon } from '../../icons/Icon/Icon';
-import { AccountTab } from '../AccountTab/AccountTab';
-import { Button } from '../../buttons/Button/Button';
+import { Icon } from '@/shared/ui';
+import { AccountTab } from '@/shared/ui';
+import { Button } from '@/shared/ui';
 import styles from './AccountTabs.module.css';
 
 export interface AccountTabsProps {

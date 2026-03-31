@@ -27,7 +27,6 @@
 }
 
 .orderTag {
-  font-family: var(--ctx-font-code);
   font-size: var(--ctx-font-size-xs);
   color: var(--ctx-color-text-secondary);
   background: var(--ctx-color-bg-subtle);

@@ -78,7 +78,6 @@
 }
 
 .name {
-  font-family: var(--ctx-font-body);
   font-size: var(--ctx-font-size-caption);   /* 16px Desktop */
   font-weight: 500; /* [Desktop]/Utilities/Medium */
   line-height: var(--ctx-line-height-normal);

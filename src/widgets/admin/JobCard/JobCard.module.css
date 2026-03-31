@@ -16,7 +16,7 @@
 }
 
 .jobName {
-  font-size: var(--ctx-font-size-heading);
+  font-size: var(--ctx-font-size-h4);
   font-weight: 600; /* Semibold */
   color: var(--ctx-color-text-default);
   margin: 0 0 var(--ctx-space-inset-xs);

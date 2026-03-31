@@ -260,7 +260,6 @@ export function Icon({
                          color = 'currentColor',
                          className,
                      }: IconProps) {
-    const viewBox = VIEWBOXES[name] ?? '0 0 20 20'
     const ref = useRef<SVGGElement>(null)
 
     const [bbox, setBbox] = useState({ x: 0, y: 0, width: 0, height: 0 })

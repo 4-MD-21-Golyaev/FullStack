@@ -145,7 +145,7 @@
 }
 
 .totalValue {
-  font-size: var(--ctx-font-size-heading);
+  font-size: var(--ctx-font-size-h4);
   color: var(--ctx-color-text-default);
 }
 
@@ -172,6 +172,5 @@
 }
 
 .mono {
-  font-family: var(--ctx-font-code);
   font-size: var(--ctx-font-size-caption);
 }
