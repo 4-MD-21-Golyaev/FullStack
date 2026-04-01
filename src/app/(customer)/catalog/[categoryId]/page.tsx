@@ -64,7 +64,6 @@ export default function CatalogCategoryPage() {
 
   useEffect(() => {
     if (!categoryId || isLeafCategory) {
-      setProductsByCategory({});
       return;
     }
     let active = true;
@@ -83,10 +82,8 @@ export default function CatalogCategoryPage() {
 
   useEffect(() => {
     if (!categoryId || !isLeafCategory) {
-      setCategoryProducts([]);
       return;
     }
-    setCategoryProductsLoading(true);
     let active = true;
     fetchProducts(categoryId)
       .then(items => {
@@ -103,6 +100,7 @@ export default function CatalogCategoryPage() {
       });
     return () => {
       active = false;
+      setCategoryProductsLoading(true);
     };
   }, [categoryId, isLeafCategory, fetchProducts]);
 

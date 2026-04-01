@@ -1,7 +1,7 @@
-import { MoySkladCatalogGateway } from '@/application/ports/MoySkladCatalogGateway';
-import { MoySkladOrderGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladOrderGateway';
-import { OrderItem } from '@/domain/order/OrderItem';
-import { MoySkladFolder, MoySkladProduct, MoySkladStockItem } from '@/domain/moysklad/MoySkladProduct';
+import { type MoySkladCatalogGateway } from '@/application/ports/MoySkladCatalogGateway';
+import { type MoySkladOrderGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladOrderGateway';
+import { type OrderItem } from '@/domain/order/OrderItem';
+import { type MoySkladFolder, type MoySkladProduct, type MoySkladStockItem } from '@/domain/moysklad/MoySkladProduct';
 
 const BASE_URL = 'https://api.moysklad.ru/api/remap/1.2';
 const PAGE_LIMIT = 100;

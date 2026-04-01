@@ -8,10 +8,10 @@
 .inner {
   max-width: var(--ctx-layout-max-width);
   margin-inline: auto;
-  padding: var(--ctx-space-stack-xl) var(--ctx-space-page-desktop) var(--ctx-space-stack-lg);
+  padding: var(--primitive-space-1200) var(--primitive-space-800) var(--primitive-space-800);
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-xl);
+  gap: var(--primitive-space-1200);
 }
 
 /* ── Logo ── */
@@ -25,7 +25,7 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
 }
 
 /* ── Row 1: columns ── */
@@ -34,7 +34,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
 }
 
 /* ── Support column ── */
@@ -42,14 +42,14 @@
 .support {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-xl);
+  gap: var(--primitive-space-600);
   flex-shrink: 0;
 }
 
 .supportHeader {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-sm);
+  gap: var(--primitive-space-200);
 }
 
 .supportSchedule {
@@ -62,7 +62,7 @@
 .contacts {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-xl);
+  gap: var(--primitive-space-600);
 }
 
 .contact {
@@ -74,7 +74,7 @@
 .contactText {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-sm);
+  gap: var(--primitive-space-200);
 }
 
 .contactLabel {
@@ -94,7 +94,7 @@
 .column {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-lg);
+  gap: var(--primitive-space-400);
   flex-shrink: 0;
 }
 
@@ -108,7 +108,7 @@
 .linkList {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-lg);
+  gap: var(--primitive-space-400);
 }
 
 /* ── Row 2: addresses + app buttons ── */
@@ -117,7 +117,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
 }
 
 .addressBlock {
@@ -128,7 +128,7 @@
 
 .addresses {
   display: flex;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
 }
 
 .address {
@@ -140,7 +140,7 @@
 .addressText {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-sm);
+  gap: var(--primitive-space-200);
 }
 
 .addressName {
@@ -162,8 +162,8 @@
 .copyright {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-xl);
-  padding-top: var(--ctx-space-inset-xl);
+  gap: var(--primitive-space-600);
+  padding-top: var(--primitive-space-600);
   position: relative;
 }
 

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { RegisterUseCase } from '@/application/auth/RegisterUseCase';
 import { PrismaUserRepository } from '@/infrastructure/repositories/UserRepository.prisma';
 import { UserAlreadyExistsError } from '@/domain/auth/errors';

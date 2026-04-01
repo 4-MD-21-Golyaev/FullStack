@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { PickerListMyOrdersUseCase } from '@/application/picker/PickerListMyOrdersUseCase';
 import { PrismaOrderRepository } from '@/infrastructure/repositories/OrderRepository.prisma';
 

@@ -1,16 +1,16 @@
 .root {
-  padding: var(--ctx-space-stack-xl) 0;
+  padding: var(--primitive-space-1200) 0;
 }
 
 .container {
   max-width: var(--ctx-layout-max-width);
   margin-inline: auto;
-  padding-inline: var(--ctx-space-page-desktop);
+  padding-inline: var(--primitive-space-800);
 }
 
 .inner {
   display: flex;
-  gap: var(--ctx-space-inset-lg);
+  gap: var(--primitive-space-400);
   align-items: flex-start;
 }
 
@@ -21,13 +21,13 @@
   min-width: 217px;
   height: 306px;
   background-color: var(--ctx-color-bg-subtle);
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--ctx-space-stack-md);
-  padding: var(--ctx-space-inset-xl);
+  gap: var(--primitive-space-400);
+  padding: var(--primitive-space-600);
   overflow: hidden;
   position: relative;
 }
@@ -38,14 +38,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
 }
 
 .categoryFallback {
   position: absolute;
   inset: 0;
   background-color: var(--ctx-color-bg-subtle);
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
 }
 
 .categoryName {
@@ -94,7 +94,7 @@
   width: 32px;
   min-width: 32px;
   height: 32px;
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   border: 1px solid var(--ctx-color-border-default);
   background-color: var(--ctx-color-bg-surface);
   display: flex;
@@ -123,6 +123,6 @@
 .empty {
   font-size: var(--ctx-font-size-body);
   color: var(--ctx-color-text-secondary);
-  padding: var(--ctx-space-inset-xl);
+  padding: var(--primitive-space-600);
   white-space: nowrap;
 }

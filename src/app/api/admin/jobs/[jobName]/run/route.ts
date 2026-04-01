@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { AdminRunJobUseCase } from '@/application/admin/AdminRunJobUseCase';
 import { PrismaJobRunLogRepository } from '@/infrastructure/repositories/JobRunLogRepository.prisma';
 

@@ -1,9 +1,9 @@
 import { randomUUID } from 'crypto';
-import { MoySkladCatalogGateway } from '@/application/ports/MoySkladCatalogGateway';
-import { ProductRepository } from '@/application/ports/ProductRepository';
-import { CategoryRepository } from '@/application/ports/CategoryRepository';
-import { ImageStorageGateway } from '@/application/ports/ImageStorageGateway';
-import { MoySkladFolder } from '@/domain/moysklad/MoySkladProduct';
+import { type MoySkladCatalogGateway } from '@/application/ports/MoySkladCatalogGateway';
+import { type ProductRepository } from '@/application/ports/ProductRepository';
+import { type CategoryRepository } from '@/application/ports/CategoryRepository';
+import { type ImageStorageGateway } from '@/application/ports/ImageStorageGateway';
+import { type MoySkladFolder } from '@/domain/moysklad/MoySkladProduct';
 
 export interface SyncResult {
     created: number;

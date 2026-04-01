@@ -1,13 +1,13 @@
 import { describe, it, expect, vi } from 'vitest';
 import { ConfirmPaymentUseCase } from '../ConfirmPaymentUseCase';
-import { PaymentRepository } from '../../ports/PaymentRepository';
-import { PaymentGateway } from '../../ports/PaymentGateway';
-import { TransactionRunner, TransactionContext } from '../../ports/TransactionRunner';
+import { type PaymentRepository } from '../../ports/PaymentRepository';
+import { type PaymentGateway } from '../../ports/PaymentGateway';
+import { type TransactionRunner, type TransactionContext } from '../../ports/TransactionRunner';
 import { OrderState } from '@/domain/order/OrderState';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
-import { Order } from '@/domain/order/Order';
-import { Payment } from '@/domain/payment/Payment';
-import { Product } from '@/domain/product/Product';
+import { type Order } from '@/domain/order/Order';
+import { type Payment } from '@/domain/payment/Payment';
+import { type Product } from '@/domain/product/Product';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 
 const makeOrder = (state: OrderState): Order => ({

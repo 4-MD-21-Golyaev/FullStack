@@ -1,9 +1,9 @@
-import { TransactionRunner } from '@/application/ports/TransactionRunner';
+import { type TransactionRunner } from '@/application/ports/TransactionRunner';
 import { cancelOrder, startDelivery } from '@/domain/order/transitions';
 import { OrderState } from '@/domain/order/OrderState';
-import { Payment } from '@/domain/payment/Payment';
+import { type Payment } from '@/domain/payment/Payment';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
-import { Product } from '@/domain/product/Product';
+import { type Product } from '@/domain/product/Product';
 import { randomUUID } from 'crypto';
 
 interface PayOrderInput {

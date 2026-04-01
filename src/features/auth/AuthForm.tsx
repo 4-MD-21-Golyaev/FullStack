@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback, KeyboardEvent, ClipboardEvent } from 'react';
+import { useState, useRef, useEffect, useCallback, type KeyboardEvent, type ClipboardEvent } from 'react';
 import { Button, Input, Spinner } from '@/shared/ui';
 import styles from './AuthForm.module.css';
 

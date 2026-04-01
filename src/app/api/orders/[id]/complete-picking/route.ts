@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { PrismaTransactionRunner } from '@/infrastructure/db/PrismaTransactionRunner';
 import { CompletePickingUseCase } from '@/application/order/CompletePickingUseCase';
 

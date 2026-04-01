@@ -2,7 +2,7 @@
   /* Figma 1678:41329 — fixed segment dimensions */
   width: 60px;  /* hardcoded per spec */
   height: 64px; /* hardcoded per spec */
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   display: flex;
   align-items: center;
   justify-content: center;

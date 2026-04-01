@@ -29,14 +29,18 @@ Implement: <description>
 5. New shared/ui components go in the correct group: icons/ buttons/ inputs/ feedback/ data/ layout/.
 6. Export new components from `src/shared/ui/index.ts`.
 7. CSS tokens:
-   - Use --ctx-* tokens or existing component tokens.
-   - --primitive-* is FORBIDDEN in CSS Modules and component.css.
+   - Spacing (padding, margin, gap): use --primitive-space-* directly. NEVER create ctx-space-* or component-level spacing tokens.
+   - Border-radius: use --primitive-radius-* directly. NEVER create ctx-radius-* or component-level radius tokens.
+   - Everything else (color, font, shadow): use --ctx-* tokens or existing component tokens.
+   - --primitive-color-*, --primitive-font-*, --primitive-shadow-* are FORBIDDEN in CSS Modules.
    - font-weight: numeric literal with Figma comment, never a token.
-   - No matching token? Add to src/styles/tokens/context.css — never hardcode.
+   - No matching non-spacing/non-radius token? Add to src/styles/tokens/context.css — never hardcode.
 
 ### Self-check (mandatory before returning)
 8. Grep file for <button, <input, <textarea, <select — each must be a shared/ui component. Fix if found.
-9. Grep CSS module for --primitive-* — must be zero. Fix if found.
+9. Grep CSS module for --primitive-color-*, --primitive-font-*, --primitive-shadow-* — must be zero. Fix if found.
+   --primitive-space-* is ALLOWED and REQUIRED for all spacing (padding, margin, gap).
+   --primitive-radius-* is ALLOWED and REQUIRED for all border-radius.
 10. Confirm barrel export in src/shared/ui/index.ts. Add if missing.
 11. Run: npx tsc --noEmit. Fix errors if any.
 ```
@@ -46,21 +50,37 @@ Implement: <description>
 ```
 Review the implementation at <paths>.
 Read `.claude/rules/ui-components.md` for composition and token rules.
-Check each item, report PASS or FAIL with evidence.
 
-### Structural
+### Step 0 — Lint (run first, fix all errors before manual checks)
+Run the linter scoped to the files you changed:
+`npx eslint <file1> <file2> ...`
+
+Fix every error that appears **in those files**. Ignore errors in other files — they are pre-existing and out of scope.
+
+The linter enforces automatically — do NOT duplicate these as manual checks:
+- @typescript-eslint/no-explicit-any, no-unused-vars, consistent-type-imports
+- react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
+- FSD boundaries: shared/ui → upper layers; domain → outer layers; application → infrastructure/app
+- @next/next/no-img-element
+
+### Manual checks (report PASS / FAIL with evidence)
+
+#### Structural
 1. RAW HTML — grep for <button, <input, <textarea, <select, <a.
    FAIL if any should be a shared/ui component.
 2. BARREL — new components exported from src/shared/ui/index.ts. FAIL if missing.
 3. GROUP — file inside icons/buttons/inputs/feedback/data/layout/. FAIL if at shared/ui root.
-4. TOKENS — grep CSS for --primitive-* → ALWAYS FAIL. Hardcoded colors where ctx token exists → FAIL.
-5. IMPORTS — cross-group imports inside shared/ui use relative paths (../../). FAIL if barrel used internally.
+4. TOKENS — grep CSS for --primitive-color-*, --primitive-font-*, --primitive-shadow-* → FAIL.
+   --primitive-space-* is REQUIRED for spacing — ctx-space-* or hardcoded px spacing → FAIL.
+   --primitive-radius-* is REQUIRED for border-radius — ctx-radius-* or hardcoded px radius → FAIL.
+   Hardcoded colors where ctx token exists → FAIL.
 
-### Business logic
-6. SPEC — identify source of truth (ADR, plan, task). Every requirement implemented. FAIL if gap.
-7. LAYERS — FSD import rule respected. shared/ui imports nothing from upper layers. FAIL on violation.
-8. EDGE CASES — empty states, boundaries, errors handled. FAIL if obvious case ignored.
-9. CONSISTENCY — matches existing patterns in the same layer. FAIL if incompatible.
+#### Business logic
+5. SPEC — identify source of truth (ADR, plan, task). Every requirement implemented. FAIL if gap.
+6. LAYERS — linter covers shared/ui, domain, application. Manually verify: widgets/entities/features
+   do not import from app layer or violate FSD direction. FAIL on violation.
+7. EDGE CASES — empty states, boundaries, errors handled. FAIL if obvious case ignored.
+8. CONSISTENCY — matches existing patterns in the same layer. FAIL if incompatible.
 
 Return table: check | result | detail.
 For every FAIL: fix the issue, re-run that check.
@@ -117,9 +137,10 @@ Never add to flat `shared/ui/` root.
 
 # CSS Token Rules
 
-- **`--primitive-*` FORBIDDEN** in CSS Modules and component.css. Only in context.css.
-- **`--ctx-*`** is the default token layer for CSS Modules.
-- **Component tokens** (`--button-*`, `--card-*`) only for: (a) fixed Figma value not in ctx layer, or (b) multi-value shorthand.
+- **Spacing** (`padding`, `margin`, `gap`, `top/right/bottom/left`): use **`--primitive-space-*` directly**. FORBIDDEN to create `ctx-space-*` or component-level spacing tokens.
+- **Border-radius**: use **`--primitive-radius-*` directly**. FORBIDDEN to create `ctx-radius-*` or component-level radius tokens.
+- **Color, font, shadow**: use **`--ctx-*`** tokens. `--primitive-color-*`, `--primitive-font-*`, `--primitive-shadow-*` FORBIDDEN in CSS Modules.
+- **Component tokens** (`--button-*`, `--card-*`) only for: (a) fixed Figma value not in any token layer, or (b) multi-value shorthand. Never for spacing aliases.
 - **Single-line alias FORBIDDEN:** `--comp-x: var(--ctx-y)` — use ctx token directly.
 - **font-weight: never tokenized.** Numeric literal + Figma text style comment.
 - **`--ctx-font-size-h1..h4`** only for heading roles. Not arbitrary size aliases.

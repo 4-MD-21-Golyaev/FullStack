@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { TransactionRunner, TransactionContext } from '@/application/ports/TransactionRunner';
+import { type TransactionRunner, type TransactionContext } from '@/application/ports/TransactionRunner';
 import { prisma } from './prismaClient';
 import { PrismaOrderRepository } from '../repositories/OrderRepository.prisma';
 import { PrismaPaymentRepository } from '../repositories/PaymentRepository.prisma';

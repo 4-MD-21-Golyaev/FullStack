@@ -13,7 +13,7 @@
   background-color: var(--ctx-color-bg-subtle);
   color: var(--ctx-color-text-default);
   border: none;
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   font-size: var(--ctx-font-size-body);
   font-weight: 500; /* [Desktop]/Utilities/Medium */
   line-height: var(--ctx-line-height-normal);
@@ -33,12 +33,12 @@
 
 /* ── Sizes ── */
 .trigger.lg {
-  padding: var(--ctx-space-inset-lg) 32px; /* Figma: L select horizontal 32px */
+  padding: var(--primitive-space-400) 32px; /* Figma: L select horizontal 32px */
   min-height: 52px;
 }
 
 .trigger.sm {
-  padding: 12px var(--ctx-space-inset-xl); /* Figma: S select vertical 12px */
+  padding: 12px var(--primitive-space-600); /* Figma: S select vertical 12px */
   min-height: 44px;
 }
 
@@ -55,16 +55,16 @@
 
 .chevron {
   flex-shrink: 0;
-  margin-left: var(--ctx-space-inset-sm);
+  margin-left: var(--primitive-space-200);
 }
 
 /* ── Dropdown list ── */
 .dropdown {
   position: absolute;
-  top: calc(100% + var(--ctx-space-inset-xs));
+  top: calc(100% + var(--primitive-space-100));
   left: 0;
   width: 100%;
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   overflow: hidden;
   z-index: var(--ctx-z-dropdown);
   box-shadow: var(--ctx-shadow-card);

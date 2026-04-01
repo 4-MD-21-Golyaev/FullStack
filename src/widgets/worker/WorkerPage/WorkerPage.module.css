@@ -1,7 +1,7 @@
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 .listHeader {
@@ -20,7 +20,7 @@
 .refreshSection {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 .refreshHint {
@@ -31,7 +31,7 @@
 
 .refreshBtn {
   color: var(--ctx-color-text-secondary);
-  padding: var(--ctx-space-inset-xs);
+  padding: var(--primitive-space-100);
   min-width: 32px;
   min-height: 32px;
   display: flex;
@@ -42,14 +42,14 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-sm);
+  gap: var(--primitive-space-200);
 }
 
 .empty {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--ctx-space-stack-sm);
+  gap: var(--primitive-space-200);
   padding-top: 48px; /* intentional — vertical breathing room for empty state */
   text-align: center;
 }
@@ -57,7 +57,7 @@
 .emptyIcon {
   width: 64px; /* intentional — fixed icon container size */
   height: 64px;
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   background: var(--ctx-color-bg-subtle);
   display: flex;
   align-items: center;

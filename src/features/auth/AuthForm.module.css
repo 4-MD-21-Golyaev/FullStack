@@ -21,7 +21,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: var(--ctx-space-inline-lg); /* 24px */
+  gap: var(--primitive-space-600); /* 24px */
   padding-top: 40px;
 }
 
@@ -43,7 +43,7 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md); /* 16px */
+  gap: var(--primitive-space-400); /* 16px */
 }
 
 /* ── 4-box OTP input ── */
@@ -58,7 +58,7 @@
   height: 64px;
   background-color: var(--ctx-color-bg-subtle);
   border: none;
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   font-size: var(--ctx-font-size-h4);
   font-weight: 700;
   line-height: var(--ctx-line-height-loose);
@@ -98,8 +98,8 @@
   color: var(--ctx-color-text-secondary);
   background: var(--ctx-color-bg-subtle);
   border: 1px dashed var(--ctx-color-border-default);
-  border-radius: var(--ctx-radius-sm);
-  padding: var(--ctx-space-inset-xs) var(--ctx-space-inset-sm);
+  border-radius: var(--primitive-radius-100);
+  padding: var(--primitive-space-100) var(--primitive-space-200);
   margin: 0;
   font-family: var(--ctx-font-code);
   text-align: center;

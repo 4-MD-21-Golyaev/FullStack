@@ -1,7 +1,7 @@
 .root {
   display: inline-block;
   background-color: var(--ctx-color-bg-subtle);
-  border-radius: var(--ctx-radius-sm);
+  border-radius: var(--primitive-radius-100);
   animation: shimmer 1.5s ease-in-out infinite;
 }
 

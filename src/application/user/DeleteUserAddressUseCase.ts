@@ -1,4 +1,4 @@
-import { UserAddressRepository } from '@/application/ports/UserAddressRepository';
+import { type UserAddressRepository } from '@/application/ports/UserAddressRepository';
 
 export class DeleteUserAddressUseCase {
     constructor(private repository: UserAddressRepository) {}

@@ -1,8 +1,8 @@
-import { Order } from './Order';
+import { type Order } from './Order';
 import { OrderState } from './OrderState';
 import { InvalidOrderStateError } from './errors';
-import { OrderItem } from './OrderItem';
-import { AbsenceResolutionStrategy } from './AbsenceResolutionStrategy';
+import { type OrderItem } from './OrderItem';
+import { type AbsenceResolutionStrategy } from './AbsenceResolutionStrategy';
 
 function ensureState(order: Order, allowed: OrderState[]) {
     if (!allowed.includes(order.state)) {

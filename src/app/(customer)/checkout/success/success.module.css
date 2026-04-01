@@ -1,9 +1,9 @@
-.page { padding-block: var(--ctx-space-stack-xl); }
+.page { padding-block: var(--primitive-space-1200); }
 .content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
   text-align: center;
   max-width: var(--ctx-layout-narrow-width);
   margin-inline: auto;

@@ -1,13 +1,13 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 .tableContainer {
   overflow-x: auto;
   border: 1px solid var(--ctx-color-border-default);
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
 }
 
 .table {
@@ -50,7 +50,7 @@
 }
 
 .empty {
-  padding: var(--ctx-space-stack-lg);
+  padding: var(--primitive-space-800);
   text-align: center;
   color: var(--ctx-color-text-secondary);
 }
@@ -58,7 +58,7 @@
 .skeletonCell {
   height: 16px;
   background: var(--ctx-color-bg-subtle);
-  border-radius: var(--ctx-radius-sm);
+  border-radius: var(--primitive-radius-100);
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -71,14 +71,14 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 .pageBtn {
   background: var(--ctx-color-bg-subtle);
   border: 1px solid var(--ctx-color-border-default);
-  border-radius: var(--ctx-radius-control);
-  padding: var(--ctx-space-inset-xs) 12px; /* Figma: pagination button padding */
+  border-radius: var(--primitive-radius-400);
+  padding: var(--primitive-space-100) 12px; /* Figma: pagination button padding */
   cursor: pointer;
   font-size: var(--ctx-font-size-label);
   color: var(--ctx-color-text-default);

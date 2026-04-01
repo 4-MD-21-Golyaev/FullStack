@@ -1,9 +1,9 @@
-.page { padding-block: var(--ctx-space-stack-lg); }
+.page { padding-block: var(--primitive-space-800); }
 
 .leftCol {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
   align-items: start;
 }
 
@@ -22,15 +22,15 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
   position: sticky;
-  top: var(--ctx-space-stack-md);
+  top: var(--primitive-space-400);
 }
 
 .stepContent {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
   grid-column: 1 / 7;
 }
 
@@ -41,12 +41,12 @@
   line-height: var(--ctx-line-height-loose);
 }
 
-.tabs { display: flex; gap: var(--ctx-space-inline-sm); }
+.tabs { display: flex; gap: var(--primitive-space-200); }
 
 .radioGroup {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-xs);
+  gap: var(--primitive-space-300);
 }
 
 .pickupNote {
@@ -66,7 +66,7 @@
 .itemsList {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-xs);
+  gap: var(--primitive-space-300);
 }
 
 .sectionTitle {
@@ -101,14 +101,14 @@
 
 .addAddressRow {
   display: flex;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
   align-items: center;
 }
 
 .formSection {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 /* All Radio items fill the group width */

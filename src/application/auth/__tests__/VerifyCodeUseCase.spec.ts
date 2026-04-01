@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { VerifyCodeUseCase } from '../VerifyCodeUseCase';
-import { OtpRepository } from '@/application/ports/OtpRepository';
-import { UserRepository } from '@/application/ports/UserRepository';
-import { RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
-import { TokenService } from '@/application/ports/TokenService';
+import { type OtpRepository } from '@/application/ports/OtpRepository';
+import { type UserRepository } from '@/application/ports/UserRepository';
+import { type RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
+import { type TokenService } from '@/application/ports/TokenService';
 import { InvalidOtpError, UserNotFoundError } from '@/domain/auth/errors';
 
 const mockUser = { id: 'u1', email: 'a@b.com', role: 'CUSTOMER', phone: '+7', address: null };

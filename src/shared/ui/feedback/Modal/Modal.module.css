@@ -15,7 +15,7 @@
   align-items: center;
   justify-content: center;
   background-color: var(--ctx-color-bg-surface);
-  border-radius: var(--ctx-radius-modal);
+  border-radius: var(--primitive-radius-800);
   box-shadow: var(--ctx-shadow-modal);
   animation: slideUp var(--ctx-transition); /* 200ms ease */
 }

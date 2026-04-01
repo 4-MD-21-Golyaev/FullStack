@@ -1,25 +1,25 @@
 .jobCard {
   background: var(--ctx-color-bg-surface);
   border: var(--card-border);
-  border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-xl);
+  border-radius: var(--primitive-radius-200);
+  padding: var(--primitive-space-600);
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 .jobHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--ctx-space-inline-md);
+  gap: var(--primitive-space-400);
 }
 
 .jobName {
   font-size: var(--ctx-font-size-h4);
   font-weight: 600; /* Semibold */
   color: var(--ctx-color-text-default);
-  margin: 0 0 var(--ctx-space-inset-xs);
+  margin: 0 0 var(--primitive-space-100);
 }
 
 .jobDesc {
@@ -31,9 +31,9 @@
 .jobMeta {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--ctx-space-stack-sm) var(--ctx-space-inline-md);
+  gap: var(--primitive-space-200) var(--primitive-space-400);
   font-size: var(--ctx-font-size-caption);
-  padding-top: var(--ctx-space-stack-sm);
+  padding-top: var(--primitive-space-200);
   border-top: 1px solid var(--ctx-color-border-default);
 }
 

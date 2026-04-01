@@ -1,4 +1,4 @@
-import { OrderRepository, AdminOrderFilters, AdminOrderRow } from '@/application/ports/OrderRepository';
+import { type OrderRepository, type AdminOrderFilters, type AdminOrderRow } from '@/application/ports/OrderRepository';
 
 interface AdminListOrdersInput {
     status?: string;

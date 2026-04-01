@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CancelOrderUseCase } from '../CancelOrderUseCase';
-import { TransactionRunner, TransactionContext } from '../../ports/TransactionRunner';
+import { type TransactionRunner, type TransactionContext } from '../../ports/TransactionRunner';
 import { OrderState } from '@/domain/order/OrderState';
-import { Order } from '@/domain/order/Order';
+import { type Order } from '@/domain/order/Order';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 
 const makeOrder = (state: OrderState): Order => ({

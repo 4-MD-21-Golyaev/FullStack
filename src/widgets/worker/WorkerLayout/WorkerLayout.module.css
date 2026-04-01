@@ -7,7 +7,7 @@
 
 .content {
   flex: 1;
-  padding: var(--ctx-space-stack-lg) var(--ctx-space-inset-lg);
+  padding: var(--primitive-space-800) var(--primitive-space-400);
   max-width: 600px;
   margin: 0 auto;
   width: 100%;
@@ -23,6 +23,6 @@
 
 @media (max-width: 480px) {
   .content {
-    padding: var(--ctx-space-page-mobile);
+    padding: var(--primitive-space-300);
   }
 }

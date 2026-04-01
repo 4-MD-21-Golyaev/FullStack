@@ -1,6 +1,6 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
-import { PaymentRepository } from '@/application/ports/PaymentRepository';
-import { Payment } from '@/domain/payment/Payment';
+import { type PaymentRepository } from '@/application/ports/PaymentRepository';
+import { type Payment } from '@/domain/payment/Payment';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
 import { PaymentAlreadyInProgressError } from '@/domain/payment/errors';
 import { prisma } from '../db/prismaClient';

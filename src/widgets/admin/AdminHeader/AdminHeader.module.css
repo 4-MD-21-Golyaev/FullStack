@@ -4,7 +4,7 @@
   border-bottom: 1px solid var(--ctx-color-border-default);
   display: flex;
   align-items: center;
-  padding: 0 var(--ctx-space-inset-xl);
+  padding: 0 var(--primitive-space-600);
   position: sticky;
   top: 0;
   z-index: var(--ctx-z-dropdown);
@@ -17,7 +17,7 @@
 .right {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-md);
+  gap: var(--primitive-space-400);
 }
 
 .user {
@@ -33,14 +33,14 @@
 .logout {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inset-xs);
+  gap: var(--primitive-space-100);
   background: none;
   border: none;
   color: var(--ctx-color-text-secondary);
   font-size: var(--ctx-font-size-label);
   cursor: pointer;
-  padding: var(--ctx-space-inset-xs) var(--ctx-space-inset-sm);
-  border-radius: var(--ctx-radius-control);
+  padding: var(--primitive-space-100) var(--primitive-space-200);
+  border-radius: var(--primitive-radius-400);
   transition: color 100ms ease,
               background-color 100ms ease;
 }

@@ -1,17 +1,17 @@
 .root {
   background: var(--ctx-color-bg-page);
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   display: flex;
   flex-direction: column;
   gap: 8px; /* Figma: 8px gap between label and value */
 }
 
 .sizeM {
-  padding: 12px var(--ctx-space-inset-xl); /* 12px 24px per Figma M size */
+  padding: 12px var(--primitive-space-600); /* 12px 24px per Figma M size */
 }
 
 .sizeS {
-  padding: 12px var(--ctx-space-inset-lg); /* 12px 16px per Figma S size */
+  padding: 12px var(--primitive-space-400); /* 12px 16px per Figma S size */
 }
 
 .label {

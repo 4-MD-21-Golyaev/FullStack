@@ -1,7 +1,7 @@
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-sm);
+  gap: var(--primitive-space-200);
 }
 
 .label {
@@ -24,7 +24,7 @@
 .textarea {
   width: 100%;
   min-height: 100px;
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   border: none;
   background-color: var(--ctx-color-bg-subtle);
   color: var(--ctx-color-text-default);
@@ -54,8 +54,8 @@
   resize: none;
 }
 
-.lg { padding: var(--ctx-space-inset-lg) var(--ctx-space-page-desktop); /* Figma: L textarea padding 16px 32px */ }
-.md { padding: var(--ctx-space-inset-lg) var(--ctx-space-inset-xl);   /* Figma: M textarea padding 16px 24px */ }
+.lg { padding: var(--primitive-space-400) var(--primitive-space-800); /* Figma: L textarea padding 16px 32px */ }
+.md { padding: var(--primitive-space-400) var(--primitive-space-600);   /* Figma: M textarea padding 16px 24px */ }
 
 .isError {
   outline: 2px solid var(--ctx-color-border-danger);

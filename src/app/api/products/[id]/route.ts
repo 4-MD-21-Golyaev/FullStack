@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { PrismaProductRepository } from '@/infrastructure/repositories/ProductRepository.prisma';
 
 export async function GET(

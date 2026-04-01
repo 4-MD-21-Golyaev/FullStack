@@ -2,7 +2,7 @@
   display: block;
   width: var(--pagination-bullet-size);
   height: var(--pagination-bullet-size);
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   background-color: var(--ctx-color-icon-secondary);
   border: none;
   padding: 0;

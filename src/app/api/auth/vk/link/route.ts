@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { PrismaVkIdentityRepository } from '@/infrastructure/repositories/VkIdentityRepository.prisma';
 import { InvalidVkSignatureError } from '@/domain/auth/errors';
 import { validateVkSignature } from '@/lib/auth/vk-signature';

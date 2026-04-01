@@ -1,4 +1,4 @@
-import { Order } from '@/domain/order/Order';
+import { type Order } from '@/domain/order/Order';
 
 export interface AdminOrderFilters {
     status?: string;

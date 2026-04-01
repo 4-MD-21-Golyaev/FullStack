@@ -20,7 +20,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--primitive-space-400);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   min-height: 56px;
 }
@@ -38,8 +38,8 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  padding: var(--ctx-space-inset-xs);
-  border-radius: var(--ctx-radius-sm);
+  padding: var(--primitive-space-100);
+  border-radius: var(--primitive-radius-100);
   transition: background-color 100ms ease;
   flex-shrink: 0;
 }
@@ -51,7 +51,7 @@
 .nav {
   display: flex;
   flex-direction: column;
-  padding: var(--ctx-space-inset-sm) 0;
+  padding: var(--primitive-space-200) 0;
   flex: 1;
   overflow-y: auto;
 }
@@ -59,8 +59,8 @@
 .navItem {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-sm);
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
+  gap: var(--primitive-space-200);
+  padding: var(--primitive-space-200) var(--primitive-space-400);
   color: var(--ctx-color-text-inverse-secondary);
   text-decoration: none;
   font-size: var(--ctx-font-size-label);
@@ -96,7 +96,7 @@
   color: var(--ctx-color-text-inverse);
   font-size: var(--ctx-font-size-caption);
   font-weight: 700; /* Bold */
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   padding: 1px 6px;
   min-width: 18px;
   text-align: center;
@@ -106,7 +106,7 @@
   width: 8px;
   height: 8px;
   background: var(--ctx-color-status-danger);
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   position: absolute;
   top: 8px;
   right: 8px;

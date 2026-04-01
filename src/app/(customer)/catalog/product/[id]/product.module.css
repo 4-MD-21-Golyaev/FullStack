@@ -3,13 +3,13 @@
 }
 
 .pageInner {
-  padding-block: var(--ctx-space-stack-xl);
+  padding-block: var(--primitive-space-1200);
 }
 
 .loading {
   display: flex;
   justify-content: center;
-  padding: var(--ctx-space-stack-xl) 0;
+  padding: var(--primitive-space-1200) 0;
 }
 
 .empty {
@@ -19,14 +19,14 @@
 
 .layout {
   display: flex;
-  gap: var(--ctx-space-inline-lg);
+  gap: var(--primitive-space-600);
   align-items: flex-start;
 }
 
 .gallery {
   display: grid;
   grid-template-columns: 64px 350px;
-  gap: var(--ctx-space-stack-xs);
+  gap: var(--primitive-space-300);
   width: max-content;
 }
 
@@ -37,14 +37,14 @@
 .thumbnails {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 .thumb {
   width: 64px;
   height: 64px;
   border: 1px solid var(--ctx-color-stroke-subtle);
-  border-radius: var(--ctx-radius-sm);
+  border-radius: var(--primitive-radius-100);
   background: var(--ctx-color-bg-subtle);
   position: relative;
   overflow: hidden;
@@ -64,7 +64,7 @@
   width: 350px;
   height: 350px;
   max-width: 100%;
-  border-radius: var(--ctx-radius-lg);
+  border-radius: var(--primitive-radius-300);
   background: var(--ctx-color-bg-surface);
   border: 1px solid var(--ctx-color-stroke-subtle);
   overflow: hidden;
@@ -72,14 +72,14 @@
 
 .mainImageEl {
   object-fit: contain;
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--primitive-space-400);
 }
 
 .info {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
 }
 
 .title {
@@ -94,16 +94,16 @@
   display: flex;
   align-items: stretch;
   justify-content: space-between;
-  gap: var(--ctx-space-stack-lg);
-  padding: var(--ctx-space-inset-lg);
-  border-radius: var(--ctx-radius-lg);
+  gap: var(--primitive-space-800);
+  padding: var(--primitive-space-400);
+  border-radius: var(--primitive-radius-300);
   background: var(--ctx-color-bg-subtle);
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-stack-sm);
+  gap: var(--primitive-space-200);
 }
 
 .counter {
@@ -113,7 +113,7 @@
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
 }
 
 .tabContent {

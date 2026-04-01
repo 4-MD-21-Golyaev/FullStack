@@ -1,7 +1,7 @@
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-sm);
+  gap: var(--primitive-space-200);
 }
 
 .label {

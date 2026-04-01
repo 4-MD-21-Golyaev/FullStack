@@ -13,10 +13,9 @@ interface StageProps {
 export function Stage({ iconName, label, state = 'enabled', size = 'L' }: StageProps) {
   return (
     <div className={[styles.root, styles[`size${size}`]].join(' ')}>
-      <StageIcon
-        state={state}
-        icon={<Icon name={iconName} size={20} color="currentColor" />}
-      />
+      <StageIcon state={state}>
+        <Icon name={iconName} size={20} color="currentColor" />
+      </StageIcon>
       {size === 'L' && label && (
         <span className={styles.label}>{label}</span>
       )}

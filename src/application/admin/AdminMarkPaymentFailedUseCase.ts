@@ -1,5 +1,5 @@
 import { AuditLogRepository } from '@/application/ports/AuditLogRepository';
-import { TransactionRunner } from '@/application/ports/TransactionRunner';
+import { type TransactionRunner } from '@/application/ports/TransactionRunner';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
 
 interface AdminMarkPaymentFailedInput {

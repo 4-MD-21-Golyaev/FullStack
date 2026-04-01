@@ -1,5 +1,5 @@
-import { Order } from './Order';
-import { OrderState } from './OrderState';
+import { type Order } from './Order';
+import { type OrderState } from './OrderState';
 
 export interface DeliverySlaMetrics {
     orderId: string;

@@ -1,4 +1,4 @@
-import { OrderItem } from '@/domain/order/OrderItem';
+import { type OrderItem } from '@/domain/order/OrderItem';
 
 /** Бросается когда хотя бы один товар из заказа не найден в МойСклад по артикулу. */
 export class MoySkladProductNotFoundError extends Error {

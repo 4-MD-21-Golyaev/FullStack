@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { VkAuthUseCase } from '../VkAuthUseCase';
-import { VkIdentityRepository } from '@/application/ports/VkIdentityRepository';
-import { UserRepository } from '@/application/ports/UserRepository';
-import { RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
-import { TokenService } from '@/application/ports/TokenService';
+import { type VkIdentityRepository } from '@/application/ports/VkIdentityRepository';
+import { type UserRepository } from '@/application/ports/UserRepository';
+import { type RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
+import { type TokenService } from '@/application/ports/TokenService';
 import { InvalidVkSignatureError, VkIdentityNotLinkedError, UserNotFoundError } from '@/domain/auth/errors';
 
 // Pre-computed valid signature for the test query string using secret "test-secret"

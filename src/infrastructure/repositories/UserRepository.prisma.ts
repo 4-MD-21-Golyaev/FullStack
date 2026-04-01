@@ -1,5 +1,5 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
-import { UserRepository, UserInfo, CreateUserData } from '@/application/ports/UserRepository';
+import { type UserRepository, type UserInfo, type CreateUserData } from '@/application/ports/UserRepository';
 import { prisma } from '../db/prismaClient';
 
 type DbClient = PrismaClient | Prisma.TransactionClient;

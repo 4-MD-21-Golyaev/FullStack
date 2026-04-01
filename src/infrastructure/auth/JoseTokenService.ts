@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify } from 'jose';
-import { TokenService, AccessTokenPayload, RefreshTokenPayload } from '@/application/ports/TokenService';
+import { type TokenService, type AccessTokenPayload, type RefreshTokenPayload } from '@/application/ports/TokenService';
 
 export class JoseTokenService implements TokenService {
     private secret: Uint8Array;

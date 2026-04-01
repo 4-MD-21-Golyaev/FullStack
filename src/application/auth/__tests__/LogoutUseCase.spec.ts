@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { LogoutUseCase } from '../LogoutUseCase';
-import { RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
-import { TokenService } from '@/application/ports/TokenService';
+import { type RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
+import { type TokenService } from '@/application/ports/TokenService';
 
 function makeRefreshTokenRepo(): RefreshTokenRepository {
     return { save: vi.fn(), findById: vi.fn(), revoke: vi.fn(), revokeAllForUser: vi.fn(), consumeActive: vi.fn() };

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { GetUserAddressesUseCase } from '@/application/user/GetUserAddressesUseCase';
 import { SaveUserAddressUseCase } from '@/application/user/SaveUserAddressUseCase';
 import { PrismaUserAddressRepository } from '@/infrastructure/repositories/UserAddressRepository.prisma';

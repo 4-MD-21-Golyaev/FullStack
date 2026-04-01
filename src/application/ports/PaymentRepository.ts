@@ -1,4 +1,4 @@
-import { Payment } from '@/domain/payment/Payment';
+import { type Payment } from '@/domain/payment/Payment';
 
 export interface PaymentRepository {
     save(payment: Payment): Promise<void>;

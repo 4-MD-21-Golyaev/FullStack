@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { PrismaCartRepository } from '@/infrastructure/repositories/CartRepository.prisma';
 import { PrismaProductRepository } from '@/infrastructure/repositories/ProductRepository.prisma';
 import { SyncCartUseCase } from '@/application/cart/SyncCartUseCase';

@@ -1,12 +1,12 @@
 .root {
   background: var(--ctx-color-bg-surface);
   border: var(--card-border);
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
   box-shadow: var(--ctx-shadow-card);
-  padding: var(--ctx-space-inset-xl);
+  padding: var(--primitive-space-600);
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-sm);
+  gap: var(--primitive-space-200);
 }
 
 .header {
@@ -42,7 +42,7 @@
 .skeleton {
   height: 36px;
   background: var(--ctx-color-bg-subtle);
-  border-radius: var(--ctx-radius-sm);
+  border-radius: var(--primitive-radius-100);
   animation: pulse 1.5s ease-in-out infinite;
 }
 

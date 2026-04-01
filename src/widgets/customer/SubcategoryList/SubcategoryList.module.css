@@ -1,7 +1,7 @@
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-xs); /* 12px — spacing/300 between title row and slider */
+  gap: var(--primitive-space-300); /* 12px — spacing/300 between title row and slider */
   width: 100%;
 }
 

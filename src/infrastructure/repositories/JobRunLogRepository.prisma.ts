@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
-import { JobRunLogRepository } from '@/application/ports/JobRunLogRepository';
-import { JobRunLog } from '@/domain/jobs/JobRunLog';
+import { type PrismaClient } from '@prisma/client';
+import { type JobRunLogRepository } from '@/application/ports/JobRunLogRepository';
+import { type JobRunLog } from '@/domain/jobs/JobRunLog';
 import { prisma } from '../db/prismaClient';
 
 export class PrismaJobRunLogRepository implements JobRunLogRepository {

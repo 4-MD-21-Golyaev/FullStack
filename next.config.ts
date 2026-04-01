@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ['https://vk-myproject.loca.lt'],
+  allowedDevOrigins: ['blackfly-causeless-camie.ngrok-free.dev'],
   async headers() {
     return [
       {

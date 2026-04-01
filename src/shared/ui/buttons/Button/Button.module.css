@@ -2,8 +2,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--ctx-space-inline-sm);
-  border-radius: var(--ctx-radius-control);
+  gap: var(--primitive-space-200);
+  border-radius: var(--primitive-radius-400);
   font-weight: var(--button-font-weight);
   font-size: var(--ctx-font-size-ui);
   line-height: var(--ctx-line-height-tight);
@@ -55,7 +55,7 @@
 .tertiary {
   background-color: transparent;
   color: var(--ctx-color-text-default);
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
 }
 
 .tertiary:hover:not(:disabled):not([aria-disabled='true']) {

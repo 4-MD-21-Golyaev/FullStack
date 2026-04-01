@@ -8,7 +8,7 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 .streetWrapper {
@@ -17,7 +17,7 @@
 
 .streetRow {
   display: flex;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
   align-items: flex-start;
 }
 
@@ -28,7 +28,7 @@
 
 .row {
   display: flex;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 .row > * {
@@ -48,7 +48,7 @@
   right: 0;
   z-index: 100;
   background: var(--ctx-color-bg-surface);
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   box-shadow: var(--ctx-shadow-card);
   overflow: hidden;
   margin-top: 4px;
@@ -57,7 +57,7 @@
 }
 
 .suggestionItem {
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
+  padding: var(--primitive-space-200) var(--primitive-space-400);
   cursor: pointer;
   display: flex;
   flex-direction: column;

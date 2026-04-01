@@ -3,7 +3,7 @@
   align-items: center;
   overflow: hidden;
   width: 100%;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 .input {

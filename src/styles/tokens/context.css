@@ -73,22 +73,6 @@
   --ctx-color-order-cancelled-bg:  var(--primitive-color-pink-50);
   --ctx-color-order-cancelled-text: var(--primitive-color-error-500);
 
-  /* ── Spacing by usage context ── */
-  --ctx-space-inset-xs:     var(--primitive-space-100);   /* 4px  padding tiny elements */
-  --ctx-space-inset-sm:     var(--primitive-space-200);   /* 8px  padding small components */
-  --ctx-space-inset-md:     var(--primitive-space-300);
-  --ctx-space-inset-lg:     var(--primitive-space-400);   /* 16px padding buttons, inputs */
-  --ctx-space-inset-xl:     var(--primitive-space-600);   /* 24px padding cards */
-  --ctx-space-stack-xs:     var(--primitive-space-300);   /* 12px vertical gap extra-small */
-  --ctx-space-stack-sm:     var(--primitive-space-200);   /* 8px  vertical gap small */
-  --ctx-space-stack-md:     var(--primitive-space-400);   /* 16px */
-  --ctx-space-stack-lg:     var(--primitive-space-800);   /* 32px */
-  --ctx-space-stack-xl:     var(--primitive-space-1200);  /* 48px */
-  --ctx-space-inline-sm:    var(--primitive-space-200);   /* 8px  horizontal gap */
-  --ctx-space-inline-md:    var(--primitive-space-400);   /* 16px */
-  --ctx-space-inline-lg:    var(--primitive-space-600);   /* 24px */
-  --ctx-space-page-desktop: var(--primitive-space-800);   /* 32px page padding */
-  --ctx-space-page-mobile:  var(--primitive-space-300);   /* 12px */
   --ctx-layout-max-width:   1200px;   /* standard content width (customer pages) */
   --ctx-layout-narrow-width: 480px;  /* narrow centered content (success, empty states) */
   --ctx-grid-columns:       12;       /* 12-column layout grid */
@@ -113,14 +97,6 @@
   --ctx-line-height-tight:  var(--primitive-line-height-110);  /* 1.10 */
   --ctx-line-height-normal: var(--primitive-line-height-115);  /* 1.15 */
   --ctx-line-height-loose:  var(--primitive-line-height-120);  /* 1.20 */
-
-  /* ── Shape (border-radius) ── */
-  --ctx-radius-sm:      var(--primitive-radius-100);    /* 4px  — мелкие элементы */
-  --ctx-radius-card:    var(--primitive-radius-200);    /* 8px  — cards */
-  --ctx-radius-lg:      var(--primitive-radius-300);    /* 12px — крупные контролы */
-  --ctx-radius-control: var(--primitive-radius-400);    /* 16px — buttons, inputs */
-  --ctx-radius-modal:   var(--primitive-radius-800);    /* 32px — modals */
-  --ctx-radius-badge:   var(--primitive-radius-FULL);   /* 9999px — badges */
 
   /* ── Misc ── */
   --ctx-shadow-card:  var(--primitive-shadow-card);

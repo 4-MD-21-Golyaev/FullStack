@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { PrismaOrderRepository } from '@/infrastructure/repositories/OrderRepository.prisma';
 import { PrismaPaymentRepository } from '@/infrastructure/repositories/PaymentRepository.prisma';
 import { PrismaTransactionRunner } from '@/infrastructure/db/PrismaTransactionRunner';

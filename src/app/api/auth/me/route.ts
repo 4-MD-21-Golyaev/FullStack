@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { GetMeUseCase } from '@/application/auth/GetMeUseCase';
 import { PrismaUserRepository } from '@/infrastructure/repositories/UserRepository.prisma';
 

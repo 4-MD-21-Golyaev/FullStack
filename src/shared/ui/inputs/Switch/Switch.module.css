@@ -2,7 +2,7 @@
   /* Component-specific dimensions: 36×20px pill, no token equivalent */
   width: 36px;
   height: 20px;
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   border: none;
   padding: 0;
   position: relative;
@@ -29,7 +29,7 @@
   position: absolute;
   width: 16px;
   height: 16px;
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   background-color: var(--ctx-color-bg-surface);
   top: 2px;
   left: 2px;

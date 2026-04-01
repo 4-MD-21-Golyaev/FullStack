@@ -1,5 +1,5 @@
 .root {
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   border: none;
   color: var(--ctx-color-text-default);
   width: 100%;

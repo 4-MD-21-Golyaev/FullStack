@@ -1,4 +1,4 @@
-import { OrderRepository } from '@/application/ports/OrderRepository';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
 import { closeOrder } from '@/domain/order/transitions';
 
 interface CloseOrderInput {

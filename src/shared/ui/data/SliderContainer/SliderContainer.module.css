@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: var(--ctx-space-inset-lg);
+  gap: var(--primitive-space-400);
 }
 
 .slider {

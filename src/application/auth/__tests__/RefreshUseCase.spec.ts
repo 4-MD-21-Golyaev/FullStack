@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { RefreshUseCase } from '../RefreshUseCase';
-import { RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
-import { UserRepository } from '@/application/ports/UserRepository';
-import { TokenService } from '@/application/ports/TokenService';
+import { type RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
+import { type UserRepository } from '@/application/ports/UserRepository';
+import { type TokenService } from '@/application/ports/TokenService';
 import { InvalidRefreshTokenError } from '@/domain/auth/errors';
 
 const mockUser = { id: 'u1', email: 'a@b.com', role: 'CUSTOMER', phone: '+7', address: null };

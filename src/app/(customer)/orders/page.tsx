@@ -163,13 +163,13 @@ function OrdersSkeletonList() {
           <div className={styles.skeletonCard}>
             <div className={styles.skeletonRow}>
               <Skeleton width="160px" height="20px" />
-              <Skeleton width="80px" height="24px" borderRadius="var(--ctx-radius-badge)" />
+              <Skeleton width="80px" height="24px" borderRadius="var(--primitive-radius-FULL)" />
             </div>
             <div className={styles.skeletonRow}>
               <Skeleton width="120px" height="16px" />
               <Skeleton width="80px" height="16px" />
             </div>
-            <Skeleton width="100%" height="64px" borderRadius="var(--ctx-radius-card)" />
+            <Skeleton width="100%" height="64px" borderRadius="var(--primitive-radius-200)" />
           </div>
         </li>
       ))}

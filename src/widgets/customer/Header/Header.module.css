@@ -14,7 +14,7 @@
   width: 100%;
   max-width: var(--ctx-layout-max-width);
   margin-inline: auto;
-  padding-inline: var(--ctx-space-page-desktop);
+  padding-inline: var(--primitive-space-800);
   display: flex;
   align-items: center;
 }
@@ -29,13 +29,13 @@
 .topBar .container {
   height: 100%;
   justify-content: flex-end;
-  padding-bottom: var(--ctx-space-inset-sm);
-  padding-top: var(--ctx-space-inset-lg);
+  padding-bottom: var(--primitive-space-200);
+  padding-top: var(--primitive-space-400);
 }
 
 .phones {
   display: flex;
-  gap: var(--ctx-space-stack-xl);
+  gap: var(--primitive-space-1200);
 }
 
 .phoneItem {
@@ -67,8 +67,8 @@
 
 .mainBar .container {
   height: 100%;
-  gap: var(--ctx-space-stack-lg);
-  padding-block: var(--ctx-space-inset-lg);
+  gap: var(--primitive-space-800);
+  padding-block: var(--primitive-space-400);
 }
 
 /* ── Logo ── */
@@ -93,7 +93,7 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
   flex-shrink: 0;
 }
 
@@ -110,7 +110,7 @@
 
   .mainBar .container {
     gap: 12px; /* Figma: mobile header gap */
-    padding-inline: var(--ctx-space-page-mobile);
+    padding-inline: var(--primitive-space-300);
   }
 
   .phones {

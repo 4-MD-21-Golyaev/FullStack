@@ -70,7 +70,7 @@
   width: 60px; /* Figma: CardImage M = 60×60 */
   height: 60px;
   flex-shrink: 0;
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
   background: var(--ctx-color-bg-surface);
 }
 

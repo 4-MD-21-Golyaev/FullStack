@@ -1,10 +1,10 @@
 .root {
   background: var(--ctx-color-bg-page);
-  border-radius: var(--ctx-radius-control);
-  padding: var(--ctx-space-inset-lg);
+  border-radius: var(--primitive-radius-400);
+  padding: var(--primitive-space-400);
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 .headerRow {
@@ -31,7 +31,7 @@
 .itemsLeft {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 .weight {

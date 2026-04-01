@@ -1,6 +1,6 @@
-import { OrderState } from './OrderState';
-import { OrderItem } from './OrderItem';
-import { AbsenceResolutionStrategy } from './AbsenceResolutionStrategy';
+import { type OrderState } from './OrderState';
+import { type OrderItem } from './OrderItem';
+import { type AbsenceResolutionStrategy } from './AbsenceResolutionStrategy';
 
 export interface Order {
     id: string;

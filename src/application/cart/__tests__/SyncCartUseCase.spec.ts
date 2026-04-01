@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { SyncCartUseCase } from '../SyncCartUseCase';
-import { CartRepository } from '@/application/ports/CartRepository';
-import { ProductRepository } from '@/application/ports/ProductRepository';
+import { type CartRepository } from '@/application/ports/CartRepository';
+import { type ProductRepository } from '@/application/ports/ProductRepository';
 
 const mockProduct = (id: string) => ({
     id, name: `Product ${id}`, article: id, price: 100, stock: 10, imagePath: null, categoryId: 'c1',

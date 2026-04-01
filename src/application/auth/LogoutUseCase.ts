@@ -1,5 +1,5 @@
-import { RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
-import { TokenService } from '@/application/ports/TokenService';
+import { type RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
+import { type TokenService } from '@/application/ports/TokenService';
 
 export interface LogoutInput {
     refreshToken: string;

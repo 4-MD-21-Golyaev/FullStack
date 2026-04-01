@@ -1,5 +1,5 @@
-import { OrderRepository } from '@/application/ports/OrderRepository';
-import { Order } from '@/domain/order/Order';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
+import { type Order } from '@/domain/order/Order';
 
 interface PickerListMyOrdersInput {
     userId: string;

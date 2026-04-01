@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
-import { RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
-import { UserRepository } from '@/application/ports/UserRepository';
-import { TokenService } from '@/application/ports/TokenService';
+import { type RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
+import { type UserRepository } from '@/application/ports/UserRepository';
+import { type TokenService } from '@/application/ports/TokenService';
 import { InvalidRefreshTokenError } from '@/domain/auth/errors';
 
 export interface RefreshInput {

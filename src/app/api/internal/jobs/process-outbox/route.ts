@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { ProcessOutboxUseCase } from '@/application/order/ProcessOutboxUseCase';
 import { PrismaOutboxRepository } from '@/infrastructure/repositories/OutboxRepository.prisma';
 import { PrismaOrderRepository } from '@/infrastructure/repositories/OrderRepository.prisma';

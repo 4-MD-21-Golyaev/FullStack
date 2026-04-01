@@ -1,4 +1,4 @@
-import { TransactionRunner } from '@/application/ports/TransactionRunner';
+import { type TransactionRunner } from '@/application/ports/TransactionRunner';
 import { cancelOrder } from '@/domain/order/transitions';
 
 interface CancelOrderInput {

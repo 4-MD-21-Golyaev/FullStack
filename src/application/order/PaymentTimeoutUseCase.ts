@@ -1,5 +1,5 @@
-import { PaymentRepository } from '@/application/ports/PaymentRepository';
-import { TransactionRunner } from '@/application/ports/TransactionRunner';
+import { type PaymentRepository } from '@/application/ports/PaymentRepository';
+import { type TransactionRunner } from '@/application/ports/TransactionRunner';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
 import { PAYMENT_TIMEOUT_MS } from '@/domain/payment/paymentTimeout';
 

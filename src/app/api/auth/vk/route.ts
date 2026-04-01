@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { VkAuthUseCase } from '@/application/auth/VkAuthUseCase';
 import { PrismaVkIdentityRepository } from '@/infrastructure/repositories/VkIdentityRepository.prisma';
 import { PrismaUserRepository } from '@/infrastructure/repositories/UserRepository.prisma';

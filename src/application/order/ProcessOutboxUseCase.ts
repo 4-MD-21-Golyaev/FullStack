@@ -1,8 +1,8 @@
-import { OutboxRepository } from '@/application/ports/OutboxRepository';
-import { OrderRepository } from '@/application/ports/OrderRepository';
-import { UserRepository } from '@/application/ports/UserRepository';
-import { MoySkladOrderGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladOrderGateway';
-import { EmailGateway } from '@/application/ports/EmailGateway';
+import { type OutboxRepository } from '@/application/ports/OutboxRepository';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
+import { type UserRepository } from '@/application/ports/UserRepository';
+import { type MoySkladOrderGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladOrderGateway';
+import { type EmailGateway } from '@/application/ports/EmailGateway';
 import { OutboxPrerequisiteNotReadyError } from './errors/OutboxPrerequisiteNotReadyError';
 
 const MAX_RETRIES = 3;

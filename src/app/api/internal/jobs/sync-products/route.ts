@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { SyncProductsUseCase } from '@/application/product/SyncProductsUseCase';
 import { HttpMoySkladCatalogGateway } from '@/infrastructure/moysklad/HttpMoySkladGateway';
 import { DiskImageStorageGateway } from '@/infrastructure/storage/DiskImageStorageGateway';

@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { UpdateOrderItemsUseCase } from '../UpdateOrderItemsUseCase';
-import { TransactionRunner, TransactionContext } from '../../ports/TransactionRunner';
+import { type TransactionRunner, type TransactionContext } from '../../ports/TransactionRunner';
 import { OrderState } from '@/domain/order/OrderState';
-import { Order } from '@/domain/order/Order';
-import { Product } from '@/domain/product/Product';
+import { type Order } from '@/domain/order/Order';
+import { type Product } from '@/domain/product/Product';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 import { InvalidOrderStateError } from '@/domain/order/errors';
 

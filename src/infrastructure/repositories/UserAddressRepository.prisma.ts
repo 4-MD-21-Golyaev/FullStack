@@ -1,6 +1,6 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
-import { UserAddressRepository } from '@/application/ports/UserAddressRepository';
-import { UserAddress } from '@/domain/user/UserAddress';
+import { type UserAddressRepository } from '@/application/ports/UserAddressRepository';
+import { type UserAddress } from '@/domain/user/UserAddress';
 import { prisma } from '../db/prismaClient';
 
 type DbClient = PrismaClient | Prisma.TransactionClient;

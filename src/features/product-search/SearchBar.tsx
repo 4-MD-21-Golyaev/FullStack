@@ -1,7 +1,7 @@
 'use client';
 import { useRef, useEffect } from 'react';
 import { Search, Spinner, Link } from '@/shared/ui';
-import { useProductSearch, ProductSearchResult } from './useProductSearch';
+import { useProductSearch, type ProductSearchResult } from './useProductSearch';
 import styles from './SearchBar.module.css';
 
 interface SearchBarProps {

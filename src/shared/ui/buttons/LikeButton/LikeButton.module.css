@@ -2,7 +2,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--like-button-radius);
+  border-radius: var(--primitive-radius-300);
   border: none;
   color: var(--ctx-color-icon-default);
   cursor: pointer;
@@ -10,8 +10,8 @@
   transition: background-color 150ms ease, color 150ms ease;
 }
 
-.md { width: 36px; height: 36px; border-radius: var(--ctx-radius-lg); }
-.lg { width: 52px; height: 52px; border-radius: var(--ctx-radius-control); }
+.md { width: 36px; height: 36px; border-radius: var(--primitive-radius-300); }
+.lg { width: 52px; height: 52px; border-radius: var(--primitive-radius-400); }
 
 .ghost { background-color: transparent; }
 .ghost:hover:not(:disabled) { background-color: var(--ctx-color-bg-subtle); }

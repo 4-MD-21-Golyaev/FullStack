@@ -1,6 +1,6 @@
-import { TransactionRunner } from '@/application/ports/TransactionRunner';
-import { Order } from '@/domain/order/Order';
-import { OrderItem } from '@/domain/order/OrderItem';
+import { type TransactionRunner } from '@/application/ports/TransactionRunner';
+import { type Order } from '@/domain/order/Order';
+import { type OrderItem } from '@/domain/order/OrderItem';
 import { OrderState } from '@/domain/order/OrderState';
 import { InvalidOrderStateError } from '@/domain/order/errors';
 

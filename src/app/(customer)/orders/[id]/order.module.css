@@ -1,5 +1,5 @@
 .page {
-  padding-block: var(--ctx-space-stack-xl);
+  padding-block: var(--primitive-space-1200);
 }
 
 @media (max-width: 900px) {
@@ -11,20 +11,20 @@
 .main {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--ctx-space-inline-md);
+  gap: var(--primitive-space-400);
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-md);
+  gap: var(--primitive-space-400);
   flex-wrap: wrap;
   min-width: 0;
 }
@@ -53,7 +53,7 @@
 .itemsSection {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 .sectionTitle {
@@ -74,8 +74,8 @@
 .item {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-md);
-  padding-block: var(--ctx-space-stack-sm);
+  gap: var(--primitive-space-400);
+  padding-block: var(--primitive-space-200);
   border-bottom: 1px solid var(--ctx-color-border-default);
 }
 
@@ -87,7 +87,7 @@
   width: 60px;
   height: 60px;
   flex-shrink: 0;
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
   background: var(--ctx-color-bg-surface);
 }
 
@@ -96,7 +96,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-xs); /* 4px */
+  gap: var(--primitive-space-100); /* 4px */
 }
 
 .itemName {
@@ -118,7 +118,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: var(--ctx-space-inset-xs); /* 4px */
+  gap: var(--primitive-space-100); /* 4px */
   flex-shrink: 0;
 }
 
@@ -128,7 +128,7 @@
   color: var(--ctx-color-text-secondary);
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inset-xs); /* 4px */
+  gap: var(--primitive-space-100); /* 4px */
 }
 
 .itemSubtotal {
@@ -141,7 +141,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: var(--ctx-space-stack-sm);
+  padding-top: var(--primitive-space-200);
 }
 
 .totalLabel {

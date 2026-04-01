@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { RequestCodeUseCase } from '../RequestCodeUseCase';
-import { OtpRepository } from '@/application/ports/OtpRepository';
-import { EmailGateway } from '@/application/ports/EmailGateway';
+import { type OtpRepository } from '@/application/ports/OtpRepository';
+import { type EmailGateway } from '@/application/ports/EmailGateway';
 
 function makeOtpRepo(): OtpRepository {
     return {

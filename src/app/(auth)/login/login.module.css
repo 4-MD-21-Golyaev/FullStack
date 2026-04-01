@@ -4,14 +4,14 @@
   align-items: center;
   justify-content: center;
   background: var(--ctx-color-bg-page);
-  padding: var(--ctx-space-inset-xl);
+  padding: var(--primitive-space-600);
 }
 
 .card {
   position: relative;
   width: 400px;
   background: var(--ctx-color-bg-surface);
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
   box-shadow: var(--ctx-shadow-card);
   overflow: hidden;
 }

@@ -1,5 +1,5 @@
-import { OrderRepository } from '@/application/ports/OrderRepository';
-import { TransactionRunner } from '@/application/ports/TransactionRunner';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
+import { type TransactionRunner } from '@/application/ports/TransactionRunner';
 import { cancelOrder } from '@/domain/order/transitions';
 import { OrderState } from '@/domain/order/OrderState';
 

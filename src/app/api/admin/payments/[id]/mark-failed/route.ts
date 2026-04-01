@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { AdminMarkPaymentFailedUseCase } from '@/application/admin/AdminMarkPaymentFailedUseCase';
 import { PrismaTransactionRunner } from '@/infrastructure/db/PrismaTransactionRunner';
 import { randomUUID } from 'crypto';

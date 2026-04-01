@@ -2,20 +2,20 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--ctx-space-inline-sm);
-  padding: var(--ctx-space-inset-sm);
+  gap: var(--primitive-space-200);
+  padding: var(--primitive-space-200);
   background: var(--ctx-color-bg-subtle);
   border: 1px solid var(--ctx-color-border-default);
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
 }
 
 .search {
   font-size: var(--ctx-font-size-body);
   border: var(--input-border);
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   background: var(--ctx-color-bg-surface);
   color: var(--ctx-color-text-default);
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
+  padding: var(--primitive-space-200) var(--primitive-space-400);
   outline: none;
   min-width: 200px;
   flex: 1;
@@ -29,13 +29,13 @@
 .statuses {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--ctx-space-inset-xs);
+  gap: var(--primitive-space-100);
 }
 
 .statusBtn {
-  padding: var(--ctx-space-inset-xs) 12px; /* Figma: status pill padding */
+  padding: var(--primitive-space-100) 12px; /* Figma: status pill padding */
   border: 1px solid var(--ctx-color-border-default);
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   background: var(--ctx-color-bg-surface);
   color: var(--ctx-color-text-secondary);
   font-size: var(--ctx-font-size-caption);
@@ -63,16 +63,16 @@
 
 .dates {
   display: flex;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 .dateInput {
   font-size: var(--ctx-font-size-body);
   border: var(--input-border);
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   background: var(--ctx-color-bg-surface);
   color: var(--ctx-color-text-default);
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
+  padding: var(--primitive-space-200) var(--primitive-space-400);
   outline: none;
   transition: border-color var(--ctx-transition);
 }

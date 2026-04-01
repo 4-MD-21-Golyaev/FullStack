@@ -6,7 +6,7 @@
 
 .circle {
   display: block;
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   border-style: solid;
   border-color: var(--ctx-color-border-default);
   border-top-color: var(--ctx-color-action-primary);

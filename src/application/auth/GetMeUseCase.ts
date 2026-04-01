@@ -1,4 +1,4 @@
-import { UserRepository, UserInfo } from '@/application/ports/UserRepository';
+import { type UserRepository, type UserInfo } from '@/application/ports/UserRepository';
 
 export interface GetMeInput {
     userId: string;

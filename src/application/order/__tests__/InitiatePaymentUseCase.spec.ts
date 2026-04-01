@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InitiatePaymentUseCase } from '../InitiatePaymentUseCase';
 import { PaymentWindowExpiredError } from '@/domain/payment/errors';
-import { OrderRepository } from '../../ports/OrderRepository';
-import { PaymentRepository } from '../../ports/PaymentRepository';
-import { ProductRepository } from '../../ports/ProductRepository';
-import { PaymentGateway } from '../../ports/PaymentGateway';
-import { TransactionRunner } from '../../ports/TransactionRunner';
+import { type OrderRepository } from '../../ports/OrderRepository';
+import { type PaymentRepository } from '../../ports/PaymentRepository';
+import { type ProductRepository } from '../../ports/ProductRepository';
+import { type PaymentGateway } from '../../ports/PaymentGateway';
+import { type TransactionRunner } from '../../ports/TransactionRunner';
 import { OrderState } from '@/domain/order/OrderState';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
-import { Order } from '@/domain/order/Order';
-import { Product } from '@/domain/product/Product';
+import { type Order } from '@/domain/order/Order';
+import { type Product } from '@/domain/product/Product';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 
 const makeOrder = (state: OrderState, updatedAt = new Date()): Order => ({

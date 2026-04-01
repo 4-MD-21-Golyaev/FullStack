@@ -4,7 +4,7 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   border: none;
   cursor: pointer;
   flex-shrink: 0;

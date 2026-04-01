@@ -26,7 +26,7 @@
   /* Fixed component dimension — 20×20px per Figma spec */
   width: 20px;
   height: 20px;
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   background-color: var(--ctx-color-text-disabled);
   position: relative;
   transition: background-color var(--ctx-transition);
@@ -44,7 +44,7 @@
   /* Fixed dot dimension — 12×12px per Figma spec */
   width: 12px;
   height: 12px;
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   background-color: var(--ctx-color-bg-surface);
   top: 50%;
   left: 50%;

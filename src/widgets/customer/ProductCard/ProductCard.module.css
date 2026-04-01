@@ -6,7 +6,7 @@
   width: var(--product-card-w-l);
   height: var(--product-card-h-l);
   background: var(--ctx-color-bg-surface);
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -46,7 +46,7 @@
 /* ── Discount badge (overlays image, bottom-left) ── */
 .discountBadge {
   position: absolute;
-  bottom: var(--ctx-space-inset-sm);
+  bottom: var(--primitive-space-200);
   left: var(--product-card-badge-left);
   pointer-events: none;
 }
@@ -64,8 +64,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: var(--ctx-space-stack-sm);
-  padding: var(--ctx-space-stack-sm) var(--ctx-space-inset-lg) var(--ctx-space-inset-lg);
+  gap: var(--primitive-space-200);
+  padding: var(--primitive-space-200) var(--primitive-space-400) var(--primitive-space-400);
   flex: 1;
   min-height: 0;
 }

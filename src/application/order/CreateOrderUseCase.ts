@@ -1,7 +1,7 @@
-import { TransactionRunner } from '@/application/ports/TransactionRunner';
+import { type TransactionRunner } from '@/application/ports/TransactionRunner';
 import { createOrder } from '@/domain/order/transitions';
-import { OrderItem } from '@/domain/order/OrderItem';
-import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
+import { type OrderItem } from '@/domain/order/OrderItem';
+import { type AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 import { randomUUID } from 'crypto';
 
 interface CreateOrderInput {

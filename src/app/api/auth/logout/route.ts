@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { LogoutUseCase } from '@/application/auth/LogoutUseCase';
 import { PrismaRefreshTokenRepository } from '@/infrastructure/repositories/RefreshTokenRepository.prisma';
 import { JoseTokenService } from '@/infrastructure/auth/JoseTokenService';

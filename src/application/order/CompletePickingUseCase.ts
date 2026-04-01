@@ -1,4 +1,4 @@
-import { TransactionRunner } from '@/application/ports/TransactionRunner';
+import { type TransactionRunner } from '@/application/ports/TransactionRunner';
 import { registerPayment } from '@/domain/order/transitions';
 import { randomUUID } from 'crypto';
 

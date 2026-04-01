@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { PrismaProductRepository } from '@/infrastructure/repositories/ProductRepository.prisma';
 import { PrismaCategoryRepository } from '@/infrastructure/repositories/CategoryRepository.prisma';
-import { Category } from '@/domain/category/Category';
+import { type Category } from '@/domain/category/Category';
 
 function collectDescendantIds(rootId: string, all: Category[]): string[] {
     const ids: string[] = [rootId];

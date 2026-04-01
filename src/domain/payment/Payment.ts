@@ -1,4 +1,4 @@
-import { PaymentStatus } from './PaymentStatus';
+import { type PaymentStatus } from './PaymentStatus';
 
 export interface Payment {
     id: string;

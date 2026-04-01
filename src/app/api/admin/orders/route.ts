@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { AdminListOrdersUseCase } from '@/application/admin/AdminListOrdersUseCase';
 import { PrismaOrderRepository } from '@/infrastructure/repositories/OrderRepository.prisma';
 

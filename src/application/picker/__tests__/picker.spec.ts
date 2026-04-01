@@ -3,9 +3,9 @@ import { PickerListAvailableUseCase } from '../PickerListAvailableUseCase';
 import { PickerListMyOrdersUseCase } from '../PickerListMyOrdersUseCase';
 import { PickerClaimOrderUseCase } from '../PickerClaimOrderUseCase';
 import { PickerReleaseOrderUseCase } from '../PickerReleaseOrderUseCase';
-import { OrderRepository } from '@/application/ports/OrderRepository';
-import { AuditLogRepository } from '@/application/ports/AuditLogRepository';
-import { Order } from '@/domain/order/Order';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
+import { type AuditLogRepository } from '@/application/ports/AuditLogRepository';
+import { type Order } from '@/domain/order/Order';
 import { OrderState } from '@/domain/order/OrderState';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 

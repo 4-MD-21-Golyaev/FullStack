@@ -1,6 +1,6 @@
 import { randomInt } from 'crypto';
-import { OtpRepository } from '@/application/ports/OtpRepository';
-import { EmailGateway } from '@/application/ports/EmailGateway';
+import { type OtpRepository } from '@/application/ports/OtpRepository';
+import { type EmailGateway } from '@/application/ports/EmailGateway';
 
 export interface RequestCodeInput {
     email: string;

@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { PaymentTimeoutUseCase } from '../PaymentTimeoutUseCase';
-import { PaymentRepository } from '../../ports/PaymentRepository';
-import { TransactionRunner, TransactionContext } from '../../ports/TransactionRunner';
+import { type PaymentRepository } from '../../ports/PaymentRepository';
+import { type TransactionRunner, type TransactionContext } from '../../ports/TransactionRunner';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
-import { Payment } from '@/domain/payment/Payment';
+import { type Payment } from '@/domain/payment/Payment';
 
 const makePayment = (status: PaymentStatus, overrides: Partial<Payment> = {}): Payment => ({
     id: 'pay-1',

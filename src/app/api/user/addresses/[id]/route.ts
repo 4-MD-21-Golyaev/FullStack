@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { DeleteUserAddressUseCase } from '@/application/user/DeleteUserAddressUseCase';
 import { PrismaUserAddressRepository } from '@/infrastructure/repositories/UserAddressRepository.prisma';
 

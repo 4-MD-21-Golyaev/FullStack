@@ -1,6 +1,6 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
-import { CartRepository } from '@/application/ports/CartRepository';
-import { CartItem } from '@/domain/cart/CartItem';
+import { type CartRepository } from '@/application/ports/CartRepository';
+import { type CartItem } from '@/domain/cart/CartItem';
 import { prisma } from '../db/prismaClient';
 
 type DbClient = PrismaClient | Prisma.TransactionClient;

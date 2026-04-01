@@ -1,7 +1,7 @@
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
   padding-bottom: 100px; /* intentional — space for sticky actions */
 }
 
@@ -16,7 +16,7 @@
 .headerMeta {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-md);
+  gap: var(--primitive-space-400);
 }
 
 .orderTag {
@@ -25,7 +25,7 @@
   color: var(--ctx-color-text-secondary);
   background: var(--ctx-color-bg-subtle);
   padding: 2px 8px; /* intentional — compact tag sizing */
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
 }
 
 .total {
@@ -39,11 +39,11 @@
 .addressCard {
   display: flex;
   align-items: flex-start;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
   background: var(--ctx-color-bg-surface);
   border: 1px solid var(--ctx-color-border-default);
-  border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-xl);
+  border-radius: var(--primitive-radius-200);
+  padding: var(--primitive-space-600);
   text-decoration: none;
   color: var(--ctx-color-text-default);
   transition: border-color 150ms ease, box-shadow 150ms ease;
@@ -70,11 +70,11 @@
 .slaCard {
   background: var(--ctx-color-bg-surface);
   border: 1px solid var(--ctx-color-border-default);
-  border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-xl);
+  border-radius: var(--primitive-radius-200);
+  padding: var(--primitive-space-600);
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-inset-sm);
+  gap: var(--primitive-space-200);
 }
 
 .slaLabel {
@@ -95,13 +95,13 @@
   z-index: var(--ctx-z-dropdown);
   background: var(--ctx-color-bg-surface);
   border-top: 1px solid var(--ctx-color-border-default);
-  padding: var(--ctx-space-inset-lg);
+  padding: var(--primitive-space-400);
 }
 
 .actions {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-sm);
+  gap: var(--primitive-space-200);
   max-width: 600px;
   margin: 0 auto;
   width: 100%;
@@ -112,6 +112,6 @@
 @media (max-width: 480px) {
   .header {
     flex-wrap: wrap;
-    gap: var(--ctx-space-stack-sm);
+    gap: var(--primitive-space-200);
   }
 }

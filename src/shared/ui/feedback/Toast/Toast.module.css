@@ -1,9 +1,9 @@
 .root {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-md);
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
-  border-radius: var(--ctx-radius-control);
+  gap: var(--primitive-space-400);
+  padding: var(--primitive-space-200) var(--primitive-space-400);
+  border-radius: var(--primitive-radius-400);
   font-size: var(--ctx-font-size-label);
   box-shadow: var(--ctx-shadow-modal);
   min-width: 240px;

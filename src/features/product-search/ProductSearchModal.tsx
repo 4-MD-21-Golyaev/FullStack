@@ -1,6 +1,6 @@
 'use client';
 import { Modal } from '@/shared/ui';
-import { ProductSearchResult } from './useProductSearch';
+import { type ProductSearchResult } from './useProductSearch';
 import { SearchBar } from './SearchBar';
 
 interface Props {

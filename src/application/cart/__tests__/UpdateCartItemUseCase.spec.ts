@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { UpdateCartItemUseCase } from '../UpdateCartItemUseCase';
-import { CartRepository } from '@/application/ports/CartRepository';
-import { ProductRepository } from '@/application/ports/ProductRepository';
+import { type CartRepository } from '@/application/ports/CartRepository';
+import { type ProductRepository } from '@/application/ports/ProductRepository';
 
 const mockProduct = {
     id: 'p1',

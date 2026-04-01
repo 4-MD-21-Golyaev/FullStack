@@ -1,7 +1,7 @@
 .root {
   display: inline-flex;
   align-items: center;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 /* ── Size S ── */
@@ -32,5 +32,5 @@
   line-height: var(--ctx-line-height-tight);
   color: var(--ctx-color-text-secondary);
   white-space: nowrap;
-  margin-left: var(--ctx-space-inline-sm);
+  margin-left: var(--primitive-space-200);
 }

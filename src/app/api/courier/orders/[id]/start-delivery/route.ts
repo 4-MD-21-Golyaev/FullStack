@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { CourierStartDeliveryUseCase } from '@/application/courier/CourierStartDeliveryUseCase';
 import { PrismaTransactionRunner } from '@/infrastructure/db/PrismaTransactionRunner';
 import { randomUUID } from 'crypto';

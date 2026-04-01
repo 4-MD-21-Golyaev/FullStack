@@ -61,8 +61,8 @@ export default function OrderDetailPage() {
           <GridItem span={9} spanMd={12}>
             <main className={styles.main}>
               <Skeleton width="200px" height="32px" />
-              <Skeleton width="100%" height="120px" borderRadius="var(--ctx-radius-card)" />
-              <Skeleton width="100%" height="200px" borderRadius="var(--ctx-radius-card)" />
+              <Skeleton width="100%" height="120px" borderRadius="var(--primitive-radius-200)" />
+              <Skeleton width="100%" height="200px" borderRadius="var(--primitive-radius-200)" />
             </main>
           </GridItem>
         </Grid>

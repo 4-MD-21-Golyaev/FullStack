@@ -1,6 +1,6 @@
 import path from 'path';
 import { mkdir, writeFile } from 'fs/promises';
-import { ImageStorageGateway } from '@/application/ports/ImageStorageGateway';
+import { type ImageStorageGateway } from '@/application/ports/ImageStorageGateway';
 
 export class DiskImageStorageGateway implements ImageStorageGateway {
     private readonly uploadDir: string;

@@ -4,8 +4,8 @@
   font-size: var(--ctx-font-size-xs);
   font-weight: 450; /* [Desktop]/Utilities/Regular */
   line-height: var(--ctx-line-height-tight);
-  border-radius: var(--ctx-radius-badge);
-  padding: var(--ctx-space-inset-xs) var(--ctx-space-inset-sm);
+  border-radius: var(--primitive-radius-FULL);
+  padding: var(--primitive-space-100) var(--primitive-space-200);
   white-space: nowrap;
 }
 

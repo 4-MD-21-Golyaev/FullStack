@@ -1,5 +1,5 @@
-import { UserAddressRepository } from '@/application/ports/UserAddressRepository';
-import { UserAddress } from '@/domain/user/UserAddress';
+import { type UserAddressRepository } from '@/application/ports/UserAddressRepository';
+import { type UserAddress } from '@/domain/user/UserAddress';
 
 export class GetUserAddressesUseCase {
     constructor(private repository: UserAddressRepository) {}

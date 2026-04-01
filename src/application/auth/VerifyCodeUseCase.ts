@@ -1,8 +1,8 @@
 import { randomUUID } from 'crypto';
-import { OtpRepository } from '@/application/ports/OtpRepository';
-import { UserRepository } from '@/application/ports/UserRepository';
-import { RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
-import { TokenService } from '@/application/ports/TokenService';
+import { type OtpRepository } from '@/application/ports/OtpRepository';
+import { type UserRepository } from '@/application/ports/UserRepository';
+import { type RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
+import { type TokenService } from '@/application/ports/TokenService';
 import { InvalidOtpError, UserNotFoundError } from '@/domain/auth/errors';
 
 export interface VerifyCodeInput {

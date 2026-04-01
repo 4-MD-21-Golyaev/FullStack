@@ -1,9 +1,9 @@
 .root {
   display: inline-flex;
   align-items: center;
-  gap: var(--ctx-space-inset-sm);
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
-  border-radius: var(--ctx-radius-control);
+  gap: var(--primitive-space-200);
+  padding: var(--primitive-space-200) var(--primitive-space-400);
+  border-radius: var(--primitive-radius-400);
 
   /* Enabled state */
   background-color: var(--ctx-color-bg-surface);

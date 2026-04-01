@@ -129,8 +129,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         .catch(() => {/* keep local items on error */});
     } else if (!currentUserId && prevUserId) {
       // Just logged out: reset to empty local cart
-      setItems([]);
       localClear();
+      void Promise.resolve([] as CartItem[]).then(setItems);
     } else if (currentUserId && prevUserId === currentUserId) {
       // Page refresh while still logged in: load from server
       serverGetCart().then(setItems).catch(() => {/* keep current */});
@@ -138,7 +138,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     // No user, no prev user → already initialized from localStorage in useState
 
     prevUserIdRef.current = currentUserId;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [authLoading, user?.userId]);
 
   // Persist to localStorage for guests

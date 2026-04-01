@@ -1,10 +1,10 @@
 'use client';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Slider } from '../Slider/Slider';
-import { ArrowsContainer } from '../../buttons/ArrowsContainer/ArrowsContainer';
+import { Slider } from '@/shared/ui';
+import { ArrowsContainer } from '@/shared/ui';
 import styles from './SliderContainer.module.css';
 
-const SCROLL_STEP = 300;
+const SCROLL_STEP = 217;
 
 interface SliderContainerProps {
   children: React.ReactNode;

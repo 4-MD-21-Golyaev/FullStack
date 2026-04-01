@@ -1,4 +1,4 @@
-import { CartItem } from '@/domain/cart/CartItem';
+import { type CartItem } from '@/domain/cart/CartItem';
 
 export interface CartRepository {
     findByUserId(userId: string): Promise<CartItem[]>;

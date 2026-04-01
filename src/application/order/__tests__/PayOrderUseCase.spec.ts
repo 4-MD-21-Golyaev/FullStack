@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { PayOrderUseCase } from '../PayOrderUseCase';
-import { TransactionRunner, TransactionContext } from '../../ports/TransactionRunner';
+import { type TransactionRunner, type TransactionContext } from '../../ports/TransactionRunner';
 import { OrderState } from '@/domain/order/OrderState';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
-import { Order } from '@/domain/order/Order';
-import { Product } from '@/domain/product/Product';
+import { type Order } from '@/domain/order/Order';
+import { type Product } from '@/domain/product/Product';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 
 const makeOrder = (state: OrderState): Order => ({

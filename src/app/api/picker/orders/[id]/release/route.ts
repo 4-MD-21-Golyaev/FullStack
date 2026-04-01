@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { PickerReleaseOrderUseCase } from '@/application/picker/PickerReleaseOrderUseCase';
 import { PrismaOrderRepository } from '@/infrastructure/repositories/OrderRepository.prisma';
 import { PrismaAuditLogRepository } from '@/infrastructure/repositories/AuditLogRepository.prisma';

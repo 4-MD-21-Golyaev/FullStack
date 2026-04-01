@@ -1,5 +1,5 @@
 .page {
-  padding-block: var(--ctx-space-stack-xl);
+  padding-block: var(--primitive-space-1200);
 }
 
 @media (max-width: 900px) {
@@ -11,7 +11,7 @@
 .main {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
 }
 
 .title {
@@ -25,7 +25,7 @@
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 /* Orders list */
@@ -35,14 +35,14 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 /* Empty state */
 .empty {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
   align-items: flex-start;
 }
 
@@ -56,16 +56,16 @@
 .skeletonCard {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-sm);
-  padding: var(--ctx-space-inset-xl);
+  gap: var(--primitive-space-200);
+  padding: var(--primitive-space-600);
   background: var(--ctx-color-bg-surface);
   border: 1px solid var(--ctx-color-border-default);
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
 }
 
 .skeletonRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--ctx-space-inline-md);
+  gap: var(--primitive-space-400);
 }

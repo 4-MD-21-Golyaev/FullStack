@@ -9,14 +9,20 @@ paths:
 
 # Customer Layout & Grid System
 
-## Токены (src/styles/tokens/context.css)
+## Токены
 
+**Layout (context.css):**
 ```
---ctx-grid-columns:       12       — число колонок
---ctx-grid-gutter:        12px     — gap между колонками и карточками
---ctx-layout-max-width:   1200px   — максимальная ширина контента
---ctx-space-page-desktop: 32px     — боковые отступы (desktop)
---ctx-space-page-mobile:  12px     — боковые отступы (mobile)
+--ctx-grid-columns:      12       — число колонок
+--ctx-grid-gutter:       12px     — gap между колонками и карточками
+--ctx-layout-max-width:  1200px   — максимальная ширина контента
+--ctx-layout-narrow-width: 480px  — узкий центрированный контент
+```
+
+**Отступы страницы (primitive.css — использовать напрямую):**
+```
+--primitive-space-800  = 32px  — боковые отступы desktop
+--primitive-space-300  = 12px  — боковые отступы mobile
 ```
 
 Стандартные брейкпоинты: `1200px`, `900px`, `600px`. Не изобретать свои.
@@ -85,6 +91,7 @@ paths:
 ## Обязательные правила
 
 - **`minmax(0, ...)` для контентных колонок** — `fr` без него = `minmax(auto, fr)`, трек расширяется под контент и ломает лейаут. Всегда: `minmax(0, Xfr)` или `minmax(0, 1fr)`.
-- **Только `--ctx-*` токены в CSS Modules** — `var(--primitive-*)` запрещён везде кроме `context.css`.
+- **Spacing — только `--primitive-space-*`** напрямую в CSS Modules. Создавать `ctx-space-*` или component-level spacing токены ЗАПРЕЩЕНО.
+- **Цвет, радиус, шрифт, тени — только `--ctx-*`** токены. `--primitive-color-*` и прочие примитивы не для spacing запрещены в CSS Modules.
 - **Числовые значения запрещены** для `max-width`, `padding-inline`, `gap` — только токены.
 - **Адаптив колонок — в CSS Module**, не в токенах и не через JS.

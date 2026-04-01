@@ -6,10 +6,10 @@ import { CourierReleaseOrderUseCase } from '../CourierReleaseOrderUseCase';
 import { CourierStartDeliveryUseCase } from '../CourierStartDeliveryUseCase';
 import { CourierConfirmDeliveredUseCase } from '../CourierConfirmDeliveredUseCase';
 import { CourierMarkDeliveryFailedUseCase } from '../CourierMarkDeliveryFailedUseCase';
-import { OrderRepository } from '@/application/ports/OrderRepository';
-import { AuditLogRepository } from '@/application/ports/AuditLogRepository';
-import { TransactionRunner, TransactionContext } from '@/application/ports/TransactionRunner';
-import { Order } from '@/domain/order/Order';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
+import { type AuditLogRepository } from '@/application/ports/AuditLogRepository';
+import { type TransactionRunner, type TransactionContext } from '@/application/ports/TransactionRunner';
+import { type Order } from '@/domain/order/Order';
 import { OrderState } from '@/domain/order/OrderState';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 

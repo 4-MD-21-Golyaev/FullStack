@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { RegisterUseCase } from '../RegisterUseCase';
-import { UserRepository } from '@/application/ports/UserRepository';
+import { type UserRepository } from '@/application/ports/UserRepository';
 import { UserAlreadyExistsError } from '@/domain/auth/errors';
 
 function makeUserRepo(existing: unknown = null): UserRepository {

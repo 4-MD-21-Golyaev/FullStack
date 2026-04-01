@@ -1,4 +1,4 @@
-import { UserRepository } from '@/application/ports/UserRepository';
+import { type UserRepository } from '@/application/ports/UserRepository';
 import { UserAlreadyExistsError } from '@/domain/auth/errors';
 
 export interface RegisterInput {

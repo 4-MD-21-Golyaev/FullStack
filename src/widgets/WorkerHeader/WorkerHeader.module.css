@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 var(--ctx-space-inset-xl);
+  padding: 0 var(--primitive-space-600);
   position: sticky;
   top: 0;
   z-index: var(--ctx-z-dropdown);
@@ -14,7 +14,7 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 .brandName {
@@ -26,7 +26,7 @@
 .roleBadge {
   background: var(--ctx-color-bg-subtle);
   color: var(--ctx-color-text-secondary);
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   font-size: var(--ctx-font-size-xs);
   font-weight: 600; /* Semibold */
   letter-spacing: 0.06em;
@@ -37,7 +37,7 @@
 .right {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-md);
+  gap: var(--primitive-space-400);
 }
 
 .email {
@@ -47,7 +47,7 @@
 
 @media (max-width: 480px) {
   .root {
-    padding: 0 var(--ctx-space-inset-lg);
+    padding: 0 var(--primitive-space-400);
   }
 
   .email {

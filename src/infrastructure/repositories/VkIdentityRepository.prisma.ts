@@ -1,4 +1,4 @@
-import { VkIdentityRepository } from '@/application/ports/VkIdentityRepository';
+import { type VkIdentityRepository } from '@/application/ports/VkIdentityRepository';
 import { prisma } from '../db/prismaClient';
 
 export class PrismaVkIdentityRepository implements VkIdentityRepository {

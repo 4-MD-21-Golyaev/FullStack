@@ -3,9 +3,9 @@
   display: block;
   width: 100%;
   height: 52px; /* component-specific fixed height per Figma */
-  padding: var(--ctx-space-inset-lg) 32px var(--ctx-space-inset-lg) 64px; /* 16px top/bottom, 32px right, 64px left (16 margin + 36 icon + 12 gap) */
+  padding: var(--primitive-space-400) 32px var(--primitive-space-400) 64px; /* 16px top/bottom, 32px right, 64px left (16 margin + 36 icon + 12 gap) */
   border: none;
-  border-radius: var(--ctx-radius-control); /* 16px */
+  border-radius: var(--primitive-radius-400); /* 16px */
   background-color: var(--ctx-color-bg-surface);
   cursor: pointer;
   overflow: hidden;
@@ -27,7 +27,7 @@
   top: 8px;
   width: 36px; /* component-specific icon frame size per Figma */
   height: 36px; /* component-specific icon frame size per Figma */
-  border-radius: var(--ctx-radius-card); /* 8px */
+  border-radius: var(--primitive-radius-200); /* 8px */
   background-color: var(--ctx-color-bg-subtle);
   display: flex;
   align-items: center;

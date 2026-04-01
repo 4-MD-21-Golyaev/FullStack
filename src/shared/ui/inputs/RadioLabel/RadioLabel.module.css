@@ -1,10 +1,10 @@
 .root {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-stack-xs);
+  gap: var(--primitive-space-300);
   background-color: var(--ctx-color-bg-subtle);
-  padding: var(--ctx-space-stack-xs) var(--ctx-space-inline-lg);
-  border-radius: var(--ctx-radius-control);
+  padding: var(--primitive-space-300) var(--primitive-space-600);
+  border-radius: var(--primitive-radius-400);
   cursor: pointer;
 }
 

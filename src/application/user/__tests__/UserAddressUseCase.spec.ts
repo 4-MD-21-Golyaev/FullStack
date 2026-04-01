@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GetUserAddressesUseCase } from '../GetUserAddressesUseCase';
 import { SaveUserAddressUseCase } from '../SaveUserAddressUseCase';
 import { DeleteUserAddressUseCase } from '../DeleteUserAddressUseCase';
-import { UserAddressRepository } from '@/application/ports/UserAddressRepository';
-import { UserAddress } from '@/domain/user/UserAddress';
+import { type UserAddressRepository } from '@/application/ports/UserAddressRepository';
+import { type UserAddress } from '@/domain/user/UserAddress';
 
 function makeRepo(overrides: Partial<UserAddressRepository> = {}): UserAddressRepository {
     return {

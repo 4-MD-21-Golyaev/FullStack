@@ -1,7 +1,7 @@
 .link {
   display: inline-flex;
   align-items: center;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
   color: var(--ctx-color-text-default);
   font-family: var(--ctx-font-body);
   font-size: var(--ctx-font-size-body);

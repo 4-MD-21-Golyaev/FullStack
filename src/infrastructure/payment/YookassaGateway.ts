@@ -1,8 +1,8 @@
 import {
-    PaymentGateway,
-    CreatePaymentParams,
-    CreatedPayment,
-    RefundParams,
+    type PaymentGateway,
+    type CreatePaymentParams,
+    type CreatedPayment,
+    type RefundParams,
 } from '@/application/ports/PaymentGateway';
 
 const YOOKASSA_API_URL = 'https://api.yookassa.ru/v3';

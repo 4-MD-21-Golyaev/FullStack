@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { RequestCodeUseCase } from '@/application/auth/RequestCodeUseCase';
 import { PrismaOtpRepository } from '@/infrastructure/repositories/OtpRepository.prisma';
 import { NodemailerEmailGateway } from '@/infrastructure/auth/NodemailerEmailGateway';

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { GetMeUseCase } from '../GetMeUseCase';
-import { UserRepository } from '@/application/ports/UserRepository';
+import { type UserRepository } from '@/application/ports/UserRepository';
 
 const mockUser = { id: 'u1', email: 'a@b.com', role: 'CUSTOMER', phone: '+7', address: null };
 

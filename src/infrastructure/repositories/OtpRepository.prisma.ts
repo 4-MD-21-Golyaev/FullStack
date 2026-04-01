@@ -1,5 +1,5 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
-import { OtpRepository } from '@/application/ports/OtpRepository';
+import { type OtpRepository } from '@/application/ports/OtpRepository';
 import { OtpRateLimitedError } from '@/domain/auth/errors';
 import { hashOtpCode, compareOtpHashes } from '@/lib/auth/otp-hash';
 import { prisma } from '../db/prismaClient';

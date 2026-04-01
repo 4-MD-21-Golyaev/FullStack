@@ -1,7 +1,7 @@
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 .header {
@@ -9,13 +9,13 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 .title {
@@ -27,17 +27,17 @@
 
 .actions {
   display: flex;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 .card {
   background: var(--ctx-color-bg-surface);
   border: var(--card-border);
-  border-radius: var(--ctx-radius-card);
-  padding: var(--ctx-space-inset-xl);
+  border-radius: var(--primitive-radius-200);
+  padding: var(--primitive-space-600);
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 .cardTitle {
@@ -50,7 +50,7 @@
 .cards2col {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 /* Timeline */
@@ -89,7 +89,7 @@
 .timelineLabel {
   font-size: var(--ctx-font-size-caption);
   color: var(--ctx-color-text-secondary);
-  margin-top: var(--ctx-space-inset-xs);
+  margin-top: var(--primitive-space-100);
   text-align: center;
 }
 
@@ -120,7 +120,7 @@
 
 .itemsTable th {
   text-align: left;
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
+  padding: var(--primitive-space-200) var(--primitive-space-400);
   background: var(--ctx-color-bg-subtle);
   color: var(--ctx-color-text-secondary);
   font-weight: 600; /* Semibold */
@@ -128,7 +128,7 @@
 }
 
 .itemsTable td {
-  padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
+  padding: var(--primitive-space-200) var(--primitive-space-400);
   border-bottom: 1px solid var(--ctx-color-border-default);
   color: var(--ctx-color-text-default);
 }
@@ -153,7 +153,7 @@
 .dl {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: var(--ctx-space-stack-sm) var(--ctx-space-inline-md);
+  gap: var(--primitive-space-200) var(--primitive-space-400);
   font-size: var(--ctx-font-size-label);
 }
 

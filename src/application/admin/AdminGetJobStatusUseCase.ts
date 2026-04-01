@@ -1,5 +1,5 @@
-import { JobRunLogRepository } from '@/application/ports/JobRunLogRepository';
-import { JobRunLog } from '@/domain/jobs/JobRunLog';
+import { type JobRunLogRepository } from '@/application/ports/JobRunLogRepository';
+import { type JobRunLog } from '@/domain/jobs/JobRunLog';
 
 interface AdminGetJobStatusInput {
     jobName: string;

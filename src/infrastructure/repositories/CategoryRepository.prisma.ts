@@ -1,5 +1,5 @@
-import { CategoryRepository } from '@/application/ports/CategoryRepository';
-import { Category } from '@/domain/category/Category';
+import { type CategoryRepository } from '@/application/ports/CategoryRepository';
+import { type Category } from '@/domain/category/Category';
 import { prisma } from '../db/prismaClient';
 
 export class PrismaCategoryRepository implements CategoryRepository {

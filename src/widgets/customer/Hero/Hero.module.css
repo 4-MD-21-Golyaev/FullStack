@@ -1,22 +1,22 @@
 .root {
-  padding: 64px 0 var(--ctx-space-stack-xl); /* Figma: hero top padding 64px */
+  padding: 64px 0 var(--primitive-space-1200); /* Figma: hero top padding 64px */
 }
 
 .container {
   max-width: var(--ctx-layout-max-width);
   margin-inline: auto;
-  padding-inline: var(--ctx-space-page-desktop);
+  padding-inline: var(--primitive-space-800);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--ctx-space-inset-xl);
+  gap: var(--primitive-space-600);
 }
 
 .banner {
   width: 100%;
   height: 350px;
   background-color: var(--ctx-color-bg-subtle);
-  border-radius: var(--ctx-radius-card);
+  border-radius: var(--primitive-radius-200);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,13 +31,13 @@
 .dots {
   display: flex;
   align-items: center;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }
 
 .dot {
   width: 6px;
   height: 6px;
-  border-radius: var(--ctx-radius-badge);
+  border-radius: var(--primitive-radius-FULL);
   background-color: var(--ctx-color-text-disabled);
   border: none;
   cursor: pointer;

@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import { OrderPaymentTimeoutUseCase } from '../OrderPaymentTimeoutUseCase';
-import { OrderRepository } from '../../ports/OrderRepository';
-import { TransactionRunner, TransactionContext } from '../../ports/TransactionRunner';
+import { type OrderRepository } from '../../ports/OrderRepository';
+import { type TransactionRunner, type TransactionContext } from '../../ports/TransactionRunner';
 import { OrderState } from '@/domain/order/OrderState';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
-import { Order } from '@/domain/order/Order';
-import { Payment } from '@/domain/payment/Payment';
+import { type Order } from '@/domain/order/Order';
+import { type Payment } from '@/domain/payment/Payment';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 
 const makeOrder = (state: OrderState, overrides: Partial<Order> = {}): Order => ({

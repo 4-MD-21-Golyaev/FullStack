@@ -1,8 +1,8 @@
-import { OrderRepository } from './OrderRepository';
-import { PaymentRepository } from './PaymentRepository';
-import { ProductRepository } from './ProductRepository';
-import { OutboxRepository } from './OutboxRepository';
-import { AuditLogRepository } from './AuditLogRepository';
+import { type OrderRepository } from './OrderRepository';
+import { type PaymentRepository } from './PaymentRepository';
+import { type ProductRepository } from './ProductRepository';
+import { type OutboxRepository } from './OutboxRepository';
+import { type AuditLogRepository } from './AuditLogRepository';
 
 export interface TransactionContext {
     orderRepository: OrderRepository;

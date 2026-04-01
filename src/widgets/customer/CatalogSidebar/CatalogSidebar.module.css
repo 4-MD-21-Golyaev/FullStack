@@ -25,5 +25,5 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  padding-left: var(--ctx-space-inset-sm);
+  padding-left: var(--primitive-space-200);
 }

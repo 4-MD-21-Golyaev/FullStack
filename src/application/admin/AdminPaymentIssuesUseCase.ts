@@ -1,5 +1,5 @@
-import { PaymentRepository } from '@/application/ports/PaymentRepository';
-import { OrderRepository } from '@/application/ports/OrderRepository';
+import { type PaymentRepository } from '@/application/ports/PaymentRepository';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
 import { OrderState } from '@/domain/order/OrderState';
 

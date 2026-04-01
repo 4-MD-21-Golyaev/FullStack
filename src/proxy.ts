@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { verifyJwt } from '@/lib/auth/jwt';
 
 // Routes accessible without authentication

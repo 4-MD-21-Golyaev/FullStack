@@ -1,4 +1,4 @@
-import { JobRunLog } from '@/domain/jobs/JobRunLog';
+import { type JobRunLog } from '@/domain/jobs/JobRunLog';
 
 export interface JobRunLogRepository {
     start(jobName: string, initiatedBy?: string): Promise<string>; // returns id

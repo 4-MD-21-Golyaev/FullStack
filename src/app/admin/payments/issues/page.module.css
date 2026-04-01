@@ -1,13 +1,13 @@
 .root {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 .header {
   display: flex;
   align-items: baseline;
-  gap: var(--ctx-space-inline-md);
+  gap: var(--primitive-space-400);
 }
 
 .title {
@@ -33,5 +33,5 @@
 
 .rowActions {
   display: flex;
-  gap: var(--ctx-space-inline-sm);
+  gap: var(--primitive-space-200);
 }

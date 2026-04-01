@@ -1,5 +1,5 @@
-import { OrderRepository } from '@/application/ports/OrderRepository';
-import { CartRepository } from '@/application/ports/CartRepository';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
+import { type CartRepository } from '@/application/ports/CartRepository';
 
 interface RepeatOrderToCartInput {
     orderId: string;

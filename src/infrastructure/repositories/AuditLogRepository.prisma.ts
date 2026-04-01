@@ -1,6 +1,6 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
-import { AuditLogRepository } from '@/application/ports/AuditLogRepository';
-import { AuditLog } from '@/domain/audit/AuditLog';
+import { type AuditLogRepository } from '@/application/ports/AuditLogRepository';
+import { type AuditLog } from '@/domain/audit/AuditLog';
 import { prisma } from '../db/prismaClient';
 
 type DbClient = PrismaClient | Prisma.TransactionClient;

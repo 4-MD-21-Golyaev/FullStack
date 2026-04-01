@@ -1,11 +1,11 @@
 .container {
   max-width: var(--ctx-layout-max-width);
   margin-inline: auto;
-  padding-inline: var(--ctx-space-page-desktop);
+  padding-inline: var(--primitive-space-800);
 }
 
 @media (max-width: 600px) {
   .container {
-    padding-inline: var(--ctx-space-page-mobile);
+    padding-inline: var(--primitive-space-300);
   }
 }

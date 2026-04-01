@@ -1,18 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import NextLink from 'next/link';
 import { Button, Container } from '@/shared/ui';
 import styles from './success.module.css';
 
 export default function CheckoutSuccessPage() {
-  const [orderId, setOrderId] = useState<string | null>(null);
-
-  useEffect(() => {
+  const [orderId] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
     const id = sessionStorage.getItem('lastOrderId');
-    setOrderId(id);
     if (id) sessionStorage.removeItem('lastOrderId');
-  }, []);
+    return id;
+  });
 
   return (
     <Container className={styles.page}>

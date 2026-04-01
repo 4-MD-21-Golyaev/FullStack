@@ -1,4 +1,4 @@
-import { UserAddress } from '@/domain/user/UserAddress';
+import { type UserAddress } from '@/domain/user/UserAddress';
 
 export interface UserAddressRepository {
     findByUserId(userId: string): Promise<UserAddress[]>;

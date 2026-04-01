@@ -1,11 +1,11 @@
-import { PaymentRepository } from '@/application/ports/PaymentRepository';
-import { TransactionRunner } from '@/application/ports/TransactionRunner';
-import { PaymentGateway } from '@/application/ports/PaymentGateway';
+import { type PaymentRepository } from '@/application/ports/PaymentRepository';
+import { type TransactionRunner } from '@/application/ports/TransactionRunner';
+import { type PaymentGateway } from '@/application/ports/PaymentGateway';
 import { cancelOrder, startDelivery } from '@/domain/order/transitions';
-import { Order } from '@/domain/order/Order';
+import { type Order } from '@/domain/order/Order';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
-import { Payment } from '@/domain/payment/Payment';
-import { Product } from '@/domain/product/Product';
+import { type Payment } from '@/domain/payment/Payment';
+import { type Product } from '@/domain/product/Product';
 import { randomUUID } from 'crypto';
 
 type ConfirmPaymentResult = {

@@ -52,62 +52,17 @@ export interface IconProps {
   name: IconName
   size?: number
   glyphSize?: number
+  /**
+   * Цвет иконки. По умолчанию наследуется через `currentColor` —
+   * достаточно задать `color` на родительском элементе через CSS-токен.
+   * Явный проп нужен только для хардкода вне CSS-контекста.
+   */
   color?: string
   className?: string
 }
 
 const ICON_CONTAINER_SIZE = 20
 const DEFAULT_GLYPH_SIZE = 16
-
-// viewBox per icon (when not 0 0 20 20 the svg scales via preserveAspectRatio)
-const VIEWBOXES: Partial<Record<IconName, string>> = {
-  burger:        '0 0 16 12',
-  catalog:       '0 0 18 16',
-  search:        '0 0 16 16',
-  cross:         '0 0 12 12',
-  repeat:        '0 0 14 16',
-  minus:         '0 0 12 2',
-  plus:          '0 0 12 12',
-  arrow:         '0 0 16 16',
-  dropdown:      '0 0 10 16',
-  dropup:        '0 0 10 16',
-  arrow_left:    '0 0 10 16',
-  arrow_right:   '0 0 10 16',
-  drag:          '0 0 17 17',
-  checkbox_empty:'0 0 16 16',
-  checkbox:      '0 0 16 16',
-  check:         '0 0 16 12',
-  like:          '0 0 16 14',
-  like_filled:   '0 0 16 14',
-  account:       '0 0 16 16',
-  percent:       '0 0 16 16',
-  address:       '0 0 16 12',
-  cart:          '0 0 14 16',
-  card:          '0 0 16 17',
-  exit:          '0 0 16 16',
-  sort:          '0 0 16 15',
-  filter:        '0 0 16 15',
-  delete:        '0 0 16 17',
-  edit:          '0 0 16 16',
-  star:          '0 0 16 15',
-  info:          '0 0 16 16',
-  attention:     '0 0 16 16',
-  question:      '0 0 16 16',
-  wa:            '0 0 16 16',
-  vk:            '0 0 16 16',
-  phone:         '0 0 16 16',
-  tg:            '0 0 16 16',
-  location:      '0 0 13 16',
-  location_pin:  '0 0 13 16',
-  ruble:         '0 0 16 16',
-  payment:       '0 0 16 12',
-  money:         '0 0 15 15',
-  calendar:      '0 0 16 16',
-  confirm:       '0 0 16 15',
-  comment:       '0 0 16 16',
-  setting:       '0 0 16 16',
-  dot:           '0 0 20 20',
-}
 
 const ICONS: Record<IconName, string> = {
   burger:

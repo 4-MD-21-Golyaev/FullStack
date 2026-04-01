@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import { ProcessOutboxUseCase } from '../ProcessOutboxUseCase';
-import { OutboxRepository, OutboxEvent } from '@/application/ports/OutboxRepository';
-import { MoySkladOrderGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladOrderGateway';
-import { OrderRepository } from '@/application/ports/OrderRepository';
-import { UserRepository } from '@/application/ports/UserRepository';
-import { EmailGateway } from '@/application/ports/EmailGateway';
-import { Order } from '@/domain/order/Order';
+import { type OutboxRepository, type OutboxEvent } from '@/application/ports/OutboxRepository';
+import { type MoySkladOrderGateway, MoySkladProductNotFoundError } from '@/application/ports/MoySkladOrderGateway';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
+import { type UserRepository } from '@/application/ports/UserRepository';
+import { type EmailGateway } from '@/application/ports/EmailGateway';
+import { type Order } from '@/domain/order/Order';
 import { OrderState } from '@/domain/order/OrderState';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 

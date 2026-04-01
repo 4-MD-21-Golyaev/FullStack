@@ -1,13 +1,13 @@
 .page {
   background: var(--ctx-color-bg-surface);
-  padding-block: var(--ctx-space-stack-xl);
+  padding-block: var(--primitive-space-1200);
 }
 
 /* Empty state */
 .empty {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
   align-items: flex-start;
 }
 
@@ -22,7 +22,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: var(--ctx-space-stack-lg);
+  margin-bottom: var(--primitive-space-800);
 }
 
 .title {
@@ -44,14 +44,14 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
 }
 
 /* Section (В наличии / Нет в наличии) */
 .section {
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-lg);
+  gap: var(--primitive-space-800);
 }
 
 .sectionTitle {
@@ -84,7 +84,7 @@
 
 .pendingInfo {
   display: flex;
-  gap: var(--ctx-space-inline-md);
+  gap: var(--primitive-space-400);
   align-items: flex-start;
   width: 390px; /* mirrors WideProductCard info column */
   flex-shrink: 0;
@@ -99,7 +99,7 @@
 
 .pendingActions {
   display: flex;
-  gap: var(--ctx-space-inline-lg);
+  gap: var(--primitive-space-600);
   align-items: center;
   flex-shrink: 0;
 }
@@ -125,7 +125,7 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--ctx-space-stack-md);
+  gap: var(--primitive-space-400);
 }
 
 .checkoutBtn {

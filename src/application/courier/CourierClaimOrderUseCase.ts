@@ -1,5 +1,5 @@
-import { OrderRepository } from '@/application/ports/OrderRepository';
-import { AuditLogRepository } from '@/application/ports/AuditLogRepository';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
+import { type AuditLogRepository } from '@/application/ports/AuditLogRepository';
 
 interface CourierClaimOrderInput {
     orderId: string;

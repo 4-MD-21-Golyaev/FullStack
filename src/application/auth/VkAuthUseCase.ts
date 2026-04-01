@@ -1,8 +1,8 @@
 import { randomUUID } from 'crypto';
-import { VkIdentityRepository } from '@/application/ports/VkIdentityRepository';
-import { UserRepository } from '@/application/ports/UserRepository';
-import { RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
-import { TokenService } from '@/application/ports/TokenService';
+import { type VkIdentityRepository } from '@/application/ports/VkIdentityRepository';
+import { type UserRepository } from '@/application/ports/UserRepository';
+import { type RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
+import { type TokenService } from '@/application/ports/TokenService';
 import { InvalidVkSignatureError, VkIdentityNotLinkedError, UserNotFoundError } from '@/domain/auth/errors';
 import { validateVkSignature } from '@/lib/auth/vk-signature';
 

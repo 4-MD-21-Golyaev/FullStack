@@ -1,5 +1,5 @@
-import { CartRepository } from '@/application/ports/CartRepository';
-import { ProductRepository } from '@/application/ports/ProductRepository';
+import { type CartRepository } from '@/application/ports/CartRepository';
+import { type ProductRepository } from '@/application/ports/ProductRepository';
 
 export interface CartItemView {
     productId: string;

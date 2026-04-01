@@ -1,5 +1,5 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
-import { RefreshTokenRepository, RefreshTokenRecord } from '@/application/ports/RefreshTokenRepository';
+import { type RefreshTokenRepository, type RefreshTokenRecord } from '@/application/ports/RefreshTokenRepository';
 import { prisma } from '../db/prismaClient';
 
 type DbClient = PrismaClient | Prisma.TransactionClient;

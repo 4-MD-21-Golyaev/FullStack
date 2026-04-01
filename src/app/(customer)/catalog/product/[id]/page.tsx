@@ -32,7 +32,6 @@ export default function ProductPage() {
   useEffect(() => {
     if (!productId) return;
     let active = true;
-    setLoading(true);
     fetch('/api/products')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load products');
@@ -54,6 +53,7 @@ export default function ProductPage() {
       });
     return () => {
       active = false;
+      setLoading(true);
     };
   }, [productId]);
 

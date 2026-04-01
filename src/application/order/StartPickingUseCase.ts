@@ -1,4 +1,4 @@
-import { OrderRepository } from '@/application/ports/OrderRepository';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
 import { startPicking } from '@/domain/order/transitions';
 
 interface StartPickingInput {

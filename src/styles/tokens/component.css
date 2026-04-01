@@ -4,7 +4,7 @@
  *   (a) Contains a fixed value from Figma not present in the ctx layer
  *       (px/rem/rgba literals, e.g. 240px, 6px, rgba(255,255,255,0.08))
  *   (b) Combines multiple ctx-tokens into a single multi-value shorthand property,
- *       e.g. `--button-padding-sm: var(--ctx-space-inset-sm) 12px`
+ *       e.g. `--button-padding-sm: var(--primitive-space-200) 12px`
  *
  * A single-line alias `--comp-x: var(--ctx-y)` is FORBIDDEN — use the ctx token directly
  * in the CSS Module instead.
@@ -17,36 +17,33 @@
   --button-font-weight:      500; /* [Desktop]/Utilities/Medium */
 
   /* Fixed Figma padding recipes (vertical ctx-token, horizontal Figma-literal) */
-  --button-padding-sm: var(--ctx-space-inset-sm) var(--ctx-space-inset-md);
-  --button-padding-md: var(--ctx-space-inset-md) var(--ctx-space-inset-xl);
-  --button-padding-lg: var(--ctx-space-inset-lg) var(--ctx-space-inset-xl);
-
-  /* ── LikeButton ── */
-  --like-button-radius: var(--ctx-radius-lg);
+  --button-padding-sm: var(--primitive-space-200) var(--primitive-space-300);
+  --button-padding-md: var(--primitive-space-300) var(--primitive-space-600);
+  --button-padding-lg: var(--primitive-space-400) var(--primitive-space-600);
 
   /* ── Input ── */
   --input-border:        1px solid var(--ctx-color-border-default);
   --input-border-focus:  2px solid var(--ctx-color-border-focus);
   --input-border-danger: 1px solid var(--ctx-color-border-danger);
-  --input-padding:       var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
+  --input-padding:       var(--primitive-space-200) var(--primitive-space-400);
   /* Fixed Figma height/padding per size */
   --input-height-lg:    52px;    /* Figma: Input L */
   --input-height-md:    52px;    /* Figma: Input M */
   --input-height-sm:    44px;    /* Figma: Input S */
-  --input-padding-lg:   var(--ctx-space-inset-lg) 32px;  /* Figma: L horizontal 32px */
-  --input-padding-md:   var(--ctx-space-inset-lg) var(--ctx-space-inset-lg);
-  --input-padding-sm:   12px var(--ctx-space-inset-xl);  /* Figma: S vertical 12px */
+  --input-padding-lg:   var(--primitive-space-400) 32px;  /* Figma: L horizontal 32px */
+  --input-padding-md:   var(--primitive-space-400) var(--primitive-space-400);
+  --input-padding-sm:   12px var(--primitive-space-600);  /* Figma: S vertical 12px */
 
   /* ── Badge ── */
   /* Override: 6px vertical not in spacing scale */
-  --badge-padding-s: var(--ctx-space-inset-xs) var(--ctx-space-inset-sm);  /* 4px 8px */
+  --badge-padding-s: var(--primitive-space-100) var(--primitive-space-200);  /* 4px 8px */
   --badge-padding-m: 6px 12px;   /* Figma: M badge — 6px/12px not in scale */
 
   /* ── Card ── */
   --card-border:  1px solid var(--ctx-color-border-default);
 
   /* ── Table (admin) ── */
-  --table-cell-padding: var(--ctx-space-inset-sm) var(--ctx-space-inset-lg);
+  --table-cell-padding: var(--primitive-space-200) var(--primitive-space-400);
 
   /* ── SlaTimer (override: maps timer states to status colors) ── */
   --sla-color-ok:      var(--ctx-color-status-success);
@@ -96,7 +93,7 @@
 
   /* ── AppMarketButton (fixed Figma dimensions) ── */
   --app-market-btn-height:  44px;   /* Figma: fixed height */
-  --app-market-btn-padding: 10px var(--ctx-space-inset-xl);  /* 10px — no scale equivalent */
+  --app-market-btn-padding: 10px var(--primitive-space-600);  /* 10px — no scale equivalent */
   --app-market-btn-gap:     12px;   /* Figma: icon-text gap */
 
   /* ── Slider ── */

@@ -5,12 +5,12 @@
   width: 217px;
   min-width: 217px;
   height: var(--product-card-h-l); /* 306px — Figma: same height as product cards */
-  border-radius: var(--ctx-radius-control); /* 16px */
+  border-radius: var(--primitive-radius-400); /* 16px */
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--ctx-space-stack-xl) var(--ctx-space-inset-lg); /* 48px 16px */
+  padding: var(--primitive-space-1200) var(--primitive-space-400); /* 48px 16px */
   flex-shrink: 0;
   background-color: var(--ctx-color-bg-subtle); /* fallback when no image */
 }

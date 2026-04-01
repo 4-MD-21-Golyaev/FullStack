@@ -4,7 +4,7 @@
   gap: var(--app-market-btn-gap);
   height: var(--app-market-btn-height);
   padding: var(--app-market-btn-padding);
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   background-color: var(--ctx-color-bg-subtle);
   color: var(--ctx-color-text-default);
   text-decoration: none;

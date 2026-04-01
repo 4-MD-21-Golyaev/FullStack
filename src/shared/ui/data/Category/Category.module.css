@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: flex-start;
   background: var(--ctx-color-bg-category);
-  border-radius: var(--ctx-radius-control);
+  border-radius: var(--primitive-radius-400);
   overflow: hidden;
   flex-shrink: 0;
   text-decoration: none;
@@ -16,13 +16,13 @@
 .sizeL {
   width: 180px; /* Figma: Category/L width */
   height: 180px; /* Figma: Category/L height */
-  padding: var(--ctx-space-inset-lg) 14px; /* 16px top/bottom, 14px Figma literal left/right */
+  padding: var(--primitive-space-400) 14px; /* 16px top/bottom, 14px Figma literal left/right */
 }
 
 .sizeS {
   width: 108px; /* Figma: Category/S width */
   height: 120px; /* Figma: Category/S height */
-  padding: var(--ctx-space-page-mobile) var(--ctx-space-inset-xs); /* 12px top/bottom, 6px Figma literal left/right */
+  padding: var(--primitive-space-300) var(--primitive-space-100); /* 12px top/bottom, 6px Figma literal left/right */
 }
 
 /* ── Image ── */

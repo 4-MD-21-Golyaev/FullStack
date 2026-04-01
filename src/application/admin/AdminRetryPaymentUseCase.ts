@@ -1,7 +1,7 @@
-import { PaymentRepository } from '@/application/ports/PaymentRepository';
-import { PaymentGateway } from '@/application/ports/PaymentGateway';
-import { OrderRepository } from '@/application/ports/OrderRepository';
-import { AuditLogRepository } from '@/application/ports/AuditLogRepository';
+import { type PaymentRepository } from '@/application/ports/PaymentRepository';
+import { type PaymentGateway } from '@/application/ports/PaymentGateway';
+import { type OrderRepository } from '@/application/ports/OrderRepository';
+import { type AuditLogRepository } from '@/application/ports/AuditLogRepository';
 import { PaymentStatus } from '@/domain/payment/PaymentStatus';
 import { Payment } from '@/domain/payment/Payment';
 import { randomUUID } from 'crypto';

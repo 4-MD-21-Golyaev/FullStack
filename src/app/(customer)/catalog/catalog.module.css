@@ -4,7 +4,7 @@
 }
 
 .pageInner {
-  padding-block: var(--ctx-space-stack-xl);
+  padding-block: var(--primitive-space-1200);
 }
 
 .title {
@@ -12,7 +12,7 @@
   font-weight: 700; /* Bold */
   line-height: var(--ctx-line-height-normal);
   color: var(--ctx-color-text-default);
-  margin: 0 0 var(--ctx-space-stack-lg);
+  margin: 0 0 var(--primitive-space-800);
 }
 
 

@@ -1,4 +1,4 @@
-import { MoySkladFolder, MoySkladProduct, MoySkladStockItem } from '@/domain/moysklad/MoySkladProduct';
+import { type MoySkladFolder, type MoySkladProduct, type MoySkladStockItem } from '@/domain/moysklad/MoySkladProduct';
 
 export interface MoySkladCatalogGateway {
     fetchFolders(): Promise<MoySkladFolder[]>;

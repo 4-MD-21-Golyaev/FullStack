@@ -1,4 +1,4 @@
-import { JobRunLogRepository } from '@/application/ports/JobRunLogRepository';
+import { type JobRunLogRepository } from '@/application/ports/JobRunLogRepository';
 
 export type AdminJobName = 'payment-timeout' | 'process-outbox' | 'sync-products';
 

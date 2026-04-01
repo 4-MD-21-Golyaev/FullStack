@@ -1,6 +1,6 @@
 .loading,
 .error {
   text-align: center;
-  padding: var(--ctx-space-stack-lg);
+  padding: var(--primitive-space-800);
   color: var(--ctx-color-text-secondary);
 }

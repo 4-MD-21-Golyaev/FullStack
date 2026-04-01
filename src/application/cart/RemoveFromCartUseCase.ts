@@ -1,4 +1,4 @@
-import { CartRepository } from '@/application/ports/CartRepository';
+import { type CartRepository } from '@/application/ports/CartRepository';
 
 export interface RemoveFromCartInput {
     userId: string;

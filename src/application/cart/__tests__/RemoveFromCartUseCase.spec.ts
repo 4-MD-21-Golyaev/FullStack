@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { RemoveFromCartUseCase } from '../RemoveFromCartUseCase';
-import { CartRepository } from '@/application/ports/CartRepository';
+import { type CartRepository } from '@/application/ports/CartRepository';
 
 function makeCartRepo(): CartRepository {
     return {

@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { type NextRequest } from 'next/server';
 
 // Актуальный список IP ЮKassa: https://yookassa.ru/developers/using-api/webhooks
 const YOOKASSA_CIDRS = [

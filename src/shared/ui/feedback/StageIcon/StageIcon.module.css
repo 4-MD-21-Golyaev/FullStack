@@ -1,49 +1,24 @@
-.root {
-  position: relative;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
+.ring {
+  width: var(--primitive-space-1600);
+  height: var(--primitive-space-1600);
+  border-radius: var(--primitive-radius-FULL);
+  background-color: var(--ctx-color-bg-surface);
   flex-shrink: 0;
-}
-
-.enabled {
-  background-color: var(--ctx-color-bg-subtle);
+  position: relative;
 }
 
 .activated {
-  background-color: var(--ctx-color-action-primary);
+  outline: 3px solid var(--ctx-color-action-primary);
+  outline-offset: -3px;
 }
 
-.inner {
+.surface {
   position: absolute;
-  inset: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.enabled .inner {
-  background-color: var(--ctx-color-bg-surface);
-}
-
-.activated .inner {
-  background-color: var(--stage-icon-inner-activated-bg);
-}
-
-.iconSlot {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.enabled .iconSlot {
-  color: var(--ctx-color-text-default);
-}
-
-.activated .iconSlot {
+  inset: var(--primitive-space-200);
+  border-radius: var(--primitive-radius-FULL);
+  background-color: var(--ctx-color-action-primary);
   color: var(--ctx-color-text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

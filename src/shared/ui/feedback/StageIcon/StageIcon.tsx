@@ -1,15 +1,25 @@
+import type { ReactNode } from 'react';
 import styles from './StageIcon.module.css';
 
 interface StageIconProps {
   state?: 'enabled' | 'activated';
-  icon: React.ReactNode;
+  children: ReactNode;
 }
 
-export function StageIcon({ state = 'enabled', icon }: StageIconProps) {
+/**
+ * Контейнер для иконки этапа. Устанавливает `color: white` на внутренней поверхности,
+ * поэтому дочерние элементы, использующие `currentColor`, автоматически получают белый цвет.
+ *
+ * @example
+ * <StageIcon state="activated">
+ *   <Icon name="calendar" size={20} />
+ * </StageIcon>
+ */
+export function StageIcon({ state = 'enabled', children }: StageIconProps) {
   return (
-    <div className={[styles.root, styles[state]].join(' ')}>
-      <div className={styles.inner}>
-        <div className={styles.iconSlot}>{icon}</div>
+    <div className={[styles.ring, state === 'activated' && styles.activated].filter(Boolean).join(' ')}>
+      <div className={styles.surface}>
+        {children}
       </div>
     </div>
   );

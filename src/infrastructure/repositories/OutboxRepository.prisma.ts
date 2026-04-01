@@ -1,5 +1,5 @@
 import type { PrismaClient, Prisma } from '@prisma/client';
-import { OutboxRepository, OutboxEvent } from '@/application/ports/OutboxRepository';
+import { type OutboxRepository, type OutboxEvent } from '@/application/ports/OutboxRepository';
 import { prisma } from '../db/prismaClient';
 
 type DbClient = PrismaClient | Prisma.TransactionClient;

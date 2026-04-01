@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { EmailGateway } from '@/application/ports/EmailGateway';
+import { type EmailGateway } from '@/application/ports/EmailGateway';
 
 export class NodemailerEmailGateway implements EmailGateway {
     private createTransporter() {

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CreateOrderUseCase } from '../CreateOrderUseCase';
-import { TransactionRunner, TransactionContext } from '../../ports/TransactionRunner';
-import { OrderRepository } from '../../ports/OrderRepository';
-import { ProductRepository } from '../../ports/ProductRepository';
+import { type TransactionRunner, type TransactionContext } from '../../ports/TransactionRunner';
+import { type OrderRepository } from '../../ports/OrderRepository';
+import { type ProductRepository } from '../../ports/ProductRepository';
 import { OrderState } from '@/domain/order/OrderState';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
 
