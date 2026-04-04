@@ -53,13 +53,6 @@
   flex-shrink: 0;
 }
 
-.address {
-  font-size: var(--ctx-font-size-label);
-  color: var(--ctx-color-text-secondary);
-  margin: 0;
-  line-height: var(--ctx-line-height-normal);
-}
-
 .timeRow {
   display: flex;
   align-items: center;

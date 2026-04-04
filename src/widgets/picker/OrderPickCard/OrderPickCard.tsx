@@ -24,7 +24,6 @@ export function OrderPickCard({ order, onClaim, isClaiming = false }: OrderPickC
           <span>{order.items.length} поз.</span>
         </div>
       </div>
-      <p className={styles.address}>{order.address}</p>
       <div className={styles.timeRow}>
         <Clock size={14} className={styles.timeIcon} />
         <span>{formatDistanceToNow(new Date(order.createdAt), { addSuffix: true, locale: ru })}</span>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi, type OrderItemDto, type OrderDto } from '@/lib/api/orders';
@@ -76,7 +76,6 @@ function ItemRow({ item, mode, localQty, maxQty, onQtyChange, onMarkAbsent, onRe
     >
       <div className={styles.itemInfo}>
         <span className={styles.itemName}>{item.name}</span>
-        <span className={styles.itemArticle}>{item.article}</span>
       </div>
 
       <div className={styles.itemControls}>
@@ -167,7 +166,8 @@ export function PickingWorkspace({ order }: Props) {
   const [showComplete, setShowComplete] = useState(false);
 
   // Capture initial items once — server may later drop qty=0 items from order.items
-  const allItems = useRef(order.items).current;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const allItems = useMemo(() => order.items, []);
 
   const [localItems, setLocalItems] = useState<Record<string, ItemLocalState>>(() =>
     Object.fromEntries(
@@ -175,13 +175,13 @@ export function PickingWorkspace({ order }: Props) {
     )
   );
   const localItemsRef = useRef(localItems);
-  localItemsRef.current = localItems;
+  useLayoutEffect(() => { localItemsRef.current = localItems; });
 
   const processedCounterRef = useRef(0);
 
   const [replacements, setReplacements] = useState<Record<string, ReplacementLocalState>>({});
   const replacementsRef = useRef(replacements);
-  replacementsRef.current = replacements;
+  useLayoutEffect(() => { replacementsRef.current = replacements; });
 
   const [searchForProductId, setSearchForProductId] = useState<string | null>(null);
 
@@ -343,10 +343,6 @@ export function PickingWorkspace({ order }: Props) {
     completeHint = `${absent.length} поз. без замены — будут удалены из заказа`;
   }
 
-  const localTotal =
-    collected.reduce((sum, item) => sum + item.price * (localItems[item.productId]?.qty ?? 0), 0) +
-    Object.values(replacements).reduce((sum, r) => sum + r.price * r.qty, 0);
-
   const canReplaceAbsent = order.absenceResolutionStrategy !== AbsenceResolutionStrategy.AUTO_REMOVE;
 
   const isNotStarted = order.state === OrderState.CREATED;
@@ -375,8 +371,6 @@ export function PickingWorkspace({ order }: Props) {
           </Button>
         </div>
       </div>
-
-      <p className={styles.address}>{order.address}</p>
 
       <div className={`${styles.absenceBanner} ${CALL_STRATEGIES.has(order.absenceResolutionStrategy) ? styles.absenceBannerCall : ''}`}>
         <span className={styles.absenceBannerLabel}>При отсутствии</span>
@@ -463,7 +457,6 @@ export function PickingWorkspace({ order }: Props) {
                       {/* Исходный товар */}
                       <div className={styles.absentOriginal}>
                         <span className={styles.itemName}>{item.name}</span>
-                        <span className={styles.itemArticle}>{item.article}</span>
                         <Button variant="ghost" size="sm" onClick={() => handleRestore(item.productId)}>
                           Восстановить
                         </Button>
@@ -476,7 +469,6 @@ export function PickingWorkspace({ order }: Props) {
                           <div key={repId} className={styles.replacementRow}>
                             <div className={styles.itemInfo}>
                               <span className={styles.itemName}>{rep.name}</span>
-                              <span className={styles.itemArticle}>{rep.article}</span>
                             </div>
                             <div className={styles.itemControls}>
                               <Counter
