@@ -4,7 +4,7 @@ import styles from './NarrowProductCard.module.css';
 
 export interface NarrowProductCardProps {
   name: string;
-  imageSrc: string;
+  imageSrc: string | null;
   quantity: number;
   unitPrice: number;
   totalPrice: number;

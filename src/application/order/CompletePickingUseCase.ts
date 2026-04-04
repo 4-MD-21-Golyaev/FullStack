@@ -46,6 +46,12 @@ export class CompletePickingUseCase {
                 },
             });
 
+            await outboxRepository.save({
+                id: randomUUID(),
+                eventType: 'ORDER_READY_FOR_PAYMENT',
+                payload: { orderId: updated.id },
+            });
+
             return updated;
         });
     }

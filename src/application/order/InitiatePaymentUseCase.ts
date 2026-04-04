@@ -31,13 +31,12 @@ export class InitiatePaymentUseCase {
             throw new Error('Order not found');
         }
 
-        // Идемпотентность: оплата уже была обработана
-        if (order.state === OrderState.DELIVERY || order.state === OrderState.CLOSED) {
-            throw new Error('Payment already processed for this order');
+        if (order.state !== OrderState.PAYMENT) {
+            throw new Error('Order is not in PAYMENT state');
         }
 
         // Окно оплаты истекло: заказ слишком долго находится в состоянии PAYMENT
-        if (order.state === OrderState.PAYMENT && isPaymentWindowExpired(order.updatedAt)) {
+        if (isPaymentWindowExpired(order.updatedAt)) {
             await this.transactionRunner.run(async ({ orderRepository }) => {
                 const freshOrder = await orderRepository.findById(input.orderId);
                 if (freshOrder && freshOrder.state === OrderState.PAYMENT) {

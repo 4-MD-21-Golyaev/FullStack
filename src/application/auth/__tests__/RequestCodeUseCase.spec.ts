@@ -13,6 +13,10 @@ function makeOtpRepo(): OtpRepository {
 function makeEmailGateway(): EmailGateway {
     return {
         sendOtp: vi.fn().mockResolvedValue(undefined),
+        sendOrderConfirmed: vi.fn().mockResolvedValue(undefined),
+        sendOrderOutForDelivery: vi.fn().mockResolvedValue(undefined),
+        sendOrderDelivered: vi.fn().mockResolvedValue(undefined),
+        sendOrderReadyForPayment: vi.fn().mockResolvedValue(undefined),
     };
 }
 

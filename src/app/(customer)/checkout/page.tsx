@@ -118,16 +118,18 @@ export default function CheckoutPage() {
   if (authLoading) return null;
   if (!user) return null;
 
-  if (items.length === 0) {
+  const inStockItems = items.filter(i => i.stock > 0);
+
+  if (inStockItems.length === 0) {
     router.replace('/cart');
     return null;
   }
 
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const subtotal = inStockItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const discount = Math.round(subtotal * DISCOUNT_PERCENT / 100);
   const deliveryCost = form.deliveryType === 'courier' ? DELIVERY_COST : undefined;
   const total = subtotal + (deliveryCost ?? 0) - discount;
-  const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
+  const itemCount = inStockItems.reduce((sum, i) => sum + i.quantity, 0);
 
   const getOrderAddress = (): string => {
     if (form.deliveryType === 'pickup') {
@@ -144,13 +146,12 @@ export default function CheckoutPage() {
       const order = await ordersApi.createOrder({
         address: getOrderAddress(),
         absenceResolutionStrategy: form.absenceStrategy,
-        items: items.map(i => ({ productId: i.productId, quantity: i.quantity })),
+        items: inStockItems.map(i => ({ productId: i.productId, quantity: i.quantity })),
         scheduledDate: form.scheduledDate ?? undefined,
         scheduledTimeSlot: form.scheduledTimeSlot ?? undefined,
       });
       sessionStorage.setItem('lastOrderId', order.id);
-      const { confirmationUrl } = await ordersApi.initiatePayment(order.id);
-      window.location.href = confirmationUrl;
+      router.push(`/orders/${order.id}`);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Произошла ошибка. Попробуйте ещё раз.');
     } finally {
@@ -176,7 +177,7 @@ export default function CheckoutPage() {
           onClick={handleSubmit}
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Оформляем...' : `Оплатить ${total.toLocaleString('ru-RU')} ₽`}
+          {isSubmitting ? 'Оформляем...' : 'Подтвердить заказ'}
         </Button>
       );
     }
@@ -424,11 +425,11 @@ export default function CheckoutPage() {
             {stepButton()}
             {step === 4 && (
               <div className={styles.itemsList}>
-                {items.map(item => (
+                {inStockItems.map(item => (
                   <NarrowProductCard
                     key={item.productId}
                     name={item.name}
-                    imageSrc={item.imagePath ?? '/images/placeholder.png'}
+                    imageSrc={item.imagePath}
                     quantity={item.quantity}
                     unitPrice={item.price}
                     totalPrice={item.price * item.quantity}

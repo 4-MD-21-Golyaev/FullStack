@@ -16,16 +16,15 @@
 
 .header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: var(--primitive-space-400);
 }
 
 .headerLeft {
   display: flex;
-  align-items: center;
-  gap: var(--primitive-space-400);
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: var(--primitive-space-300);
   min-width: 0;
 }
 
@@ -36,17 +35,44 @@
   color: var(--ctx-color-text-default);
 }
 
-/* Info grid — 2-column layout for ProfileField */
-.infoGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--ctx-grid-gutter);
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--primitive-space-300);
 }
 
-@media (max-width: 600px) {
-  .infoGrid {
+.orderNumber {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 450; /* Figma: Utilities/Caption */
+  line-height: 1.15;
+  color: var(--ctx-color-text-default);
+}
+
+.headerButtons {
+  display: flex;
+  align-items: center;
+  gap: var(--primitive-space-200);
+  flex-shrink: 0;
+}
+
+/* Info two-column layout */
+.infoColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--primitive-space-600);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .infoColumns {
     grid-template-columns: 1fr;
   }
+}
+
+.infoCol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-200);
 }
 
 /* Items section */
@@ -57,106 +83,37 @@
 }
 
 .sectionTitle {
-  font-size: var(--ctx-font-size-h2);
+  font-size: var(--ctx-font-size-h3);
   font-weight: 700; /* Figma: Heading/H2 */
   line-height: var(--ctx-line-height-tight);
   color: var(--ctx-color-text-default);
 }
 
 .itemList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: column;
-}
-
-.item {
-  display: flex;
-  align-items: center;
-  gap: var(--primitive-space-400);
-  padding-block: var(--primitive-space-200);
-  border-bottom: 1px solid var(--ctx-color-border-default);
-}
-
-.itemImage {
-  flex-shrink: 0;
-}
-
-.itemImagePlaceholder {
-  width: 60px;
-  height: 60px;
-  flex-shrink: 0;
-  border-radius: var(--primitive-radius-200);
-  background: var(--ctx-color-bg-surface);
-}
-
-.itemInfo {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--primitive-space-100); /* 4px */
-}
-
-.itemName {
-  font-size: var(--ctx-font-size-body);
-  font-weight: 700; /* Figma: Body/Bold */
-  color: var(--ctx-color-text-default);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.itemArticle {
-  font-size: var(--ctx-font-size-label);
-  font-weight: 450; /* Figma: Utilities/Secondary */
-  color: var(--ctx-color-text-secondary);
-}
-
-.itemPricing {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--primitive-space-100); /* 4px */
-  flex-shrink: 0;
-}
-
-.itemQty {
-  font-size: var(--ctx-font-size-label);
-  font-weight: 450; /* Figma: Utilities/Secondary */
-  color: var(--ctx-color-text-secondary);
-  display: flex;
-  align-items: center;
-  gap: var(--primitive-space-100); /* 4px */
-}
-
-.itemSubtotal {
-  font-size: var(--ctx-font-size-body);
-  font-weight: 700; /* Figma: Body/Bold */
-  color: var(--ctx-color-text-default);
-}
-
-.total {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: var(--primitive-space-200);
-}
-
-.totalLabel {
-  font-size: var(--ctx-font-size-body);
-  font-weight: 700; /* Figma: Body/Bold */
-  color: var(--ctx-color-text-default);
-}
-
-.totalValue {
-  font-size: var(--ctx-font-size-h2);
-  font-weight: 700; /* Figma: Heading/H2 */
-  color: var(--ctx-color-text-default);
+  gap: var(--primitive-space-600);
 }
 
 .notFound {
   font-size: var(--ctx-font-size-body);
   color: var(--ctx-color-text-secondary);
+}
+
+.payBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-200);
+}
+
+.payNote {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 450; /* Figma: Utilities/Caption */
+  color: var(--ctx-color-text-secondary);
+}
+
+.payError {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 450; /* Figma: Utilities/Caption */
+  color: var(--ctx-color-text-danger);
 }

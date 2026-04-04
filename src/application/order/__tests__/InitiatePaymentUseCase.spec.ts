@@ -107,14 +107,15 @@ describe('InitiatePaymentUseCase', () => {
         expect(secondCall.externalId).toBe('yk-ext-id');
     });
 
-    it('throws idempotency error when order is already in DELIVERY', async () => {
+    it('throws when order is already in DELIVERY (wrong state — new guard fires first)', async () => {
         const order = makeOrder(OrderState.DELIVERY);
         const { orderRepo, paymentRepo, transactionRunner } = makeRepos(order, makeProduct(10));
 
         const useCase = new InitiatePaymentUseCase(orderRepo, paymentRepo, mockGateway, transactionRunner);
 
+        // The new guard (state !== PAYMENT) fires before any payment idempotency check.
         await expect(useCase.execute({ orderId: 'order-1', returnUrl: 'https://example.com/return' }))
-            .rejects.toThrow('Payment already processed');
+            .rejects.toThrow('Order is not in PAYMENT state');
 
         expect(paymentRepo.save).not.toHaveBeenCalled();
         expect(mockGateway.createPayment).not.toHaveBeenCalled();
@@ -142,6 +143,29 @@ describe('InitiatePaymentUseCase', () => {
 
         await expect(useCase.execute({ orderId: 'missing', returnUrl: 'https://example.com/return' }))
             .rejects.toThrow('Order not found');
+    });
+
+    it('throws if order.state is not PAYMENT', async () => {
+        const order = makeOrder(OrderState.CREATED);
+        const { orderRepo, paymentRepo, transactionRunner } = makeRepos(order, makeProduct(10));
+
+        const useCase = new InitiatePaymentUseCase(orderRepo, paymentRepo, mockGateway, transactionRunner);
+
+        await expect(useCase.execute({ orderId: 'order-1', returnUrl: 'https://example.com/return' }))
+            .rejects.toThrow('Order is not in PAYMENT state');
+
+        expect(paymentRepo.save).not.toHaveBeenCalled();
+        expect(mockGateway.createPayment).not.toHaveBeenCalled();
+    });
+
+    it('throws if order.state is PICKING (not PAYMENT)', async () => {
+        const order = makeOrder(OrderState.PICKING);
+        const { orderRepo, paymentRepo, transactionRunner } = makeRepos(order, makeProduct(10));
+
+        const useCase = new InitiatePaymentUseCase(orderRepo, paymentRepo, mockGateway, transactionRunner);
+
+        await expect(useCase.execute({ orderId: 'order-1', returnUrl: 'https://example.com/return' }))
+            .rejects.toThrow('Order is not in PAYMENT state');
     });
 
     it('marks payment FAILED and rethrows when gateway call fails after local PENDING created', async () => {

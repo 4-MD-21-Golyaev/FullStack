@@ -36,7 +36,7 @@ export function SaleSlider({ title, imageSrc, products, loading }: SaleSliderPro
                   slug={p.id}
                   name={p.name}
                   price={p.price}
-                  image={p.imagePath ?? '/images/placeholder.png'}
+                  image={p.imagePath}
                 />
               ))}
         </SliderContainer>

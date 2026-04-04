@@ -104,6 +104,11 @@ export class ProcessOutboxUseCase {
                 await this.moySkladGateway.updateCustomerOrderState(order.moySkladId);
                 break;
             }
+            case 'ORDER_READY_FOR_PAYMENT': {
+                const { email, order } = await this.resolveOrderEmail(p.orderId);
+                await this.emailGateway.sendOrderReadyForPayment(email, order.id, order.totalAmount);
+                break;
+            }
             case 'ORDER_CONFIRMED':
             case 'ORDER_OUT_FOR_DELIVERY':
             case 'ORDER_DELIVERED': {

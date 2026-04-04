@@ -67,6 +67,7 @@ model User {
 
   orders        Order[]
   cartItems     CartItem[]
+  favorites     Favorite[]
   refreshTokens RefreshToken[]
   pickerClaims    Order[] @relation("PickerClaims")
   deliveryClaims  Order[] @relation("DeliveryClaims")
@@ -149,6 +150,7 @@ model Product {
   category   Category @relation(fields: [categoryId], references: [id])
 
   cartItems  CartItem[]
+  favorites  Favorite[]
   orderItems OrderItem[]
 }
 
@@ -167,6 +169,24 @@ model CartItem {
   product   Product @relation(fields: [productId], references: [id])
 
   quantity  Int
+
+  @@unique([userId, productId])
+}
+
+//////////////////////////////////////////////////////
+// FAVORITES
+//////////////////////////////////////////////////////
+
+model Favorite {
+  id        String @id @default(uuid())
+
+  userId    String
+  user      User   @relation(fields: [userId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
 
   @@unique([userId, productId])
 }

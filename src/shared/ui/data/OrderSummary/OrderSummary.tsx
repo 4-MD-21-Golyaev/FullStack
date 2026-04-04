@@ -6,8 +6,8 @@ export interface OrderSummaryProps {
   totalWeightKg?: number;
   subtotal: number;
   deliveryCost?: number;
-  discount: number;
-  discountPercent: number;
+  discount?: number;
+  discountPercent?: number;
   total: number;
   className?: string;
 }
@@ -47,22 +47,26 @@ export function OrderSummary({
         <span>{formatPrice(subtotal)}</span>
       </div>
 
-      {deliveryCost !== undefined && (
+      {deliveryCost !== undefined && deliveryCost > 0 && (
         <div className={styles.row}>
           <span>Доставка</span>
           <span>{formatPrice(deliveryCost)}</span>
         </div>
       )}
 
-      <div className={styles.row}>
-        <span>Скидка</span>
-        <span>-{formatPrice(discount)}</span>
-      </div>
+      {discount !== undefined && discount > 0 && (
+        <div className={styles.row}>
+          <span>Скидка</span>
+          <span>-{formatPrice(discount)}</span>
+        </div>
+      )}
 
-      <div className={styles.row}>
-        <span>Персональная скидка</span>
-        <Badge variant="discount">-{discountPercent}%</Badge>
-      </div>
+      {discountPercent !== undefined && discountPercent > 0 && (
+        <div className={styles.row}>
+          <span>Персональная скидка</span>
+          <Badge variant="discount">-{discountPercent}%</Badge>
+        </div>
+      )}
     </div>
   );
 }

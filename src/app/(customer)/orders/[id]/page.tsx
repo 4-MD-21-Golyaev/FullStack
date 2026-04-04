@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
@@ -13,24 +14,35 @@ import {
   ProfileField,
   Button,
   Skeleton,
-  CardImage,
-  Price,
+  WideProductCard,
+  OrderSummary,
 } from '@/shared/ui';
-import { OrderTimeline } from '@/widgets/customer/OrderTimeline/OrderTimeline';
 import { ordersApi } from '@/lib/api/orders';
 import { OrderState } from '@/domain/order/OrderState';
 import { getCustomerOrderStatusConfig } from '@/lib/order-status-config';
-import { pluralizeItems } from '@/lib/pluralize';
 import { useAuth } from '../../AuthContext';
+import { useFavorites } from '../../FavoritesContext';
 import styles from './order.module.css';
 
 const CANCELLABLE_STATES = [OrderState.CREATED, OrderState.PICKING];
+const PAYABLE_STATES = [OrderState.CREATED, OrderState.PICKING, OrderState.PAYMENT];
+
+const ABSENCE_LABELS: Record<string, string> = {
+  CALL_REPLACE: 'Позвонить мне. Заменить, если не отвечу',
+  CALL_REMOVE:  'Позвонить мне. Убрать, если не отвечу',
+  AUTO_REPLACE: 'Заменить автоматически',
+  AUTO_REMOVE:  'Убрать автоматически',
+};
 
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
   const { refresh } = useAuth();
+  const { favoriteIds, toggleFavorite } = useFavorites();
+
+  const [isPaying, setIsPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
 
   const { data: order, isLoading } = useQuery({
     queryKey: ['my-orders', id],
@@ -43,7 +55,25 @@ export default function OrderDetailPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['my-orders'] }),
   });
 
+  const repeatMutation = useMutation({
+    mutationFn: () => ordersApi.repeatOrder(id),
+    onSuccess: () => router.push('/orders'),
+  });
+
   const isCancellable = order ? CANCELLABLE_STATES.includes(order.state) : false;
+
+  async function handlePay() {
+    setIsPaying(true);
+    setPayError(null);
+    try {
+      const { confirmationUrl } = await ordersApi.initiatePayment(id);
+      window.location.href = confirmationUrl;
+    } catch (e) {
+      setPayError(e instanceof Error ? e.message : 'Ошибка оплаты');
+    } finally {
+      setIsPaying(false);
+    }
+  }
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -101,70 +131,100 @@ export default function OrderDetailPage() {
             <div className={styles.header}>
               <div className={styles.headerLeft}>
                 <h1 className={styles.title}>
-                  Заказ от {format(new Date(order.createdAt), 'd MMMM yyyy', { locale: ru })}
+                  Заказ от {format(new Date(order.createdAt), 'd MMMM', { locale: ru })}
                 </h1>
-                <OrderStatusBadge
-                  label={orderStatusConfig.label}
-                  bgColor={orderStatusConfig.bgColor}
-                  color="var(--ctx-color-text-inverse)"
+                <div className={styles.headerMeta}>
+                  <span className={styles.orderNumber}>№ {order.id.slice(0, 10)}</span>
+                  <OrderStatusBadge
+                    label={orderStatusConfig.label}
+                    bgColor={orderStatusConfig.bgColor}
+                    color="var(--ctx-color-text-inverse)"
+                  />
+                </div>
+              </div>
+              <div className={styles.headerButtons}>
+                <Button variant="secondary" size="md" onClick={() => repeatMutation.mutate()}>
+                  Повторить заказ
+                </Button>
+                {isCancellable && (
+                  <Button variant="tertiary" size="md" onClick={() => cancelMutation.mutate()}>
+                    Отменить
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Info section — 2 columns */}
+            <div className={styles.infoColumns}>
+              {/* Left column: delivery details */}
+              <div className={styles.infoCol}>
+                {order.customerPhone && (
+                  <ProfileField label="Получатель" value={order.customerPhone} />
+                )}
+                <ProfileField label="Адрес доставки" value={order.address || 'Не указан'} />
+                {order.scheduledDate && (
+                  <ProfileField
+                    label="Дата и время"
+                    value={[
+                      format(new Date(order.scheduledDate), 'd MMMM', { locale: ru }),
+                      order.scheduledTimeSlot,
+                    ]
+                      .filter(Boolean)
+                      .join(', ')}
+                  />
+                )}
+                <ProfileField
+                  label="Если товар закончился"
+                  value={ABSENCE_LABELS[order.absenceResolutionStrategy] ?? order.absenceResolutionStrategy}
                 />
               </div>
-              {isCancellable && (
-                <Button variant="tertiary" size="md" onClick={() => cancelMutation.mutate()}>
-                  Отменить
-                </Button>
-              )}
-            </div>
-
-            {/* Info grid */}
-            <div className={styles.infoGrid}>
-              <ProfileField label="Статус" value={orderStatusConfig.label} />
-              <ProfileField label="Адрес доставки" value={order.address || 'Не указан'} />
-              <ProfileField
-                label="Дата заказа"
-                value={format(new Date(order.createdAt), 'd MMMM yyyy', { locale: ru })}
-              />
-              <ProfileField label="Номер заказа" value={`#${order.id.slice(0, 8)}`} />
-              <ProfileField label="Позиций" value={pluralizeItems(order.items.length)} />
-            </div>
-
-            {/* Order timeline */}
-            <OrderTimeline state={order.state} />
-
-            {/* Items section */}
-            <section className={styles.itemsSection}>
-              <h2 className={styles.sectionTitle}>Состав заказа</h2>
-              <ul className={styles.itemList}>
-                {order.items.map((item) => (
-                  <li key={item.productId} className={styles.item}>
-                    {item.imageSrc ? (
-                      <CardImage
-                        src={item.imageSrc}
-                        size="M"
-                        alt={item.name}
-                        className={styles.itemImage}
-                      />
-                    ) : (
-                      <div className={styles.itemImagePlaceholder} aria-hidden="true" />
+              {/* Right column: summary + payment */}
+              <div className={styles.infoCol}>
+                <OrderSummary
+                  itemCount={order.items.reduce((s, i) => s + i.quantity, 0)}
+                  subtotal={order.items.reduce((s, i) => s + i.price * i.quantity, 0)}
+                  total={order.totalAmount}
+                />
+                {order.payment && (
+                  <ProfileField label="Способ оплаты" value="Онлайн-оплата" />
+                )}
+                {PAYABLE_STATES.includes(order.state) && (
+                  <div className={styles.payBlock}>
+                    {order.state !== OrderState.PAYMENT && (
+                      <p className={styles.payNote}>Оплата доступна после сборки</p>
                     )}
-                    <div className={styles.itemInfo}>
-                      <span className={styles.itemName}>{item.name}</span>
-                      <span className={styles.itemArticle}>Арт. {item.article}</span>
-                    </div>
-                    <div className={styles.itemPricing}>
-                      <span className={styles.itemQty}>
-                        {item.quantity} шт. × <Price value={item.price} />
-                      </span>
-                      <span className={styles.itemSubtotal}>
-                        <Price value={item.price * item.quantity} />
-                      </span>
-                    </div>
-                  </li>
+                    <Button
+                      variant="primary"
+                      size="md"
+                      onClick={handlePay}
+                      disabled={order.state !== OrderState.PAYMENT || isPaying}
+                    >
+                      Оплатить
+                    </Button>
+                    {payError && <p className={styles.payError}>{payError}</p>}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Product list */}
+            <section className={styles.itemsSection}>
+              <h2 className={styles.sectionTitle}>Список товаров</h2>
+              <div className={styles.itemList}>
+                {order.items.map((item) => (
+                  <WideProductCard
+                    key={item.productId}
+                    variant="history"
+                    name={item.name}
+                    imageSrc={item.imageSrc}
+                    pricePerUnit={item.price}
+                    price={item.price * item.quantity}
+                    quantity={item.quantity}
+                    inStock={true}
+                    liked={favoriteIds.has(item.productId)}
+                    onLike={() => toggleFavorite(item.productId)}
+                  />
                 ))}
-              </ul>
-              <div className={styles.total}>
-                <span className={styles.totalLabel}>Итого</span>
-                <Price value={order.totalAmount} className={styles.totalValue} />
               </div>
             </section>
           </main>

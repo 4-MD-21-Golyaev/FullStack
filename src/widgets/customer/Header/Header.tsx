@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 import { Logo, IconButton, CartButton, Button } from '@/shared/ui';
 import { SearchBar } from '@/features/product-search';
@@ -13,8 +13,11 @@ export function Header() {
   const { totalItems } = useCart();
   const { user, openAuthModal } = useAuth();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   return (
     <header className={styles.root}>
       {/* Top bar — phone numbers */}
@@ -57,14 +60,21 @@ export function Header() {
               size="lg"
               variant="white"
               aria-label="Профиль"
-              onClick={user ? undefined : () => openAuthModal()}
+              onClick={user ? () => router.push('/orders') : () => openAuthModal()}
             />
-            <IconButton
-              icon="like"
-              size="lg"
-              variant="white"
-              aria-label="Избранное"
-            />
+          <IconButton
+            icon="like"
+            size="lg"
+            variant="white"
+            aria-label="Избранное"
+            onClick={() => {
+              if (user) {
+                router.push('/favorites');
+              } else {
+                openAuthModal('/favorites');
+              }
+            }}
+          />
             <Link href="/cart" aria-label="Корзина">
               <CartButton count={mounted ? totalItems : 0} />
             </Link>

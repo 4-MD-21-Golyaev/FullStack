@@ -57,4 +57,15 @@ export class NodemailerEmailGateway implements EmailGateway {
             html: `<p>Ваш заказ <strong>#${short}</strong> успешно доставлен.</p><p>Спасибо за покупку!</p>`,
         });
     }
+
+    async sendOrderReadyForPayment(to: string, orderId: string, totalAmount: number): Promise<void> {
+        const id8 = orderId.slice(0, 8).toUpperCase();
+        await this.createTransporter().sendMail({
+            from: process.env.SMTP_FROM,
+            to,
+            subject: `Заказ #${id8} собран — можно оплатить`,
+            text: `Ваш заказ #${id8} собран и готов к оплате. Сумма: ${totalAmount.toLocaleString('ru')} ₽. Перейдите к оплате: ${process.env.YOOKASSA_RETURN_URL ?? 'http://localhost:3000'}/orders/${orderId}`,
+            html: `<p>Ваш заказ <strong>#${id8}</strong> собран и готов к оплате.</p><p>Сумма: <strong>${totalAmount.toLocaleString('ru')} ₽</strong>.</p><p><a href="${process.env.YOOKASSA_RETURN_URL ?? 'http://localhost:3000'}/orders/${orderId}">Перейти к оплате</a></p>`,
+        });
+    }
 }

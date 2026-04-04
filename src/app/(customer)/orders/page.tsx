@@ -141,6 +141,12 @@ export default function OrdersPage() {
                             ? () => cancelMutation.mutate(order.id)
                             : undefined
                         }
+                        onPay={() => {
+                          ordersApi.initiatePayment(order.id).then(r => {
+                            window.location.href = r.confirmationUrl;
+                          });
+                        }}
+                        payEnabled={order.state === OrderState.PAYMENT}
                       />
                     </li>
                   ))}

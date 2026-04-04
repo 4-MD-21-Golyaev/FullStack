@@ -151,7 +151,7 @@ export default function CatalogCategoryPage() {
                           id={p.id}
                           slug={p.id}
                           name={p.name}
-                          image={p.imagePath ?? '/images/placeholder.png'}
+                          image={p.imagePath}
                           price={p.price}
                         />
                       ))}

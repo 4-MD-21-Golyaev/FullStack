@@ -2,7 +2,7 @@ import Image from 'next/image';
 import styles from './CardImage.module.css';
 
 interface CardImageProps {
-  src: string;
+  src?: string | null;
   alt?: string;
   size?: 'L' | 'M' | 'S';
   className?: string;
@@ -12,7 +12,7 @@ export function CardImage({ src, alt = '', size = 'L', className }: CardImagePro
   return (
     <div className={[styles.root, styles[`size${size}`], className].filter(Boolean).join(' ')}>
       <Image
-        src={src}
+        src={src || '/images/placeholder.svg'}
         alt={alt}
         fill
         className={styles.image}

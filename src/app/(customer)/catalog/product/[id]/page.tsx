@@ -7,6 +7,7 @@ import { Button, Container, Counter, LikeButton, Price, Spinner, Tab } from '@/s
 import { useCatalog, buildCategoryPath } from '../../CatalogContext';
 import { useBreadcrumbs } from '../../../BreadcrumbsContext';
 import { useCart } from '../../../CartContext';
+import { useFavorites } from '../../../FavoritesContext';
 import styles from './product.module.css';
 
 interface ApiProduct {
@@ -24,6 +25,7 @@ export default function ProductPage() {
   const { rootCategories, childrenByParent } = useCatalog();
   const { setCustomCrumbs } = useBreadcrumbs();
   const { addItem, removeItem, updateQuantity, items } = useCart();
+  const { favoriteIds, toggleFavorite } = useFavorites();
 
   const [product, setProduct] = useState<ApiProduct | null>(null);
   const [loading, setLoading] = useState(true);
@@ -74,6 +76,7 @@ export default function ProductPage() {
   const imageSrc = product?.imagePath ?? '/images/placeholder.png';
   const galleryImages = useMemo(() => [], []);
   const hasThumbnails = galleryImages.length > 0;
+  const isLiked = product ? favoriteIds.has(product.id) : false;
 
   const tabContent = useMemo(() => {
     switch (activeTab) {
@@ -169,7 +172,15 @@ export default function ProductPage() {
                       </Button>
                     );
                   })()}
-                  <LikeButton variant="white" size="lg" aria-label="Добавить в избранное" />
+                  <LikeButton
+                    variant="white"
+                    size="lg"
+                    active={isLiked}
+                    onClick={() => {
+                      if (product) toggleFavorite(product.id);
+                    }}
+                    aria-label={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
+                  />
                 </div>
               </div>
 

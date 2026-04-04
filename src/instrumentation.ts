@@ -10,6 +10,8 @@ export async function register() {
         const { PrismaOutboxRepository } = await import('@/infrastructure/repositories/OutboxRepository.prisma');
         const { PrismaTransactionRunner } = await import('@/infrastructure/db/PrismaTransactionRunner');
         const { HttpMoySkladOrderGateway } = await import('@/infrastructure/moysklad/HttpMoySkladGateway');
+        const { PrismaUserRepository } = await import('@/infrastructure/repositories/UserRepository.prisma');
+        const { NodemailerEmailGateway } = await import('@/infrastructure/auth/NodemailerEmailGateway');
 
         if (!(global as { __cronStarted?: boolean }).__cronStarted) {
             (global as { __cronStarted?: boolean }).__cronStarted = true;
@@ -48,6 +50,8 @@ export async function register() {
                             agentId:        process.env.MOYSKLAD_AGENT_ID!,
                         }),
                         new PrismaOrderRepository(),
+                        new PrismaUserRepository(),
+                        new NodemailerEmailGateway(),
                     );
                     await useCase.execute();
                 } catch (err) {

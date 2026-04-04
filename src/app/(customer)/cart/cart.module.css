@@ -35,7 +35,7 @@
 /* Two-column content layout */
 .content {
   display: flex;
-  gap: 64px; /* Figma: gap between list and sidebar */
+  gap: var(--primitive-space-1600); /* Figma: gap between list and sidebar */
   align-items: flex-start;
 }
 
@@ -108,7 +108,7 @@
 .countdown {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+  border-radius: var(--primitive-radius-FULL);
   border: 2px solid var(--ctx-color-border-default);
   display: flex;
   align-items: center;

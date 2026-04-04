@@ -3,13 +3,14 @@
 import Link from 'next/link';
 import { Badge, CardImage, Counter, IconButton, LikeButton, Price } from '@/shared/ui';
 import { useCart } from '@/app/(customer)/CartContext';
+import { useFavorites } from '@/app/(customer)/FavoritesContext';
 import styles from './ProductCard.module.css';
 
 export interface ProductCardProps {
   id: string;
   slug: string;
   name: string;
-  image: string;
+  image: string | null;
   price: number;
   stock?: number;
   oldPrice?: number;
@@ -34,14 +35,17 @@ export default function ProductCard({
   oldPrice,
   discount,
   onToggleLike,
-  liked = false,
+  liked,
   size = 'L',
   className,
 }: ProductCardProps) {
   const { items, addItem, updateQuantity, removeItem } = useCart();
+  const { favoriteIds, toggleFavorite } = useFavorites();
   const cartItem = items.find(i => i.productId === id);
   const inCart = !!cartItem;
   const quantity = cartItem?.quantity ?? 0;
+  const isLiked = typeof liked === 'boolean' ? liked : favoriteIds.has(id);
+  const handleLike = onToggleLike ?? (() => toggleFavorite(id));
 
   return (
     <div className={[styles.root, size === 'S' ? styles.sizeS : '', inCart ? styles.inCart : '', className ?? ''].filter(Boolean).join(' ')}>
@@ -60,10 +64,10 @@ export default function ProductCard({
 
       {/* Like button — top-right over image, z-index: 1 */}
       <LikeButton
-        active={liked}
-        onClick={onToggleLike}
+        active={isLiked}
+        onClick={handleLike}
         className={styles.likeButton}
-        aria-label={liked ? 'Убрать из избранного' : 'Добавить в избранное'}
+        aria-label={isLiked ? 'Убрать из избранного' : 'Добавить в избранное'}
       />
 
       {/* Info section */}

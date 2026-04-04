@@ -14,7 +14,7 @@ export interface CartItem {
 
 interface CartContextValue {
   items: CartItem[];
-  addItem: (product: Omit<CartItem, 'quantity'>) => void;
+  addItem: (product: Omit<CartItem, 'quantity'>, quantity?: number) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, qty: number) => void;
   clearCart: () => void;
@@ -148,9 +148,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [items, isAuthed]);
 
-  const addItem = (product: Omit<CartItem, 'quantity'>) => {
+  const addItem = (product: Omit<CartItem, 'quantity'>, quantity = 1) => {
     if (isAuthed) {
-      serverAdd(product.productId, 1).then(() =>
+      serverAdd(product.productId, quantity).then(() =>
         serverGetCart().then(setItems)
       ).catch(() => {/* ignore */});
     } else {
@@ -159,11 +159,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (existing) {
           return prev.map(i =>
             i.productId === product.productId
-              ? { ...i, quantity: Math.min(i.quantity + 1, product.stock) }
+              ? { ...i, quantity: Math.min(i.quantity + quantity, product.stock) }
               : i
           );
         }
-        return [...prev, { ...product, quantity: 1 }];
+        return [...prev, { ...product, quantity: Math.min(quantity, product.stock) }];
       });
     }
   };

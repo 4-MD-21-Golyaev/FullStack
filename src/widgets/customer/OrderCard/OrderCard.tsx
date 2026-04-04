@@ -18,6 +18,8 @@ export interface OrderCardProps {
   totalAmount: number;
   onViewDetails: () => void;
   onCancel?: () => void;    // if undefined — no "Отменить" button
+  onPay?: () => void;
+  payEnabled?: boolean;
   size?: 'M' | 'S';        // default 'M'
   className?: string;
 }
@@ -31,6 +33,8 @@ export function OrderCard({
   totalAmount,
   onViewDetails,
   onCancel,
+  onPay,
+  payEnabled,
   size = 'M',
   className,
 }: OrderCardProps) {
@@ -66,13 +70,9 @@ export function OrderCard({
       {/* Row 3: images | buttons */}
       <div className={styles.row}>
         <div className={styles.images}>
-          {items.slice(0, 6).map((item) =>
-            item.imageSrc ? (
-              <CardImage key={item.productId} src={item.imageSrc} size="M" />
-            ) : (
-              <div key={item.productId} className={styles.imagePlaceholder} aria-hidden="true" />
-            )
-          )}
+          {items.slice(0, 6).map((item) => (
+            <CardImage key={item.productId} src={item.imageSrc} size="M" />
+          ))}
         </div>
         <div className={styles.buttons}>
           <Button variant="secondary" size="md" onClick={onViewDetails}>
@@ -81,6 +81,11 @@ export function OrderCard({
           {onCancel && (
             <Button variant="tertiary" size="md" onClick={onCancel}>
               Отменить
+            </Button>
+          )}
+          {onPay && (
+            <Button variant="primary" size="md" onClick={onPay} disabled={!payEnabled}>
+              Оплатить
             </Button>
           )}
         </div>

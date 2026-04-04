@@ -95,6 +95,7 @@ function makeEmailGateway(): EmailGateway {
         sendOrderConfirmed: vi.fn().mockResolvedValue(undefined),
         sendOrderOutForDelivery: vi.fn().mockResolvedValue(undefined),
         sendOrderDelivered: vi.fn().mockResolvedValue(undefined),
+        sendOrderReadyForPayment: vi.fn().mockResolvedValue(undefined),
     };
 }
 
@@ -317,5 +318,36 @@ describe('ProcessOutboxUseCase', () => {
         expect(emailGateway.sendOrderDelivered).toHaveBeenCalledWith('customer@example.com', 'order-1');
         expect(repo.markProcessed).toHaveBeenCalledWith(event.id);
         expect(result).toEqual({ processed: 1, retried: 0, failed: 0 });
+    });
+
+    it('ORDER_READY_FOR_PAYMENT: sendOrderReadyForPayment вызван с email, orderId и totalAmount', async () => {
+        const event = makeEvent({ eventType: 'ORDER_READY_FOR_PAYMENT', payload: { orderId: 'order-1' } });
+        const repo = makeRepo([event]);
+        const emailGateway = makeEmailGateway();
+        const orderRepo = makeOrderRepo(); // baseOrder has totalAmount: 200
+        const userRepo = makeUserRepo();   // user has email: 'customer@example.com'
+
+        const result = await new ProcessOutboxUseCase(repo, makeGateway(), orderRepo, userRepo, emailGateway).execute();
+
+        expect(emailGateway.sendOrderReadyForPayment).toHaveBeenCalledWith(
+            'customer@example.com',
+            'order-1',
+            200,
+        );
+        expect(repo.markProcessed).toHaveBeenCalledWith(event.id);
+        expect(result).toEqual({ processed: 1, retried: 0, failed: 0 });
+    });
+
+    it('ORDER_READY_FOR_PAYMENT throws when order not found', async () => {
+        const event = makeEvent({ eventType: 'ORDER_READY_FOR_PAYMENT', payload: { orderId: 'order-1' } });
+        const repo = makeRepo([event]);
+        const emailGateway = makeEmailGateway();
+        const orderRepo = makeOrderRepo(null); // order not found
+
+        await new ProcessOutboxUseCase(repo, makeGateway(), orderRepo, makeUserRepo(), emailGateway).execute();
+
+        // resolveOrderEmail throws — event should be retried or failed, not processed
+        expect(emailGateway.sendOrderReadyForPayment).not.toHaveBeenCalled();
+        expect(repo.markProcessed).not.toHaveBeenCalledWith(event.id);
     });
 });

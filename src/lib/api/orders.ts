@@ -90,6 +90,9 @@ export const ordersApi = {
     return apiClient.get<AdminOrdersResponse>(url.pathname + url.search);
   },
 
+  repeatOrder: (id: string) =>
+    apiClient.post<OrderDto>(`/api/orders/${id}/repeat`),
+
   cancelOrder: (id: string, reason?: string) =>
     apiClient.post<OrderDto>(`/api/orders/${id}/cancel`, { reason }),
 

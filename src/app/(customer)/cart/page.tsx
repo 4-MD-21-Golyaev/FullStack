@@ -4,8 +4,9 @@ import NextLink from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Container, OrderSummary, WideProductCard } from '@/shared/ui';
-import { useCart } from '../CartContext';
+import { useCart, type CartItem } from '../CartContext';
 import { useAuth } from '../AuthContext';
+import { useFavorites } from '../FavoritesContext';
 import styles from './cart.module.css';
 
 const DELIVERY_COST = 300;
@@ -13,14 +14,15 @@ const DISCOUNT_PERCENT = 15;
 const UNDO_TIMEOUT_MS = 10_000;
 
 interface PendingDelete {
-  productId: string;
+  item: CartItem;
   countdown: number;
 }
 
 export default function CartPage() {
   const router = useRouter();
   const { user, openAuthModal } = useAuth();
-  const { items, removeItem, updateQuantity, clearCart } = useCart();
+  const { items, addItem, removeItem, updateQuantity, clearCart } = useCart();
+  const { favoriteIds, toggleFavorite } = useFavorites();
   const [pendingDeletes, setPendingDeletes] = useState<PendingDelete[]>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -39,13 +41,7 @@ export default function CartPage() {
         setPendingDeletes(prev => {
           const next = prev
             .map(p => ({ ...p, countdown: p.countdown - 1 }))
-            .filter(p => {
-              if (p.countdown <= 0) {
-                removeItem(p.productId);
-                return false;
-              }
-              return true;
-            });
+            .filter(p => p.countdown > 0);
           return next;
         });
       }, 1000);
@@ -60,22 +56,30 @@ export default function CartPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingDeletes.length === 0]);
 
-  const startDelete = (productId: string) => {
+  const startDelete = (item: CartItem) => {
+    removeItem(item.productId);
     setPendingDeletes(prev => {
-      if (prev.find(p => p.productId === productId)) return prev;
-      return [...prev, { productId, countdown: UNDO_TIMEOUT_MS / 1000 }];
+      if (prev.find(p => p.item.productId === item.productId)) return prev;
+      return [...prev, { item, countdown: UNDO_TIMEOUT_MS / 1000 }];
     });
   };
 
   const undoDelete = (productId: string) => {
-    setPendingDeletes(prev => prev.filter(p => p.productId !== productId));
+    const pending = pendingDeletes.find(p => p.item.productId === productId);
+    if (pending) {
+      const { item } = pending;
+      addItem(
+        { productId: item.productId, name: item.name, price: item.price, imagePath: item.imagePath, stock: item.stock },
+        item.quantity
+      );
+    }
+    setPendingDeletes(prev => prev.filter(p => p.item.productId !== productId));
   };
 
-  const pendingIds = new Set(pendingDeletes.map(p => p.productId));
+  const pendingIds = new Set(pendingDeletes.map(p => p.item.productId));
 
   const inStockItems = items.filter(i => i.stock > 0 && !pendingIds.has(i.productId));
   const outOfStockItems = items.filter(i => i.stock === 0 && !pendingIds.has(i.productId));
-  const pendingItems = items.filter(i => pendingIds.has(i.productId));
 
   const subtotal = inStockItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const discount = Math.round(subtotal * DISCOUNT_PERCENT / 100);
@@ -106,12 +110,12 @@ export default function CartPage() {
             <div className={styles.content}>
               <div className={styles.list}>
                 {/* В наличии */}
-                {(inStockItems.length > 0 || pendingItems.length > 0) && (
+                {(inStockItems.length > 0 || pendingDeletes.length > 0) && (
                   <section className={styles.section}>
                     <div className={styles.sectionTitle}>
                       <span className={styles.sectionLabel}>В наличии</span>
                       <span className={styles.sectionCount}>
-                        {inStockItems.length + pendingItems.length} {pluralizeItems(inStockItems.length + pendingItems.length)}
+                        {inStockItems.length + pendingDeletes.length} {pluralizeItems(inStockItems.length + pendingDeletes.length)}
                       </span>
                     </div>
 
@@ -119,32 +123,31 @@ export default function CartPage() {
                       <WideProductCard
                         key={item.productId}
                         name={item.name}
-                        imageSrc={item.imagePath ?? '/images/placeholder.png'}
+                        imageSrc={item.imagePath}
                         pricePerUnit={item.price}
                         price={item.price * item.quantity}
                         quantity={item.quantity}
                         inStock
+                        liked={favoriteIds.has(item.productId)}
+                        onLike={() => toggleFavorite(item.productId)}
                         onQuantityChange={qty => updateQuantity(item.productId, qty)}
-                        onRemove={() => startDelete(item.productId)}
+                        onRemove={() => startDelete(item)}
                       />
                     ))}
 
-                    {pendingItems.map(item => {
-                      const pending = pendingDeletes.find(p => p.productId === item.productId)!;
-                      return (
-                        <div key={item.productId} className={styles.pendingRow}>
-                          <div className={styles.pendingInfo}>
-                            <span className={styles.name}>{item.name}</span>
-                          </div>
-                          <div className={styles.pendingActions}>
-                            <div className={styles.countdown}>{pending.countdown}</div>
-                            <Button variant="secondary" size="md" onClick={() => undoDelete(item.productId)}>
-                              Вернуть
-                            </Button>
-                          </div>
+                    {pendingDeletes.map(pending => (
+                      <div key={pending.item.productId} className={styles.pendingRow}>
+                        <div className={styles.pendingInfo}>
+                          <span className={styles.name}>{pending.item.name}</span>
                         </div>
-                      );
-                    })}
+                        <div className={styles.pendingActions}>
+                          <div className={styles.countdown}>{pending.countdown}</div>
+                          <Button variant="secondary" size="md" onClick={() => undoDelete(pending.item.productId)}>
+                            Вернуть
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
                   </section>
                 )}
 
@@ -162,12 +165,14 @@ export default function CartPage() {
                       <WideProductCard
                         key={item.productId}
                         name={item.name}
-                        imageSrc={item.imagePath ?? '/images/placeholder.png'}
+                        imageSrc={item.imagePath}
                         pricePerUnit={item.price}
                         price={item.price}
                         quantity={item.quantity}
                         inStock={false}
-                        onRemove={() => startDelete(item.productId)}
+                        liked={favoriteIds.has(item.productId)}
+                        onLike={() => toggleFavorite(item.productId)}
+                        onRemove={() => startDelete(item)}
                       />
                     ))}
                   </section>

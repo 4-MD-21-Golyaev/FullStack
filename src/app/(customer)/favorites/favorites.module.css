@@ -1,0 +1,55 @@
+.page {
+  padding-block: var(--primitive-space-1200);
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--primitive-space-600);
+  margin-bottom: var(--primitive-space-800);
+}
+
+.title {
+  font-size: var(--ctx-font-size-h1);
+  font-weight: 700; /* [Desktop]/Headings/Heading 1 */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--primitive-space-1200);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-600);
+  align-items: flex-start;
+}
+
+.emptyText {
+  font-size: var(--ctx-font-size-body);
+  color: var(--ctx-color-text-secondary);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--ctx-grid-gutter);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

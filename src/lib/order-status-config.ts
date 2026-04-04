@@ -75,9 +75,9 @@ export interface CustomerOrderStatusConfig {
 }
 
 export const CUSTOMER_ORDER_STATUS_CONFIG: Record<OrderState, CustomerOrderStatusConfig> = {
-  [OrderState.CREATED]:           { label: 'В сборке',  bgColor: '#AF3732' },
-  [OrderState.PICKING]:           { label: 'В сборке',  bgColor: '#AF3732' },
-  [OrderState.PAYMENT]:           { label: 'В сборке',  bgColor: '#AF3732' },
+  [OrderState.CREATED]:           { label: 'В сборке',         bgColor: '#AF3732' },
+  [OrderState.PICKING]:           { label: 'В сборке',         bgColor: '#AF3732' },
+  [OrderState.PAYMENT]:           { label: 'Готов к оплате',   bgColor: '#AF3732' },
   [OrderState.DELIVERY]:          { label: 'В пути',    bgColor: '#9F322D' },
   [OrderState.DELIVERY_ASSIGNED]: { label: 'В пути',    bgColor: '#9F322D' },
   [OrderState.OUT_FOR_DELIVERY]:  { label: 'В пути',    bgColor: '#9F322D' },

@@ -111,6 +111,24 @@ describe('CompletePickingUseCase', () => {
         );
     });
 
+    it('emits ORDER_READY_FOR_PAYMENT outbox event after ORDER_PICKED', async () => {
+        const order = makeOrder(OrderState.PICKING);
+        const { runner, ctx } = makeTxRunner(order);
+
+        const useCase = new CompletePickingUseCase(runner);
+        await useCase.execute({
+            orderId: 'order-1',
+            unprocessedProductIds: [],
+        });
+
+        const calls = (ctx.outboxRepository.save as ReturnType<typeof vi.fn>).mock.calls;
+        const eventTypes = calls.map((c: any[]) => c[0].eventType);
+        expect(eventTypes).toContain('ORDER_READY_FOR_PAYMENT');
+
+        const readyForPaymentCall = calls.find((c: any[]) => c[0].eventType === 'ORDER_READY_FOR_PAYMENT');
+        expect(readyForPaymentCall![0].payload).toMatchObject({ orderId: 'order-1' });
+    });
+
     it('completes when absent items exist with CALL_REMOVE strategy (remove does not block)', async () => {
         const order = makeOrder(OrderState.PICKING, AbsenceResolutionStrategy.CALL_REMOVE);
         const { runner, ctx } = makeTxRunner(order);

@@ -7,7 +7,7 @@
 
 .info {
   display: flex;
-  gap: 16px;
+  gap: var(--primitive-space-400);
   align-items: flex-start;
   width: 390px;
   flex-shrink: 0;
@@ -16,13 +16,13 @@
 .nameBlock {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--primitive-space-200);
   flex: 1;
   min-width: 0;
 }
 
 .name {
-  font-size: 16px;
+  font-size: var(--ctx-font-size-caption); /* 16px — Figma: Caption */
   font-weight: 500;
   line-height: 1.15;
   max-height: 38px;
@@ -34,7 +34,7 @@
 }
 
 .meta {
-  font-size: 14px;
+  font-size: var(--ctx-font-size-label); /* 14px — Figma: Secondary */
   color: var(--ctx-color-text-secondary);
   line-height: 1.1;
 }
@@ -57,14 +57,14 @@
 }
 
 .priceActual {
-  font-size: 18px;
+  font-size: var(--ctx-font-size-ui); /* 18px — Figma: UI/Bold */
   font-weight: 700;
   line-height: 1.1;
   color: var(--ctx-color-text-default);
 }
 
 .priceOld {
-  font-size: 12px;
+  font-size: var(--ctx-font-size-xs); /* 12px — Figma: xs */
   font-weight: 700;
   line-height: 1.1;
   color: var(--ctx-color-text-secondary);
@@ -73,12 +73,26 @@
 
 .buttons {
   display: flex;
-  gap: 12px;
+  gap: var(--primitive-space-300);
   align-items: center;
   flex-shrink: 0;
 }
 
 .outOfStockMeta {
-  font-size: 14px;
+  font-size: var(--ctx-font-size-label); /* 14px — Figma: Secondary */
   color: var(--ctx-color-text-secondary);
+}
+
+.historyPriceQty {
+  display: flex;
+  align-items: center;
+  gap: var(--primitive-space-100);
+  flex-shrink: 0;
+}
+
+.historyDot {
+  font-size: var(--ctx-font-size-ui); /* 18px — Figma: Heading/5 */
+  font-weight: 700; /* Figma: Heading/5 */
+  line-height: 1.1;
+  color: var(--ctx-color-text-default);
 }
