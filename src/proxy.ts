@@ -13,6 +13,12 @@ const PUBLIC_PREFIXES = [
     '/api/webhooks/moysklad',
 ];
 
+// Routes where auth is optional: a guest is allowed through, but if a valid
+// JWT is present the downstream handler receives x-user-id for personalisation.
+const OPTIONAL_AUTH_PREFIXES = [
+    '/api/recommendations',
+];
+
 // Operational roles for picking
 const PICKER_ROLES = new Set(['STAFF', 'PICKER', 'ADMIN']);
 // Operational roles for delivery
@@ -22,6 +28,10 @@ const ADMIN_ROLES = new Set(['ADMIN']);
 
 function isPublic(pathname: string): boolean {
     return PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
+
+function isOptionalAuth(pathname: string): boolean {
+    return OPTIONAL_AUTH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
 function isPickerRoute(pathname: string, method: string): boolean {
@@ -93,6 +103,17 @@ export async function proxy(req: NextRequest) {
     }
 
     if (isPublic(pathname)) {
+        return NextResponse.next({ request: { headers: requestHeaders } });
+    }
+
+    if (isOptionalAuth(pathname)) {
+        const token = req.cookies.get('access_token')?.value ?? null;
+        const session = token ? await verifyJwt(token) : null;
+        if (session) {
+            requestHeaders.set('x-user-id', session.sub);
+            requestHeaders.set('x-user-role', session.role);
+            requestHeaders.set('x-user-email', session.email);
+        }
         return NextResponse.next({ request: { headers: requestHeaders } });
     }
 

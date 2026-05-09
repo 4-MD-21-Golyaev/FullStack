@@ -7,18 +7,14 @@ import ProductCard from '@/widgets/customer/ProductCard/ProductCard';
 import { ProductCardSkeleton } from '@/widgets/customer/ProductCard/ProductCardSkeleton';
 import CatalogSidebar from '@/widgets/customer/CatalogSidebar/CatalogSidebar';
 import { SubcategoryList } from '@/widgets/customer/SubcategoryList/SubcategoryList';
+import { usePersonalizedProductSort, type Product as RecProduct } from '@/features/recommendations';
 import { useCatalog, buildCategoryPath } from '../CatalogContext';
 import { useBreadcrumbs } from '../../BreadcrumbsContext';
 import styles from './category.module.css';
 
 const SKELETON_COUNT = 8;
 
-interface ApiProduct {
-  id: string;
-  name: string;
-  price: number;
-  imagePath: string | null;
-}
+type ApiProduct = RecProduct;
 
 export default function CatalogCategoryPage() {
   const params = useParams<{ categoryId: string }>();
@@ -104,6 +100,11 @@ export default function CatalogCategoryPage() {
     };
   }, [categoryId, isLeafCategory, fetchProducts]);
 
+  const { sorted: sortedCategoryProducts } = usePersonalizedProductSort(
+    categoryProducts,
+    isLeafCategory ? categoryId : null,
+  );
+
   const pageTitle = isLeafCategory ? currentCategoryName || 'Каталог' : 'Каталог';
 
   return (
@@ -165,7 +166,7 @@ export default function CatalogCategoryPage() {
               <section className={styles.productGrid}>
                 {categoryProductsLoading
                   ? Array.from({ length: SKELETON_COUNT }, (_, i) => <ProductCardSkeleton key={i} />)
-                  : categoryProducts.map(p => (
+                  : sortedCategoryProducts.map(p => (
                       <ProductCard
                         key={p.id}
                         id={p.id}

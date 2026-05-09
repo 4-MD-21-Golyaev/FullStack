@@ -122,6 +122,10 @@
   line-height: var(--ctx-line-height-normal);
 }
 
+.related {
+  margin-top: var(--primitive-space-1200);
+}
+
 @media (max-width: 1100px) {
   .layout {
     flex-direction: column;

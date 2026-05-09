@@ -152,6 +152,8 @@ model Product {
   cartItems  CartItem[]
   favorites  Favorite[]
   orderItems OrderItem[]
+
+  @@index([categoryId])
 }
 
 
@@ -233,6 +235,9 @@ model Order {
   payments         Payment[]
   pickerClaimer    User?     @relation("PickerClaims",   fields: [pickerClaimUserId],   references: [id])
   deliveryClaimer  User?     @relation("DeliveryClaims", fields: [deliveryClaimUserId], references: [id])
+
+  @@index([userId, statusId])
+  @@index([statusId, createdAt])
 }
 
 //////////////////////////////////////////////////////
@@ -266,6 +271,9 @@ model OrderItem {
   article   String
   price     Decimal  @db.Decimal(10, 2)
   quantity  Int
+
+  @@index([productId])
+  @@index([orderId, productId])
 }
 
 //////////////////////////////////////////////////////

@@ -1,3 +1,4 @@
+import { revalidateTag } from 'next/cache';
 import { type OrderRepository } from '@/application/ports/OrderRepository';
 import { closeOrder } from '@/domain/order/transitions';
 
@@ -18,6 +19,8 @@ export class CloseOrderUseCase {
         const updated = closeOrder(order);
 
         await this.orderRepository.save(updated);
+
+        revalidateTag('recommendations:global', 'default');
 
         return updated;
     }

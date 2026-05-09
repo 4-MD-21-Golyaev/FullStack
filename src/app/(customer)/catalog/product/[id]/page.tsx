@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Button, Container, Counter, LikeButton, Price, Spinner, Tab } from '@/shared/ui';
+import { RelatedProducts } from '@/widgets/customer/RelatedProducts/RelatedProducts';
 import { useCatalog, buildCategoryPath } from '../../CatalogContext';
 import { useBreadcrumbs } from '../../../BreadcrumbsContext';
 import { useCart } from '../../../CartContext';
@@ -206,6 +207,12 @@ export default function ProductPage() {
                 {tabContent}
               </div>
             </div>
+          </div>
+        )}
+
+        {!loading && product && (
+          <div className={styles.related}>
+            <RelatedProducts productId={product.id} />
           </div>
         )}
       </Container>

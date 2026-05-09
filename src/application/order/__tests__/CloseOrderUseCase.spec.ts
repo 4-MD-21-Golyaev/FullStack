@@ -1,9 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
+import { revalidateTag } from 'next/cache';
 import { CloseOrderUseCase } from '../CloseOrderUseCase';
 import { OrderRepository } from '../../ports/OrderRepository';
 import { OrderState } from '@/domain/order/OrderState';
 import { type Order } from '@/domain/order/Order';
 import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrategy';
+
+vi.mock('next/cache', () => ({
+    revalidateTag: vi.fn(),
+}));
 
 const makeOrder = (state: OrderState): Order => ({
     id: 'order-1',
@@ -44,6 +49,7 @@ describe('CloseOrderUseCase', () => {
 
         expect(result.state).toBe(OrderState.CLOSED);
         expect(orderRepo.save).toHaveBeenCalledWith(result);
+        expect(revalidateTag).toHaveBeenCalledWith('recommendations:global', 'default');
     });
 
     it('throws if order not found', async () => {

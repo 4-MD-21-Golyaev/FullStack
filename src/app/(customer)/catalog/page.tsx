@@ -2,11 +2,13 @@
 
 import { Category, Container } from '@/shared/ui';
 import CatalogSidebar from '@/widgets/customer/CatalogSidebar/CatalogSidebar';
+import { usePersonalizedCategorySort } from '@/features/recommendations';
 import { useCatalog } from './CatalogContext';
 import styles from './catalog.module.css';
 
 export default function CatalogPage() {
   const { rootCategories, childrenByParent, expanded, toggleCategory } = useCatalog();
+  const { sorted: sortedRootCategories } = usePersonalizedCategorySort(rootCategories);
 
   return (
     <div className={styles.page}>
@@ -24,7 +26,7 @@ export default function CatalogPage() {
           />
 
           <section className={styles.grid}>
-            {rootCategories.map(cat => (
+            {sortedRootCategories.map(cat => (
               <Category
                 key={cat.id}
                 label={cat.name}

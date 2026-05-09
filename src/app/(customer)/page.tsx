@@ -3,17 +3,12 @@
 import { useEffect, useState } from 'react';
 import { Container } from '@/shared/ui';
 import { SaleSlider } from '@/widgets/customer/SaleSlider/SaleSlider';
+import { useTopCategories } from '@/features/recommendations';
 import styles from './home.module.css';
 
 /* ── Category sliders ── */
 
-const CATEGORY_IDS = ['bakaleya', 'vypechka', 'zootovary'];
-
-interface ApiCategory {
-  id: string;
-  name: string;
-  imagePath?: string | null;
-}
+const SKELETON_SLIDER_COUNT = 3;
 
 interface ApiProduct {
   id: string;
@@ -22,36 +17,36 @@ interface ApiProduct {
   imagePath: string | null;
 }
 
-interface SliderData {
-  id: string;
-  name: string;
-  imagePath: string | null;
-  products: ApiProduct[];
-}
-
-async function fetchSliderData(id: string): Promise<SliderData> {
-  const [catRes, productsRes] = await Promise.all([
-    fetch(`/api/categories/${id}`),
-    fetch(`/api/products?categoryId=${encodeURIComponent(id)}&includeDescendants=true`),
-  ]);
-  const cat: ApiCategory = catRes.ok ? await catRes.json() : { id, name: id };
-  const productsData = productsRes.ok ? await productsRes.json() : { products: [] };
-  const products: ApiProduct[] = productsData.products ?? [];
-  return { id, name: cat.name, imagePath: cat.imagePath ?? null, products };
+async function fetchCategoryProducts(id: string): Promise<ApiProduct[]> {
+  const res = await fetch(`/api/products?categoryId=${encodeURIComponent(id)}&includeDescendants=true`);
+  if (!res.ok) return [];
+  const data = await res.json();
+  return (data.products ?? []) as ApiProduct[];
 }
 
 /* ── Page ── */
 
 export default function HomePage() {
-  const [sliderMap, setSliderMap] = useState<Record<string, SliderData>>({});
+  const { data: topCategories, loading: categoriesLoading } = useTopCategories(3);
+  const [productsByCategory, setProductsByCategory] = useState<Record<string, ApiProduct[]>>({});
 
   useEffect(() => {
-    Promise.all(CATEGORY_IDS.map(fetchSliderData)).then(results => {
-      const map: Record<string, SliderData> = {};
-      results.forEach(s => { map[s.id] = s; });
-      setSliderMap(map);
+    if (topCategories.length === 0) {
+      return;
+    }
+    let cancelled = false;
+    Promise.all(topCategories.map(cat => fetchCategoryProducts(cat.id))).then(results => {
+      if (cancelled) return;
+      const map: Record<string, ApiProduct[]> = {};
+      results.forEach((items, i) => {
+        map[topCategories[i].id] = items;
+      });
+      setProductsByCategory(map);
     });
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [topCategories]);
 
   return (
     <div className={styles.page}>
@@ -92,21 +87,26 @@ export default function HomePage() {
 
       {/* ── 2. Sale sliders ── */}
       <div className={styles.sliders}>
-        {CATEGORY_IDS.map(id => {
-          const data = sliderMap[id];
-          return (
-            <section key={id} className={styles.sliderSection}>
-              <Container>
-                <SaleSlider
-                  title={data?.name ?? ''}
-                  imageSrc={data?.imagePath}
-                  products={data?.products ?? []}
-                  loading={!data}
-                />
-              </Container>
-            </section>
-          );
-        })}
+        {categoriesLoading
+          ? Array.from({ length: SKELETON_SLIDER_COUNT }, (_, i) => (
+              <section key={`skeleton-${i}`} className={styles.sliderSection}>
+                <Container>
+                  <SaleSlider title="" products={[]} loading />
+                </Container>
+              </section>
+            ))
+          : topCategories.map(cat => (
+              <section key={cat.id} className={styles.sliderSection}>
+                <Container>
+                  <SaleSlider
+                    title={cat.name}
+                    imageSrc={cat.imagePath}
+                    products={productsByCategory[cat.id] ?? []}
+                    loading={!(cat.id in productsByCategory)}
+                  />
+                </Container>
+              </section>
+            ))}
       </div>
 
       {/* ── 3. Loyalty ── */}

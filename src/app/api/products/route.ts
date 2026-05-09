@@ -1,22 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { PrismaProductRepository } from '@/infrastructure/repositories/ProductRepository.prisma';
 import { PrismaCategoryRepository } from '@/infrastructure/repositories/CategoryRepository.prisma';
-import { type Category } from '@/domain/category/Category';
-
-function collectDescendantIds(rootId: string, all: Category[]): string[] {
-    const ids: string[] = [rootId];
-    const queue = [rootId];
-    while (queue.length > 0) {
-        const parentId = queue.shift()!;
-        for (const cat of all) {
-            if (cat.parentId === parentId) {
-                ids.push(cat.id);
-                queue.push(cat.id);
-            }
-        }
-    }
-    return ids;
-}
+import { collectDescendantIds } from '@/domain/category/utils';
 
 export async function GET(req: NextRequest) {
     try {
