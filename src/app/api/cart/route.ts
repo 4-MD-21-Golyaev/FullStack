@@ -26,12 +26,17 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json();
-        const useCase = new AddToCartUseCase(
-            new PrismaCartRepository(),
-            new PrismaProductRepository(),
-        );
-        await useCase.execute({ userId, productId: body.productId, quantity: body.quantity });
-        return NextResponse.json({ message: 'Added to cart' }, { status: 201 });
+        const cartRepository = new PrismaCartRepository();
+        const productRepository = new PrismaProductRepository();
+
+        await new AddToCartUseCase(cartRepository, productRepository).execute({
+            userId,
+            productId: body.productId,
+            quantity: body.quantity,
+        });
+        const cart = await new GetCartUseCase(cartRepository, productRepository).execute(userId);
+
+        return NextResponse.json(cart, { status: 201 });
     } catch (error: any) {
         return NextResponse.json({ message: error.message }, { status: 400 });
     }

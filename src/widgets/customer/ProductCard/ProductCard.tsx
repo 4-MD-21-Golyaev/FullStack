@@ -104,19 +104,19 @@ export default function ProductCard({
 
           {inCart && size === 'L' && (
             <div className={styles.controls}>
-              <Counter
-                value={quantity}
-                onChange={qty => updateQuantity(id, qty)}
-                min={1}
-                size="sm"
-                className={styles.counter}
-              />
               <IconButton
                 icon="delete"
                 size="md"
                 variant="white"
                 onClick={() => removeItem(id)}
                 aria-label="Удалить из корзины"
+              />
+              <Counter
+                value={quantity}
+                onChange={qty => updateQuantity(id, qty)}
+                min={1}
+                size="sm"
+                className={styles.counter}
               />
             </div>
           )}

@@ -136,3 +136,10 @@
   padding: 0;
   line-height: var(--ctx-line-height-normal);
 }
+
+/* Header-level undo (mirrors per-item .pendingActions) */
+.headerUndo {
+  display: flex;
+  gap: var(--primitive-space-600);
+  align-items: center;
+}

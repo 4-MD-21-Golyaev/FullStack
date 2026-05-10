@@ -1,5 +1,6 @@
 'use client';
 
+import { SliderContainer } from '@/shared/ui';
 import { useRelatedProducts } from '@/features/recommendations';
 import ProductCard from '@/widgets/customer/ProductCard/ProductCard';
 import { ProductCardSkeleton } from '@/widgets/customer/ProductCard/ProductCardSkeleton';
@@ -21,7 +22,7 @@ export function RelatedProducts({ productId }: RelatedProductsProps) {
   return (
     <section className={styles.root}>
       <h2 className={styles.title}>С этим товаром покупают</h2>
-      <div className={styles.grid}>
+      <SliderContainer>
         {loading
           ? Array.from({ length: RELATED_LIMIT }, (_, i) => <ProductCardSkeleton key={i} />)
           : data.map(p => (
@@ -35,7 +36,7 @@ export function RelatedProducts({ productId }: RelatedProductsProps) {
                 stock={p.stock}
               />
             ))}
-      </div>
+      </SliderContainer>
     </section>
   );
 }

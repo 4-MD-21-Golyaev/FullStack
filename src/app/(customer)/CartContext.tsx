@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useAuth } from './AuthContext';
+import { createUpdateQueue, type UpdateQueue } from './cartUpdateQueue';
 
 export interface CartItem {
   productId: string;
@@ -40,20 +41,23 @@ async function serverGetCart(): Promise<CartItem[]> {
   return res.json() as Promise<CartItem[]>;
 }
 
-async function serverAdd(productId: string, quantity: number): Promise<void> {
-  await fetch('/api/cart', {
+async function serverAdd(productId: string, quantity: number): Promise<CartItem[]> {
+  const res = await fetch('/api/cart', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ productId, quantity }),
   });
+  if (!res.ok) throw new Error('Add to cart failed');
+  return res.json() as Promise<CartItem[]>;
 }
 
 async function serverUpdate(productId: string, quantity: number): Promise<void> {
-  await fetch(`/api/cart/${productId}`, {
+  const res = await fetch(`/api/cart/${productId}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ quantity }),
   });
+  if (!res.ok) throw new Error('Update quantity failed');
 }
 
 async function serverRemove(productId: string): Promise<void> {
@@ -96,6 +100,22 @@ function localClear(): void {
   } catch {
     // ignore
   }
+}
+
+function mergeAddItem(
+  prev: CartItem[],
+  product: Omit<CartItem, 'quantity'>,
+  quantity: number,
+): CartItem[] {
+  const existing = prev.find(i => i.productId === product.productId);
+  if (existing) {
+    return prev.map(i =>
+      i.productId === product.productId
+        ? { ...i, quantity: Math.min(i.quantity + quantity, product.stock) }
+        : i,
+    );
+  }
+  return [...prev, { ...product, quantity: Math.min(quantity, product.stock) }];
 }
 
 // ── Provider ────────────────────────────────────────────────────────────────
@@ -150,26 +170,41 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = (product: Omit<CartItem, 'quantity'>, quantity = 1) => {
     if (isAuthed) {
-      serverAdd(product.productId, quantity).then(() =>
-        serverGetCart().then(setItems)
-      ).catch(() => {/* ignore */});
-    } else {
+      let snapshot: CartItem[] = [];
       setItems(prev => {
-        const existing = prev.find(i => i.productId === product.productId);
-        if (existing) {
-          return prev.map(i =>
-            i.productId === product.productId
-              ? { ...i, quantity: Math.min(i.quantity + quantity, product.stock) }
-              : i
-          );
-        }
-        return [...prev, { ...product, quantity: Math.min(quantity, product.stock) }];
+        snapshot = prev;
+        return mergeAddItem(prev, product, quantity);
       });
+      serverAdd(product.productId, quantity)
+        .then(setItems)
+        .catch(err => {
+          // TODO: surface via global toast once ToastProvider exists
+          console.error('Add to cart failed', err);
+          setItems(snapshot);
+        });
+    } else {
+      setItems(prev => mergeAddItem(prev, product, quantity));
     }
   };
 
+  const [updateQueue] = useState<UpdateQueue>(() =>
+    createUpdateQueue({
+      send: serverUpdate,
+      onError: (productId, confirmedQty) => {
+        // TODO: surface via global toast once ToastProvider exists
+        console.error('Update quantity failed', productId);
+        setItems(prev =>
+          prev.map(i =>
+            i.productId === productId ? { ...i, quantity: confirmedQty } : i,
+          ),
+        );
+      },
+    }),
+  );
+
   const removeItem = (productId: string) => {
     if (isAuthed) {
+      updateQueue.cancel(productId);
       serverRemove(productId).then(() =>
         setItems(prev => prev.filter(i => i.productId !== productId))
       ).catch(() => {/* ignore */});
@@ -184,11 +219,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     if (isAuthed) {
-      serverUpdate(productId, qty).then(() =>
-        setItems(prev =>
-          prev.map(i => i.productId === productId ? { ...i, quantity: qty } : i)
-        )
-      ).catch(() => {/* ignore */});
+      const item = items.find(i => i.productId === productId);
+      if (!item) return;
+      const cappedQty = Math.min(qty, item.stock);
+      setItems(prev =>
+        prev.map(i =>
+          i.productId === productId ? { ...i, quantity: cappedQty } : i,
+        ),
+      );
+      updateQueue.schedule(productId, cappedQty, item.quantity);
     } else {
       setItems(prev =>
         prev.map(i =>

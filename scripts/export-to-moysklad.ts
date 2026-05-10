@@ -122,52 +122,43 @@ function topSort(categories: DbCategory[]): DbCategory[] {
 }
 
 /**
- * Ищет папку в МойСклад по имени и (опционально) href родителя.
- * Сравниваем именно href родительской папки из ответа API — не pathName,
- * т.к. pathName у корневых папок пустой и ключ был бы неоднозначен.
- */
-async function findFolder(name: string, parentHref?: string): Promise<{ id: string; href: string } | null> {
-    const data = await msGet<{
-        rows: { id: string; meta: { href: string }; productFolder?: { meta: { href: string } } }[];
-    }>(`entity/productfolder?filter=name%3D${encodeURIComponent(name)}&limit=100`);
-
-    for (const row of data.rows) {
-        const rowParentHref = row.productFolder?.meta?.href;
-        if (parentHref) {
-            if (rowParentHref === parentHref) return { id: row.id, href: row.meta.href };
-        } else {
-            if (!rowParentHref) return { id: row.id, href: row.meta.href };
-        }
-    }
-    return null;
-}
-
-/**
- * Создаёт или находит productfolder в МойСклад для каждой локальной категории.
+ * Загружает все папки из МойСклад одним пакетным запросом и сопоставляет их
+ * с локальными категориями по имени + href родителя (in-memory, без доп. запросов).
  * Возвращает map: localCategoryId → href папки в МойСклад.
  */
-async function syncFolders(categories: DbCategory[]): Promise<Map<string, string>> {
+async function loadFolderMapping(categories: DbCategory[]): Promise<Map<string, string>> {
+    type MsFolder = { id: string; href: string; name: string; parentHref: string | null };
+
+    const msFolders = await fetchAllPaginated<MsFolder>(
+        'entity/productfolder',
+        r => ({
+            id:         r.id as string,
+            href:       r.meta.href as string,
+            name:       r.name as string,
+            parentHref: (r.productFolder?.meta?.href as string) ?? null,
+        }),
+    );
+
+    // key: "name|parentHref" → папка в МойСклад
+    const byNameAndParent = new Map<string, MsFolder>();
+    for (const f of msFolders) {
+        byNameAndParent.set(`${f.name}|${f.parentHref ?? ''}`, f);
+    }
+
     const localIdToHref = new Map<string, string>();
     const sorted = topSort(categories);
 
     for (const cat of sorted) {
-        const parentHref = cat.parentId ? localIdToHref.get(cat.parentId) : undefined;
+        const parentHref = cat.parentId ? (localIdToHref.get(cat.parentId) ?? null) : null;
+        const key = `${cat.name}|${parentHref ?? ''}`;
+        const match = byNameAndParent.get(key);
 
-        const existing = await findFolder(cat.name, parentHref);
-        if (existing) {
-            localIdToHref.set(cat.id, existing.href);
-            console.log(`  [папка] "${cat.name}" — уже существует`);
-            continue;
+        if (match) {
+            localIdToHref.set(cat.id, match.href);
+            console.log(`  [папка] "${cat.name}" — найдена`);
+        } else {
+            console.warn(`  [папка] "${cat.name}" — НЕ НАЙДЕНА в МойСклад, товары категории будут пропущены`);
         }
-
-        const body: Record<string, unknown> = { name: cat.name };
-        if (parentHref) {
-            body.productFolder = meta(parentHref, 'productfolder');
-        }
-
-        const created = await msPost<{ id: string; meta: { href: string } }>('entity/productfolder', body);
-        localIdToHref.set(cat.id, created.meta.href);
-        console.log(`  [папка] "${cat.name}" — создана`);
     }
 
     return localIdToHref;
@@ -223,18 +214,17 @@ function buildProductBody(
     return body;
 }
 
-async function syncProducts(
+async function syncProductsForCategory(
+    categoryName: string,
     products: DbProduct[],
-    categoryIdToFolderHref: Map<string, string>,
+    folderHref: string | undefined,
     rubCurrencyHref: string,
     priceTypeHref: string,
-): Promise<{ created: number; updated: number; errors: string[] }> {
-    let created = 0;
-    let updated = 0;
-    const errors: string[] = [];
+    totals: { created: number; updated: number; errors: string[] },
+): Promise<void> {
+    console.log(`\n  Категория: "${categoryName}" (${products.length} товаров)`);
 
     for (const product of products) {
-        const folderHref = categoryIdToFolderHref.get(product.categoryId);
         const body = buildProductBody(product, folderHref, rubCurrencyHref, priceTypeHref);
 
         try {
@@ -242,21 +232,19 @@ async function syncProducts(
 
             if (existing) {
                 await msPut(`entity/product/${existing.id}`, body);
-                console.log(`  [товар] "${product.name}" (${product.article}) — обновлён`);
-                updated++;
+                console.log(`    [товар] "${product.name}" (${product.article}) — обновлён`);
+                totals.updated++;
             } else {
                 await msPost('entity/product', body);
-                console.log(`  [товар] "${product.name}" (${product.article}) — создан`);
-                created++;
+                console.log(`    [товар] "${product.name}" (${product.article}) — создан`);
+                totals.created++;
             }
         } catch (err: any) {
             const msg = `${product.article}: ${err.message ?? err}`;
-            console.error(`  [ошибка] ${msg}`);
-            errors.push(msg);
+            console.error(`    [ошибка] ${msg}`);
+            totals.errors.push(msg);
         }
     }
-
-    return { created, updated, errors };
 }
 
 // ── Entry point ───────────────────────────────────────────────────────────────
@@ -279,22 +267,40 @@ async function main() {
         getDefaultPriceTypeHref(),
     ]);
 
-    // 3. Синхронизируем папки (категории)
-    console.log('Синхронизация категорий...');
-    const categoryIdToFolderHref = await syncFolders(dbCategories);
+    // 3. Загружаем маппинг категорий → папок МойСклад (один запрос)
+    console.log('Загрузка папок из МойСклад...');
+    const categoryIdToFolderHref = await loadFolderMapping(dbCategories);
     console.log();
 
-    // 4. Синхронизируем товары
-    console.log('Синхронизация товаров...');
-    const { created, updated, errors } = await syncProducts(dbProducts, categoryIdToFolderHref, rubCurrencyHref, priceTypeHref);
+    // 4. Группируем товары по категории, категории — по алфавиту
+    const productsByCategoryId = new Map<string, DbProduct[]>();
+    for (const product of dbProducts) {
+        const list = productsByCategoryId.get(product.categoryId) ?? [];
+        list.push(product);
+        productsByCategoryId.set(product.categoryId, list);
+    }
 
-    // 5. Итог
+    const categoriesSorted = [...dbCategories].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+
+    // 5. Экспорт по категориям
+    console.log('Синхронизация товаров по категориям...');
+    const totals = { created: 0, updated: 0, errors: [] as string[] };
+
+    for (const category of categoriesSorted) {
+        const products = productsByCategoryId.get(category.id);
+        if (!products?.length) continue;
+
+        const folderHref = categoryIdToFolderHref.get(category.id);
+        await syncProductsForCategory(category.name, products, folderHref, rubCurrencyHref, priceTypeHref, totals);
+    }
+
+    // 6. Итог
     console.log('\n=== Результат ===');
-    console.log(`Создано:   ${created}`);
-    console.log(`Обновлено: ${updated}`);
-    if (errors.length > 0) {
-        console.log(`Ошибки (${errors.length}):`);
-        for (const e of errors) console.log(`  - ${e}`);
+    console.log(`Создано:   ${totals.created}`);
+    console.log(`Обновлено: ${totals.updated}`);
+    if (totals.errors.length > 0) {
+        console.log(`Ошибки (${totals.errors.length}):`);
+        for (const e of totals.errors) console.log(`  - ${e}`);
     } else {
         console.log('Ошибок нет.');
     }

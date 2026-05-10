@@ -29,7 +29,41 @@ VERIFY: User approved the plan or said to proceed.
 
 Skip for tasks with obvious, contained scope.
 
-## 4. Agent delegation
+## 4. Plan composition
+
+TRIGGER: Writing a plan — in response to rule 3, or any document under `docs/plans/`.
+ACTION: Include only **declarative** artifacts. Exclude **procedural** artifacts — those are the implementation agent's job.
+VERIFY: Every code-like snippet in the plan describes a contract, shape, or invariant — never a function body, JSX tree, or control flow.
+
+**Declarative — keep in plans:**
+- Port signatures and interface types: `OrderRepository.findById(id: string): Promise<Order | null>`
+- Prisma schema deltas — added/changed fields and relations
+- API request/response shapes as typed JSON
+- State machines and transition tables
+- Invariants stated as declarative assertions (e.g. WHERE-condition, when the form of the expression IS the decision)
+- Pseudocode of an algorithm ONLY when the algorithm itself is the architectural decision (e.g. cart merge, conflict resolution)
+
+**Procedural — leave to the implementation agent:**
+- Function bodies, use case method bodies
+- JSX trees, hook compositions, component markup
+- Validation, error handling, control flow implementation
+- Concrete TypeScript syntax of components or hooks
+
+**Principle:** if the artifact answers **what** (contract, data shape, invariant) — it belongs in the plan. If it answers **how** (body, control flow, realization syntax) — it belongs to the implementation agent.
+
+A plan removes ambiguity about what to build. It does not prescribe how to build it.
+
+A plan must contain:
+- Architectural decisions — affected layers, ports/contracts introduced or changed, fit with FSD/hexagonal
+- Data and invariants — Prisma schema, migrations, state transitions, idempotency
+- Boundary contracts — request/response shapes, what is validated and where
+- Edge cases and failure modes that must be handled explicitly
+- File-by-file breakdown — which files change and **what** changes conceptually
+- Order of work and dependencies
+- Open questions requiring user decision
+- Test strategy — what to verify, not how to write the test
+
+## 5. Agent delegation
 
 TRIGGER: Any implementation task beyond a trivial fix.
 
@@ -65,7 +99,7 @@ Apply plan gate (rule 3). Then spawn agents per area in parallel (single message
 
 For mixed tasks, backend implementation must always go to an agent (not done directly) — this is what enables parallelization. Never serialize work that can run concurrently.
 
-## 5. Error protocol
+## 6. Error protocol
 
 TRIGGER: Agent returns FAIL, test fails, tsc errors, build breaks.
 ACTION:
@@ -74,7 +108,7 @@ ACTION:
 3. Re-run the exact check that failed.
 4. Do NOT ignore, skip, retry blindly, or work around.
 
-## 6. Post-completion
+## 7. Post-completion
 
 TRIGGER: All implementation and agents finished.
 ACTION: Run `npx tsc --noEmit`. Fix any errors before reporting done.

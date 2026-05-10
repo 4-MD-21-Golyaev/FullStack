@@ -22,6 +22,7 @@ import { OrderState } from '@/domain/order/OrderState';
 import { getCustomerOrderStatusConfig } from '@/lib/order-status-config';
 import { useAuth } from '../../AuthContext';
 import { useFavorites } from '../../FavoritesContext';
+import { useCart } from '../../CartContext';
 import styles from './order.module.css';
 
 const CANCELLABLE_STATES = [OrderState.CREATED, OrderState.PICKING];
@@ -40,6 +41,7 @@ export default function OrderDetailPage() {
   const queryClient = useQueryClient();
   const { refresh } = useAuth();
   const { favoriteIds, toggleFavorite } = useFavorites();
+  const { addItem } = useCart();
 
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
@@ -55,12 +57,24 @@ export default function OrderDetailPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['my-orders'] }),
   });
 
-  const repeatMutation = useMutation({
-    mutationFn: () => ordersApi.repeatOrder(id),
-    onSuccess: () => router.push('/orders'),
-  });
-
   const isCancellable = order ? CANCELLABLE_STATES.includes(order.state) : false;
+
+  function handleRepeat() {
+    if (!order) return;
+    for (const item of order.items) {
+      addItem(
+        {
+          productId: item.productId,
+          name: item.name,
+          price: item.price,
+          imagePath: item.imageSrc ?? null,
+          stock: 9999,
+        },
+        item.quantity
+      );
+    }
+    router.push('/cart');
+  }
 
   async function handlePay() {
     setIsPaying(true);
@@ -143,7 +157,7 @@ export default function OrderDetailPage() {
                 </div>
               </div>
               <div className={styles.headerButtons}>
-                <Button variant="secondary" size="md" onClick={() => repeatMutation.mutate()}>
+                <Button variant="secondary" size="md" onClick={handleRepeat}>
                   Повторить заказ
                 </Button>
                 {isCancellable && (

@@ -18,17 +18,25 @@ interface PendingDelete {
   countdown: number;
 }
 
+interface ClearPending {
+  items: CartItem[];
+  countdown: number;
+}
+
 export default function CartPage() {
   const router = useRouter();
   const { user, openAuthModal } = useAuth();
   const { items, addItem, removeItem, updateQuantity, clearCart } = useCart();
   const { favoriteIds, toggleFavorite } = useFavorites();
   const [pendingDeletes, setPendingDeletes] = useState<PendingDelete[]>([]);
+  const [clearPending, setClearPending] = useState<ClearPending | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Tick countdown every second
+  const isIdle = pendingDeletes.length === 0 && clearPending === null;
+
+  // Tick countdown every second — handles both per-item undos and clear-cart undo
   useEffect(() => {
-    if (pendingDeletes.length === 0) {
+    if (isIdle) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -38,11 +46,15 @@ export default function CartPage() {
 
     if (!intervalRef.current) {
       intervalRef.current = setInterval(() => {
-        setPendingDeletes(prev => {
-          const next = prev
+        setPendingDeletes(prev =>
+          prev
             .map(p => ({ ...p, countdown: p.countdown - 1 }))
-            .filter(p => p.countdown > 0);
-          return next;
+            .filter(p => p.countdown > 0),
+        );
+        setClearPending(prev => {
+          if (!prev) return prev;
+          const next = prev.countdown - 1;
+          return next > 0 ? { ...prev, countdown: next } : null;
         });
       }, 1000);
     }
@@ -53,8 +65,7 @@ export default function CartPage() {
         intervalRef.current = null;
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pendingDeletes.length === 0]);
+  }, [isIdle]);
 
   const startDelete = (item: CartItem) => {
     removeItem(item.productId);
@@ -76,6 +87,23 @@ export default function CartPage() {
     setPendingDeletes(prev => prev.filter(p => p.item.productId !== productId));
   };
 
+  const startClear = () => {
+    if (items.length === 0) return;
+    setClearPending({ items: [...items], countdown: UNDO_TIMEOUT_MS / 1000 });
+    clearCart();
+  };
+
+  const undoClear = () => {
+    if (!clearPending) return;
+    for (const item of clearPending.items) {
+      addItem(
+        { productId: item.productId, name: item.name, price: item.price, imagePath: item.imagePath, stock: item.stock },
+        item.quantity,
+      );
+    }
+    setClearPending(null);
+  };
+
   const pendingIds = new Set(pendingDeletes.map(p => p.item.productId));
 
   const inStockItems = items.filter(i => i.stock > 0 && !pendingIds.has(i.productId));
@@ -86,7 +114,8 @@ export default function CartPage() {
   const total = subtotal + DELIVERY_COST - discount;
   const totalInStockQty = inStockItems.reduce((sum, i) => sum + i.quantity, 0);
 
-  const isEmpty = items.length === 0;
+  const isEmpty = items.length === 0 && pendingDeletes.length === 0 && clearPending === null;
+  const hasContent = items.length > 0 || pendingDeletes.length > 0;
 
   return (
     <Container className={styles.page}>
@@ -102,105 +131,116 @@ export default function CartPage() {
           <>
             <div className={styles.titleRow}>
               <h1 className={styles.title}>Корзина</h1>
-              <Button variant="ghost" size="md" className={styles.clearBtn} onClick={clearCart}>
-                Очистить корзину
-              </Button>
-            </div>
-
-            <div className={styles.content}>
-              <div className={styles.list}>
-                {/* В наличии */}
-                {(inStockItems.length > 0 || pendingDeletes.length > 0) && (
-                  <section className={styles.section}>
-                    <div className={styles.sectionTitle}>
-                      <span className={styles.sectionLabel}>В наличии</span>
-                      <span className={styles.sectionCount}>
-                        {inStockItems.length + pendingDeletes.length} {pluralizeItems(inStockItems.length + pendingDeletes.length)}
-                      </span>
-                    </div>
-
-                    {inStockItems.map(item => (
-                      <WideProductCard
-                        key={item.productId}
-                        name={item.name}
-                        imageSrc={item.imagePath}
-                        pricePerUnit={item.price}
-                        price={item.price * item.quantity}
-                        quantity={item.quantity}
-                        inStock
-                        liked={favoriteIds.has(item.productId)}
-                        onLike={() => toggleFavorite(item.productId)}
-                        onQuantityChange={qty => updateQuantity(item.productId, qty)}
-                        onRemove={() => startDelete(item)}
-                      />
-                    ))}
-
-                    {pendingDeletes.map(pending => (
-                      <div key={pending.item.productId} className={styles.pendingRow}>
-                        <div className={styles.pendingInfo}>
-                          <span className={styles.name}>{pending.item.name}</span>
-                        </div>
-                        <div className={styles.pendingActions}>
-                          <div className={styles.countdown}>{pending.countdown}</div>
-                          <Button variant="secondary" size="md" onClick={() => undoDelete(pending.item.productId)}>
-                            Вернуть
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </section>
-                )}
-
-                {/* Нет в наличии */}
-                {outOfStockItems.length > 0 && (
-                  <section className={styles.section}>
-                    <div className={styles.sectionTitle}>
-                      <span className={styles.sectionLabel}>Нет в наличии</span>
-                      <span className={styles.sectionCount}>
-                        {outOfStockItems.length} {pluralizeItems(outOfStockItems.length)}
-                      </span>
-                    </div>
-
-                    {outOfStockItems.map(item => (
-                      <WideProductCard
-                        key={item.productId}
-                        name={item.name}
-                        imageSrc={item.imagePath}
-                        pricePerUnit={item.price}
-                        price={item.price}
-                        quantity={item.quantity}
-                        inStock={false}
-                        liked={favoriteIds.has(item.productId)}
-                        onLike={() => toggleFavorite(item.productId)}
-                        onRemove={() => startDelete(item)}
-                      />
-                    ))}
-                  </section>
-                )}
-              </div>
-
-              <aside className={styles.sidebar}>
-                <Button
-                  size="lg"
-                  className={styles.checkoutBtn}
-                  onClick={() => {
-                    if (!user) { openAuthModal('/checkout'); } else { router.push('/checkout'); }
-                  }}
-                >
-                  Перейти к оформлению
+              {clearPending === null ? (
+                <Button variant="ghost" size="md" className={styles.clearBtn} onClick={startClear}>
+                  Очистить корзину
                 </Button>
-                {totalInStockQty > 0 && (
-                  <OrderSummary
-                    itemCount={totalInStockQty}
-                    subtotal={subtotal}
-                    deliveryCost={DELIVERY_COST}
-                    discount={discount}
-                    discountPercent={DISCOUNT_PERCENT}
-                    total={total}
-                  />
-                )}
-              </aside>
+              ) : (
+                <div className={styles.headerUndo}>
+                  <div className={styles.countdown}>{clearPending.countdown}</div>
+                  <Button variant="secondary" size="md" onClick={undoClear}>
+                    Вернуть
+                  </Button>
+                </div>
+              )}
             </div>
+
+            {hasContent && (
+              <div className={styles.content}>
+                <div className={styles.list}>
+                  {/* В наличии */}
+                  {(inStockItems.length > 0 || pendingDeletes.length > 0) && (
+                    <section className={styles.section}>
+                      <div className={styles.sectionTitle}>
+                        <span className={styles.sectionLabel}>В наличии</span>
+                        <span className={styles.sectionCount}>
+                          {inStockItems.length + pendingDeletes.length} {pluralizeItems(inStockItems.length + pendingDeletes.length)}
+                        </span>
+                      </div>
+
+                      {inStockItems.map(item => (
+                        <WideProductCard
+                          key={item.productId}
+                          name={item.name}
+                          imageSrc={item.imagePath}
+                          pricePerUnit={item.price}
+                          price={item.price * item.quantity}
+                          quantity={item.quantity}
+                          inStock
+                          liked={favoriteIds.has(item.productId)}
+                          onLike={() => toggleFavorite(item.productId)}
+                          onQuantityChange={qty => updateQuantity(item.productId, qty)}
+                          onRemove={() => startDelete(item)}
+                        />
+                      ))}
+
+                      {pendingDeletes.map(pending => (
+                        <div key={pending.item.productId} className={styles.pendingRow}>
+                          <div className={styles.pendingInfo}>
+                            <span className={styles.name}>{pending.item.name}</span>
+                          </div>
+                          <div className={styles.pendingActions}>
+                            <div className={styles.countdown}>{pending.countdown}</div>
+                            <Button variant="secondary" size="md" onClick={() => undoDelete(pending.item.productId)}>
+                              Вернуть
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </section>
+                  )}
+
+                  {/* Нет в наличии */}
+                  {outOfStockItems.length > 0 && (
+                    <section className={styles.section}>
+                      <div className={styles.sectionTitle}>
+                        <span className={styles.sectionLabel}>Нет в наличии</span>
+                        <span className={styles.sectionCount}>
+                          {outOfStockItems.length} {pluralizeItems(outOfStockItems.length)}
+                        </span>
+                      </div>
+
+                      {outOfStockItems.map(item => (
+                        <WideProductCard
+                          key={item.productId}
+                          name={item.name}
+                          imageSrc={item.imagePath}
+                          pricePerUnit={item.price}
+                          price={item.price}
+                          quantity={item.quantity}
+                          inStock={false}
+                          liked={favoriteIds.has(item.productId)}
+                          onLike={() => toggleFavorite(item.productId)}
+                          onRemove={() => startDelete(item)}
+                        />
+                      ))}
+                    </section>
+                  )}
+                </div>
+
+                <aside className={styles.sidebar}>
+                  <Button
+                    size="lg"
+                    className={styles.checkoutBtn}
+                    onClick={() => {
+                      if (!user) { openAuthModal('/checkout'); } else { router.push('/checkout'); }
+                    }}
+                  >
+                    Перейти к оформлению
+                  </Button>
+                  {totalInStockQty > 0 && (
+                    <OrderSummary
+                      itemCount={totalInStockQty}
+                      subtotal={subtotal}
+                      deliveryCost={DELIVERY_COST}
+                      discount={discount}
+                      discountPercent={DISCOUNT_PERCENT}
+                      total={total}
+                    />
+                  )}
+                </aside>
+              </div>
+            )}
           </>
         )}
       </Container>
