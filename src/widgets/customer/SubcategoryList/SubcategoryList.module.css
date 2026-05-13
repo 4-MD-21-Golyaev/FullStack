@@ -24,3 +24,9 @@
   white-space: nowrap;
   min-width: 0;
 }
+
+@media (max-width: 767px) {
+  .viewAllText {
+    display: none;
+  }
+}

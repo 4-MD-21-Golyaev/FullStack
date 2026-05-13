@@ -239,7 +239,10 @@ export class PrismaOrderRepository implements OrderRepository {
                 pickerClaimUserId: null,
             },
             include: ORDER_INCLUDE,
-            orderBy: { createdAt: 'asc' },
+            orderBy: [
+                { scheduledDate: { sort: 'asc', nulls: 'last' } },
+                { createdAt: 'asc' },
+            ],
         });
         return records.map(r => this.toOrder(r));
     }

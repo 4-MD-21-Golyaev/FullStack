@@ -12,6 +12,7 @@
   --primitive-color-neutral-250: #dedede;   /* Gray/Focused */
   --primitive-color-neutral-300: #cccccc;   /* Gray/Disabled */
   --primitive-color-neutral-400: #9c9999;   /* Dark Gray/Enabled — secondary icons */
+  --primitive-color-neutral-450: #999999;   /* Gray contrast (Figma) — hint icons */
   --primitive-color-neutral-500: #767676;   /* Gray contrast — secondary text (WCAG AA 4.54:1 on white) */
   --primitive-color-neutral-900: #282828;   /* Signal black — primary text */
 
@@ -49,6 +50,7 @@
   --primitive-space-800:  32px;
   --primitive-space-1200: 48px;
   --primitive-space-1600: 64px;
+  --primitive-space-2400: 96px;
 
   /* ── Typography scale ── */
   --primitive-font-family-sans: 'PT Root UI VF', system-ui, sans-serif;

@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
 import { Link, SliderContainer } from '@/shared/ui';
+import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import { ProductCardSkeleton } from '@/widgets/customer/ProductCard/ProductCardSkeleton';
 import styles from './SubcategoryList.module.css';
 
@@ -14,17 +17,19 @@ interface SubcategoryListProps {
 }
 
 export function SubcategoryList({ title, href, children, loading, className }: SubcategoryListProps) {
+  const isMobile = useIsMobile();
+  const skeletonSize = isMobile ? 'S' : 'L';
   return (
     <section className={[styles.root, className].filter(Boolean).join(' ')}>
       <div className={styles.header}>
         <h3 className={styles.title}>{title}</h3>
         <Link href={href} size="S" showIcon>
-          Смотреть все
+          <span className={styles.viewAllText}>Смотреть все</span>
         </Link>
       </div>
       <SliderContainer>
         {loading
-          ? Array.from({ length: SKELETON_COUNT }, (_, i) => <ProductCardSkeleton key={i} />)
+          ? Array.from({ length: SKELETON_COUNT }, (_, i) => <ProductCardSkeleton key={i} size={skeletonSize} />)
           : children}
       </SliderContainer>
     </section>

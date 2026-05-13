@@ -1,3 +1,9 @@
 .main {
   background-color: var(--ctx-color-bg-surface);
 }
+
+@media (max-width: 767px) {
+  .main {
+    padding-bottom: var(--primitive-space-1600);
+  }
+}

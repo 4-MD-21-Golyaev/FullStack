@@ -3,6 +3,7 @@ import { GetCatalogStructureUseCase } from '@/application/catalog/GetCatalogStru
 import { CatalogProvider } from './CatalogContext';
 import { BreadcrumbsProvider } from '../BreadcrumbsContext';
 import CustomerBreadcrumbs from '@/widgets/customer/CustomerBreadcrumbs/CustomerBreadcrumbs';
+import CategoryHeader from './CategoryHeader';
 
 export default async function CatalogLayout({
   children,
@@ -17,6 +18,7 @@ export default async function CatalogLayout({
     <CatalogProvider initialData={catalogStructure}>
       <BreadcrumbsProvider>
         <CustomerBreadcrumbs />
+        <CategoryHeader />
         {children}
       </BreadcrumbsProvider>
     </CatalogProvider>

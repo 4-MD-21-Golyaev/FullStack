@@ -33,3 +33,20 @@
   color: var(--ctx-color-text-default);
   text-align: center;
 }
+
+@media (max-width: 767px) {
+  .card {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    padding: var(--primitive-space-400);
+  }
+
+  .cardImage {
+    display: none;
+  }
+
+  .cardTitle {
+    font-size: var(--ctx-font-size-caption); /* 16px — [Mobile]/Headings/H5 */
+  }
+}

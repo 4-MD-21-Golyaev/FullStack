@@ -16,3 +16,9 @@
   gap: var(--slider-gap-l);
   width: max-content;
 }
+
+@media (max-width: 767px) {
+  .content {
+    gap: var(--primitive-space-200);
+  }
+}

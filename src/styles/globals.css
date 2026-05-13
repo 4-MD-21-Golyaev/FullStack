@@ -36,6 +36,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Clip horizontal overflow on mobile so position: fixed elements (MobileBottomNav,
+   MobileCartBar, MobileOrderBar) attach to the visual viewport, not to wider content.
+   `clip` (vs `hidden`) preserves position: sticky behavior on the Header. */
+@media (max-width: 767px) {
+  html, body {
+    overflow-x: clip;
+  }
+}
+
 a {
   color: var(--ctx-color-text-link);
   text-decoration: none;

@@ -1,4 +1,7 @@
+'use client';
+
 import { SaleSliderTitle, SliderContainer } from '@/shared/ui';
+import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import ProductCard from '@/widgets/customer/ProductCard/ProductCard';
 import { ProductCardSkeleton } from '@/widgets/customer/ProductCard/ProductCardSkeleton';
 import styles from './SaleSlider.module.css';
@@ -20,6 +23,9 @@ interface SaleSliderProps {
 }
 
 export function SaleSlider({ title, imageSrc, products, loading }: SaleSliderProps) {
+  const isMobile = useIsMobile();
+  const cardSize = isMobile ? 'S' : 'L';
+
   return (
     <div className={styles.root}>
       <div className={styles.titleCol}>
@@ -37,6 +43,7 @@ export function SaleSlider({ title, imageSrc, products, loading }: SaleSliderPro
                   name={p.name}
                   price={p.price}
                   image={p.imagePath}
+                  size={cardSize}
                 />
               ))}
         </SliderContainer>

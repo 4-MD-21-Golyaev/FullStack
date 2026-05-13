@@ -25,6 +25,26 @@
   padding: var(--primitive-space-300) var(--primitive-space-100); /* 12px top/bottom, 6px Figma literal left/right */
 }
 
+@media (max-width: 767px) {
+  /* Both L and S collapse to the compact mobile S spec on mobile,
+     regardless of which size prop was passed (covers SSR/hook races). */
+  .sizeL,
+  .sizeS {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 108 / 120;
+    padding: var(--primitive-space-300) var(--primitive-space-100);
+  }
+
+  .sizeL .label,
+  .sizeS .label {
+    font-size: var(--ctx-font-size-xs); /* 12px */
+    font-weight: 700;
+    line-height: var(--ctx-line-height-loose);
+    -webkit-line-clamp: 6;
+  }
+}
+
 /* ── Image ── */
 
 .imageWrap {

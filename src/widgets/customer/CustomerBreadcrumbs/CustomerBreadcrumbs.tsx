@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { Breadcrumbs, type BreadcrumbItem } from '@/shared/ui';
+import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import { useBreadcrumbs } from '@/app/(customer)/BreadcrumbsContext';
 
 const SEGMENT_LABELS: Record<string, string> = {
@@ -29,6 +30,7 @@ function buildCrumbsFromPathname(pathname: string): BreadcrumbItem[] {
 export default function CustomerBreadcrumbs() {
   const pathname = usePathname();
   const { customCrumbs } = useBreadcrumbs();
+  const isMobile = useIsMobile();
 
   if (!pathname || pathname === '/' || pathname === '/catalog') {
     return null;
@@ -43,5 +45,5 @@ export default function CustomerBreadcrumbs() {
 
   if (!crumbs) return null;
 
-  return <Breadcrumbs crumbs={crumbs} size="L" />;
+  return <Breadcrumbs crumbs={crumbs} size={isMobile ? 'S' : 'L'} />;
 }

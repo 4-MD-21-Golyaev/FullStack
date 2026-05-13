@@ -1,6 +1,7 @@
 'use client';
 
 import { SliderContainer } from '@/shared/ui';
+import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import { useRelatedProducts } from '@/features/recommendations';
 import ProductCard from '@/widgets/customer/ProductCard/ProductCard';
 import { ProductCardSkeleton } from '@/widgets/customer/ProductCard/ProductCardSkeleton';
@@ -14,6 +15,8 @@ export interface RelatedProductsProps {
 
 export function RelatedProducts({ productId }: RelatedProductsProps) {
   const { data, loading } = useRelatedProducts(productId, RELATED_LIMIT);
+  const isMobile = useIsMobile();
+  const cardSize = isMobile ? 'S' : 'L';
 
   if (!loading && data.length === 0) {
     return null;
@@ -24,7 +27,7 @@ export function RelatedProducts({ productId }: RelatedProductsProps) {
       <h2 className={styles.title}>С этим товаром покупают</h2>
       <SliderContainer>
         {loading
-          ? Array.from({ length: RELATED_LIMIT }, (_, i) => <ProductCardSkeleton key={i} />)
+          ? Array.from({ length: RELATED_LIMIT }, (_, i) => <ProductCardSkeleton key={i} size={cardSize} />)
           : data.map(p => (
               <ProductCard
                 key={p.id}
@@ -34,6 +37,7 @@ export function RelatedProducts({ productId }: RelatedProductsProps) {
                 image={p.imagePath}
                 price={p.price}
                 stock={p.stock}
+                size={cardSize}
               />
             ))}
       </SliderContainer>

@@ -20,6 +20,7 @@ import {
 import { ordersApi } from '@/lib/api/orders';
 import { OrderState } from '@/domain/order/OrderState';
 import { getCustomerOrderStatusConfig } from '@/lib/order-status-config';
+import MobileOrderBar from '@/widgets/customer/MobileOrderBar/MobileOrderBar';
 import { useAuth } from '../../AuthContext';
 import { useFavorites } from '../../FavoritesContext';
 import { useCart } from '../../CartContext';
@@ -244,6 +245,10 @@ export default function OrderDetailPage() {
           </main>
         </GridItem>
       </Grid>
+      <MobileOrderBar
+        onRepeat={handleRepeat}
+        onCancel={isCancellable ? () => cancelMutation.mutate() : undefined}
+      />
     </Container>
   );
 }

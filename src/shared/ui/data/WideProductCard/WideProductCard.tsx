@@ -62,25 +62,23 @@ export function WideProductCard({
           <span className={styles.priceActual}>{quantity} шт</span>
         </div>
       ) : (
-        inStock && (
-          <div className={styles.container}>
+        <div className={styles.container}>
+          {inStock && (
             <Counter
               value={quantity}
               onChange={onQuantityChange}
               min={1}
               className={styles.counter}
             />
-            <div className={styles.priceCol}>
-              <span className={styles.priceActual}>{formatPrice(price)}</span>
-              {oldPrice !== undefined && (
-                <span className={styles.priceOld}>{formatPrice(oldPrice)}</span>
-              )}
-            </div>
+          )}
+          <div className={styles.priceCol}>
+            <span className={styles.priceActual}>{formatPrice(price)}</span>
+            {oldPrice !== undefined && (
+              <span className={styles.priceOld}>{formatPrice(oldPrice)}</span>
+            )}
           </div>
-        )
+        </div>
       )}
-
-      {!isHistory && !inStock && null}
 
       <div className={styles.buttons}>
         <LikeButton variant="white" active={liked} onClick={onLike} />

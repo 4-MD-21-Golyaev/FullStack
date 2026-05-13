@@ -18,6 +18,8 @@ export interface ProductCardProps {
   onToggleLike?: () => void;
   liked?: boolean;
   size?: 'L' | 'S';
+  /** Stretch to fill parent cell width preserving aspect ratio (for grid layouts). */
+  fillWidth?: boolean;
   className?: string;
 }
 
@@ -37,6 +39,7 @@ export default function ProductCard({
   onToggleLike,
   liked,
   size = 'L',
+  fillWidth = false,
   className,
 }: ProductCardProps) {
   const { items, addItem, updateQuantity, removeItem } = useCart();
@@ -48,7 +51,7 @@ export default function ProductCard({
   const handleLike = onToggleLike ?? (() => toggleFavorite(id));
 
   return (
-    <div className={[styles.root, size === 'S' ? styles.sizeS : '', inCart ? styles.inCart : '', className ?? ''].filter(Boolean).join(' ')}>
+    <div className={[styles.root, size === 'S' ? styles.sizeS : '', fillWidth ? styles.fluid : '', inCart ? styles.inCart : '', className ?? ''].filter(Boolean).join(' ')}>
       {/* Overlay link — covers entire card, z-index: 0 */}
       <Link href={`/catalog/product/${slug}`} className={styles.overlayLink} aria-label={name} />
 

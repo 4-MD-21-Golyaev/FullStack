@@ -1,0 +1,204 @@
+/* ── FooterMobile widget ── */
+
+.root {
+  background-color: var(--ctx-color-bg-page);
+  width: 100%;
+  padding-block: var(--primitive-space-600) var(--primitive-space-2400);
+  padding-inline: var(--primitive-space-300);
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-600);
+}
+
+/* ── Logo ── */
+
+.logo {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+/* ── Inner container ── */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-600);
+}
+
+/* ── Support block ── */
+
+.support {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-600);
+}
+
+.supportHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-200);
+}
+
+.colTitle {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 700; /* Bold */
+  line-height: var(--ctx-line-height-loose);
+  color: var(--ctx-color-text-default);
+}
+
+.supportSchedule {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+}
+
+.contacts {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--primitive-space-1200);
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-300);
+}
+
+.contactText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-200);
+}
+
+.contactLabel {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 700; /* Bold */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+}
+
+.messengers {
+  display: flex;
+  flex-direction: row;
+  gap: var(--primitive-space-300);
+}
+
+/* ── Accordion groups ── */
+
+.accordions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-600);
+  width: 100%;
+}
+
+.accordion {
+  width: 100%;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding-block: 0;
+  width: 100%;
+  list-style: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.chevron {
+  flex-shrink: 0;
+  transition: transform var(--ctx-transition);
+  color: var(--ctx-color-icon-default);
+}
+
+.accordion[open] > .summary .chevron {
+  transform: rotate(180deg);
+}
+
+.linkList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-400);
+  padding-top: var(--primitive-space-400);
+}
+
+/* ── Address block ── */
+
+.addressBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-300);
+}
+
+.addresses {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-400);
+  width: 100%;
+}
+
+.address {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--primitive-space-300);
+}
+
+.addressText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--primitive-space-200);
+}
+
+.addressName {
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 500; /* [Desktop]/Utilities/Medium */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+}
+
+/* ── Copyright ── */
+
+.copyright {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-800);
+  padding-top: var(--primitive-space-600);
+  width: 100%;
+  position: relative;
+}
+
+.divider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--ctx-color-border-default);
+  opacity: 0.45;
+}
+
+.copyrightText {
+  text-align: center;
+  font-size: var(--ctx-font-size-xs);
+  font-weight: 450; /* [Desktop]/Utilities/Regular */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-secondary);
+}
+
+/* ── Hide on desktop ── */
+
+@media (min-width: 768px) {
+  .root {
+    display: none;
+  }
+}

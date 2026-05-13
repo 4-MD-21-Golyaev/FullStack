@@ -2,11 +2,13 @@ import NextLink from 'next/link';
 import styles from './AppMarketButton.module.css';
 
 export type AppMarket = 'google-play' | 'app-store' | 'appgallery' | 'rustore';
+export type AppMarketButtonSize = 'sm' | 'lg';
 
 export interface AppMarketButtonProps {
   store: AppMarket;
   href: string;
   className?: string;
+  size?: AppMarketButtonSize;
 }
 
 const STORE_LABELS: Record<AppMarket, string> = {
@@ -71,21 +73,24 @@ const STORE_ICONS: Record<AppMarket, React.ReactElement> = {
   'rustore':     <RuStoreIcon />,
 };
 
-export function AppMarketButton({ store, href, className }: AppMarketButtonProps) {
+export function AppMarketButton({ store, href, className, size = 'lg' }: AppMarketButtonProps) {
   return (
     <NextLink
       href={href}
-      className={[styles.root, className ?? ''].join(' ').trim()}
+      aria-label={STORE_LABELS[store]}
+      className={[styles.root, styles[size], className ?? ''].join(' ').trim()}
       target="_blank"
       rel="noopener noreferrer"
     >
       <span className={styles.icon} aria-hidden>
         {STORE_ICONS[store]}
       </span>
-      <span className={styles.text}>
-        <span className={styles.caption}>Загрузите в</span>
-        <span className={styles.name}>{STORE_LABELS[store]}</span>
-      </span>
+      {size === 'lg' && (
+        <span className={styles.text}>
+          <span className={styles.caption}>Загрузите в</span>
+          <span className={styles.name}>{STORE_LABELS[store]}</span>
+        </span>
+      )}
     </NextLink>
   );
 }

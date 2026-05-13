@@ -1,0 +1,28 @@
+.root {
+  position: fixed;
+  bottom: 64px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--primitive-space-300);
+  padding-block: var(--primitive-space-300);
+  padding-inline: var(--primitive-space-300);
+  background-color: var(--ctx-color-bg-surface);
+  z-index: var(--ctx-z-dropdown);
+  box-shadow: var(--ctx-shadow-card);
+}
+
+.repeat {
+  flex: 1 0 0;
+}
+
+.cancel {
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .root {
+    display: none;
+  }
+}

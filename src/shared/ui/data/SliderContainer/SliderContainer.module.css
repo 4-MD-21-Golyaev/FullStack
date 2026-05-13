@@ -13,3 +13,9 @@
 .controls {
   pointer-events: none;
 }
+
+@media (max-width: 767px) {
+  .controls {
+    display: none;
+  }
+}

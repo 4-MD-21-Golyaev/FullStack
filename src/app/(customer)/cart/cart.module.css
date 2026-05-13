@@ -143,3 +143,76 @@
   gap: var(--primitive-space-600);
   align-items: center;
 }
+
+/* Recommendation sections (Можно заменить / Вы смотрели) */
+.recoSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-600);
+  width: 100%;
+}
+
+.recoSection + .recoSection,
+.content + .recoSection {
+  margin-top: var(--primitive-space-800);
+}
+
+.recoTitle {
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700; /* [Desktop]/Headings/Heading 3 */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+  margin: 0;
+}
+
+/* Info block — list wrapper for AlertBlock hints */
+.infoBlock {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-200);
+}
+
+@media (max-width: 767px) {
+  .page {
+    padding-bottom: var(--primitive-space-1600);
+  }
+
+  .checkoutBtn {
+    display: none;
+  }
+
+  .titleRow {
+    margin-bottom: var(--primitive-space-400);
+  }
+
+  .content {
+    flex-direction: column;
+    gap: var(--primitive-space-600);
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .pendingInfo {
+    width: auto;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .pendingRow {
+    flex-wrap: wrap;
+    gap: var(--primitive-space-300);
+  }
+
+  .section {
+    gap: var(--primitive-space-400);
+  }
+
+  .list {
+    gap: var(--primitive-space-600);
+  }
+}

@@ -242,3 +242,101 @@ describe('PrismaOrderRepository.findById', () => {
         expect(order!.items[0].price).toBe(55.5);
     });
 });
+
+// ── findAvailableForPicking ───────────────────────────────────────────────────
+
+describe('PrismaOrderRepository.findAvailableForPicking', () => {
+    it('queries with correct where clause and SLA-first orderBy (scheduledDate asc nulls last, createdAt asc)', async () => {
+        const db = makeDb();
+        db.order.findMany.mockResolvedValue([]);
+        const repo = new PrismaOrderRepository(db as any);
+
+        await repo.findAvailableForPicking();
+
+        expect(db.order.findMany).toHaveBeenCalledWith(
+            expect.objectContaining({
+                where: {
+                    status: { code: { in: ['CREATED', 'PICKING'] } },
+                    pickerClaimUserId: null,
+                },
+                orderBy: [
+                    { scheduledDate: { sort: 'asc', nulls: 'last' } },
+                    { createdAt: 'asc' },
+                ],
+            })
+        );
+    });
+
+    it('returns orders in the order the database returns them (DB applies orderBy)', async () => {
+        // The DB applies the ORDER BY; the repository must preserve that order.
+        // This fixture simulates the expected DB output: earlier scheduledDate first,
+        // then later scheduledDate, then NULL scheduledDate; createdAt breaks ties.
+        const earlySla = makeDbOrder({
+            id: 'order-early-sla',
+            scheduledDate: new Date('2024-01-02T09:00:00Z'),
+            createdAt: new Date('2024-01-01T15:00:00Z'),
+        });
+        const sameSlaEarlier = makeDbOrder({
+            id: 'order-same-sla-earlier-created',
+            scheduledDate: new Date('2024-01-03T09:00:00Z'),
+            createdAt: new Date('2024-01-01T10:00:00Z'),
+        });
+        const sameSlaLater = makeDbOrder({
+            id: 'order-same-sla-later-created',
+            scheduledDate: new Date('2024-01-03T09:00:00Z'),
+            createdAt: new Date('2024-01-01T12:00:00Z'),
+        });
+        const noSla = makeDbOrder({
+            id: 'order-no-sla',
+            scheduledDate: null,
+            createdAt: new Date('2024-01-01T08:00:00Z'),
+        });
+
+        const db = makeDb();
+        // DB returns rows already sorted per the orderBy contract.
+        db.order.findMany.mockResolvedValue([earlySla, sameSlaEarlier, sameSlaLater, noSla]);
+        const repo = new PrismaOrderRepository(db as any);
+
+        const orders = await repo.findAvailableForPicking();
+
+        expect(orders.map(o => o.id)).toEqual([
+            'order-early-sla',
+            'order-same-sla-earlier-created',
+            'order-same-sla-later-created',
+            'order-no-sla',
+        ]);
+    });
+
+    it('returns empty array when no orders are available', async () => {
+        const db = makeDb();
+        db.order.findMany.mockResolvedValue([]);
+        const repo = new PrismaOrderRepository(db as any);
+
+        const orders = await repo.findAvailableForPicking();
+
+        expect(orders).toEqual([]);
+    });
+
+    it('maps scheduledDate through toOrder', async () => {
+        const scheduled = new Date('2024-01-05T09:00:00Z');
+        const record = makeDbOrder({ scheduledDate: scheduled });
+        const db = makeDb();
+        db.order.findMany.mockResolvedValue([record]);
+        const repo = new PrismaOrderRepository(db as any);
+
+        const orders = await repo.findAvailableForPicking();
+
+        expect(orders[0].scheduledDate).toEqual(scheduled);
+    });
+
+    it('maps null scheduledDate through toOrder', async () => {
+        const record = makeDbOrder({ scheduledDate: null });
+        const db = makeDb();
+        db.order.findMany.mockResolvedValue([record]);
+        const repo = new PrismaOrderRepository(db as any);
+
+        const orders = await repo.findAvailableForPicking();
+
+        expect(orders[0].scheduledDate).toBeNull();
+    });
+});

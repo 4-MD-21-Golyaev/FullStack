@@ -29,6 +29,7 @@
   /* ── Icon color ── */
   --ctx-color-icon-default:   var(--primitive-color-neutral-900);
   --ctx-color-icon-secondary: var(--primitive-color-neutral-400);
+  --ctx-color-icon-hint:      var(--primitive-color-neutral-450);
   --ctx-color-icon-disabled:  var(--primitive-color-neutral-300);
 
   /* ── Accent (stars, warnings) ── */
@@ -87,7 +88,8 @@
   --ctx-font-size-label:   var(--primitive-font-size-14);   /* 14px — [Desktop]/Utilities/Secondary */
   --ctx-font-size-caption: var(--primitive-font-size-16);   /* 16px — [Desktop]/Utilities/Caption */
   --ctx-font-size-ui:      var(--primitive-font-size-18);   /* 18px — [Desktop]/Utilities/UI */
-  --ctx-font-size-body:    var(--primitive-font-size-18);   /* 18px — [Desktop]/Body, H5 */
+  --ctx-font-size-body:    var(--primitive-font-size-18);   /* 18px — [Desktop]/Body */
+  --ctx-font-size-h5:      var(--primitive-font-size-18);   /* 18px — [Desktop]/Headings/Heading 5 */
   --ctx-font-size-h4:      var(--primitive-font-size-20);   /* 20px — [Desktop]/Headings/Heading 4 */
   --ctx-font-size-h3:      var(--primitive-font-size-24);   /* 24px — [Desktop]/Headings/Heading 3 */
   --ctx-font-size-h2:      var(--primitive-font-size-36);   /* 36px — [Desktop]/Headings/Heading 2 */
@@ -105,4 +107,17 @@
   --ctx-z-dropdown:   var(--primitive-z-dropdown);
   --ctx-z-modal:      var(--primitive-z-modal);
   --ctx-z-toast:      var(--primitive-z-toast);
+}
+
+/* ── Mobile heading scale (Figma [Mobile]/Headings) ──
+   H1 24px / 1.10, H2 20px / 1.15, H3 18px / 1.15, H4 16px / 1.20, H5 16px / 1.20.
+   Tokens cascade automatically into every consumer. */
+@media (max-width: 767px) {
+  :root {
+    --ctx-font-size-h1: var(--primitive-font-size-24);   /* 24px — [Mobile]/Headings/H1 */
+    --ctx-font-size-h2: var(--primitive-font-size-20);   /* 20px — [Mobile]/Headings/H2 */
+    --ctx-font-size-h3: var(--primitive-font-size-18);   /* 18px — [Mobile]/Headings/H3 */
+    --ctx-font-size-h4: var(--primitive-font-size-16);   /* 16px — [Mobile]/Headings/H4 */
+    --ctx-font-size-h5: var(--primitive-font-size-16);   /* 16px — [Mobile]/Headings/H5 */
+  }
 }

@@ -1,9 +1,14 @@
 'use client';
 
 import NextLink from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Container, OrderSummary, WideProductCard } from '@/shared/ui';
+import { AlertBlock, Button, Container, OrderSummary, SliderContainer, WideProductCard } from '@/shared/ui';
+import { useIsMobile } from '@/shared/hooks/useIsMobile';
+import { useRelatedProducts } from '@/features/recommendations';
+import { useViewedProducts } from '@/features/viewed-products';
+import MobileCartBar from '@/widgets/customer/MobileCartBar/MobileCartBar';
+import ProductCard from '@/widgets/customer/ProductCard/ProductCard';
 import { useCart, type CartItem } from '../CartContext';
 import { useAuth } from '../AuthContext';
 import { useFavorites } from '../FavoritesContext';
@@ -28,6 +33,7 @@ export default function CartPage() {
   const { user, openAuthModal } = useAuth();
   const { items, addItem, removeItem, updateQuantity, clearCart } = useCart();
   const { favoriteIds, toggleFavorite } = useFavorites();
+  const isMobile = useIsMobile();
   const [pendingDeletes, setPendingDeletes] = useState<PendingDelete[]>([]);
   const [clearPending, setClearPending] = useState<ClearPending | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -116,6 +122,13 @@ export default function CartPage() {
 
   const isEmpty = items.length === 0 && pendingDeletes.length === 0 && clearPending === null;
   const hasContent = items.length > 0 || pendingDeletes.length > 0;
+
+  const firstOosId = outOfStockItems[0]?.productId ?? null;
+  const { data: alternatives, loading: altLoading } = useRelatedProducts(firstOosId, 6);
+  const cartItemIds = useMemo(() => items.map(i => i.productId), [items]);
+  const { data: viewed } = useViewedProducts(8, cartItemIds);
+  const cardSize = isMobile ? 'S' : 'L';
+  const showAlternatives = outOfStockItems.length > 0 && (altLoading || alternatives.length > 0);
 
   return (
     <Container className={styles.page}>
@@ -216,6 +229,27 @@ export default function CartPage() {
                       ))}
                     </section>
                   )}
+
+                  {/* Можно заменить — recommendations for first OOS item */}
+                  {showAlternatives && (
+                    <section className={styles.recoSection}>
+                      <h3 className={styles.recoTitle}>Можно заменить</h3>
+                      <SliderContainer>
+                        {alternatives.map(p => (
+                          <ProductCard
+                            key={p.id}
+                            id={p.id}
+                            slug={p.id}
+                            name={p.name}
+                            image={p.imagePath}
+                            price={p.price}
+                            stock={p.stock}
+                            size={cardSize}
+                          />
+                        ))}
+                      </SliderContainer>
+                    </section>
+                  )}
                 </div>
 
                 <aside className={styles.sidebar}>
@@ -238,9 +272,41 @@ export default function CartPage() {
                       total={total}
                     />
                   )}
+                  <ul className={styles.infoBlock} aria-label="Информация о заказе">
+                    <li><AlertBlock>Сумма может изменяться, так как в заказе есть весовой товар</AlertBlock></li>
+                    <li><AlertBlock>Обработка заказов производится с 9:00 до 19:00</AlertBlock></li>
+                    <li><AlertBlock>Заказы, принятые после 18:00, обрабатываются на следующий день</AlertBlock></li>
+                  </ul>
                 </aside>
               </div>
             )}
+
+            {viewed.length > 0 && (
+              <section className={styles.recoSection}>
+                <h3 className={styles.recoTitle}>Вы смотрели</h3>
+                <SliderContainer>
+                  {viewed.map(p => (
+                    <ProductCard
+                      key={p.id}
+                      id={p.id}
+                      slug={p.id}
+                      name={p.name}
+                      image={p.imagePath}
+                      price={p.price}
+                      stock={p.stock}
+                      size={cardSize}
+                    />
+                  ))}
+                </SliderContainer>
+              </section>
+            )}
+
+            <MobileCartBar
+              total={total}
+              onCheckout={() => {
+                if (!user) { openAuthModal('/checkout'); } else { router.push('/checkout'); }
+              }}
+            />
           </>
         )}
       </Container>

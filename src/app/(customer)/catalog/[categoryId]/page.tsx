@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Category, Container } from '@/shared/ui';
+import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import ProductCard from '@/widgets/customer/ProductCard/ProductCard';
 import { ProductCardSkeleton } from '@/widgets/customer/ProductCard/ProductCardSkeleton';
 import CatalogSidebar from '@/widgets/customer/CatalogSidebar/CatalogSidebar';
@@ -22,19 +23,13 @@ export default function CatalogCategoryPage() {
 
   const { rootCategories, childrenByParent, expanded, toggleCategory } = useCatalog();
   const { setCustomCrumbs } = useBreadcrumbs();
+  const isMobile = useIsMobile();
 
   const subcategories = useMemo(
     () => childrenByParent[categoryId] ?? [],
     [childrenByParent, categoryId],
   );
   const isLeafCategory = subcategories.length === 0;
-
-  const currentCategoryName = useMemo(() => {
-    const match =
-      rootCategories.find(c => c.id === categoryId) ??
-      Object.values(childrenByParent).flat().find(c => c.id === categoryId);
-    return match?.name ?? '';
-  }, [categoryId, rootCategories, childrenByParent]);
 
   useEffect(() => {
     if (!categoryId) return;
@@ -105,13 +100,9 @@ export default function CatalogCategoryPage() {
     isLeafCategory ? categoryId : null,
   );
 
-  const pageTitle = isLeafCategory ? currentCategoryName || 'Каталог' : 'Каталог';
-
   return (
     <div className={styles.page}>
       <Container className={styles.pageInner}>
-        <h1 className={isLeafCategory ? styles.categoryTitle : styles.title}>{pageTitle}</h1>
-
         <div className={styles.layout}>
           <CatalogSidebar
             className={styles.sidebar}
@@ -133,7 +124,7 @@ export default function CatalogCategoryPage() {
                       href={`/catalog/${cat.id}`}
                       imageSrc={cat.imagePath ?? undefined}
                       imageAlt={cat.name}
-                      size="L"
+                      size={isMobile ? 'S' : 'L'}
                     />
                   ))}
                 </section>
@@ -154,6 +145,7 @@ export default function CatalogCategoryPage() {
                           name={p.name}
                           image={p.imagePath}
                           price={p.price}
+                          size={isMobile ? 'S' : 'L'}
                         />
                       ))}
                     </SubcategoryList>
@@ -163,20 +155,26 @@ export default function CatalogCategoryPage() {
             )}
 
             {isLeafCategory && (
-              <section className={styles.productGrid}>
-                {categoryProductsLoading
-                  ? Array.from({ length: SKELETON_COUNT }, (_, i) => <ProductCardSkeleton key={i} />)
-                  : sortedCategoryProducts.map(p => (
-                      <ProductCard
-                        key={p.id}
-                        id={p.id}
-                        slug={p.id}
-                        name={p.name}
-                        image={p.imagePath ?? '/images/placeholder.png'}
-                        price={p.price}
-                      />
-                    ))}
-              </section>
+              <>
+                <section className={styles.productGrid}>
+                  {categoryProductsLoading
+                    ? Array.from({ length: SKELETON_COUNT }, (_, i) => (
+                        <ProductCardSkeleton key={i} size={isMobile ? 'S' : 'L'} />
+                      ))
+                    : sortedCategoryProducts.map(p => (
+                        <ProductCard
+                          key={p.id}
+                          id={p.id}
+                          slug={p.id}
+                          name={p.name}
+                          image={p.imagePath ?? '/images/placeholder.png'}
+                          price={p.price}
+                          size={isMobile ? 'S' : 'L'}
+                          fillWidth={isMobile}
+                        />
+                      ))}
+                </section>
+              </>
             )}
           </div>
         </div>

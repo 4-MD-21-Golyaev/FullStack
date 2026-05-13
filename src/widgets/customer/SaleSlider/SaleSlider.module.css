@@ -12,3 +12,18 @@
   flex: 1;
   min-width: 0;
 }
+
+@media (max-width: 767px) {
+  .root {
+    flex-direction: column;
+    gap: var(--primitive-space-200);
+  }
+
+  .titleCol {
+    width: 100%;
+  }
+
+  .trackCol {
+    width: 100%;
+  }
+}

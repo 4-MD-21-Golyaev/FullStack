@@ -10,7 +10,6 @@
   font-weight: 450; /* [Desktop]/Utilities/Regular */
   line-height: var(--ctx-line-height-normal);
   cursor: pointer;
-  transition: background var(--ctx-transition), color var(--ctx-transition);
   white-space: nowrap;
 }
 

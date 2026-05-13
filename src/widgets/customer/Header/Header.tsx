@@ -39,7 +39,8 @@ export function Header() {
       {/* Main bar — logo, search, actions */}
       <div className={styles.mainBar}>
         <div className={styles.container}>
-          <Logo variant="default" className={styles.logo} />
+          <Logo variant="default" className={styles.logoDesktop} />
+          <Logo variant="favicon" className={styles.logoMobile} />
 
           <div className={styles.searchWrap}>
             <SearchBar

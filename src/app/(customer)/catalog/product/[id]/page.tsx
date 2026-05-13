@@ -3,7 +3,9 @@
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { Button, Container, Counter, LikeButton, Price, Spinner, Tab } from '@/shared/ui';
+import { Button, Chips, Container, Counter, LikeButton, Price, Spinner, Tab } from '@/shared/ui';
+import { useIsMobile } from '@/shared/hooks/useIsMobile';
+import { addViewedProduct } from '@/features/viewed-products';
 import { RelatedProducts } from '@/widgets/customer/RelatedProducts/RelatedProducts';
 import { useCatalog, buildCategoryPath } from '../../CatalogContext';
 import { useBreadcrumbs } from '../../../BreadcrumbsContext';
@@ -31,6 +33,15 @@ export default function ProductPage() {
   const [product, setProduct] = useState<ApiProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'specs' | 'nutrition' | 'storage' | 'composition' | 'description'>('specs');
+  const isMobile = useIsMobile();
+
+  const tabs = useMemo(() => ([
+    { id: 'specs' as const,        label: 'Характеристики' },
+    { id: 'nutrition' as const,    label: 'Пищевая ценность' },
+    { id: 'storage' as const,      label: 'Хранение' },
+    { id: 'composition' as const,  label: 'Состав' },
+    { id: 'description' as const,  label: 'Описание' },
+  ]), []);
 
   useEffect(() => {
     if (!productId) return;
@@ -59,6 +70,11 @@ export default function ProductPage() {
       setLoading(true);
     };
   }, [productId]);
+
+  useEffect(() => {
+    if (!product) return;
+    addViewedProduct(product.id);
+  }, [product]);
 
   useEffect(() => {
     if (!product) return;
@@ -154,13 +170,14 @@ export default function ProductPage() {
                             ? removeItem(product.id)
                             : updateQuantity(product.id, qty)
                           }
-                          className={styles.counter}
+                          className={styles.primaryAction}
                         />
                       );
                     }
                     return (
                       <Button
                         size="lg"
+                        className={styles.primaryAction}
                         onClick={() => addItem({
                           productId: product.id,
                           name: product.name,
@@ -185,23 +202,32 @@ export default function ProductPage() {
                 </div>
               </div>
 
-              <div className={styles.tabs}>
-                <Tab active={activeTab === 'specs'} onClick={() => setActiveTab('specs')}>
-                  Характеристики
-                </Tab>
-                <Tab active={activeTab === 'nutrition'} onClick={() => setActiveTab('nutrition')}>
-                  Пищевая ценность
-                </Tab>
-                <Tab active={activeTab === 'storage'} onClick={() => setActiveTab('storage')}>
-                  Хранение
-                </Tab>
-                <Tab active={activeTab === 'composition'} onClick={() => setActiveTab('composition')}>
-                  Состав
-                </Tab>
-                <Tab active={activeTab === 'description'} onClick={() => setActiveTab('description')}>
-                  Описание
-                </Tab>
-              </div>
+              {isMobile ? (
+                <div className={styles.tabsMobile}>
+                  {tabs.map(t => (
+                    <Chips
+                      key={t.id}
+                      size="sm"
+                      selected={activeTab === t.id}
+                      onClick={() => setActiveTab(t.id)}
+                    >
+                      {t.label}
+                    </Chips>
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.tabs}>
+                  {tabs.map(t => (
+                    <Tab
+                      key={t.id}
+                      active={activeTab === t.id}
+                      onClick={() => setActiveTab(t.id)}
+                    >
+                      {t.label}
+                    </Tab>
+                  ))}
+                </div>
+              )}
 
               <div className={styles.tabContent}>
                 {tabContent}

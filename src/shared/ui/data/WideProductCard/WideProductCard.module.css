@@ -96,3 +96,48 @@
   line-height: 1.1;
   color: var(--ctx-color-text-default);
 }
+
+@media (max-width: 767px) {
+  .root {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      "info    info    price"
+      "counter .       buttons";
+    column-gap: var(--primitive-space-300);
+    row-gap: var(--primitive-space-300);
+    align-items: center;
+  }
+
+  .info {
+    grid-area: info;
+    width: auto;
+    min-width: 0;
+  }
+
+  /* Unwrap .container — let its children become direct grid items */
+  .container {
+    display: contents;
+  }
+
+  .priceCol {
+    grid-area: price;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .counter {
+    grid-area: counter;
+    width: auto;
+    justify-self: start;
+  }
+
+  .buttons {
+    grid-area: buttons;
+    justify-self: end;
+  }
+
+  .historyPriceQty {
+    grid-area: price;
+  }
+}

@@ -182,3 +182,9 @@
   line-height: var(--ctx-line-height-tight);
   color: var(--ctx-color-text-secondary);
 }
+
+@media (max-width: 767px) {
+  .root {
+    display: none;
+  }
+}

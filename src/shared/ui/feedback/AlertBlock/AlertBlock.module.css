@@ -2,13 +2,13 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: var(--primitive-space-200);
   border-radius: var(--primitive-radius-400);
-  padding: 12px 16px;
+  padding: var(--primitive-space-300) var(--primitive-space-400);
 }
 
 .info {
-  background-color: var(--ctx-color-bg-subtle);
+  background-color: var(--ctx-color-bg-page);
 }
 
 .alert {
@@ -23,7 +23,7 @@
 }
 
 .info .icon {
-  color: var(--ctx-color-text-secondary);
+  color: var(--ctx-color-icon-hint);
 }
 
 .alert .icon {
@@ -31,7 +31,7 @@
 }
 
 .text {
-  font-size: 14px;
+  font-size: var(--ctx-font-size-xs); /* 12px — Figma [Mobile]/Utilities/Secondary */
   font-weight: 450; /* Figma: Secondary/Regular */
   color: var(--ctx-color-text-default);
   line-height: var(--ctx-line-height-tight);

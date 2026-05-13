@@ -55,6 +55,16 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 767px) {
+  .headerButtons {
+    display: none;
+  }
+
+  .main {
+    padding-bottom: var(--primitive-space-1600);
+  }
+}
+
 /* Info two-column layout */
 .infoColumns {
   display: grid;

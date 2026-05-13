@@ -1,6 +1,7 @@
 'use client';
 
 import { Category, Container } from '@/shared/ui';
+import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import CatalogSidebar from '@/widgets/customer/CatalogSidebar/CatalogSidebar';
 import { usePersonalizedCategorySort } from '@/features/recommendations';
 import { useCatalog } from './CatalogContext';
@@ -9,6 +10,7 @@ import styles from './catalog.module.css';
 export default function CatalogPage() {
   const { rootCategories, childrenByParent, expanded, toggleCategory } = useCatalog();
   const { sorted: sortedRootCategories } = usePersonalizedCategorySort(rootCategories);
+  const isMobile = useIsMobile();
 
   return (
     <div className={styles.page}>
@@ -33,7 +35,7 @@ export default function CatalogPage() {
                 href={`/catalog/${cat.id}`}
                 imageSrc={cat.imagePath ?? undefined}
                 imageAlt={cat.name}
-                size="L"
+                size={isMobile ? 'S' : 'L'}
               />
             ))}
           </section>

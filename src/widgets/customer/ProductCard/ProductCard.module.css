@@ -36,6 +36,24 @@
   height: var(--product-card-img-h-s);
 }
 
+@media (max-width: 767px) {
+  .sizeS .imageArea {
+    padding: var(--primitive-space-600) var(--primitive-space-200);
+  }
+
+  /* Fluid mode: card stretches to fill parent cell width (used in product grids).
+     Only applies on mobile + size S + explicit fillWidth prop. Sliders use fixed sizing. */
+  .fluid.sizeS {
+    width: 100%;
+    height: auto;
+  }
+
+  .fluid.sizeS .imageArea {
+    height: auto;
+    aspect-ratio: 165 / 160;
+  }
+}
+
 /* CardImage fills the link area */
 .cardImage {
   width: 100% !important;

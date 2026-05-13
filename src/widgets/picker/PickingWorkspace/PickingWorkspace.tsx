@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useMemo, useLayoutEffect } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi, type OrderItemDto, type OrderDto } from '@/lib/api/orders';
@@ -11,6 +12,30 @@ import { AbsenceResolutionStrategy } from '@/domain/order/AbsenceResolutionStrat
 import { OrderState } from '@/domain/order/OrderState';
 import { ProductSearchModal, type ProductSearchResult } from '@/features/product-search';
 import styles from './PickingWorkspace.module.css';
+
+function ItemPhoto({ src, name }: { src?: string | null; name: string }) {
+  if (src) {
+    return (
+      <Image
+        src={src}
+        alt={name}
+        width={40}
+        height={40}
+        className={styles.itemPhoto}
+      />
+    );
+  }
+  const initial = (name.trim().charAt(0) || '?').toUpperCase();
+  return (
+    <div className={styles.itemPhotoFallback} aria-hidden="true">
+      {initial}
+    </div>
+  );
+}
+
+function formatPricePerUnit(price: number) {
+  return `${price.toLocaleString('ru')} ₽/шт`;
+}
 
 const ABSENCE_LABELS: Record<AbsenceResolutionStrategy, string> = {
   [AbsenceResolutionStrategy.CALL_REPLACE]: 'Позвонить — заменить',
@@ -74,8 +99,16 @@ function ItemRow({ item, mode, localQty, maxQty, onQtyChange, onMarkAbsent, onRe
       exit={{ opacity: 0, height: 0, paddingTop: 0, paddingBottom: 0, overflow: 'hidden' }}
       transition={{ duration: 0.25, ease: 'easeInOut' }}
     >
-      <div className={styles.itemInfo}>
-        <span className={styles.itemName}>{item.name}</span>
+      <div className={styles.itemHeader}>
+        <ItemPhoto src={item.imageSrc} name={item.name} />
+        <div className={styles.itemInfo}>
+          <span className={styles.itemName}>{item.name}</span>
+          <div className={styles.itemMeta}>
+            <span className={styles.itemArticle}>Арт. {item.article}</span>
+            <span className={styles.itemMetaSep} aria-hidden="true">·</span>
+            <span className={styles.itemPrice}>{formatPricePerUnit(item.price)}</span>
+          </div>
+        </div>
       </div>
 
       <div className={styles.itemControls}>
@@ -456,7 +489,17 @@ export function PickingWorkspace({ order }: Props) {
                     <div key={item.productId} className={styles.replacedBlock}>
                       {/* Исходный товар */}
                       <div className={styles.absentOriginal}>
-                        <span className={styles.itemName}>{item.name}</span>
+                        <div className={styles.itemHeader}>
+                          <ItemPhoto src={item.imageSrc} name={item.name} />
+                          <div className={styles.itemInfo}>
+                            <span className={styles.itemName}>{item.name}</span>
+                            <div className={styles.itemMeta}>
+                              <span className={styles.itemArticle}>Арт. {item.article}</span>
+                              <span className={styles.itemMetaSep} aria-hidden="true">·</span>
+                              <span className={styles.itemPrice}>{formatPricePerUnit(item.price)}</span>
+                            </div>
+                          </div>
+                        </div>
                         <Button variant="ghost" size="sm" onClick={() => handleRestore(item.productId)}>
                           Восстановить
                         </Button>
@@ -467,8 +510,16 @@ export function PickingWorkspace({ order }: Props) {
                         if (!rep) return null;
                         return (
                           <div key={repId} className={styles.replacementRow}>
-                            <div className={styles.itemInfo}>
-                              <span className={styles.itemName}>{rep.name}</span>
+                            <div className={styles.itemHeader}>
+                              <ItemPhoto src={null} name={rep.name} />
+                              <div className={styles.itemInfo}>
+                                <span className={styles.itemName}>{rep.name}</span>
+                                <div className={styles.itemMeta}>
+                                  <span className={styles.itemArticle}>Арт. {rep.article}</span>
+                                  <span className={styles.itemMetaSep} aria-hidden="true">·</span>
+                                  <span className={styles.itemPrice}>{formatPricePerUnit(rep.price)}</span>
+                                </div>
+                              </div>
                             </div>
                             <div className={styles.itemControls}>
                               <Counter

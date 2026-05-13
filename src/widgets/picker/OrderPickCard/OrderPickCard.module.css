@@ -65,3 +65,22 @@
   color: var(--ctx-color-text-secondary);
   flex-shrink: 0;
 }
+
+.deliveryRow {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* intentional — tight icon+text pairing */
+  font-size: var(--ctx-font-size-label);
+  color: var(--ctx-color-text-default);
+  font-weight: 500; /* Medium — emphasize SLA over order age */
+}
+
+.deliveryIcon {
+  color: var(--ctx-color-action-primary);
+  flex-shrink: 0;
+}
+
+.strategyRow {
+  display: flex;
+  align-items: center;
+}

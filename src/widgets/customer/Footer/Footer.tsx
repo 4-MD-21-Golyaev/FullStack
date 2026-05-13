@@ -1,41 +1,12 @@
 'use client';
 
-import { Logo, Link, SocialButton, AppMarketButton, IconButton } from '@/shared/ui';
+import { Logo, Link, SocialButton, IconButton } from '@/shared/ui';
+import { COMPANY_LINKS, BUYER_LINKS, LEGAL_LINKS, STORES, STORE_ADDRESSES } from './footerData';
 import styles from './Footer.module.css';
 
 interface FooterProps {
   className?: string;
 }
-
-const COMPANY_LINKS = [
-  { label: 'О нас',      href: '#' },
-  { label: 'Контакты',   href: '#' },
-  { label: 'Вакансии',   href: '#' },
-];
-
-const BUYER_LINKS = [
-  { label: 'Каталог',               href: '#' },
-  { label: 'Помощь',                href: '#' },
-  { label: 'Программа лояльности',  href: '#' },
-];
-
-const LEGAL_LINKS = [
-  { label: 'Правила программы лояльности',    href: '#' },
-  { label: 'Условия обмена и возврата',        href: '#' },
-  { label: 'Пользовательское соглашение',      href: '#' },
-  { label: 'Политика конфиденциальности',      href: '#' },
-  { label: 'Политика обработки файлов cookie', href: '#' },
-];
-
-const STORES: { name: string; href: string; }[] = [
-  { name: 'НК Сити',    href: 'https://maps.yandex.ru' },
-  { name: 'НК Гродеков', href: 'https://maps.yandex.ru' },
-];
-
-const STORE_ADDRESSES: Record<string, string> = {
-  'НК Сити':     'Улица Карла Маркса, 76',
-  'НК Гродеков': 'Комсомольская улица, 45',
-};
 
 export function Footer({ className }: FooterProps) {
   return (
