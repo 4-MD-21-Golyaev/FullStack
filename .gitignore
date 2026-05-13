@@ -20,6 +20,11 @@
 # production
 /build
 
+# database seed/dump snapshots
+*.dump
+*.backup
+/docker/db/init/
+
 # misc
 .DS_Store
 *.pem
