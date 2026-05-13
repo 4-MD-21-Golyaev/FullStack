@@ -8,6 +8,13 @@ import path from 'path'
 const require = createRequire(import.meta.url)
 const catalogData = require('../docs/catalog_with_products.json')
 
+if (process.env.ALLOW_DESTRUCTIVE_CATALOG_SEED !== 'true') {
+    throw new Error(
+        'Database seed is disabled because it deletes orders, payments, cart items, products, and categories. ' +
+        'Set ALLOW_DESTRUCTIVE_CATALOG_SEED=true only when you intentionally want to rebuild the catalog.',
+    )
+}
+
 if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is not defined')
 }
