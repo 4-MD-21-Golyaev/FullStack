@@ -18,7 +18,7 @@ vi.mock('@/lib/auth/session', () => ({
 import { NextRequest } from 'next/server';
 import { POST } from '../route';
 import { setTokenCookies } from '@/lib/auth/session';
-import { InvalidOtpError, UserNotFoundError } from '@/domain/auth/errors';
+import { InvalidOtpError, OtpRateLimitedError } from '@/domain/auth/errors';
 
 const mockSetCookies = setTokenCookies as ReturnType<typeof vi.fn>;
 
@@ -51,10 +51,10 @@ describe('POST /api/auth/verify-code', () => {
         expect(res.status).toBe(422);
     });
 
-    it('returns 404 when user not found', async () => {
-        mockExecute.mockRejectedValue(new UserNotFoundError('unknown@example.com'));
-        const res = await POST(makeReq({ email: 'unknown@example.com', code: '123456' }));
-        expect(res.status).toBe(404);
+    it('returns 429 when OTP attempts are rate-limited', async () => {
+        mockExecute.mockRejectedValue(new OtpRateLimitedError());
+        const res = await POST(makeReq({ email: 'user@example.com', code: '000000' }));
+        expect(res.status).toBe(429);
     });
 
     it('returns 200 and calls setTokenCookies on success', async () => {

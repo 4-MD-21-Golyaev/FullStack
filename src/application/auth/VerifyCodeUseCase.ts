@@ -3,7 +3,7 @@ import { type OtpRepository } from '@/application/ports/OtpRepository';
 import { type UserRepository } from '@/application/ports/UserRepository';
 import { type RefreshTokenRepository } from '@/application/ports/RefreshTokenRepository';
 import { type TokenService } from '@/application/ports/TokenService';
-import { InvalidOtpError, UserNotFoundError } from '@/domain/auth/errors';
+import { InvalidOtpError } from '@/domain/auth/errors';
 
 export interface VerifyCodeInput {
     email: string;
@@ -30,8 +30,13 @@ export class VerifyCodeUseCase {
         const valid = await this.otpRepository.verify(input.email, input.code);
         if (!valid) throw new InvalidOtpError();
 
-        const user = await this.userRepository.findByEmail(input.email);
-        if (!user) throw new UserNotFoundError(input.email);
+        const existing = await this.userRepository.findByEmail(input.email);
+        const user = existing ?? await this.userRepository.create({
+            email: input.email,
+            phone: '',
+            address: null,
+            role: 'CUSTOMER',
+        });
 
         const accessToken = await this.tokenService.signAccessToken({
             sub: user.id,

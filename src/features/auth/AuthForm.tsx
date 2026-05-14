@@ -79,7 +79,7 @@ function CodeInput({ value, onChange, hasError, autoFocus }: CodeInputProps) {
 
 // ── AuthForm ──────────────────────────────────────────────────────────────────
 
-export type Step = 'email' | 'code' | 'register';
+export type Step = 'email' | 'code';
 
 const RESEND_TIMEOUT_SEC = 60;
 
@@ -97,8 +97,6 @@ export interface AuthFormProps {
 export function AuthForm({ step, onStepChange, onSuccess, onResendSecondsChange, resendTriggerRef }: AuthFormProps) {
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
   const [devCode, setDevCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -161,10 +159,6 @@ export function AuthForm({ step, onStepChange, onSuccess, onResendSecondsChange,
         return;
       }
       const data = await res.json() as { message?: string };
-      if (res.status === 404) {
-        onStepChange('register');
-        return;
-      }
       if (res.status === 429) {
         setError('Слишком много попыток. Запросите новый код.');
         return;
@@ -201,33 +195,6 @@ export function AuthForm({ step, onStepChange, onSuccess, onResendSecondsChange,
   }, [email]);
 
   if (resendTriggerRef) resendTriggerRef.current = handleResend;
-
-  async function handleRegister(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, phone, address: address || null }),
-      });
-      if (!res.ok) {
-        const data = await res.json() as { message?: string };
-        setError(data.message ?? 'Ошибка регистрации');
-        return;
-      }
-      const newDevCode = await sendCode(email);
-      setDevCode(newDevCode);
-      setCode('');
-      setResendSeconds(RESEND_TIMEOUT_SEC);
-      onStepChange('code');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка сети');
-    } finally {
-      setLoading(false);
-    }
-  }
 
   const hasCodeError = !!error && step === 'code';
 
@@ -283,37 +250,6 @@ export function AuthForm({ step, onStepChange, onSuccess, onResendSecondsChange,
         </div>
       )}
 
-      {/* ── Step: register ── */}
-      {step === 'register' && (
-        <form className={styles.body} onSubmit={handleRegister}>
-          <div className={styles.content}>
-            <p className={styles.subtitle}>
-              Аккаунт не найден. Создайте его, чтобы продолжить.
-            </p>
-            <div className={styles.form}>
-              <Input
-                type="tel"
-                placeholder="Телефон"
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                required
-                autoFocus
-                size="lg"
-              />
-              <Input
-                placeholder="Адрес доставки"
-                value={address}
-                onChange={e => setAddress(e.target.value)}
-                size="lg"
-              />
-              {error && <p className={styles.errorMsg}>{error}</p>}
-              <Button type="submit" variant="primary" size="lg" loading={loading}>
-                Зарегистрироваться
-              </Button>
-            </div>
-          </div>
-        </form>
-      )}
     </div>
   );
 }

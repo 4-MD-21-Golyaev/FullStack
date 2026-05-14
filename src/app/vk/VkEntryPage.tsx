@@ -153,7 +153,7 @@ export default function VkEntryPage({ initialQueryString }: { initialQueryString
                         icon="arrow_left"
                         variant="white"
                         size="md"
-                        onClick={() => setStep(step === 'register' ? 'code' : 'email')}
+                        onClick={() => setStep('email')}
                         aria-label="Назад"
                         style={{ position: 'absolute', top: 24, left: 24 }}
                     />

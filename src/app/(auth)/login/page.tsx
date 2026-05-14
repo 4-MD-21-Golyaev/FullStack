@@ -32,7 +32,7 @@ function LoginContent() {
           icon="arrow_left"
           variant="white"
           size="md"
-          onClick={() => setStep(step === 'register' ? 'code' : 'email')}
+          onClick={() => setStep('email')}
           aria-label="Назад"
           className={styles.backBtn}
         />

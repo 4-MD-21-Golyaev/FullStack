@@ -25,8 +25,8 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
     onClose();
   };
 
-  const handleBack = step !== 'email'
-    ? () => setStep(step === 'register' ? 'code' : 'email')
+  const handleBack = step === 'code'
+    ? () => setStep('email')
     : undefined;
 
   const footer = (() => {
