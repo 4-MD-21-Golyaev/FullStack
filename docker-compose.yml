@@ -20,6 +20,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      network: fullstack_internal
+      args:
+        DATABASE_URL: ${DATABASE_URL}
     restart: unless-stopped
     env_file: .env
     depends_on:
@@ -45,6 +48,7 @@ services:
 
 networks:
   internal:
+    name: fullstack_internal
 
 volumes:
   pgdata:
