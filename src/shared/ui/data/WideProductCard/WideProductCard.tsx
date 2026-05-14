@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { CardImage } from '../CardImage/CardImage';
 import { Counter } from '../../inputs/Counter/Counter';
 import { LikeButton } from '../../buttons/LikeButton/LikeButton';
@@ -16,6 +17,7 @@ export interface WideProductCardProps {
   inStock: boolean;
   liked?: boolean;
   variant?: 'cart' | 'history';
+  href?: string;
   onQuantityChange?: (qty: number) => void;
   onLike?: () => void;
   onRemove?: () => void;
@@ -37,6 +39,7 @@ export function WideProductCard({
   inStock,
   liked,
   variant = 'cart',
+  href,
   onQuantityChange,
   onLike,
   onRemove,
@@ -47,6 +50,7 @@ export function WideProductCard({
 
   return (
     <div className={[styles.root, className ?? ''].join(' ').trim()}>
+      {href && <Link href={href} className={styles.overlayLink} aria-label={name} />}
       <div className={styles.info}>
         <CardImage src={imageSrc} alt={name} size="M" />
         <div className={styles.nameBlock}>

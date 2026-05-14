@@ -44,7 +44,7 @@ export async function POST(
 
         const result = await useCase.execute({
             orderId: id,
-            returnUrl: `${RETURN_URL}/orders/${id}/result`,
+            returnUrl: `${RETURN_URL}/orders/${id}`,
         });
 
         return NextResponse.json(result);

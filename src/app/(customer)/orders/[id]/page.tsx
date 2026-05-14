@@ -236,6 +236,7 @@ export default function OrderDetailPage() {
                     price={item.price * item.quantity}
                     quantity={item.quantity}
                     inStock={true}
+                    href={`/catalog/product/${item.productId}`}
                     liked={favoriteIds.has(item.productId)}
                     onLike={() => toggleFavorite(item.productId)}
                   />

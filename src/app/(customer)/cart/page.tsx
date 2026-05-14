@@ -3,7 +3,7 @@
 import NextLink from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AlertBlock, Button, Container, OrderSummary, SliderContainer, WideProductCard } from '@/shared/ui';
+import { Button, Container, OrderSummary, SliderContainer, WideProductCard } from '@/shared/ui';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import { useRelatedProducts } from '@/features/recommendations';
 import { useViewedProducts } from '@/features/viewed-products';
@@ -180,6 +180,7 @@ export default function CartPage() {
                           price={item.price * item.quantity}
                           quantity={item.quantity}
                           inStock
+                          href={`/catalog/product/${item.productId}`}
                           liked={favoriteIds.has(item.productId)}
                           onLike={() => toggleFavorite(item.productId)}
                           onQuantityChange={qty => updateQuantity(item.productId, qty)}
@@ -222,6 +223,7 @@ export default function CartPage() {
                           price={item.price}
                           quantity={item.quantity}
                           inStock={false}
+                          href={`/catalog/product/${item.productId}`}
                           liked={favoriteIds.has(item.productId)}
                           onLike={() => toggleFavorite(item.productId)}
                           onRemove={() => startDelete(item)}
@@ -272,11 +274,6 @@ export default function CartPage() {
                       total={total}
                     />
                   )}
-                  <ul className={styles.infoBlock} aria-label="Информация о заказе">
-                    <li><AlertBlock>Сумма может изменяться, так как в заказе есть весовой товар</AlertBlock></li>
-                    <li><AlertBlock>Обработка заказов производится с 9:00 до 19:00</AlertBlock></li>
-                    <li><AlertBlock>Заказы, принятые после 18:00, обрабатываются на следующий день</AlertBlock></li>
-                  </ul>
                 </aside>
               </div>
             )}

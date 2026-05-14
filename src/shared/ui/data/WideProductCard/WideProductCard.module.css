@@ -3,6 +3,13 @@
   align-items: flex-start;
   justify-content: space-between;
   width: 100%;
+  position: relative;
+}
+
+.overlayLink {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 .info {
@@ -48,6 +55,8 @@
 
 .counter {
   width: 148px;
+  position: relative;
+  z-index: 2;
 }
 
 .priceCol {
@@ -76,6 +85,8 @@
   gap: var(--primitive-space-300);
   align-items: center;
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .outOfStockMeta {
