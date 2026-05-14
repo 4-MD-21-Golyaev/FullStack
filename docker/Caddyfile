@@ -1,0 +1,8 @@
+{
+    email ignatian03@gmail.com
+}
+
+goliaev-diplom.ru, www.goliaev-diplom.ru {
+    encode zstd gzip
+    reverse_proxy app:3000
+}

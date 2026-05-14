@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   allowedDevOrigins: ['blackfly-causeless-camie.ngrok-free.dev'],
   async headers() {
     return [
