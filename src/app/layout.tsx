@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  title: 'Order Management',
+  title: 'КН Супермаркет',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
