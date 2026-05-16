@@ -30,14 +30,6 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
     : undefined;
 
   const footer = (() => {
-    if (step === 'email') {
-      return (
-        <p className={styles.consentText}>
-          Продолжая авторизацию, вы даете{' '}
-          <span className={styles.consentLink}>согласие на обработку персональных данных</span>
-        </p>
-      );
-    }
     if (step === 'code') {
       return resendSeconds > 0
         ? <p className={styles.resendTimer}>Вы сможете отправить код повторно через {resendSeconds} сек.</p>

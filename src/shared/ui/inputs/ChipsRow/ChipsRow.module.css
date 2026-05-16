@@ -1,0 +1,18 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: var(--primitive-space-200);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.root::-webkit-scrollbar {
+  display: none;
+}
+
+.root[data-visible="false"] {
+  display: none;
+}

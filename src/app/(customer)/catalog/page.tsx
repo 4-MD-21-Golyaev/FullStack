@@ -1,6 +1,6 @@
 'use client';
 
-import { Category, Container } from '@/shared/ui';
+import { Category, Container, CardGrid } from '@/shared/ui';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import CatalogSidebar from '@/widgets/customer/CatalogSidebar/CatalogSidebar';
 import { usePersonalizedCategorySort } from '@/features/recommendations';
@@ -27,7 +27,7 @@ export default function CatalogPage() {
             onToggle={toggleCategory}
           />
 
-          <section className={styles.grid}>
+          <CardGrid mobileColumns={3}>
             {sortedRootCategories.map(cat => (
               <Category
                 key={cat.id}
@@ -38,7 +38,7 @@ export default function CatalogPage() {
                 size={isMobile ? 'S' : 'L'}
               />
             ))}
-          </section>
+          </CardGrid>
         </div>
       </Container>
     </div>

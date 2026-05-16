@@ -2,8 +2,15 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRef } from 'react';
+import { ViewportProvider } from '@/shared/contexts/ViewportContext';
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+  initialIsMobile,
+  children,
+}: {
+  initialIsMobile: boolean;
+  children: React.ReactNode;
+}) {
   const queryClientRef = useRef<QueryClient | null>(null);
   if (!queryClientRef.current) {
     queryClientRef.current = new QueryClient({
@@ -18,7 +25,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClientRef.current}>
-      {children}
+      <ViewportProvider initialIsMobile={initialIsMobile}>
+        {children}
+      </ViewportProvider>
     </QueryClientProvider>
   );
 }

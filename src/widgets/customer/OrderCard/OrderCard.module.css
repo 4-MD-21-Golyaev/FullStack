@@ -63,7 +63,14 @@
 
 .sizeS .images {
   overflow-x: auto;
+  overflow-y: hidden;
   width: 100%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sizeS .images::-webkit-scrollbar {
+  display: none;
 }
 
 .buttons {

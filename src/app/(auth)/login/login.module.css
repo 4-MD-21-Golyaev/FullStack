@@ -9,16 +9,64 @@
 
 .card {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 400px;
+  height: 700px;
   background: var(--ctx-color-bg-surface);
-  border-radius: var(--primitive-radius-200);
-  box-shadow: var(--ctx-shadow-card);
+  border-radius: var(--primitive-radius-800);
+  box-shadow: var(--ctx-shadow-modal);
   overflow: hidden;
 }
 
-.backBtn {
+.header {
   position: absolute;
-  top: 24px;
-  left: 24px;
-  z-index: 1;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.headerSlot {
+  width: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.headerTitle {
+  flex: 1;
+  text-align: center;
+  font-size: var(--ctx-font-size-h3);
+  font-weight: 700; /* Figma: [Desktop]/Headings/Heading 3 */
+  color: var(--ctx-color-text-default);
+  line-height: var(--ctx-line-height-normal);
+}
+
+.content {
+  width: 100%;
+  padding: 0 24px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.resendTimer {
+  font-size: var(--ctx-font-size-label);
+  font-weight: 450; /* Figma: label regular */
+  line-height: var(--ctx-line-height-tight);
+  color: var(--ctx-color-text-default);
+  text-align: center;
+  margin: 0;
 }

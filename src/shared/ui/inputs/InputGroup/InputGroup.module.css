@@ -1,0 +1,55 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-400);
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-200);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--primitive-space-300);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--ctx-font-size-h4);
+  font-weight: 700; /* Figma [Mobile]/Headings/H4 — PT Root UI VF Bold */
+  line-height: var(--ctx-line-height-loose);
+  color: var(--ctx-color-text-default);
+}
+
+.required {
+  color: var(--ctx-color-text-required);
+}
+
+.action {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.description {
+  margin: 0;
+  font-size: var(--ctx-font-size-caption);
+  font-weight: 450; /* Figma [Mobile]/Body/Weight 450 — PT Root UI VF Regular */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-text-default);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-300);
+}
+
+.body > * {
+  width: 100%;
+}

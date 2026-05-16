@@ -13,25 +13,6 @@
   margin: 0;
 }
 
-.tabs {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  gap: var(--primitive-space-200);
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.tabs[data-visible="false"] {
-  display: none;
-}
-
 @media (max-width: 767px) {
   .root {
     padding-block: var(--primitive-space-600) 0;

@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { Logo, Link, SocialButton, IconButton, Icon } from '@/shared/ui';
 import { COMPANY_LINKS, BUYER_LINKS, LEGAL_LINKS, STORES, STORE_ADDRESSES } from '../Footer/footerData';
 import styles from './FooterMobile.module.css';
@@ -20,6 +21,9 @@ const NAV_GROUPS: NavGroup[] = [
 ];
 
 export function FooterMobile({ className }: FooterMobileProps) {
+  const pathname = usePathname();
+  if (pathname?.startsWith('/checkout')) return null;
+
   return (
     <footer className={[styles.root, className ?? ''].filter(Boolean).join(' ')}>
       <Logo variant="favicon" className={styles.logo} />

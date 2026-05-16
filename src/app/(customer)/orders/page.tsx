@@ -5,7 +5,8 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { Button, Container, Grid, GridItem, Skeleton, AccountTabs, Chips } from '@/shared/ui';
+import { Button, Container, Grid, GridItem, Skeleton, AccountTabs, Chips, ChipsRow } from '@/shared/ui';
+import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import { OrderCard } from '@/widgets/customer/OrderCard/OrderCard';
 import { ordersApi } from '@/lib/api/orders';
 import { OrderState } from '@/domain/order/OrderState';
@@ -33,13 +34,14 @@ const CANCELLABLE_STATES: OrderState[] = [OrderState.CREATED, OrderState.PICKING
 const FILTER_OPTIONS: { value: Filter; label: string }[] = [
   { value: 'all', label: 'Все' },
   { value: 'active', label: 'Активные' },
-  { value: 'done', label: 'Выполненные' },
+  { value: 'done', label: 'Завершенные' },
 ];
 
 export default function OrdersPage() {
   const { user, isLoading: authLoading, openAuthModal, refresh } = useAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const isMobile = useIsMobile();
   const [filter, setFilter] = useState<Filter>('all');
 
   const { data: orders, isLoading } = useQuery({
@@ -94,7 +96,7 @@ export default function OrdersPage() {
             <>
               {/* Chips filter — only show if orders exist and loading is done */}
               {!isLoading && orders && orders.length > 0 && (
-                <div className={styles.chips}>
+                <ChipsRow activeIndex={FILTER_OPTIONS.findIndex(opt => opt.value === filter)}>
                   {FILTER_OPTIONS.map((opt) => (
                     <Chips
                       key={opt.value}
@@ -104,7 +106,7 @@ export default function OrdersPage() {
                       {opt.label}
                     </Chips>
                   ))}
-                </div>
+                </ChipsRow>
               )}
 
               {isLoading && <OrdersSkeletonList />}
@@ -135,6 +137,7 @@ export default function OrdersPage() {
                         items={order.items}
                         itemCount={order.items.length}
                         totalAmount={order.totalAmount}
+                        size={isMobile ? 'S' : 'M'}
                         onViewDetails={() => router.push(`/orders/${order.id}`)}
                         onCancel={
                           CANCELLABLE_STATES.includes(order.state)

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Category, Container } from '@/shared/ui';
+import { Category, Container, CardGrid } from '@/shared/ui';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import ProductCard from '@/widgets/customer/ProductCard/ProductCard';
 import { ProductCardSkeleton } from '@/widgets/customer/ProductCard/ProductCardSkeleton';
@@ -116,7 +116,7 @@ export default function CatalogCategoryPage() {
           <div className={styles.content}>
             {!isLeafCategory && (
               <>
-                <section className={styles.grid}>
+                <CardGrid mobileColumns={3}>
                   {subcategories.map(cat => (
                     <Category
                       key={cat.id}
@@ -127,7 +127,7 @@ export default function CatalogCategoryPage() {
                       size={isMobile ? 'S' : 'L'}
                     />
                   ))}
-                </section>
+                </CardGrid>
 
                 <div className={styles.sliders}>
                   {subcategories.map(sub => (
@@ -156,7 +156,7 @@ export default function CatalogCategoryPage() {
 
             {isLeafCategory && (
               <>
-                <section className={styles.productGrid}>
+                <CardGrid>
                   {categoryProductsLoading
                     ? Array.from({ length: SKELETON_COUNT }, (_, i) => (
                         <ProductCardSkeleton key={i} size={isMobile ? 'S' : 'L'} />
@@ -173,7 +173,7 @@ export default function CatalogCategoryPage() {
                           fillWidth={isMobile}
                         />
                       ))}
-                </section>
+                </CardGrid>
               </>
             )}
           </div>

@@ -15,7 +15,6 @@ import { useFavorites } from '../FavoritesContext';
 import styles from './cart.module.css';
 
 const DELIVERY_COST = 300;
-const DISCOUNT_PERCENT = 15;
 const UNDO_TIMEOUT_MS = 10_000;
 
 interface PendingDelete {
@@ -116,8 +115,7 @@ export default function CartPage() {
   const outOfStockItems = items.filter(i => i.stock === 0 && !pendingIds.has(i.productId));
 
   const subtotal = inStockItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const discount = Math.round(subtotal * DISCOUNT_PERCENT / 100);
-  const total = subtotal + DELIVERY_COST - discount;
+  const total = subtotal + DELIVERY_COST;
   const totalInStockQty = inStockItems.reduce((sum, i) => sum + i.quantity, 0);
 
   const isEmpty = items.length === 0 && pendingDeletes.length === 0 && clearPending === null;
@@ -269,8 +267,6 @@ export default function CartPage() {
                       itemCount={totalInStockQty}
                       subtotal={subtotal}
                       deliveryCost={DELIVERY_COST}
-                      discount={discount}
-                      discountPercent={DISCOUNT_PERCENT}
                       total={total}
                     />
                   )}

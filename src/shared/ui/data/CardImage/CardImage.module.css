@@ -3,6 +3,7 @@
   background: var(--ctx-color-bg-surface);
   border-radius: var(--primitive-radius-200);
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .sizeL {
@@ -25,4 +26,29 @@
 
 .image {
   object-fit: contain;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--ctx-color-bg-subtle) 0%,
+    var(--ctx-color-bg-surface) 50%,
+    var(--ctx-color-bg-subtle) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  transition: opacity 200ms ease-out;
+}
+
+.skeletonHidden {
+  opacity: 0;
+  animation: none;
+  pointer-events: none;
 }

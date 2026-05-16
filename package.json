@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest",
-    "ngrok": "ngrok http 3000 --response-header-add \"ngrok-skip-browser-warning: 1\""
+    "ngrok": "ngrok http 3000 --response-header-add \"ngrok-skip-browser-warning: 1\"",
+    "generate:icons": "tsx scripts/generate-icon-bboxes.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -42,7 +43,9 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "jsdom": "^28.1.0",
+    "svg-path-bounds": "^1.0.2",
     "ts-node": "^10.9.2",
+    "tsx": "^4.22.0",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.0.18"

@@ -2,6 +2,8 @@
 export { Container } from './layout/Container/Container';
 export { Grid } from './layout/Grid/Grid';
 export { GridItem } from './layout/Grid/GridItem';
+export { CardGrid } from './layout/CardGrid/CardGrid';
+export type { CardGridProps } from './layout/CardGrid/CardGrid';
 
 // icons
 export { Icon } from './icons/Icon/Icon';
@@ -42,6 +44,8 @@ export { Counter } from './inputs/Counter/Counter';
 export type { CounterProps } from './inputs/Counter/Counter';
 export { Chips } from './inputs/Chips/Chips';
 export type { ChipsProps } from './inputs/Chips/Chips';
+export { ChipsRow } from './inputs/ChipsRow/ChipsRow';
+export type { ChipsRowProps } from './inputs/ChipsRow/ChipsRow';
 export { PaymentChips } from './inputs/PaymentChips/PaymentChips';
 export type { PaymentChipsProps } from './inputs/PaymentChips/PaymentChips';
 export { Switch } from './inputs/Switch/Switch';
@@ -54,6 +58,8 @@ export { Radio } from './inputs/Radio/Radio';
 export type { RadioProps } from './inputs/Radio/Radio';
 export { RadioLabel } from './inputs/RadioLabel/RadioLabel';
 export type { RadioLabelProps } from './inputs/RadioLabel/RadioLabel';
+export { InputGroup } from './inputs/InputGroup/InputGroup';
+export type { InputGroupProps } from './inputs/InputGroup/InputGroup';
 export { AccountTab } from './inputs/AccountTab/AccountTab';
 export type { AccountTabProps } from './inputs/AccountTab/AccountTab';
 export { AccountTabs } from './inputs/AccountTabs/AccountTabs';

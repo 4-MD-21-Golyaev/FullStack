@@ -108,6 +108,15 @@
   text-decoration: none;
 }
 
+/* ── Checkout mobile bar (hidden by default; shown on mobile + /checkout) ── */
+
+.checkoutBar {
+  display: none;
+  align-items: center;
+  padding-block: var(--primitive-space-300);
+  padding-inline: var(--primitive-space-300);
+}
+
 /* ── Mobile ── */
 
 @media (max-width: 767px) { /* --header-breakpoint-mobile */
@@ -138,5 +147,13 @@
 
   .logoMobile {
     display: block;
+  }
+
+  .checkout .mainBar {
+    display: none;
+  }
+
+  .checkout .checkoutBar {
+    display: flex;
   }
 }

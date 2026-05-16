@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSyncExternalStore } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Logo, IconButton, CartButton, Button } from '@/shared/ui';
 import { SearchBar } from '@/features/product-search';
 import { useCart } from '@/app/(customer)/CartContext';
@@ -13,13 +13,24 @@ export function Header() {
   const { totalItems } = useCart();
   const { user, openAuthModal } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const isCheckout = pathname?.startsWith('/checkout') ?? false;
   const mounted = useSyncExternalStore(
     () => () => {},
     () => true,
     () => false,
   );
   return (
-    <header className={styles.root}>
+    <header className={[styles.root, isCheckout ? styles.checkout : ''].filter(Boolean).join(' ')}>
+      <div className={styles.checkoutBar}>
+        <IconButton
+          icon="arrow_left"
+          size="lg"
+          variant="white"
+          aria-label="Назад в корзину"
+          onClick={() => router.push('/cart')}
+        />
+      </div>
       {/* Top bar — phone numbers */}
       <div className={styles.topBar}>
         <div className={styles.container}>

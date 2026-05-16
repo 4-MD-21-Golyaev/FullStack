@@ -1,4 +1,3 @@
-import { Badge } from '../../feedback/Badge/Badge';
 import styles from './OrderSummary.module.css';
 
 export interface OrderSummaryProps {
@@ -6,8 +5,6 @@ export interface OrderSummaryProps {
   totalWeightKg?: number;
   subtotal: number;
   deliveryCost?: number;
-  discount?: number;
-  discountPercent?: number;
   total: number;
   className?: string;
 }
@@ -25,8 +22,6 @@ export function OrderSummary({
   totalWeightKg,
   subtotal,
   deliveryCost,
-  discount,
-  discountPercent,
   total,
   className,
 }: OrderSummaryProps) {
@@ -51,20 +46,6 @@ export function OrderSummary({
         <div className={styles.row}>
           <span>Доставка</span>
           <span>{formatPrice(deliveryCost)}</span>
-        </div>
-      )}
-
-      {discount !== undefined && discount > 0 && (
-        <div className={styles.row}>
-          <span>Скидка</span>
-          <span>-{formatPrice(discount)}</span>
-        </div>
-      )}
-
-      {discountPercent !== undefined && discountPercent > 0 && (
-        <div className={styles.row}>
-          <span>Персональная скидка</span>
-          <Badge variant="discount">-{discountPercent}%</Badge>
         </div>
       )}
     </div>

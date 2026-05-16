@@ -6,13 +6,16 @@ import styles from './MobileCartBar.module.css';
 interface MobileCartBarProps {
   total: number;
   onCheckout: () => void;
+  buttonText?: string;
+  disabled?: boolean;
+  className?: string;
 }
 
-export function MobileCartBar({ total, onCheckout }: MobileCartBarProps) {
+export function MobileCartBar({ total, onCheckout, buttonText = 'К оформлению', disabled = false, className }: MobileCartBarProps) {
   return (
-    <div className={styles.root}>
-      <Button variant="primary" size="lg" onClick={onCheckout}>
-        К оформлению
+    <div className={[styles.root, className ?? ''].filter(Boolean).join(' ')}>
+      <Button variant="primary" size="lg" onClick={onCheckout} disabled={disabled}>
+        {buttonText}
       </Button>
       <Price value={total} size="L" />
     </div>

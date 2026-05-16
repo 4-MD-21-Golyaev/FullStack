@@ -1,4 +1,7 @@
+'use client';
+
 import Image from 'next/image';
+import { useState } from 'react';
 import styles from './CardImage.module.css';
 
 interface CardImageProps {
@@ -9,8 +12,11 @@ interface CardImageProps {
 }
 
 export function CardImage({ src, alt = '', size = 'L', className }: CardImageProps) {
+  const [loaded, setLoaded] = useState(false);
+
   return (
     <div className={[styles.root, styles[`size${size}`], className].filter(Boolean).join(' ')}>
+      <div className={[styles.skeleton, loaded ? styles.skeletonHidden : ''].filter(Boolean).join(' ')} aria-hidden />
       <Image
         src={src || '/images/placeholder.svg'}
         alt={alt}
@@ -23,6 +29,8 @@ export function CardImage({ src, alt = '', size = 'L', className }: CardImagePro
               ? '60px'
               : '52px'
         }
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
       />
     </div>
   );

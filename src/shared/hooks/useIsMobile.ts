@@ -1,21 +1,13 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
-
-const MOBILE_QUERY = '(max-width: 767px)';
+import { useContext } from 'react';
+import { ViewportContext } from '@/shared/contexts/ViewportContext';
 
 /**
- * Reactive mobile-viewport flag. SSR returns `false` (desktop default), then re-syncs
- * on client mount and updates on viewport changes.
+ * Reactive mobile-viewport flag. Reads from ViewportContext which is
+ * seeded by UA-based detection on the server (avoiding hydration flash)
+ * and kept in sync with matchMedia after mount.
  */
 export function useIsMobile(): boolean {
-  return useSyncExternalStore(
-    (cb) => {
-      const mql = window.matchMedia(MOBILE_QUERY);
-      mql.addEventListener('change', cb);
-      return () => mql.removeEventListener('change', cb);
-    },
-    () => window.matchMedia(MOBILE_QUERY).matches,
-    () => false,
-  );
+  return useContext(ViewportContext);
 }

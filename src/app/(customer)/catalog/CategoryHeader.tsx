@@ -1,8 +1,8 @@
 'use client';
 
-import { useLayoutEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Chips, Container } from '@/shared/ui';
+import { Chips, ChipsRow, Container } from '@/shared/ui';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import { useCatalog } from './CatalogContext';
 import styles from './CategoryHeader.module.css';
@@ -49,32 +49,14 @@ export default function CategoryHeader() {
   }, [isLeaf, parentCategory, currentCategory]);
 
   const showTabs = !!categoryId && isMobile && isLeaf && siblings.length > 1;
-
-  const tabsRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    if (!showTabs) return;
-    const container = tabsRef.current;
-    if (!container) return;
-    const activeIndex = siblings.findIndex(s => s.id === categoryId);
-    if (activeIndex < 0) return;
-    const activeChip = container.children[activeIndex] as HTMLElement | undefined;
-    if (!activeChip) return;
-    // Component instance persists in /catalog/layout.tsx, so scrollLeft holds
-    // its previous value between sibling navigations — smooth scroll animates
-    // from the user's actual position to the new active chip.
-    container.scrollTo({ left: activeChip.offsetLeft, behavior: 'smooth' });
-  }, [categoryId, siblings, showTabs]);
+  const activeSiblingIndex = siblings.findIndex(s => s.id === categoryId);
 
   if (!categoryId) return null;
 
   return (
     <Container className={styles.root}>
       <h1 className={styles.title}>{title}</h1>
-      <div
-        ref={tabsRef}
-        className={styles.tabs}
-        data-visible={showTabs ? 'true' : 'false'}
-      >
+      <ChipsRow visible={showTabs} activeIndex={activeSiblingIndex}>
         {siblings.map(sib => (
           <Chips
             key={sib.id}
@@ -85,7 +67,7 @@ export default function CategoryHeader() {
             {sib.name}
           </Chips>
         ))}
-      </div>
+      </ChipsRow>
     </Container>
   );
 }

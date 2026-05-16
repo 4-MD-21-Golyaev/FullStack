@@ -21,11 +21,16 @@
   color: var(--ctx-color-text-default);
 }
 
-/* Chips filter row */
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--primitive-space-200);
+@media (max-width: 767px) {
+  .page {
+    padding-block: var(--primitive-space-600);
+  }
+  .main {
+    gap: var(--primitive-space-400);
+  }
+  .title {
+    font-size: var(--ctx-font-size-h2);
+  }
 }
 
 /* Orders list */

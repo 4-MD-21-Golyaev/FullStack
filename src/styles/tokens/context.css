@@ -9,6 +9,7 @@
   --ctx-color-text-inverse-secondary: var(--primitive-color-neutral-400);  /* secondary text on dark bg */
   --ctx-color-text-link:      var(--primitive-color-red-500);
   --ctx-color-text-danger:    var(--primitive-color-error-500);
+  --ctx-color-text-required:  var(--primitive-color-red-900);  /* required-field asterisk — Figma Ripe Wine */
 
   /* ── Background color ── */
   --ctx-color-bg-page:           var(--primitive-color-neutral-75);
