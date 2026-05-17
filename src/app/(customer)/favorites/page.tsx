@@ -30,22 +30,7 @@ export default function FavoritesPage() {
         <h1 className={styles.title}>Избранное</h1>
       </div>
 
-      {isLoading && (
-        <div className={styles.loading}>
-          <Spinner />
-        </div>
-      )}
-
-      {!isLoading && favorites.length === 0 && (
-        <div className={styles.empty}>
-          <p className={styles.emptyText}>В избранном пока пусто</p>
-          <NextLink href="/catalog">
-            <Button size="lg">Перейти в каталог</Button>
-          </NextLink>
-        </div>
-      )}
-
-      {!isLoading && favorites.length > 0 && (
+      {favorites.length > 0 && (
         <CardGrid>
           {favorites.map(p => (
             <ProductCard
@@ -61,6 +46,21 @@ export default function FavoritesPage() {
             />
           ))}
         </CardGrid>
+      )}
+
+      {isLoading && favorites.length === 0 && (
+        <div className={styles.loading}>
+          <Spinner />
+        </div>
+      )}
+
+      {!isLoading && favorites.length === 0 && (
+        <div className={styles.empty}>
+          <p className={styles.emptyText}>В избранном пока пусто</p>
+          <NextLink href="/catalog">
+            <Button size="lg">Перейти в каталог</Button>
+          </NextLink>
+        </div>
       )}
     </Container>
   );

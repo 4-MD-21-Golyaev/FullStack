@@ -89,7 +89,10 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
 
   const removeFavorite = (productId: string) => {
     if (!ensureAuthed()) return;
-    serverRemove(productId).then(refresh).catch(() => { /* ignore */ });
+    // Optimistic: drop locally before the request so the UI updates instantly.
+    // On error, resync with the server to recover the correct state.
+    setFavorites(prev => prev.filter(f => f.id !== productId));
+    serverRemove(productId).catch(() => { void refresh(); });
   };
 
   const toggleFavorite = (productId: string) => {
