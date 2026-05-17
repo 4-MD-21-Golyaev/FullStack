@@ -19,11 +19,11 @@ export const LEGAL_LINKS = [
 ];
 
 export const STORES: { name: string; href: string }[] = [
-  { name: 'НК Сити',    href: 'https://maps.yandex.ru' },
-  { name: 'НК Гродеков', href: 'https://maps.yandex.ru' },
+  { name: 'КН Сити',      href: 'https://maps.yandex.ru' },
+  { name: 'КН Супермолл', href: 'https://maps.yandex.ru' },
 ];
 
 export const STORE_ADDRESSES: Record<string, string> = {
-  'НК Сити':     'Улица Карла Маркса, 76',
-  'НК Гродеков': 'Комсомольская улица, 45',
+  'КН Сити':      'ул. Пушкина, д. Колотушкина',
+  'КН Супермолл': 'ул. Пушкина, д. Колотушкина',
 };

@@ -34,7 +34,7 @@ export function Footer({ className }: FooterProps) {
                 <div className={styles.contact}>
                   <div className={styles.contactText}>
                     <span className={styles.contactLabel}>Горячая линия</span>
-                    <Link href="tel:+79145420292" size="M">+7 (914) 542-02-92</Link>
+                    <Link href="tel:+79999999999" size="M">+7 (999) 999-99-99</Link>
                   </div>
                   <div className={styles.messengers}>
                     <SocialButton network="whatsapp" variant="white" aria-label="WhatsApp" />
@@ -46,7 +46,7 @@ export function Footer({ className }: FooterProps) {
                 <div className={styles.contact}>
                   <div className={styles.contactText}>
                     <span className={styles.contactLabel}>Отдел качества</span>
-                    <Link href="tel:+79294101202" size="M">+7 (929) 410-12-02</Link>
+                    <Link href="tel:+79999999999" size="M">+7 (999) 999-99-99</Link>
                   </div>
                   <div className={styles.messengers}>
                     <SocialButton network="whatsapp" variant="white" aria-label="WhatsApp" />
