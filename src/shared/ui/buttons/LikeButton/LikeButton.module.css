@@ -14,12 +14,17 @@
 .lg { width: 52px; height: 52px; border-radius: var(--primitive-radius-400); }
 
 .ghost { background-color: transparent; }
-.ghost:hover:not(:disabled) { background-color: var(--ctx-color-bg-subtle); }
 .ghost:focus-visible:not(:disabled) { background-color: var(--ctx-color-bg-subtle-hover); outline: none; }
+.ghost:active:not(:disabled) { background-color: var(--ctx-color-bg-subtle-hover); }
 
 .white { background-color: var(--ctx-color-bg-surface); }
-.white:hover:not(:disabled) { background-color: var(--ctx-color-bg-surface-hover); }
 .white:focus-visible:not(:disabled) { background-color: var(--ctx-color-bg-subtle); outline: none; }
+.white:active:not(:disabled) { background-color: var(--ctx-color-bg-subtle); }
+
+@media (hover: hover) {
+  .ghost:hover:not(:disabled) { background-color: var(--ctx-color-bg-subtle); }
+  .white:hover:not(:disabled) { background-color: var(--ctx-color-bg-surface-hover); }
+}
 
 .root:disabled {
   cursor: not-allowed;
@@ -30,6 +35,8 @@
   color: var(--ctx-color-action-primary);
 }
 
-.active.ghost:hover:not(:disabled) {
-  background-color: var(--ctx-color-bg-subtle);
+@media (hover: hover) {
+  .active.ghost:hover:not(:disabled) {
+    background-color: var(--ctx-color-bg-subtle);
+  }
 }

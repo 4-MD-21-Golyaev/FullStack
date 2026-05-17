@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useMemo, useLayoutEffect } from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ordersApi, type OrderItemDto, type OrderDto } from '@/lib/api/orders';
 import { pickerApi } from '@/lib/api/picker';
@@ -91,18 +91,20 @@ interface ItemRowProps {
 }
 
 function ItemRow({ item, mode, localQty, maxQty, onQtyChange, onMarkAbsent, onRestore, onAddReplacement }: ItemRowProps) {
+  const stateClass = styles[`state_${mode}` as 'state_unprocessed' | 'state_collected' | 'state_absent' | 'state_replaced'];
   return (
     <motion.div
-      className={styles.itemRow}
-      initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
-      animate={{ opacity: 1, height: 'auto', overflow: 'hidden' }}
-      exit={{ opacity: 0, height: 0, paddingTop: 0, paddingBottom: 0, overflow: 'hidden' }}
-      transition={{ duration: 0.25, ease: 'easeInOut' }}
+      className={[styles.itemRow, stateClass].filter(Boolean).join(' ')}
+      transition={{ duration: 0.2, ease: 'easeInOut' }}
     >
       <div className={styles.itemHeader}>
         <ItemPhoto src={item.imageSrc} name={item.name} />
         <div className={styles.itemInfo}>
-          <span className={styles.itemName}>{item.name}</span>
+          <span className={styles.itemName}>
+            {mode === 'collected' && <CheckCircle2 size={14} className={styles.statusIconCollected} aria-label="Собрано" />}
+            {mode === 'absent' && <XCircle size={14} className={styles.statusIconAbsent} aria-label="Отсутствует" />}
+            {item.name}
+          </span>
           <div className={styles.itemMeta}>
             <span className={styles.itemArticle}>Арт. {item.article}</span>
             <span className={styles.itemMetaSep} aria-hidden="true">·</span>
@@ -160,35 +162,6 @@ function ItemRow({ item, mode, localQty, maxQty, onQtyChange, onMarkAbsent, onRe
   );
 }
 
-interface ItemGroupProps {
-  title: string;
-  count: number;
-  accent?: 'default' | 'absent' | 'collected' | 'replaced';
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}
-
-function ItemGroup({ title, count, accent = 'default', icon, children }: ItemGroupProps) {
-  return (
-    <motion.div
-      className={`${styles.group} ${styles[`accent_${accent}`]}`}
-      initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
-      animate={{ opacity: 1, height: 'auto', overflow: 'hidden' }}
-      exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
-      transition={{ duration: 0.25, ease: 'easeInOut' }}
-    >
-      <div className={styles.groupHeader}>
-        <div className={styles.groupHeaderLeft}>
-          {icon}
-          <span className={styles.groupTitle}>{title}</span>
-        </div>
-        <span className={styles.groupCount}>{count}</span>
-      </div>
-      <div className={styles.groupItems}>{children}</div>
-    </motion.div>
-  );
-}
-
 interface Props {
   order: OrderDto;
 }
@@ -196,7 +169,6 @@ interface Props {
 export function PickingWorkspace({ order }: Props) {
   const queryClient = useQueryClient();
   const [showRelease, setShowRelease] = useState(false);
-  const [showComplete, setShowComplete] = useState(false);
 
   // Capture initial items once — server may later drop qty=0 items from order.items
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -264,7 +236,6 @@ export function PickingWorkspace({ order }: Props) {
     },
     onSuccess: () => {
       queryClient.setQueryData(['picker', 'me'], { order: null });
-      setShowComplete(false);
     },
   });
 
@@ -350,15 +321,11 @@ export function PickingWorkspace({ order }: Props) {
     scheduleUpdate();
   }, [scheduleUpdate]);
 
-  // Derive groups
+  // Derive counters for progress + completion guards (items stay in original order on screen)
   const unprocessed = allItems.filter(i => deriveMode(localItems[i.productId]) === 'unprocessed');
-
-  const byProcessedDesc = (a: OrderItemDto, b: OrderItemDto) =>
-    (localItems[b.productId]?.processedAt ?? 0) - (localItems[a.productId]?.processedAt ?? 0);
-
-  const absent = allItems.filter(i => deriveMode(localItems[i.productId]) === 'absent').sort(byProcessedDesc);
-  const collected = allItems.filter(i => deriveMode(localItems[i.productId]) === 'collected').sort(byProcessedDesc);
-  const replaced = allItems.filter(i => deriveMode(localItems[i.productId]) === 'replaced').sort(byProcessedDesc);
+  const absent = allItems.filter(i => deriveMode(localItems[i.productId]) === 'absent');
+  const collected = allItems.filter(i => deriveMode(localItems[i.productId]) === 'collected');
+  const replaced = allItems.filter(i => deriveMode(localItems[i.productId]) === 'replaced');
 
   // Completion guards (UI-side enforcement of ADR-003)
   const isReplaceStrategy = REPLACE_STRATEGIES.has(order.absenceResolutionStrategy);
@@ -440,134 +407,87 @@ export function PickingWorkspace({ order }: Props) {
             </div>
           </div>
 
-          <AnimatePresence mode="sync">
-          {unprocessed.length > 0 && (
-            <ItemGroup key="unprocessed" title="Необработано" count={unprocessed.length}>
-              <AnimatePresence mode="popLayout">
-                {unprocessed.map(item => (
-                  <ItemRow
-                    key={item.productId}
-                    item={item}
-                    mode="unprocessed"
-                    localQty={localItems[item.productId]?.qty ?? 0}
-                    maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
-                    onQtyChange={handleQtyChange}
-                    onMarkAbsent={handleMarkAbsent}
-                    onRestore={handleRestore}
-                  />
-                ))}
-              </AnimatePresence>
-            </ItemGroup>
-          )}
+          <div className={styles.itemList}>
+            {allItems.map(item => {
+              const state = localItems[item.productId];
+              const mode = deriveMode(state);
 
-          {absent.length > 0 && (
-            <ItemGroup key="absent" title="Отсутствует" count={absent.length} accent="absent" icon={<XCircle size={14} />}>
-              <AnimatePresence mode="popLayout">
-                {absent.map(item => (
-                  <ItemRow
-                    key={item.productId}
-                    item={item}
-                    mode="absent"
-                    localQty={0}
-                    maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
-                    onQtyChange={handleQtyChange}
-                    onMarkAbsent={handleMarkAbsent}
-                    onRestore={handleRestore}
-                    onAddReplacement={canReplaceAbsent ? (id) => setSearchForProductId(id) : undefined}
-                  />
-                ))}
-              </AnimatePresence>
-            </ItemGroup>
-          )}
-
-          {replaced.length > 0 && (
-            <ItemGroup key="replaced" title="Заменено" count={replaced.length} accent="replaced" icon={<ArrowLeftRight size={14} />}>
-              <AnimatePresence mode="popLayout">
-                {replaced.map(item => {
-                  const repIds = localItems[item.productId]?.replacementProductIds ?? [];
-                  return (
-                    <div key={item.productId} className={styles.replacedBlock}>
-                      {/* Исходный товар */}
-                      <div className={styles.absentOriginal}>
-                        <div className={styles.itemHeader}>
-                          <ItemPhoto src={item.imageSrc} name={item.name} />
-                          <div className={styles.itemInfo}>
-                            <span className={styles.itemName}>{item.name}</span>
-                            <div className={styles.itemMeta}>
-                              <span className={styles.itemArticle}>Арт. {item.article}</span>
-                              <span className={styles.itemMetaSep} aria-hidden="true">·</span>
-                              <span className={styles.itemPrice}>{formatPricePerUnit(item.price)}</span>
-                            </div>
-                          </div>
+              if (mode === 'replaced') {
+                const repIds = state.replacementProductIds;
+                return (
+                  <div key={item.productId} className={`${styles.itemRow} ${styles.state_replaced}`}>
+                    <div className={styles.itemHeader}>
+                      <ItemPhoto src={item.imageSrc} name={item.name} />
+                      <div className={styles.itemInfo}>
+                        <span className={styles.itemName}>
+                          <ArrowLeftRight size={14} className={styles.statusIconReplaced} aria-label="Заменено" />
+                          <span className={styles.replacedOriginalName}>{item.name}</span>
+                        </span>
+                        <div className={styles.itemMeta}>
+                          <span className={styles.itemArticle}>Арт. {item.article}</span>
+                          <span className={styles.itemMetaSep} aria-hidden="true">·</span>
+                          <span className={styles.itemPrice}>{formatPricePerUnit(item.price)}</span>
                         </div>
-                        <Button variant="ghost" size="sm" onClick={() => handleRestore(item.productId)}>
-                          Восстановить
-                        </Button>
                       </div>
-                      {/* Замены */}
-                      {repIds.map(repId => {
-                        const rep = replacements[repId];
-                        if (!rep) return null;
-                        return (
-                          <div key={repId} className={styles.replacementRow}>
-                            <div className={styles.itemHeader}>
-                              <ItemPhoto src={null} name={rep.name} />
-                              <div className={styles.itemInfo}>
-                                <span className={styles.itemName}>{rep.name}</span>
-                                <div className={styles.itemMeta}>
-                                  <span className={styles.itemArticle}>Арт. {rep.article}</span>
-                                  <span className={styles.itemMetaSep} aria-hidden="true">·</span>
-                                  <span className={styles.itemPrice}>{formatPricePerUnit(rep.price)}</span>
-                                </div>
+                      <Button variant="ghost" size="sm" onClick={() => handleRestore(item.productId)}>
+                        Восстановить
+                      </Button>
+                    </div>
+                    {repIds.map(repId => {
+                      const rep = replacements[repId];
+                      if (!rep) return null;
+                      return (
+                        <div key={repId} className={styles.replacementRow}>
+                          <div className={styles.itemHeader}>
+                            <ItemPhoto src={null} name={rep.name} />
+                            <div className={styles.itemInfo}>
+                              <span className={styles.itemName}>{rep.name}</span>
+                              <div className={styles.itemMeta}>
+                                <span className={styles.itemArticle}>Арт. {rep.article}</span>
+                                <span className={styles.itemMetaSep} aria-hidden="true">·</span>
+                                <span className={styles.itemPrice}>{formatPricePerUnit(rep.price)}</span>
                               </div>
                             </div>
-                            <div className={styles.itemControls}>
-                              <Counter
-                                value={rep.qty}
-                                min={1}
-                                size="lg"
-                                className={styles.counter}
-                                onChange={(qty) => handleReplacementQtyChange(repId, qty)}
-                              />
-                              <Button variant="danger" size="sm" onClick={() => handleRemoveReplacement(item.productId, repId)}>
-                                Убрать
-                              </Button>
-                            </div>
                           </div>
-                        );
-                      })}
-                      {/* Добавить ещё замену */}
-                      {canReplaceAbsent && (
-                        <Button variant="ghost" size="sm" onClick={() => setSearchForProductId(item.productId)}>
-                          + Ещё замену
-                        </Button>
-                      )}
-                    </div>
-                  );
-                })}
-              </AnimatePresence>
-            </ItemGroup>
-          )}
+                          <div className={styles.itemControls}>
+                            <Counter
+                              value={rep.qty}
+                              min={1}
+                              size="lg"
+                              className={styles.counter}
+                              onChange={(qty) => handleReplacementQtyChange(repId, qty)}
+                            />
+                            <Button variant="danger" size="sm" onClick={() => handleRemoveReplacement(item.productId, repId)}>
+                              Убрать
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {canReplaceAbsent && (
+                      <Button variant="ghost" size="sm" onClick={() => setSearchForProductId(item.productId)}>
+                        + Ещё замену
+                      </Button>
+                    )}
+                  </div>
+                );
+              }
 
-          {collected.length > 0 && (
-            <ItemGroup key="collected" title="Собрано" count={collected.length} accent="collected" icon={<CheckCircle2 size={14} />}>
-              <AnimatePresence mode="popLayout">
-                {collected.map(item => (
-                  <ItemRow
-                    key={item.productId}
-                    item={item}
-                    mode="collected"
-                    localQty={localItems[item.productId]?.qty ?? 0}
-                    maxQty={localItems[item.productId]?.maxQty ?? item.quantity}
-                    onQtyChange={handleQtyChange}
-                    onMarkAbsent={handleMarkAbsent}
-                    onRestore={handleRestore}
-                  />
-                ))}
-              </AnimatePresence>
-            </ItemGroup>
-          )}
-          </AnimatePresence>
+              return (
+                <ItemRow
+                  key={item.productId}
+                  item={item}
+                  mode={mode}
+                  localQty={state.qty}
+                  maxQty={state.maxQty}
+                  onQtyChange={handleQtyChange}
+                  onMarkAbsent={handleMarkAbsent}
+                  onRestore={handleRestore}
+                  onAddReplacement={mode === 'absent' && canReplaceAbsent ? (id) => setSearchForProductId(id) : undefined}
+                />
+              );
+            })}
+          </div>
 
           <motion.div
             className={styles.completeSectionWrap}
@@ -582,7 +502,7 @@ export function PickingWorkspace({ order }: Props) {
                 size="lg"
                 disabled={!canComplete}
                 loading={completeMutation.isPending}
-                onClick={() => setShowComplete(true)}
+                onClick={() => completeMutation.mutate()}
               >
                 Завершить сборку
               </Button>
@@ -602,16 +522,6 @@ export function PickingWorkspace({ order }: Props) {
         onCancel={() => setShowRelease(false)}
       />
 
-      <ConfirmDialog
-        open={showComplete}
-        title="Завершить сборку?"
-        description="Заказ перейдёт в статус PAYMENT."
-        confirmLabel="Завершить"
-        variant="primary"
-        loading={completeMutation.isPending}
-        onConfirm={() => completeMutation.mutate()}
-        onCancel={() => setShowComplete(false)}
-      />
 
       <ProductSearchModal
         open={searchForProductId !== null}

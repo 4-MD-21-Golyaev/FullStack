@@ -186,16 +186,62 @@
   gap: var(--primitive-space-300);
 }
 
+/* ── Item list (flat) ── */
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-300);
+}
+
 /* ── Item row ── */
 
 .itemRow {
   background: var(--ctx-color-bg-surface);
   border: 1px solid var(--ctx-color-border-default);
+  border-left: 3px solid var(--ctx-color-border-default);
   border-radius: var(--primitive-radius-200);
   padding: var(--primitive-space-400);
   display: flex;
   flex-direction: column;
   gap: var(--primitive-space-200);
+  transition: background-color var(--ctx-transition), border-color var(--ctx-transition);
+}
+
+.state_collected {
+  border-left-color: var(--ctx-color-status-success);
+}
+
+.state_absent {
+  border-left-color: var(--ctx-color-status-danger);
+}
+
+.state_replaced {
+  border-left-color: var(--ctx-color-status-warning);
+}
+
+.statusIconCollected {
+  color: var(--ctx-color-status-success);
+  margin-right: var(--primitive-space-100);
+  vertical-align: -2px;
+}
+
+.statusIconAbsent {
+  color: var(--ctx-color-status-danger);
+  margin-right: var(--primitive-space-100);
+  vertical-align: -2px;
+}
+
+.statusIconReplaced {
+  color: var(--ctx-color-status-warning);
+  margin-right: var(--primitive-space-100);
+  vertical-align: -2px;
+}
+
+.replacedOriginalName {
+  text-decoration: line-through;
+  text-decoration-color: var(--ctx-color-text-secondary);
+  color: var(--ctx-color-text-secondary);
 }
 
 .itemHeader {

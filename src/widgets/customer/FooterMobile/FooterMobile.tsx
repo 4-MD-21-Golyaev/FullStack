@@ -20,9 +20,11 @@ const NAV_GROUPS: NavGroup[] = [
   { title: 'Правовая информация', links: LEGAL_LINKS },
 ];
 
+const HIDDEN_ROUTE_PREFIXES = ['/checkout', '/account', '/profile', '/orders'];
+
 export function FooterMobile({ className }: FooterMobileProps) {
   const pathname = usePathname();
-  if (pathname?.startsWith('/checkout')) return null;
+  if (pathname && HIDDEN_ROUTE_PREFIXES.some(p => pathname.startsWith(p))) return null;
 
   return (
     <footer className={[styles.root, className ?? ''].filter(Boolean).join(' ')}>

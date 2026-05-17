@@ -24,8 +24,10 @@
   color: inherit;
 }
 
-.closeBtn:hover {
-  opacity: 1;
+@media (hover: hover) {
+  .closeBtn:hover {
+    opacity: 1;
+  }
 }
 
 .success {

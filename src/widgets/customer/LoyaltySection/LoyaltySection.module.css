@@ -81,8 +81,10 @@
   align-self: flex-start;
 }
 
-.detailsLink:hover {
-  color: var(--ctx-color-action-primary-hover);
+@media (hover: hover) {
+  .detailsLink:hover {
+    color: var(--ctx-color-action-primary-hover);
+  }
 }
 
 /* ── App section ── */
@@ -125,8 +127,10 @@
   transition: background-color var(--ctx-transition);
 }
 
-.appBtn:hover {
-  background-color: var(--ctx-color-bg-subtle);
+@media (hover: hover) {
+  .appBtn:hover {
+    background-color: var(--ctx-color-bg-subtle);
+  }
 }
 
 .appBtnSub {

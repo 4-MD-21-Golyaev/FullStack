@@ -25,18 +25,24 @@
 
 /* White variant */
 .white { background-color: var(--ctx-color-bg-surface); color: var(--ctx-color-icon-default); }
-.white:hover:not(:disabled) { background-color: var(--ctx-color-bg-surface-hover); }
 .white:focus-visible:not(:disabled) { background-color: var(--ctx-color-bg-subtle); outline: none; }
+.white:active:not(:disabled) { background-color: var(--ctx-color-bg-subtle-hover); }
 .white:disabled { background-color: var(--ctx-color-text-disabled); }
 
 /* Gray variant */
 .gray { background-color: var(--ctx-color-bg-subtle); color: var(--ctx-color-icon-default); }
-.gray:hover:not(:disabled) { background-color: var(--ctx-color-bg-subtle-hover); }
 .gray:focus-visible:not(:disabled) { background-color: var(--ctx-color-bg-subtle-focus); outline: none; }
+.gray:active:not(:disabled) { background-color: var(--ctx-color-bg-subtle-focus); }
 .gray:disabled { background-color: var(--ctx-color-text-disabled); }
 
 /* Red variant */
 .red { background-color: var(--ctx-color-action-primary); color: var(--ctx-color-bg-surface); }
-.red:hover:not(:disabled) { background-color: var(--ctx-color-action-primary-hover); }
 .red:focus-visible:not(:disabled) { background-color: var(--ctx-color-action-primary-active); outline: none; }
+.red:active:not(:disabled) { background-color: var(--ctx-color-action-primary-active); }
 .red:disabled { background-color: var(--ctx-color-icon-secondary); }
+
+@media (hover: hover) {
+  .white:hover:not(:disabled) { background-color: var(--ctx-color-bg-surface-hover); }
+  .gray:hover:not(:disabled) { background-color: var(--ctx-color-bg-subtle-hover); }
+  .red:hover:not(:disabled) { background-color: var(--ctx-color-action-primary-hover); }
+}

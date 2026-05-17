@@ -8,9 +8,11 @@ import { useRouter } from 'next/navigation';
 import { Button, Container, Grid, GridItem, Skeleton, AccountTabs, Chips, ChipsRow } from '@/shared/ui';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import { OrderCard } from '@/widgets/customer/OrderCard/OrderCard';
-import { ordersApi } from '@/lib/api/orders';
+import { CancelOrderModal } from '@/widgets/customer/CancelOrderModal/CancelOrderModal';
+import { ordersApi, type OrderDto } from '@/lib/api/orders';
 import { OrderState } from '@/domain/order/OrderState';
 import { useAuth } from '../AuthContext';
+import { useCart } from '../CartContext';
 import styles from './orders.module.css';
 
 type Filter = 'all' | 'active' | 'done';
@@ -42,7 +44,25 @@ export default function OrdersPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
+  const { addItem } = useCart();
   const [filter, setFilter] = useState<Filter>('all');
+  const [cancelOrderId, setCancelOrderId] = useState<string | null>(null);
+
+  const handleRepeat = (order: OrderDto) => {
+    for (const item of order.items) {
+      addItem(
+        {
+          productId: item.productId,
+          name: item.name,
+          price: item.price,
+          imagePath: item.imageSrc ?? null,
+          stock: 9999,
+        },
+        item.quantity,
+      );
+    }
+    router.push('/cart');
+  };
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ['my-orders'],
@@ -52,7 +72,10 @@ export default function OrdersPage() {
 
   const cancelMutation = useMutation({
     mutationFn: (id: string) => ordersApi.cancelOrder(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['my-orders'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-orders'] });
+      setCancelOrderId(null);
+    },
   });
 
   const filteredOrders =
@@ -138,18 +161,26 @@ export default function OrdersPage() {
                         itemCount={order.items.length}
                         totalAmount={order.totalAmount}
                         size={isMobile ? 'S' : 'M'}
-                        onViewDetails={() => router.push(`/orders/${order.id}`)}
+                        detailsHref={`/orders/${order.id}`}
                         onCancel={
                           CANCELLABLE_STATES.includes(order.state)
-                            ? () => cancelMutation.mutate(order.id)
+                            ? () => setCancelOrderId(order.id)
                             : undefined
                         }
-                        onPay={() => {
-                          ordersApi.initiatePayment(order.id).then(r => {
-                            window.location.href = r.confirmationUrl;
-                          });
-                        }}
-                        payEnabled={order.state === OrderState.PAYMENT}
+                        onPay={
+                          order.state === OrderState.PAYMENT
+                            ? () => {
+                                ordersApi.initiatePayment(order.id).then(r => {
+                                  window.location.href = r.confirmationUrl;
+                                });
+                              }
+                            : undefined
+                        }
+                        onRepeat={
+                          DONE_STATES.includes(order.state)
+                            ? () => handleRepeat(order)
+                            : undefined
+                        }
                       />
                     </li>
                   ))}
@@ -160,6 +191,12 @@ export default function OrdersPage() {
         </main>
         </GridItem>
       </Grid>
+
+      <CancelOrderModal
+        open={cancelOrderId !== null}
+        onClose={() => setCancelOrderId(null)}
+        onConfirm={() => cancelOrderId && cancelMutation.mutate(cancelOrderId)}
+      />
     </Container>
   );
 }

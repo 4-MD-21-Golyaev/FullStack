@@ -20,7 +20,13 @@
   color: var(--ctx-color-icon-default);
 }
 
-.enabled:hover:not(:disabled) {
+@media (hover: hover) {
+  .enabled:hover:not(:disabled) {
+    background-color: var(--ctx-color-bg-subtle);
+  }
+}
+
+.enabled:active:not(:disabled) {
   background-color: var(--ctx-color-bg-subtle);
 }
 

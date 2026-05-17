@@ -64,8 +64,10 @@
   gap: 2px;
 }
 
-.suggestionItem:hover {
-  background: var(--ctx-color-bg-subtle-hover);
+@media (hover: hover) {
+  .suggestionItem:hover {
+    background: var(--ctx-color-bg-subtle-hover);
+  }
 }
 
 .suggestionTitle {

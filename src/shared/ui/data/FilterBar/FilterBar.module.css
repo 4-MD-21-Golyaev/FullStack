@@ -44,9 +44,11 @@
   transition: all 100ms ease;
 }
 
-.statusBtn:hover {
-  border-color: var(--ctx-color-action-primary);
-  color: var(--ctx-color-action-primary);
+@media (hover: hover) {
+  .statusBtn:hover {
+    border-color: var(--ctx-color-action-primary);
+    color: var(--ctx-color-action-primary);
+  }
 }
 
 .statusBtnActive {
@@ -55,10 +57,12 @@
   color: var(--ctx-color-text-inverse);
 }
 
-.statusBtnActive:hover {
-  background: var(--ctx-color-action-primary-hover);
-  border-color: var(--ctx-color-action-primary-hover);
-  color: var(--ctx-color-text-inverse);
+@media (hover: hover) {
+  .statusBtnActive:hover {
+    background: var(--ctx-color-action-primary-hover);
+    border-color: var(--ctx-color-action-primary-hover);
+    color: var(--ctx-color-text-inverse);
+  }
 }
 
 .dates {

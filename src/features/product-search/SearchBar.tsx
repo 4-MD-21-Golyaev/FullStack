@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Search, Spinner, Link } from '@/shared/ui';
 import { useProductSearch, type ProductSearchResult } from './useProductSearch';
 import styles from './SearchBar.module.css';
@@ -8,11 +8,16 @@ interface SearchBarProps {
   onSelect: (product: ProductSearchResult) => void;
   placeholder?: string;
   className?: string;
+  /** When true: results render in flow below input (not as floating dropdown). */
+  inline?: boolean;
+  /** When true: hide "Показать все" link and enable infinite scroll via IntersectionObserver. */
+  infinite?: boolean;
 }
 
-export function SearchBar({ onSelect, placeholder, className }: SearchBarProps) {
-  const { query, setQuery, results, isLoading } = useProductSearch();
+export function SearchBar({ onSelect, placeholder, className, inline, infinite }: SearchBarProps) {
+  const { query, setQuery, results, isLoading, loadMore, hasMore } = useProductSearch();
   const containerRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleMouseDown(e: MouseEvent) {
@@ -34,6 +39,22 @@ export function SearchBar({ onSelect, placeholder, className }: SearchBarProps) 
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [setQuery]);
 
+  useEffect(() => {
+    if (!infinite) return;
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !isLoading) {
+          loadMore();
+        }
+      },
+      { root: null, threshold: 0.1 },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [infinite, hasMore, isLoading, loadMore]);
+
   const showDropdown = query.trim().length >= 2;
 
   function handleSelect(product: ProductSearchResult) {
@@ -43,7 +64,7 @@ export function SearchBar({ onSelect, placeholder, className }: SearchBarProps) 
 
   return (
     <div
-      className={[styles.root, className].filter(Boolean).join(' ')}
+      className={[styles.root, inline ? styles.inline : '', className].filter(Boolean).join(' ')}
       ref={containerRef}
     >
       <Search
@@ -52,8 +73,8 @@ export function SearchBar({ onSelect, placeholder, className }: SearchBarProps) 
         onChange={(e) => setQuery(e.target.value)}
       />
       {showDropdown && (
-        <div className={styles.dropdown}>
-          {isLoading && (
+        <div className={[styles.dropdown, inline ? styles.dropdownInline : ''].filter(Boolean).join(' ')}>
+          {isLoading && results.length === 0 && (
             <div className={styles.spinnerWrap}>
               <Spinner />
             </div>
@@ -61,7 +82,7 @@ export function SearchBar({ onSelect, placeholder, className }: SearchBarProps) 
           {!isLoading && results.length === 0 && (
             <p className={styles.hint}>Ничего не найдено</p>
           )}
-          {!isLoading && results.length > 0 && (
+          {results.length > 0 && (
             <>
               {results.map((product) => (
                 /*
@@ -82,12 +103,19 @@ export function SearchBar({ onSelect, placeholder, className }: SearchBarProps) 
                   </span>
                 </button>
               ))}
-              <Link
-                href={`/catalog/search?q=${encodeURIComponent(query.trim())}`}
-                className={styles.showAll}
-              >
-                Показать все результаты
-              </Link>
+              {infinite && hasMore && (
+                <div ref={sentinelRef} className={styles.sentinel}>
+                  {isLoading && <Spinner />}
+                </div>
+              )}
+              {!infinite && (
+                <Link
+                  href={`/catalog/search?q=${encodeURIComponent(query.trim())}`}
+                  className={styles.showAll}
+                >
+                  Показать все результаты
+                </Link>
+              )}
             </>
           )}
         </div>

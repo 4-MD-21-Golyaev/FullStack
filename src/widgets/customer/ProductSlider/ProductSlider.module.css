@@ -106,8 +106,10 @@
   flex-shrink: 0;
 }
 
-.navBtn:hover {
-  background-color: var(--ctx-color-bg-subtle-hover);
+@media (hover: hover) {
+  .navBtn:hover {
+    background-color: var(--ctx-color-bg-subtle-hover);
+  }
 }
 
 .navPrev {

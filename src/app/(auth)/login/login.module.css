@@ -70,3 +70,47 @@
   text-align: center;
   margin: 0;
 }
+
+@media (max-width: 767px) {
+  .page {
+    min-height: 100dvh;
+    align-items: stretch;
+    justify-content: stretch;
+    padding: 0;
+    background: var(--ctx-color-bg-surface);
+  }
+
+  .card {
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: var(--primitive-space-400);
+    gap: var(--primitive-space-600);
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .header {
+    position: static;
+    padding: 0;
+  }
+
+  .content {
+    padding: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .footer {
+    position: static;
+    padding: 0;
+  }
+}

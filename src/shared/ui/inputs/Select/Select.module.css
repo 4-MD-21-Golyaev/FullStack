@@ -22,8 +22,10 @@
   text-align: left;
 }
 
-.trigger:hover:not(:disabled) {
-  background-color: var(--ctx-color-bg-subtle-hover);
+@media (hover: hover) {
+  .trigger:hover:not(:disabled) {
+    background-color: var(--ctx-color-bg-subtle-hover);
+  }
 }
 
 .trigger:disabled {

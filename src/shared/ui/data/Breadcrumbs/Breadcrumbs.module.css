@@ -50,8 +50,10 @@
   transition: color var(--ctx-transition);
 }
 
-.link:hover {
-  color: var(--ctx-color-text-default);
+@media (hover: hover) {
+  .link:hover {
+    color: var(--ctx-color-text-default);
+  }
 }
 
 .separator {

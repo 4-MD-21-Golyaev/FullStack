@@ -24,7 +24,10 @@ export function MobileBottomNav() {
   }
 
   const isCatalogActive = pathname.startsWith('/catalog');
-  const isAccountActive = pathname.startsWith('/orders');
+  const isAccountActive =
+    pathname.startsWith('/account') ||
+    pathname.startsWith('/orders') ||
+    pathname.startsWith('/profile');
   const isLikeActive = pathname.startsWith('/favorites');
   const isCartActive = pathname.startsWith('/cart');
 
@@ -40,7 +43,7 @@ export function MobileBottomNav() {
         icon="account"
         state={isAccountActive ? 'activated' : 'enabled'}
         aria-label="Профиль"
-        onClick={user ? () => router.push('/orders') : () => openAuthModal()}
+        onClick={user ? () => router.push('/account') : () => openAuthModal()}
       />
       <MobilePanelButton
         icon="like"

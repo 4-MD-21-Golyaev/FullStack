@@ -45,9 +45,11 @@
               background-color 100ms ease;
 }
 
-.logout:hover {
-  color: var(--ctx-color-text-danger);
-  background: var(--ctx-color-bg-subtle);
+@media (hover: hover) {
+  .logout:hover {
+    color: var(--ctx-color-text-danger);
+    background: var(--ctx-color-bg-subtle);
+  }
 }
 
 .logout:disabled {

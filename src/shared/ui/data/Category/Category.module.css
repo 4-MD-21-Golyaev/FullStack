@@ -58,8 +58,10 @@
   transition: transform var(--ctx-transition);
 }
 
-.root:hover .image {
-  transform: scale(1.06);
+@media (hover: hover) {
+  .root:hover .image {
+    transform: scale(1.06);
+  }
 }
 
 /* ── Label ── */

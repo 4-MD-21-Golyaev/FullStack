@@ -1,0 +1,4 @@
+.page {
+  padding-block: var(--primitive-space-400) var(--primitive-space-600);
+  min-height: calc(100dvh - var(--header-mainbar-height) - var(--primitive-space-1600));
+}

@@ -11,8 +11,10 @@
   user-select: none;
 }
 
-.root:hover {
-  background-color: var(--ctx-color-bg-subtle-hover);
+@media (hover: hover) {
+  .root:hover {
+    background-color: var(--ctx-color-bg-subtle-hover);
+  }
 }
 
 /* ── Sizes ── */

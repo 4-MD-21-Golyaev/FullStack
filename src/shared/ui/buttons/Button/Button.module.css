@@ -21,8 +21,14 @@
   color: var(--ctx-color-text-inverse);
 }
 
-.primary:hover:not(:disabled):not([aria-disabled='true']) {
-  background-color: var(--ctx-color-action-primary-hover);
+@media (hover: hover) {
+  .primary:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: var(--ctx-color-action-primary-hover);
+  }
+}
+
+.primary:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--ctx-color-action-primary-active);
 }
 
 .secondary {
@@ -30,8 +36,14 @@
   color: var(--ctx-color-text-default);
 }
 
-.secondary:hover:not(:disabled):not([aria-disabled='true']) {
-  background-color: var(--ctx-color-bg-subtle-hover);
+@media (hover: hover) {
+  .secondary:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: var(--ctx-color-bg-subtle-hover);
+  }
+}
+
+.secondary:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--ctx-color-bg-subtle-focus);
 }
 
 .danger {
@@ -39,7 +51,13 @@
   color: var(--ctx-color-action-danger);
 }
 
-.danger:hover:not(:disabled):not([aria-disabled='true']) {
+@media (hover: hover) {
+  .danger:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: var(--ctx-color-status-danger-bg);
+  }
+}
+
+.danger:active:not(:disabled):not([aria-disabled='true']) {
   background-color: var(--ctx-color-status-danger-bg);
 }
 
@@ -48,8 +66,14 @@
   color: var(--ctx-color-text-default);
 }
 
-.ghost:hover:not(:disabled):not([aria-disabled='true']) {
-  background-color: var(--ctx-color-bg-subtle);
+@media (hover: hover) {
+  .ghost:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: var(--ctx-color-bg-subtle);
+  }
+}
+
+.ghost:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--ctx-color-bg-subtle-hover);
 }
 
 .tertiary {
@@ -58,8 +82,14 @@
   border-radius: var(--primitive-radius-400);
 }
 
-.tertiary:hover:not(:disabled):not([aria-disabled='true']) {
-  background-color: var(--ctx-color-bg-subtle-hover);
+@media (hover: hover) {
+  .tertiary:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: var(--ctx-color-bg-subtle-hover);
+  }
+}
+
+.tertiary:active:not(:disabled):not([aria-disabled='true']) {
+  background-color: var(--ctx-color-bg-subtle-focus);
 }
 
 .tertiary:focus-visible:not(:disabled):not([aria-disabled='true']) {

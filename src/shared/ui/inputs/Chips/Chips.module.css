@@ -28,8 +28,14 @@
   font-size: var(--ctx-font-size-caption);
 }
 
-.root:hover:not(:disabled):not(.isSelected) {
-  background: var(--ctx-color-bg-subtle-hover);
+@media (hover: hover) {
+  .root:hover:not(:disabled):not(.isSelected) {
+    background: var(--ctx-color-bg-subtle-hover);
+  }
+}
+
+.root:active:not(:disabled):not(.isSelected) {
+  background: var(--ctx-color-bg-subtle-focus);
 }
 
 .root:focus-visible:not(:disabled):not(.isSelected) {
@@ -42,8 +48,14 @@
   color: var(--ctx-color-text-inverse);
 }
 
-.isSelected:hover:not(:disabled) {
-  background: var(--ctx-color-action-primary-hover);
+@media (hover: hover) {
+  .isSelected:hover:not(:disabled) {
+    background: var(--ctx-color-action-primary-hover);
+  }
+}
+
+.isSelected:active:not(:disabled) {
+  background: var(--ctx-color-action-primary-active);
 }
 
 .isSelected:focus-visible:not(:disabled) {

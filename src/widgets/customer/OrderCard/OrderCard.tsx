@@ -1,5 +1,7 @@
 'use client';
 
+import NextLink from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button, CardImage, OrderStatusBadge, Price } from '@/shared/ui';
 import { getCustomerOrderStatusConfig } from '@/lib/order-status-config';
 import { pluralizeItems } from '@/lib/pluralize';
@@ -16,10 +18,10 @@ export interface OrderCardProps {
   }>;
   itemCount: number;        // total items count for "N товаров"
   totalAmount: number;
-  onViewDetails: () => void;
+  detailsHref: string;      // route to order detail page — used by overlay link + "Детали" button
   onCancel?: () => void;    // if undefined — no "Отменить" button
-  onPay?: () => void;
-  payEnabled?: boolean;
+  onPay?: () => void;       // shown when provided — primary CTA for PAYMENT state
+  onRepeat?: () => void;    // shown when provided — primary CTA for non-PAYMENT states
   size?: 'M' | 'S';        // default 'M'
   className?: string;
 }
@@ -31,13 +33,14 @@ export function OrderCard({
   items,
   itemCount,
   totalAmount,
-  onViewDetails,
+  detailsHref,
   onCancel,
   onPay,
-  payEnabled,
+  onRepeat,
   size = 'M',
   className,
 }: OrderCardProps) {
+  const router = useRouter();
   const statusConfig = getCustomerOrderStatusConfig(state);
   const rootClass = [
     styles.root,
@@ -47,6 +50,9 @@ export function OrderCard({
 
   return (
     <article className={rootClass}>
+      {/* Overlay link — covers the whole card behind the content; lets background clicks navigate to details */}
+      <NextLink href={detailsHref} className={styles.overlayLink} aria-label={`${date} — подробнее`} />
+
       {/* Row 1: date + badge | price */}
       <div className={styles.header}>
         <div className={styles.headerLeft}>
@@ -75,17 +81,22 @@ export function OrderCard({
           ))}
         </div>
         <div className={styles.buttons}>
-          <Button variant="secondary" size="md" onClick={onViewDetails}>
-            Посмотреть детали
+          <Button variant="secondary" size="md" onClick={() => router.push(detailsHref)}>
+            {size === 'S' ? 'Детали' : 'Посмотреть детали'}
           </Button>
           {onCancel && (
-            <Button variant="tertiary" size="md" onClick={onCancel}>
+            <Button variant="danger" size="md" onClick={onCancel}>
               Отменить
             </Button>
           )}
           {onPay && (
-            <Button variant="primary" size="md" onClick={onPay} disabled={!payEnabled}>
+            <Button variant="primary" size="md" onClick={onPay}>
               Оплатить
+            </Button>
+          )}
+          {onRepeat && (
+            <Button variant="primary" size="md" onClick={onRepeat}>
+              Повторить
             </Button>
           )}
         </div>

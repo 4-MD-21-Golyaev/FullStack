@@ -9,9 +9,11 @@
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
-.root:hover {
-  border-color: var(--ctx-color-action-primary);
-  box-shadow: var(--ctx-shadow-card);
+@media (hover: hover) {
+  .root:hover {
+    border-color: var(--ctx-color-action-primary);
+    box-shadow: var(--ctx-shadow-card);
+  }
 }
 
 .top {

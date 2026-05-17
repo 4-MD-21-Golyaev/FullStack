@@ -10,8 +10,10 @@
   transition: background-color var(--ctx-transition);
 }
 
-.bullet:hover {
-  background-color: var(--ctx-color-text-secondary);
+@media (hover: hover) {
+  .bullet:hover {
+    background-color: var(--ctx-color-text-secondary);
+  }
 }
 
 .bullet.active {

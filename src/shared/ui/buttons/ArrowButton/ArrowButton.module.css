@@ -14,9 +14,15 @@
   pointer-events: none;
 }
 
-.wrapper:has(button:hover) .bg,
-.wrapper:has(button:focus-visible) .bg {
+.wrapper:has(button:focus-visible) .bg,
+.wrapper:has(button:active:not(:disabled)) .bg {
   color: var(--ctx-color-bg-surface-hover);
+}
+
+@media (hover: hover) {
+  .wrapper:has(button:hover) .bg {
+    color: var(--ctx-color-bg-surface-hover);
+  }
 }
 
 /* The actual button */
@@ -40,9 +46,12 @@
   transition: color 150ms ease;
 }
 
-.root:hover:not(:disabled) { color: var(--ctx-color-icon-default); }
 .root:focus-visible:not(:disabled) { outline: none; }
 .root:disabled { cursor: not-allowed; opacity: 0.5; }
+
+@media (hover: hover) {
+  .root:hover:not(:disabled) { color: var(--ctx-color-icon-default); }
+}
 
 /* Button sizes */
 .sm.root { width: 32px; height: 32px; }

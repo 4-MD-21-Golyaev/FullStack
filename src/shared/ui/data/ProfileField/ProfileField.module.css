@@ -35,9 +35,8 @@
 .value {
   color: var(--ctx-color-text-default);
   line-height: var(--ctx-line-height-normal);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .sizeM .value {

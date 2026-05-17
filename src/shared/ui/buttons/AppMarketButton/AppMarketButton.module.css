@@ -14,13 +14,19 @@
   flex-shrink: 0;
 }
 
-.root:hover {
-  background-color: var(--ctx-color-bg-subtle-hover);
+@media (hover: hover) {
+  .root:hover {
+    background-color: var(--ctx-color-bg-subtle-hover);
+  }
 }
 
 .root:focus-visible {
   background-color: var(--ctx-color-bg-subtle-focus);
   outline: none;
+}
+
+.root:active {
+  background-color: var(--ctx-color-bg-subtle-focus);
 }
 
 .icon {

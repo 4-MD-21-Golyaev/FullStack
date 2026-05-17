@@ -38,14 +38,25 @@
 }
 
 /* Hovered state */
-.root:hover {
-  background-color: var(--ctx-color-bg-surface-hover);
+@media (hover: hover) {
+  .root:hover {
+    background-color: var(--ctx-color-bg-surface-hover);
+  }
+}
+
+.root:active:not(.expanded) {
+  background-color: var(--ctx-color-bg-subtle);
 }
 
 /* Expanded / Focused state */
-.expanded,
-.expanded:hover {
+.expanded {
   background-color: var(--ctx-color-bg-subtle);
+}
+
+@media (hover: hover) {
+  .expanded:hover {
+    background-color: var(--ctx-color-bg-subtle);
+  }
 }
 
 /* Label */
@@ -72,8 +83,14 @@
   color: var(--ctx-color-text-default);
 }
 
-.root:hover .chevron {
-  background-color: var(--ctx-color-bg-surface-hover);
+@media (hover: hover) {
+  .root:hover .chevron {
+    background-color: var(--ctx-color-bg-surface-hover);
+  }
+}
+
+.root:active:not(.expanded) .chevron {
+  background-color: var(--ctx-color-bg-subtle);
 }
 
 .expanded .chevron {

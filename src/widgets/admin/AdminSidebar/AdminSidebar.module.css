@@ -44,8 +44,10 @@
   flex-shrink: 0;
 }
 
-.toggle:hover {
-  background: var(--sidebar-item-active-bg);
+@media (hover: hover) {
+  .toggle:hover {
+    background: var(--sidebar-item-active-bg);
+  }
 }
 
 .nav {
@@ -70,9 +72,11 @@
   white-space: nowrap;
 }
 
-.navItem:hover {
-  background: var(--sidebar-item-active-bg);
-  color: var(--ctx-color-text-inverse);
+@media (hover: hover) {
+  .navItem:hover {
+    background: var(--sidebar-item-active-bg);
+    color: var(--ctx-color-text-inverse);
+  }
 }
 
 .navItemActive {

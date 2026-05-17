@@ -14,9 +14,11 @@ interface ModalProps {
   onBack?: () => void;
   showClose?: boolean;
   footer?: React.ReactNode;
+  /** When true: on mobile the bottom-sheet expands to fill near-full viewport. */
+  fullHeight?: boolean;
 }
 
-export function Modal({ open, onClose, children, className, size, title, onBack, showClose = true, footer }: ModalProps) {
+export function Modal({ open, onClose, children, className, size, title, onBack, showClose = true, footer, fullHeight }: ModalProps) {
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -29,7 +31,7 @@ export function Modal({ open, onClose, children, className, size, title, onBack,
   return (
     <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal>
       <div
-        className={[styles.root, styles[size ?? 'md'], className].filter(Boolean).join(' ')}
+        className={[styles.root, styles[size ?? 'md'], fullHeight ? styles.fullHeight : '', className].filter(Boolean).join(' ')}
         onClick={e => e.stopPropagation()}
       >
         {title && (

@@ -39,8 +39,10 @@
   cursor: pointer;
 }
 
-.clickable:hover {
-  background: var(--ctx-color-bg-subtle-hover);
+@media (hover: hover) {
+  .clickable:hover {
+    background: var(--ctx-color-bg-subtle-hover);
+  }
 }
 
 .cell {
@@ -85,8 +87,10 @@
   transition: background-color 100ms ease;
 }
 
-.pageBtn:hover:not(:disabled) {
-  background: var(--ctx-color-border-default);
+@media (hover: hover) {
+  .pageBtn:hover:not(:disabled) {
+    background: var(--ctx-color-border-default);
+  }
 }
 
 .pageBtn:disabled {

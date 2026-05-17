@@ -19,13 +19,20 @@
   transition: background-color var(--ctx-transition), border-color var(--ctx-transition);
 }
 
-.root:hover {
-  background-color: var(--ctx-color-bg-surface-hover);
-  border-color: var(--ctx-color-bg-subtle-hover);
+@media (hover: hover) {
+  .root:hover {
+    background-color: var(--ctx-color-bg-surface-hover);
+    border-color: var(--ctx-color-bg-subtle-hover);
+  }
 }
 
 .root:focus-visible {
   outline: none;
+  background-color: var(--ctx-color-bg-subtle);
+  border-color: var(--ctx-color-bg-subtle-focus);
+}
+
+.root:active:not(.isSelected) {
   background-color: var(--ctx-color-bg-subtle);
   border-color: var(--ctx-color-bg-subtle-focus);
 }

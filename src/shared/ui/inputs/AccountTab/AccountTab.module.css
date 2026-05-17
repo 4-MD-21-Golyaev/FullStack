@@ -12,13 +12,19 @@
   text-align: left;
 }
 
-.root:hover {
-  background-color: var(--ctx-color-bg-surface-hover);
+@media (hover: hover) {
+  .root:hover {
+    background-color: var(--ctx-color-bg-surface-hover);
+  }
 }
 
 .root:focus-visible {
   background-color: var(--ctx-color-bg-surface-active);
   outline: none;
+}
+
+.root:active:not(.active) {
+  background-color: var(--ctx-color-bg-surface-active);
 }
 
 .iconFrame {
@@ -59,9 +65,15 @@
   transition: opacity 0.15s ease;
 }
 
-.root:hover .arrow,
-.root:focus-visible .arrow {
+.root:focus-visible .arrow,
+.root:active:not(.active) .arrow {
   opacity: 1;
+}
+
+@media (hover: hover) {
+  .root:hover .arrow {
+    opacity: 1;
+  }
 }
 
 .active {
@@ -69,11 +81,18 @@
 }
 
 
-.active .arrow,
-.active:hover .arrow {
+.active .arrow {
   opacity: 0;
 }
 
-.active:hover {
-  background-color: var(--ctx-color-bg-surface-active);
+@media (hover: hover) {
+  .active:hover .arrow {
+    opacity: 0;
+  }
+}
+
+@media (hover: hover) {
+  .active:hover {
+    background-color: var(--ctx-color-bg-surface-active);
+  }
 }

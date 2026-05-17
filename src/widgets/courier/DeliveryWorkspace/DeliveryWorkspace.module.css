@@ -49,9 +49,11 @@
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
-.addressCard:hover {
-  border-color: var(--ctx-color-action-primary);
-  box-shadow: var(--ctx-shadow-card);
+@media (hover: hover) {
+  .addressCard:hover {
+    border-color: var(--ctx-color-action-primary);
+    box-shadow: var(--ctx-shadow-card);
+  }
 }
 
 .mapPin {

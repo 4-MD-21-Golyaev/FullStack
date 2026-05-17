@@ -21,6 +21,7 @@ import { ordersApi } from '@/lib/api/orders';
 import { OrderState } from '@/domain/order/OrderState';
 import { getCustomerOrderStatusConfig } from '@/lib/order-status-config';
 import MobileOrderBar from '@/widgets/customer/MobileOrderBar/MobileOrderBar';
+import { CancelOrderModal } from '@/widgets/customer/CancelOrderModal/CancelOrderModal';
 import { useAuth } from '../../AuthContext';
 import { useFavorites } from '../../FavoritesContext';
 import { useCart } from '../../CartContext';
@@ -28,6 +29,7 @@ import styles from './order.module.css';
 
 const CANCELLABLE_STATES = [OrderState.CREATED, OrderState.PICKING];
 const PAYABLE_STATES = [OrderState.CREATED, OrderState.PICKING, OrderState.PAYMENT];
+const TERMINAL_STATES = [OrderState.DELIVERED, OrderState.CLOSED, OrderState.CANCELLED];
 
 const ABSENCE_LABELS: Record<string, string> = {
   CALL_REPLACE: 'Позвонить мне. Заменить, если не отвечу',
@@ -46,6 +48,7 @@ export default function OrderDetailPage() {
 
   const [isPaying, setIsPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
+  const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
 
   const { data: order, isLoading } = useQuery({
     queryKey: ['my-orders', id],
@@ -58,7 +61,13 @@ export default function OrderDetailPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['my-orders'] }),
   });
 
+  const handleCancelConfirm = () => {
+    cancelMutation.mutate();
+    setCancelConfirmOpen(false);
+  };
+
   const isCancellable = order ? CANCELLABLE_STATES.includes(order.state) : false;
+  const isTerminal = order ? TERMINAL_STATES.includes(order.state) : false;
 
   function handleRepeat() {
     if (!order) return;
@@ -158,11 +167,13 @@ export default function OrderDetailPage() {
                 </div>
               </div>
               <div className={styles.headerButtons}>
-                <Button variant="secondary" size="md" onClick={handleRepeat}>
-                  Повторить заказ
-                </Button>
+                {isTerminal && (
+                  <Button variant="secondary" size="md" onClick={handleRepeat}>
+                    Повторить заказ
+                  </Button>
+                )}
                 {isCancellable && (
-                  <Button variant="tertiary" size="md" onClick={() => cancelMutation.mutate()}>
+                  <Button variant="danger" size="md" onClick={() => setCancelConfirmOpen(true)}>
                     Отменить
                   </Button>
                 )}
@@ -247,8 +258,14 @@ export default function OrderDetailPage() {
         </GridItem>
       </Grid>
       <MobileOrderBar
-        onRepeat={handleRepeat}
-        onCancel={isCancellable ? () => cancelMutation.mutate() : undefined}
+        onRepeat={isTerminal ? handleRepeat : undefined}
+        onCancel={isCancellable ? () => setCancelConfirmOpen(true) : undefined}
+      />
+
+      <CancelOrderModal
+        open={cancelConfirmOpen}
+        onClose={() => setCancelConfirmOpen(false)}
+        onConfirm={handleCancelConfirm}
       />
     </Container>
   );

@@ -11,9 +11,15 @@
   transition: color var(--ctx-transition);
 }
 
-.link:hover,
-.link:focus-visible {
+.link:focus-visible,
+.link:active {
   color: var(--ctx-color-text-link);
+}
+
+@media (hover: hover) {
+  .link:hover {
+    color: var(--ctx-color-text-link);
+  }
 }
 
 /* ── Sizes ── */

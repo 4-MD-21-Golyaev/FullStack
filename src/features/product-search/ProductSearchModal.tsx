@@ -11,8 +11,8 @@ interface Props {
 
 export function ProductSearchModal({ open, onSelect, onClose }: Props) {
   return (
-    <Modal open={open} onClose={onClose} title="Выбрать замену">
-      <SearchBar onSelect={onSelect} placeholder="Название или артикул" />
+    <Modal open={open} onClose={onClose} title="Выбрать замену" fullHeight>
+      <SearchBar onSelect={onSelect} placeholder="Название или артикул" inline infinite />
     </Modal>
   );
 }

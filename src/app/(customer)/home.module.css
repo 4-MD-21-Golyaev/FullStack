@@ -171,8 +171,10 @@
   cursor: pointer;
 }
 
-.loyaltyDetailsLink:hover {
-  color: var(--ctx-color-action-primary-hover);
+@media (hover: hover) {
+  .loyaltyDetailsLink:hover {
+    color: var(--ctx-color-action-primary-hover);
+  }
 }
 
 .loyaltyApp {

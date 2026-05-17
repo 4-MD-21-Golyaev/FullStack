@@ -83,3 +83,59 @@
   from { transform: translateY(8px); opacity: 0; }
   to   { transform: translateY(0);   opacity: 1; }
 }
+
+/* ── Mobile: bottom-sheet ── */
+@media (max-width: 767px) {
+  .overlay {
+    align-items: flex-end;
+  }
+
+  .root,
+  .md,
+  .lg {
+    width: 100%;
+    height: auto;
+    max-height: calc(100vh - var(--primitive-space-800));
+    border-radius: var(--primitive-radius-400) var(--primitive-radius-400) 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: var(--primitive-space-600);
+    padding: var(--primitive-space-400);
+    overflow: hidden;
+    animation: slideUpSheet 200ms ease;
+  }
+
+  .fullHeight {
+    height: 90dvh;
+    max-height: 90dvh;
+  }
+
+  .header {
+    position: static;
+    padding: 0;
+    gap: var(--primitive-space-100);
+  }
+
+  .headerTitle {
+    font-size: var(--ctx-font-size-h2);
+  }
+
+  .content {
+    padding: 0;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .footer {
+    position: static;
+    padding: 0;
+  }
+}
+
+@keyframes slideUpSheet {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0);    }
+}

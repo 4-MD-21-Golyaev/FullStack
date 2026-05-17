@@ -1,0 +1,18 @@
+.description {
+  margin: 0 0 var(--primitive-space-600);
+  text-align: center;
+  font-size: var(--ctx-font-size-body);
+  font-weight: 700; /* Figma: Bold */
+  line-height: var(--ctx-line-height-normal);
+  color: var(--ctx-color-icon-hint); /* Figma "Gray contrast" #999 */
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primitive-space-400);
+}
+
+.actions > * {
+  width: 100%;
+}

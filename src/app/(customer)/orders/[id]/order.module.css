@@ -60,8 +60,21 @@
     display: none;
   }
 
+  .page {
+    padding-block: var(--primitive-space-600);
+  }
+
   .main {
+    gap: var(--primitive-space-400);
     padding-bottom: var(--primitive-space-1600);
+  }
+
+  .title {
+    font-size: var(--ctx-font-size-h2);
+  }
+
+  .itemList {
+    gap: var(--primitive-space-400);
   }
 }
 
@@ -75,7 +88,7 @@
 
 @media (max-width: 900px) {
   .infoColumns {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -127,3 +140,4 @@
   font-weight: 450; /* Figma: Utilities/Caption */
   color: var(--ctx-color-text-danger);
 }
+

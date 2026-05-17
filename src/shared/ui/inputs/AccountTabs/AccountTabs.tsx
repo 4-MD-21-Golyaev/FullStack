@@ -7,16 +7,12 @@ import { Button } from '@/shared/ui';
 import styles from './AccountTabs.module.css';
 
 export interface AccountTabsProps {
-  activeTab?: 'profile' | 'discounts' | 'addresses' | 'payment' | 'orders';
+  activeTab?: 'orders';
   onLogout?: () => void;
   className?: string;
 }
 
 const tabs = [
-  { id: 'profile' as const, label: 'Личные данные', icon: 'account' as const, href: '/profile' },
-  { id: 'discounts' as const, label: 'Скидки и бонусы', icon: 'percent' as const, href: '/profile/discounts' },
-  { id: 'addresses' as const, label: 'Адреса доставки', icon: 'address' as const, href: '/profile/addresses' },
-  { id: 'payment' as const, label: 'Способы оплаты', icon: 'card' as const, href: '/profile/payment' },
   { id: 'orders' as const, label: 'История заказов', icon: 'cart' as const, href: '/orders' },
 ];
 

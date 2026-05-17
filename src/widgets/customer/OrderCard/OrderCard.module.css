@@ -1,9 +1,23 @@
 .root {
+  position: relative;
   border-bottom: 1px solid var(--ctx-color-border-default);
   padding-block: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.overlayLink {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.header,
+.meta,
+.row {
+  position: relative;
+  z-index: 1;
 }
 
 .header {
@@ -82,4 +96,9 @@
 
 .sizeS .buttons {
   width: 100%;
+}
+
+.sizeS .buttons > * {
+  flex: 1;
+  min-width: 0;
 }
