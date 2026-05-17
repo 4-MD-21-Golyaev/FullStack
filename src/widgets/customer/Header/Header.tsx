@@ -36,11 +36,11 @@ export function Header() {
         <div className={styles.container}>
           <div className={styles.phones}>
             <div className={styles.phoneItem}>
-              <span className={styles.phoneNumber}>+7 (914) 542-02-92</span>
+              <span className={styles.phoneNumber}>+7 (999) 999-99-99</span>
               <span className={styles.phoneLabel}>Горячая линия</span>
             </div>
             <div className={styles.phoneItem}>
-              <span className={styles.phoneNumber}>+7 (929) 410-12-02</span>
+              <span className={styles.phoneNumber}>+7 (999) 999-99-99</span>
               <span className={styles.phoneLabel}>Отдел качества</span>
             </div>
           </div>

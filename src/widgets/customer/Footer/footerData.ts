@@ -25,5 +25,5 @@ export const STORES: { name: string; href: string }[] = [
 
 export const STORE_ADDRESSES: Record<string, string> = {
   'КН Сити':      'ул. Пушкина, д. Колотушкина',
-  'КН Супермолл': 'ул. Пушкина, д. Колотушкина',
+  'КН Супермолл': 'ул. Колотушкина, д. Пушкина',
 };
