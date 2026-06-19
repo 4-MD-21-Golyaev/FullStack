@@ -46,7 +46,15 @@ export class PrismaProductRepository implements ProductRepository {
     async findByCategoryIds(categoryIds: string[]): Promise<Product[]> {
         if (categoryIds.length === 0) return [];
         const records = await this.db.product.findMany({
-            where: { categoryId: { in: categoryIds } },
+            // Keep the home page recommendation sliders clean:
+            //  - exclude products without a real image (they render the placeholder),
+            //  - exclude service items whose name starts with '*' (e.g. "* НЕ использ",
+            //    "*Новогодний подарок") — internal markers, not real catalog goods.
+            where: {
+                categoryId: { in: categoryIds },
+                imagePath: { not: '' },
+                NOT: { name: { startsWith: '*' } },
+            },
             orderBy: { name: 'asc' },
         });
         return records.map(r => this.toProduct(r));

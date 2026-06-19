@@ -44,11 +44,21 @@ interface Persona {
     rootCategoryHint: string[]; // substring match against root category names
 }
 
+// Hints are substring-matched (case-insensitive) against ROOT category names of
+// the seeded grocery catalog. Every hint below resolves to at least one real
+// root, so no persona falls back to a random product slice. Staple roots
+// (молочка, овощи, мясо, бакалея, выпечка) intentionally overlap across several
+// personas — exactly like a real grocery where everyone buys basics — so they
+// rise to the top of the homepage category recommendations.
 const PERSONA_DEFS: Persona[] = [
-    { name: 'foodies',  rootCategoryHint: ['бакале', 'выпеч', 'молоч', 'мясо', 'сыр', 'хлеб'] },
-    { name: 'pet',      rootCategoryHint: ['зоо', 'pet', 'животн', 'корм'] },
-    { name: 'household',rootCategoryHint: ['бытов', 'хозяй', 'уборк', 'чисто'] },
-    { name: 'beauty',   rootCategoryHint: ['красот', 'космет', 'ух', 'гигиен'] },
+    // Family weekly shop: dairy, meat, produce, staples, kids, bakery
+    { name: 'family',      rootCategoryHint: ['молоч', 'мясо', 'овощ', 'бакале', 'детск', 'выпеч'] },
+    // Health-conscious: produce, fish, "твой рацион", dairy, frozen
+    { name: 'healthy',     rootCategoryHint: ['овощ', 'рыба', 'рацион', 'молоч', 'заморож'] },
+    // Sweet tooth / snacking: confectionery, bakery, snacks, drinks
+    { name: 'sweet-tooth', rootCategoryHint: ['кондитер', 'выпеч', 'снек', 'напитк'] },
+    // Pet owner + household runs: pet, home/auto/garden, staples
+    { name: 'pet-home',    rootCategoryHint: ['зоо', 'дом', 'бакале'] },
 ];
 
 async function main() {

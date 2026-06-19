@@ -29,9 +29,15 @@ export class PrismaCategoryRecommendationRepository implements CategoryRecommend
     }
 
     async findTopCategories(opts: FindTopCategoriesOptions): Promise<PopularCategory[]> {
-        const fetchLimit = opts.rootOnly ? Math.max(opts.limit * 5, 20) : opts.limit;
         const scoreExpr = this.scoreExpr(opts.withTimeDecay ?? false);
         const statuses = [...opts.statusCodes];
+
+        // When rolling up to roots, aggregate ALL leaf categories before limiting.
+        // Capping leaves first would drop a root whose orders are spread across
+        // many subcategories (each individual leaf scoring below the cap) — e.g.
+        // a confectionery root with 15 children loses to a 3-child root despite
+        // far more total orders. The rollup, not the leaf count, decides the top.
+        const limitClause = opts.rootOnly ? PrismaNS.empty : PrismaNS.sql`LIMIT ${opts.limit}`;
 
         const rows = await this.db.$queryRaw<RawRow[]>(PrismaNS.sql`
             SELECT p."categoryId" AS category_id,
@@ -44,7 +50,7 @@ export class PrismaCategoryRecommendationRepository implements CategoryRecommend
             WHERE s.code = ANY(${statuses}::text[])
             GROUP BY p."categoryId"
             ORDER BY score DESC, order_count DESC
-            LIMIT ${fetchLimit}
+            ${limitClause}
         `);
 
         const mapped = rows.map(this.toPopularCategory);

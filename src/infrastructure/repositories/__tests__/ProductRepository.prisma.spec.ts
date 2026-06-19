@@ -255,10 +255,52 @@ describe('PrismaProductRepository.findByCategoryIds', () => {
         const results = await repo.findByCategoryIds(['cat-1', 'cat-2']);
 
         expect(db.product.findMany).toHaveBeenCalledWith({
-            where: { categoryId: { in: ['cat-1', 'cat-2'] } },
+            where: {
+                categoryId: { in: ['cat-1', 'cat-2'] },
+                imagePath: { not: '' },
+                NOT: { name: { startsWith: '*' } },
+            },
             orderBy: { name: 'asc' },
         });
         expect(results).toHaveLength(2);
+    });
+
+    it('filters out placeholder-image products via imagePath: { not: empty } alongside categoryId in', async () => {
+        const db = makeDb([]);
+        const repo = new PrismaProductRepository(db as any);
+
+        await repo.findByCategoryIds(['cat-1']);
+
+        const call = db.product.findMany.mock.calls[0][0];
+        expect(call.where).toEqual({
+            categoryId: { in: ['cat-1'] },
+            imagePath: { not: '' },
+            NOT: { name: { startsWith: '*' } },
+        });
+        expect(call.where.imagePath).toEqual({ not: '' });
+        expect(call.where.NOT).toEqual({ name: { startsWith: '*' } });
+        expect(call.where.categoryId).toEqual({ in: ['cat-1'] });
+    });
+
+    it('orders results by name ascending', async () => {
+        const db = makeDb([]);
+        const repo = new PrismaProductRepository(db as any);
+
+        await repo.findByCategoryIds(['cat-1']);
+
+        const call = db.product.findMany.mock.calls[0][0];
+        expect(call.orderBy).toEqual({ name: 'asc' });
+    });
+
+    it('maps Decimal price to number via toNumber()', async () => {
+        const record = makeDbRecord({ categoryId: 'cat-1', price: makeDecimal(42.5) });
+        const db = makeDb([record]);
+        const repo = new PrismaProductRepository(db as any);
+
+        const results = await repo.findByCategoryIds(['cat-1']);
+
+        expect(results[0].price).toBe(42.5);
+        expect(typeof results[0].price).toBe('number');
     });
 
     it('returns empty array without querying db when categoryIds is empty', async () => {
